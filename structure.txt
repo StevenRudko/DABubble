@@ -1,0 +1,57 @@
+1. Login = (
+    regestrierung,
+    passwort reset,
+    Avatar auswählen,
+    impressum,
+    datenschutz,
+)
+
+2. Navbar =  (
+    header component (
+        search bar compoinent
+        profil overview component
+    )
+    side bar component (
+        department-header.component
+        channel list component (
+            createChannel.component
+        )
+        privat message component
+    )
+)
+
+3. Main content (
+    channel.component(
+        channel-info-bar(
+            channel-edit
+            member-channel-list
+            add-channle-user
+        )
+        chat-box(
+            user-massage(
+                SHARED COMPONENx2
+            )
+        )
+
+        thread.comonent(
+            thread-info-bar
+                SHARED COMPONENT
+       )
+        Privat-message.component(
+             privat-messagel-info-bar
+             SHARED COMPONENT
+         )
+    )
+)
+
+SHARED COMPONENT(
+    user-massage
+    emoji.component
+    user-profil-overlay
+    message-input-box
+    if message is empty componente
+)
+
+Service (
+    
+)

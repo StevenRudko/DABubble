@@ -1,1 +1,20 @@
-/* You can add global styles to this file, and also import other style files */
+@use '@angular/material';
+@use 'assets/styles/theme-colors.scss'; // location of generated file
+
+html {
+  // Apply the dark theme by default
+  @include material.theme((
+    color: (
+      primary: theme-colors.$primary-palette,
+      tertiary: theme-colors.$tertiary-palette,
+      theme-type: dark,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+
+  // Use high contrast dark theme colors when users prefer contrast
+  @media (prefers-contrast: more) {
+    @include theme-colors.high-contrast-overrides(dark);
+  }
+}
