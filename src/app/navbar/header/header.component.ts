@@ -1,10 +1,13 @@
 import { Component } from '@angular/core';
+import { ProfileOverviewComponent } from './profile-overview/profile-overview.component';
+import {MatCardModule} from '@angular/material/card';
 
 @Component({
   selector: 'app-header',
-  imports: [],
+  standalone:true,
+  imports: [ProfileOverviewComponent, MatCardModule ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
-  standalone: true,
 })
+
 export class HeaderComponent {}

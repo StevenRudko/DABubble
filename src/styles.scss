@@ -21,8 +21,15 @@ html {
   }
 }
 
-body {
+html, body {
   font-size: 16px;
+  width:100%;
+  box-sizing: border-box;
+}
+
+section {
+  width:100%;
+  box-sizing: border-box;
 }
 
 @mixin margin ($ml: 0, $mr: 0, $mt: 0, $mb: 0) {
@@ -33,10 +40,10 @@ body {
 }
 
 @mixin padding ($pl: 0, $pr: 0, $pt: 0, $pb: 0) {
-  margin-left: $pl;
-  margin-right: $pr;
-  margin-top: $pt;
-  margin-bottom: $pb;
+  padding-left: $pl;
+  padding-right: $pr;
+  padding-top: $pt;
+  padding-bottom: $pb;
 }
 
 @mixin dFlex ($d: flex, $fd: row, $jc: center, $ai: center, $g: 0px) {

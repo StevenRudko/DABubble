@@ -1,5 +1,7 @@
 @use './../styles.scss' as styles;
 
-section {
-    @include styles.padding ($pl: 1rem, $pr: 1rem, $pt: 1rem, $pb: 0);
+main {
+    background-color:aliceblue;
+    height: 100vh;
+    width:100%;
 }
