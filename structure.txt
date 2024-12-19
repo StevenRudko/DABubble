@@ -8,7 +8,7 @@
 
 2. Navbar =  (
     header component (
-        search bar compoinent
+        search bar compoinent       // wirklich benötigt? gibts nur einmal in der main-component
         profil overview component
     )
     side bar component (
