@@ -1,0 +1,37 @@
+@use './../../../styles.scss' as styles;
+@use './../../../assets/styles/fonts.scss' as fonts;
+@use './../../../assets/styles/theme-colors.scss' as colors;
+
+.message-input-container {
+    width: 100%;
+    box-sizing: border-box;
+    height: 150px;
+    border: 1px solid grey;
+    border-radius: 20px;
+    padding: 12px;
+
+    &:hover {
+        border: 1px solid #797EF3;
+    }
+}
+
+.custom-textarea {
+    width: 100%;
+    border-radius: 20px;
+    box-sizing: border-box;
+    height: 80px;
+    padding: 10px;
+    resize: none;
+    border: unset;
+}
+
+.icons-wrapper {
+    @include styles.dFlex($d: flex, $fd: row, $jc: flex-start, $ai: center, $g: 22px);
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0px 14px;
+}
+
+mat-icon {
+    color: grey;
+}

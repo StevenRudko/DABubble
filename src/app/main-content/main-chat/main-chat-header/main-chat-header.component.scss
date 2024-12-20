@@ -4,9 +4,9 @@
 
 header {
     height: 80px;
-    width: 100%;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.05);
     @include styles.padding($pl: 48px, $pr: 48px, $pt: 0, $pb: 0);
+    width:100%;
     @include styles.dFlex($d: flex, $fd: row, $jc: space-between, $ai: center, $g: 0);
     box-sizing: border-box;
     border-top-right-radius: 20px;

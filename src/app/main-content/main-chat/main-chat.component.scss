@@ -7,3 +7,16 @@ section {
     height:100%;
 }
 
+app-message-input-box {
+    width:100%;
+    box-sizing: border-box;
+}
+
+.main-chat-body {
+    @include styles.padding($pl: 12px, $pr: 12px, $pt: 12px, $pb: 12px);
+    width:100%;
+    box-sizing: border-box;
+}
+
+
+
