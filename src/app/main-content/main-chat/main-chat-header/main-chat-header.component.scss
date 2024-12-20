@@ -4,16 +4,16 @@
 
 header {
     height: 80px;
-    width:100%;
+    width: 100%;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    @include styles.padding($pl: 48px, $pr: 24px, $pt: 0, $pb: 0);
-    @include styles.dFlex($d: flex, $fd: row, $jc: flex-start, $ai: center, $g: 0);
+    @include styles.padding($pl: 48px, $pr: 48px, $pt: 0, $pb: 0);
+    @include styles.dFlex($d: flex, $fd: row, $jc: space-between, $ai: center, $g: 0);
     box-sizing: border-box;
     border-top-right-radius: 20px;
     border-top-left-radius: 20px;
 }
 
-.header-selection-name {
+.selection-name {
     @include styles.dFlex($d: flex, $fd: row, $jc: flex-start, $ai: center, $g: 8px);
     font-size: 24px;
     font-weight: 600;
@@ -25,7 +25,54 @@ header {
 }
 
 mat-icon {
-    width: 30px;
-    height: 30px;
+    width: auto;
+    height: auto;
     font-size: 32px;
 }
+
+.wrapper-member {
+    @include styles.dFlex($d: flex, $fd: row, $jc: space-between, $ai: center, $g: 24px);  
+}
+
+.member-list {
+    @include styles.dFlex($d: flex, $fd: row, $jc: space-between, $ai: center, $g: 24px);
+}
+
+.member-list-profiles {
+    @include styles.dFlex($d: flex, $fd: row, $jc: space-between, $ai: center, $g: 0);
+}
+
+.circle-outline {
+    background-color: white;
+    border-radius: 100%;
+    padding:1px;
+}
+
+.member-list-img {
+        width: 30px;
+        height: 30px;
+        margin-right:-10px;
+}
+
+button {
+    @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
+    background-color: #ECEEFE;
+    border-radius:100%;
+    border:unset;
+    cursor:pointer;
+    padding:10px;
+    z-index:1;
+    &:hover .add-user-icon {
+        transform: scale(1.2);
+    }
+}
+
+.add-user-icon {
+    position:relative;
+    width: auto;
+    height: auto;
+    font-size:20px;
+    color:black;
+    z-index:2;
+}
+
