@@ -1,6 +1,6 @@
-@use './../../../styles.scss' as styles;
-@use './../../../assets/styles/fonts.scss' as fonts;
-@use './../../../assets/styles/theme-colors.scss' as colors;
+@use './../../styles.scss' as styles;
+@use './../../assets/styles/fonts.scss' as fonts;
+@use './../../assets/styles/theme-colors.scss' as colors;
 
 section {
     @include styles.padding($pl: 1rem, $pr: 1rem, $pt: 1rem, $pb: 0);

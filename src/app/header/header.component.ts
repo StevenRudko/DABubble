@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { ProfileOverviewComponent } from './profile-overview/profile-overview.component';
 import { MatCardModule } from '@angular/material/card';
-import { LogoComponentComponent } from '../../shared/logo-component/logo-component.component';
+import { LogoComponentComponent } from '../shared/logo-component/logo-component.component';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [ProfileOverviewComponent, LogoComponentComponent, MatCardModule],
+  imports: [ProfileOverviewComponent, LogoComponentComponent, MatCardModule, ProfileOverviewComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
