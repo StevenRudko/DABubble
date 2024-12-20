@@ -1,4 +1,4 @@
-@use './../../../styles.scss' as styles;
+@use './../../styles.scss' as styles;
 
 .sidebar {
     @include styles.margin ($ml: 12px, $mr: 0, $mt: 12px, $mb: 0);
