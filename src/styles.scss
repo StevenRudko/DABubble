@@ -34,6 +34,16 @@ section {
   box-sizing: border-box;
 }
 
+.bg-frame-v1 {
+  padding:16px;
+  background-color: white;
+  border-radius:20px;
+}
+
+.flex-g {
+  flex-grow: 1;
+}
+
 @mixin margin ($ml: 0, $mr: 0, $mt: 0, $mb: 0) {
   margin-left: $ml;
   margin-right: $mr;

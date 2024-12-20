@@ -1,0 +1,16 @@
+@use './../../styles.scss' as styles;
+@use './../../assets/styles/fonts.scss' as fonts;
+@use './../../assets/styles/theme-colors.scss' as colors;
+
+section {
+    @include styles.padding($pl: 12px, $pr: 12px, $pt: 12px, $pb: 0);
+    @include styles.dFlex($d: flex, $fd: row, $jc: space-between, $ai: flex-start, $g: 24px);
+}
+
+app-slidebar {
+    width:20%;
+}
+
+app-thread {
+    width:30%;
+}
