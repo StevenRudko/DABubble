@@ -29,9 +29,18 @@ html, body {
   font-family: Nunito;
 }
 
-section {
+section, .width-100 {
   width:100%;
   box-sizing: border-box;
+}
+
+.bg-frame-v1 {
+  background-color: white;
+  border-radius:20px;
+}
+
+.flex-g {
+  flex-grow: 1;
 }
 
 @mixin margin ($ml: 0, $mr: 0, $mt: 0, $mb: 0) {

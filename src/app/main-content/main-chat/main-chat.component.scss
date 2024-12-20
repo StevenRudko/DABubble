@@ -1,0 +1,10 @@
+@use './../../../styles.scss' as styles;
+@use './../../../assets/styles/fonts.scss' as fonts;
+@use './../../../assets/styles/theme-colors.scss' as colors;
+
+section {
+    @include styles.dFlex($d: flex, $fd: column, $jc: flex-start, $ai: flex-start, $g: 24px);
+    height:300px;
+}
+
+
