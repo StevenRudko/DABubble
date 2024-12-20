@@ -8,16 +8,23 @@ section {
 }
 
 mat-card {
-    @include styles.padding($pl: 12px, $pr: 24px, $pt: 0.25rem, $pb: 0.25rem);
+    @include styles.padding($pl: 12px, $pr: 24px, $pt: 0, $pb: 0);
     @include styles.dFlex($d: flex, $fd: row, $jc: space-between, $ai: center, $g: 0);
     background-color: white;
-    width: 300px;
+    width: 50%;
     box-shadow: unset;
     border: 1px solid rgb(221, 221, 221);
     border-radius: 50px;
 }
 
+mat-card-content {
+    p {
+        color: rgba(104, 104, 104);
+    }
+}
+
 mat-icon {
     height:20px;
     width:20px;
+    color: rgba(104, 104, 104);
 }
