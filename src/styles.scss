@@ -29,13 +29,12 @@ html, body {
   font-family: Nunito;
 }
 
-section {
+section, .width-100 {
   width:100%;
   box-sizing: border-box;
 }
 
 .bg-frame-v1 {
-  padding:16px;
   background-color: white;
   border-radius:20px;
 }

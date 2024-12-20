@@ -1,0 +1,31 @@
+@use './../../../../styles.scss' as styles;
+@use './../../../../assets/styles/fonts.scss' as fonts;
+@use './../../../../assets/styles/theme-colors.scss' as colors;
+
+header {
+    height: 80px;
+    width:100%;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    @include styles.padding($pl: 48px, $pr: 24px, $pt: 0, $pb: 0);
+    @include styles.dFlex($d: flex, $fd: row, $jc: flex-start, $ai: center, $g: 0);
+    box-sizing: border-box;
+    border-top-right-radius: 20px;
+    border-top-left-radius: 20px;
+}
+
+.header-selection-name {
+    @include styles.dFlex($d: flex, $fd: row, $jc: flex-start, $ai: center, $g: 8px);
+    font-size: 24px;
+    font-weight: 600;
+
+    &:hover {
+        cursor: pointer;
+        color: #797EF3;
+    }
+}
+
+mat-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 32px;
+}
