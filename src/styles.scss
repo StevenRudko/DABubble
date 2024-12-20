@@ -1,4 +1,5 @@
 @use '@angular/material';
+@use './assets/styles/fonts.scss';
 @use 'assets/styles/theme-colors.scss'; // location of generated file
 
 * {
@@ -25,6 +26,7 @@ html, body {
   font-size: 16px;
   width:100%;
   box-sizing: border-box;
+  font-family: Nunito;
 }
 
 section {
