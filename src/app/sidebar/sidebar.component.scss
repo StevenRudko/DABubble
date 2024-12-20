@@ -1,0 +1,11 @@
+@use './../../styles.scss' as styles;
+
+.sidebar {
+    @include styles.margin ($ml: 12px, $mr: 0, $mt: 12px, $mb: 0);
+    @include styles.padding($pl: 1rem, $pr: 1rem, $pt: 1rem, $pb: 0);
+    @include styles.dFlex($d: flex, $fd: column, $jc: flex-start, $ai: flex-start, $g: 0);
+    background-color: white;
+    height:500px;
+    width:20%;
+    border-radius:20px;
+}
