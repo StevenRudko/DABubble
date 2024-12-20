@@ -28,7 +28,7 @@
         privat message component
     )
     
-    channel.component(
+    channel.component( // korrekturvorschlag: statt channel -> main-chat, da man auch direktnachrichten schreiben kann und das fenster nicht nur für die channels ist (Samuel)
         channel-info-bar(
             channel-edit
             member-channel-list
