@@ -1,0 +1,19 @@
+@use './../../../styles.scss' as styles;
+@use './../../../assets/styles/fonts.scss' as fonts;
+@use './../../../assets/styles/theme-colors.scss' as colors;
+
+.profile-overview-div {
+    @include styles.dFlex($d: flex, $fd: row, $jc: flex-start, $ai: center, $g: 12px);
+}
+
+.img-placeholder-div {
+    img {
+        height: 50px;
+        width: 50px;
+    }
+}
+
+.profile-overview-name {
+   font-size:18px;
+   font-weight:600;
+}
