@@ -26,9 +26,12 @@ mat-card-content {
 mat-icon {
     height:20px;
     width:20px;
-    color: rgba(104, 104, 104);
 }
 
 .profile-overview-container {
-    @include styles.dFlex($d: flex, $fd: row, $jc: space-between, $ai: center, $g: 12px);
+    @include styles.dFlex($d: flex, $fd: row, $jc: space-between, $ai: center, $g: 0);
+    cursor:pointer;
+    &:hover {
+        color:#797EF3;
+    }
 }
