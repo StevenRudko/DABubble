@@ -4,7 +4,7 @@
 
 section {
     @include styles.padding($pl: 12px, $pr: 12px, $pt: 12px, $pb: 24px);
-    @include styles.dFlex($d: flex, $fd: row, $jc: space-between, $ai: flex-start, $g: 24px);
+    @include styles.dFlex($d: flex, $fd: row, $jc: space-between, $ai: flex-start, $g: 4px);
     height: calc(100% - 100px);
 }
 
@@ -21,3 +21,29 @@ app-thread {
     width: 30%;
     height: 100%;
 }
+
+.open-sidebar-btn mat-card {
+    @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
+    position: absolute;
+    left:0;
+    bottom:20%;
+    height:40%;
+    width:60px;
+    border-top-left-radius:0px;
+    border-bottom-left-radius:0px;
+    box-shadow: 4px 4px 8px rgba(89, 89, 89, 0.3);
+    cursor: pointer;
+  
+    &:hover {
+        color: #797EF3;
+        font-weight: 700;
+        font-size: 16px;
+    }
+  }
+
+  .open-sidebar-content {
+    @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 12px);
+    transform: rotate(270deg);
+    white-space: nowrap;
+  }
+  
