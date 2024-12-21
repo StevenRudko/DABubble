@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
+import { MATERIAL_MODULES } from '../../../shared/material-imports';
 
 @Component({
   selector: 'app-main-chat-header',
   standalone: true,
-  imports: [MatIconModule, MatButtonModule],
+  imports: [ MATERIAL_MODULES ],
   templateUrl: './main-chat-header.component.html',
   styleUrl: './main-chat-header.component.scss',
 })

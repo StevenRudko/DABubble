@@ -1,22 +1,21 @@
 import { Component } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
 import { LogoComponentComponent } from '../shared/logo-component/logo-component.component';
-import { MatIconModule } from '@angular/material/icon';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MATERIAL_MODULES } from '../shared/material-imports';
 import { ProfileOverviewComponent } from './profile-overview/profile-overview.component';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-header',
   standalone: true,
   imports: [
     LogoComponentComponent,
-    MatCardModule,
-    MatIconModule,
-    MatDialogModule
+    MATERIAL_MODULES,
+    MatDialogModule,
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
+
 export class HeaderComponent {
 
   constructor(private dialog: MatDialog) {}
