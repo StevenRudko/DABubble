@@ -6,16 +6,17 @@
     width: 100%;
     box-sizing: border-box;
     height: 150px;
-    border: 1px solid grey;
+    border: 1px solid #ADB0D9;
     border-radius: 20px;
     padding: 12px;
+    cursor: pointer;
 
     &:hover {
         border: 1px solid #797EF3;
     }
 }
 
-.custom-textarea {
+textarea {
     width: 100%;
     border-radius: 20px;
     box-sizing: border-box;
@@ -23,15 +24,53 @@
     padding: 10px;
     resize: none;
     border: unset;
+    font-family: Nunito;
+    font-size:18px;
+    line-height:24.55px;
+    outline:unset;
+    cursor:pointer;
 }
 
-.icons-wrapper {
-    @include styles.dFlex($d: flex, $fd: row, $jc: flex-start, $ai: center, $g: 22px);
-    width: 100%;
-    box-sizing: border-box;
+.bottom-wrapper-icons {
+    @include styles.dFlex($d: flex, $fd: row, $jc: space-between, $ai: center, $g: 0);
     padding: 0px 14px;
 }
 
-mat-icon {
-    color: grey;
+.circle-outline {
+    @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
+    cursor: pointer;
+    border-radius: 30px;
+    padding: 5px;
+
+    &:hover {
+        background-color: #ECEEFE;
+
+        mat-icon {
+            transform: scale(1.1);
+            color: #444DF2;
+            font-weight: 500;
+            // color: #797EF3;
+        }
+    }
+
+    mat-icon {
+        color: grey;
+    }
+}
+
+.interactive-icons {
+    @include styles.dFlex($d: flex, $fd: row, $jc: flex-start, $ai: center, $g: 22px);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.send-icon-div {
+    mat-icon {
+        cursor: pointer;
+        color: #444DF2;
+
+        &:hover {
+            color: #797EF3;
+        }
+    }
 }

@@ -14,7 +14,9 @@ app-message-input-box {
 
 .main-chat-body {
     @include styles.padding($pl: 12px, $pr: 12px, $pt: 12px, $pb: 12px);
+    @include styles.dFlex($d: flex, $fd: column, $jc: space-between, $ai: flex-start, $g: 0px);
     width:100%;
+    height:100%;
     box-sizing: border-box;
 }
 
