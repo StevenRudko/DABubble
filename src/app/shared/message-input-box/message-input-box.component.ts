@@ -1,13 +1,11 @@
 import { Component } from '@angular/core';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
+import { MATERIAL_MODULES } from '../material-imports';
 
 @Component({
   selector: 'app-message-input-box',
   standalone: true,
-  imports: [MatInputModule, MatFormFieldModule, FormsModule, MatIconModule],
+  imports: [FormsModule, MATERIAL_MODULES],
   templateUrl: './message-input-box.component.html',
   styleUrl: './message-input-box.component.scss',
 })
