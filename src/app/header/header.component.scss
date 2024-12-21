@@ -28,10 +28,46 @@ mat-icon {
     width:20px;
 }
 
-.profile-overview-container {
+.profile-container {
     @include styles.dFlex($d: flex, $fd: row, $jc: space-between, $ai: center, $g: 0);
     cursor:pointer;
     &:hover {
         color:#797EF3;
     }
+}
+
+.profile-div {
+    @include styles.dFlex($d: flex, $fd: row, $jc: space-between, $ai: center, $g: 16px);
+}
+
+.img-placeholder-div {
+    @include styles.dFlex($d: flex, $fd: row, $jc: flex-start, $ai: center, $g: 0);
+
+    img {
+        height: 50px;
+        width: 50px;
+    }
+}
+
+.profile-name {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.status-circle-outline {
+    position:relative;
+    top:19px;
+    right:12px;
+    height: 15px;
+    width: 15px;
+    background-color: #ECEEFE;
+    border-radius: 100%;
+    @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
+}
+
+.status-circle-inline {
+    height: 10px;
+    width: 10px;
+    background-color: #92C83E;
+    border-radius: 100%;
 }
