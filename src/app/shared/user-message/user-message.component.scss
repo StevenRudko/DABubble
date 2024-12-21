@@ -4,21 +4,37 @@
 
 
 section {
-    @include styles.padding($pl: 28px, $pr: 28px, $pt: 0, $pb: 0);
+    margin-left: -12px;
     @include styles.dFlex($d: flex, $fd: row, $jc: space-between, $ai: center, $g: 0);
+    cursor: pointer;
+
+    &:hover {
+        background-color: #ECEEFE;
+    }
+
+    &:hover .user-message-row-center {
+        background-color: white;
+    }
+
+    &:hover .last-comment-time {
+        color:#393939;
+    }
+
+    width:calc(100% + 24px);
 }
 
 .user-message-container {
     @include styles.dFlex($d: flex, $fd: row, $jc: flex-start, $ai: flex-start, $g: 28px);
+    @include styles.padding($pl: 28px, $pr: 28px, $pt: 8px, $pb: 8px);
 }
 
 .user-message-img {
-    width: 60px;
-    height: 60px;
+    width: 70px;
+    height: 70px;
 }
 
 .user-message-box {
-    @include styles.dFlex($d: flex, $fd: column, $jc: flex-start, $ai: flex-start, $g: 12px); 
+    @include styles.dFlex($d: flex, $fd: column, $jc: flex-start, $ai: flex-start, $g: 12px);
 }
 
 .user-message-row-top {
@@ -26,12 +42,36 @@ section {
 }
 
 .user-message-name {
-    font-weight:700;
-    font-size:17px;
+    font-weight: 700;
+    font-size: 17px;
+    &:hover {
+        color: #535AF1;
+    }
 }
 
-.user-message-time {
-    font-weight:400;
-    font-size:14px;  
-    color:grey;
+.user-message-time,
+.last-comment-time {
+    font-weight: 400;
+    font-size: 14px;
+    color: grey;
+}
+
+.user-message-row-center {
+    background-color: white;
+    padding: 12px;
+    background-color: #ECEEFE;
+    border-radius:30px;
+    border-top-left-radius: 0px;
+}
+
+.user-message-row-bottom {
+    @include styles.dFlex($d: flex, $fd: row, $jc: flex-start, $ai: center, $g: 24px);
+}
+
+.comments-number {
+    color: #535AF1;
+    &:hover {
+        font-weight: 700;
+        font-size: 16px;
+    }
 }
