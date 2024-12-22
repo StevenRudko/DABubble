@@ -22,22 +22,24 @@ html {
   }
 }
 
-html, body {
+html,
+body {
   font-size: 16px;
-  width:100%;
-  height:100%;
+  width: 100%;
+  height: 100%;
   box-sizing: border-box;
   font-family: Nunito;
 }
 
-section, .width-100 {
-  width:100%;
+section,
+.width-100 {
+  width: 100%;
   box-sizing: border-box;
 }
 
 .bg-frame-v1 {
   background-color: white;
-  border-radius:30px;
+  border-radius: 30px;
 }
 
 .flex-g {
@@ -64,4 +66,60 @@ section, .width-100 {
   justify-content: $jc;
   align-items: $ai;
   gap: $g;
+}
+
+h1 {
+  color: #444DF2;
+  margin-bottom: 30px;
+  font-size: 2.875rem;
+}
+
+.rounded-container {
+  @include dFlex($d: flex, $fd: row, $jc: none, $ai: center);
+  height: 60px;
+  width: 100%;
+  background-color: #ECEEFE;
+  border-radius: 100px;
+  border: 1px solid rgba(0, 0, 0, 0);
+  margin-bottom: 40px;
+  overflow: hidden;
+  transition: ease-in-out 0.07s;
+}
+
+.auth-input-container {
+  @extend .rounded-container;
+
+  &:hover {
+    border: 1px solid #686868;
+  }
+
+  mat-icon {
+    padding: 0 30px;
+    color: #686868;
+  }
+
+  &:focus-within {
+    border: 1px solid #535AF1;
+
+    mat-icon {
+      color: black;
+    }
+  }
+
+  input {
+    width: 100%;
+    border: none;
+    background-color: #ECEEFE;
+    font-family: Nunito;
+    font-size: 18px;
+    font-weight: 500;
+
+    &:focus {
+      outline: none;
+
+      &::placeholder {
+        opacity: 0;
+      }
+    }
+  }
 }

@@ -1,17 +1,18 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { MATERIAL_MODULES } from '../../shared/material-imports';
-import {ErrorStateMatcher} from '@angular/material/core';
-import { FormControl, FormGroupDirective, NgForm } from '@angular/forms';
+import {ErrorStateMatcher, ShowOnDirtyErrorStateMatcher} from '@angular/material/core';
+import { FormControl, FormGroupDirective, FormsModule, NgForm, Validators, ReactiveFormsModule,} from '@angular/forms';
+import { UserAuth } from '../../models/user-auth';
 
 @Component({
   selector: 'app-user-login',
-  imports: [MATERIAL_MODULES],
+  imports: [MATERIAL_MODULES, FormsModule, ReactiveFormsModule],
+  providers: [{ provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher }],
   templateUrl: './user-login.component.html',
   styleUrl: './user-login.component.scss'
 })
 export class UserLoginComponent {
-  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
-    const isSubmitted = form && form.submitted;
-    return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
-  }
+
+  userAuth: UserAuth = new UserAuth();
+  loading: boolean = false;
 }

@@ -1,16 +1,50 @@
-<h1>Anmeldung</h1>
-<span>Wir empfehlen dir, die E-Mail-Adresse zu nutzen, die du bei der Arbeit verwendest.</span>
-<form class="example-form">
-    <mat-form-field class="example-full-width">
-      <mat-label>Email</mat-label>
-      <!-- <input type="email" matInput [formControl]="emailFormControl" [errorStateMatcher]="matcher"
-             placeholder="Ex. pat@example.com">
-      <mat-hint>Errors appear instantly!</mat-hint>
-      @if (emailFormControl.hasError('email') && !emailFormControl.hasError('required')) {
-        <mat-error>Please enter a valid email address</mat-error>
-      }
-      @if (emailFormControl.hasError('required')) {
-        <mat-error>Email is <strong>required</strong></mat-error>
-      } -->
-    </mat-form-field>
+<div class="login-cointainer">
+  <h1>Anmeldung</h1>
+  <span>Wir empfehlen dir, die E-Mail-Adresse zu nutzen, die du bei der Arbeit verwendest.</span>
+  <form>
+    <div class="auth-input-container">
+      <mat-icon matSuffix>mail_outline</mat-icon>
+      <input type="email" [disabled]="loading" placeholder="beispielname@email.com">
+    </div>
+
+    <!-- @if (true) {
+    <mat-error>*Diese E-Mail-Adresse ist leider ungültig.</mat-error>
+    }
+    @if (true) {
+    <mat-error>*Diese E-Mail-Adresse ist leider ungültig.</mat-error>
+    } -->
+
+    <div class="auth-input-container">
+      <mat-icon matSuffix>lock_outline</mat-icon>
+      <input type="password" [disabled]="loading" placeholder="Passwort">
+    </div>
+
+    <!-- @if (true) {
+    <mat-error>*Diese E-Mail-Adresse ist leider ungültig.</mat-error>
+    }
+    @if (true) {
+    <mat-error>*Diese E-Mail-Adresse ist leider ungültig.</mat-error>
+    } -->
+
   </form>
+  <div class="forgot-password-container">
+    <p>Passwort vergessen?</p>
+  </div>
+  <div class="separator">
+    <div class="separator-line"></div>
+    <div class="seperator-text">ODER</div>
+    <div class="separator-line"></div>
+  </div>
+  <div class="google-login-container">
+    <div class="google-button">
+      <img class="google-img" src="img/Google.png">
+      <p>Anmelden mit Google</p>
+    </div>
+  </div>
+
+  <div class="login-button-container">
+    <button class="btn-auth">Anmelden</button>
+    <button class="btn-guest">Gäste-Login</button>
+  </div>
+
+</div>
