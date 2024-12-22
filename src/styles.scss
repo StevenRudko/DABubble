@@ -75,7 +75,7 @@ h1 {
 }
 
 .rounded-container {
-  @include dFlex($d: flex, $fd: row, $jc: none, $ai: center);
+  @include dFlex($d: flex, $fd: row, $jc: unset, $ai: center);
   height: 60px;
   width: 100%;
   background-color: #ECEEFE;
@@ -134,7 +134,7 @@ h1 {
   height: calc(100% - 100px);
   width: calc(100% - 100px);
   padding: 50px;
-  @include dFlex($d: flex, $fd: column, $jc: noen, $ai: center);
+  @include dFlex($d: flex, $fd: column, $jc: unset, $ai: center);
 }
 
 .login-form {
@@ -167,4 +167,16 @@ h1 {
   &:disabled {
     background-color: #686868;
   }
+}
+
+.position-bottom-right {
+  position: absolute;
+  bottom: 50px;
+  right: 50px;
+}
+
+.arrow-back {
+  position: absolute;
+  top: 65px;
+  left: 30px;
 }

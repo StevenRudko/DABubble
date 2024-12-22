@@ -1,0 +1,44 @@
+@use './../../../styles.scss' as styles;
+
+.avatar-picker-container {
+    @include styles.dFlex($d: flex, $fd: column, $jc: center, $ai: center);
+    width: calc(100% - 34px);
+    padding: 26px 17px 0 17px;
+}
+
+.person-circle {
+    height: 170px;
+    width: 170px;
+    background-color: #797EF3;
+    border-radius: 100%;
+    @include styles.dFlex($d: flex, $fd: unset, $jc: center, $ai: center);
+    margin-bottom: 32px;
+}
+
+.user-information {
+    width: 100%;
+}
+
+h2 {
+    font-size: 2rem;
+    text-align: center;
+}
+
+p {
+    text-align: left;
+    font-size: 1.25rem;
+    padding: 8px 0;
+}
+
+.avatar-img-container {
+    @include styles.dFlex($d: flex, $fd: unset, $jc: space-between, $ai: center);
+    width: 100%;
+    padding-top: 8px;
+    margin-bottom: 120px;
+
+    img {
+        width: 64px;
+        height: 64px;
+        cursor: pointer;
+    }
+}

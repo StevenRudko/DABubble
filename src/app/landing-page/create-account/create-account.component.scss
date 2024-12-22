@@ -2,6 +2,7 @@
 
 .privacy-policy-container {
     @include styles.dFlex($d: flex, $fd: none, $jc: none, $ai: center, $g: 8px);
+    margin-bottom: 80px;
 }
 
 .container {
@@ -103,10 +104,4 @@
     span {
         border: 2px solid #444DF2;
     }
-}
-
-.position-bottom-right {
-    position: absolute;
-    bottom: 50px;
-    right: 50px;
 }

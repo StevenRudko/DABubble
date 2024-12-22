@@ -41,11 +41,12 @@
 
 .user-auth-section {
     width: 600px;       // wenn mit Content gefüllt löschen
-    height: 770px;      // wenn mit Content gefüllt löschen
+    // height: 770px;      // wenn mit Content gefüllt löschen
 }
 
 app-user-login,
-app-create-account {
+app-create-account,
+app-avatar-picker {
     width: 100%;
     height: 100%;
 }
