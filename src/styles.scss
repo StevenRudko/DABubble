@@ -123,3 +123,48 @@ h1 {
     }
   }
 }
+
+.login-description {
+  font-size: 1.25rem;
+  text-align: center;
+  padding-bottom: 46px;
+}
+
+.login-cointainer {
+  height: calc(100% - 100px);
+  width: calc(100% - 100px);
+  padding: 50px;
+  @include dFlex($d: flex, $fd: column, $jc: noen, $ai: center);
+}
+
+.login-form {
+  width: 100%;
+}
+
+.button-base {
+  height: 50px;
+  border-radius: 25px;
+  font-size: 1.125rem;
+  padding: 12px 25px;
+  font-weight: 700;
+  font-family: Nunito;
+  cursor: pointer;
+}
+
+.btn-full {
+  background-color: #444DF2;
+  border: none;
+  color: #FFFFFF;
+
+  &:hover {
+      background-color: #797EF3;
+  }
+
+  &:active {
+    background-color: #444DF2;
+  }
+
+  &:disabled {
+    background-color: #686868;
+  }
+}

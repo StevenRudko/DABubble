@@ -1,0 +1,121 @@
+@use './../../../styles.scss' as styles;
+
+.privacy-policy-container {
+    @include styles.dFlex($d: flex, $fd: none, $jc: none, $ai: center, $g: 8px);
+}
+
+.container {
+    display: block;
+    position: relative;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border-radius: 100%;
+    height: 26px;
+    width: 26px;
+
+    &:hover {
+        background-color: #ECEEFE;
+    }
+}
+
+.container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    height: 16px;
+    width: 16px;
+    border: 2px solid #797EF3;
+    border-radius: 4px;
+}
+
+/* On mouse-over, add a grey background color */
+.container:hover input~.checkmark {
+    background-color: #ECEEFE;
+    border: 2px solid #444DF2;
+
+    &:after {
+        border: solid #444DF2;
+        border-width: 0 2px 2px 0;
+    }
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the checkmark when checked */
+.container input:checked~.checkmark:after {
+    display: block;
+}
+
+/* Style the checkmark/indicator */
+.container .checkmark:after {
+    left: 4px;
+    top: 0px;
+    width: 5px;
+    height: 10px;
+    border: solid #797EF3;
+    border-width: 0 2px 2px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.privacy-policy-text {
+    font-family: OpenSans;
+    font-size: 1rem;
+
+    span {
+        font-family: Figtree;
+        font-size: 1.125rem;
+        color: #797EF3;
+        border-radius: 20px;
+        padding: 0 8px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: #ECEEFE;
+            color: #444DF2;
+            font-weight: 700;
+            padding: 0 5px;
+        }
+    }
+}
+
+.hovered {
+    background-color: #ECEEFE;
+
+    span {
+        border: 2px solid #444DF2;
+    }
+}
+
+// .next-step-btn {
+//     width: 100%;
+//     @include styles.dFlex($d: flex, $fd: none, $jc: flex-end, $ai: flex-end);
+
+//     button {
+        
+//     }
+// }
+
+.position-bottom-right {
+    position: absolute;
+    bottom: 50px;
+    right: 50px;
+}

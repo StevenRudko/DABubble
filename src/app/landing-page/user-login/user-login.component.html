@@ -1,7 +1,7 @@
 <div class="login-cointainer">
   <h1>Anmeldung</h1>
-  <span>Wir empfehlen dir, die E-Mail-Adresse zu nutzen, die du bei der Arbeit verwendest.</span>
-  <form>
+  <span class="login-description">Wir empfehlen dir, die E-Mail-Adresse zu nutzen, die du bei der Arbeit verwendest.</span>
+  <form class="login-form">
     <div class="auth-input-container">
       <mat-icon matSuffix>mail_outline</mat-icon>
       <input type="email" [disabled]="loading" placeholder="beispielname@email.com">
@@ -43,8 +43,8 @@
   </div>
 
   <div class="login-button-container">
-    <button class="btn-auth">Anmelden</button>
-    <button class="btn-guest">Gäste-Login</button>
+    <button class="btn-full button-base">Anmelden</button>
+    <button class="btn-guest button-base">Gäste-Login</button>
   </div>
 
 </div>

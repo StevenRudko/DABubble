@@ -3,6 +3,7 @@ import { MATERIAL_MODULES } from '../../shared/material-imports';
 import {ErrorStateMatcher, ShowOnDirtyErrorStateMatcher} from '@angular/material/core';
 import { FormControl, FormGroupDirective, FormsModule, NgForm, Validators, ReactiveFormsModule,} from '@angular/forms';
 import { UserAuth } from '../../models/user-auth';
+import { GoogleAuthProvider } from "firebase/auth";
 
 @Component({
   selector: 'app-user-login',
@@ -15,4 +16,5 @@ export class UserLoginComponent {
 
   userAuth: UserAuth = new UserAuth();
   loading: boolean = false;
+
 }

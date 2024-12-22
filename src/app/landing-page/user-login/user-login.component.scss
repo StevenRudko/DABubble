@@ -1,22 +1,5 @@
 @use './../../../styles.scss' as styles;
 
-.login-cointainer {
-    height: calc(100% - 100px);
-    width: calc(100% - 120px);
-    padding: 50px 60px;
-    @include styles.dFlex($d: flex, $fd: column, $jc: noen, $ai: center);
-}
-
-span {
-    font-size: 1.25rem;
-    text-align: center;
-    padding-bottom: 46px;
-}
-
-form {
-    width: 100%;
-}
-
 
 .forgot-password-container {
     font-family: Figtree;
@@ -75,29 +58,7 @@ form {
 
 .login-button-container {
     width: 100%;
-    @include styles.dFlex($d: flex, $fd: none, $jc: center, $ai: center, $g: 30px);
-
-    button {
-        height: 50px;
-        border-radius: 25px;
-        font-size: 1.125rem;
-        padding: 12px 25px;
-        font-weight: 700;
-        font-family: Nunito;
-        cursor: pointer;
-    }
-
-}
-
-.btn-auth {
-    background-color: #444DF2;
-    border: none;
-    color: #FFFFFF;
-
-    &:hover {
-        background-color: #797EF3;
-    }
-
+    @include styles.dFlex($d: flex, $fd: none, $jc: center, $ai: center, $g: 30px)
 }
 
 .btn-guest {
