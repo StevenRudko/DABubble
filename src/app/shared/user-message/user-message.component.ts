@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { HoverService } from '../../../assets/service/hover.service';
+import { HoverService } from '../../../service/hover.service';
 import { MessageEmojisComponent } from '../message-emojis/message-emojis.component';
 
 @Component({
