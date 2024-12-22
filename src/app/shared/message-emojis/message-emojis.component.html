@@ -1,11 +1,18 @@
 <div *ngIf="isHovered" class="emoji-container">
   <mat-card class="emoji-card">
     <mat-card-content class="emoji-content">
-      <button mat-icon-button>👍</button>
-      <button mat-icon-button>❤️</button>
-      <button mat-icon-button>😄</button>
-      <button mat-icon-button>🎉</button>
-      <button mat-icon-button>👏</button>
+      <button mat-icon-button>
+        <mat-icon class="check_circle">check_circle</mat-icon>
+      </button>
+      <button mat-icon-button>
+        <mat-icon>🙌</mat-icon>
+      </button>
+      <button mat-icon-button>
+        <mat-icon>face_retouching_natural</mat-icon>
+      </button>
+      <button mat-icon-button>
+        <mat-icon>insert_comment</mat-icon>
+      </button>
     </mat-card-content>
   </mat-card>
 </div>

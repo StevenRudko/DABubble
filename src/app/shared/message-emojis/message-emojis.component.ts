@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MATERIAL_MODULES } from '../material-imports';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
-import { HoverService } from '../../../assets/service/hover.service';
+import { HoverService } from '../../../service/hover.service';
 
 @Component({
   selector: 'app-message-emojis',
@@ -18,11 +18,8 @@ export class MessageEmojisComponent implements OnInit, OnDestroy {
   constructor(private hoverService: HoverService) {}
 
   ngOnInit(): void {
-    console.log('Initialer Hover Status:', this.isHovered);
-    
     this.hoverStatusSubscription = this.hoverService.hoverStatus$.subscribe(status => {
       this.isHovered = status;
-      console.log('Hover Status aktualisiert:', this.isHovered);
     });
   }
 
