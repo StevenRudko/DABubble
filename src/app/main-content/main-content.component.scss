@@ -5,17 +5,54 @@
 section {
   height: calc(100% - 100px);
   position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.content-container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 0 12px;
 }
 
 mat-drawer-container {
   width: 100%;
   height: 100%;
   background: transparent !important;
+  box-sizing: border-box;
+}
+
+.sidebar-container {
+  width: 100%;
+  height: 100%;
+  padding-left: 12px;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 mat-drawer {
   width: 20%;
-  margin-left: 1rem;
+  border-radius: 8px;
+  overflow: hidden;
+  box-sizing: border-box;
+
+  &::ng-deep .mat-drawer-inner-container {
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+}
+
+.sidenav {
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.mat-drawer-content {
+  box-sizing: border-box;
+  overflow: hidden;
+  padding-left: 12px;
 }
 
 .content-wrapper {
@@ -27,18 +64,21 @@ mat-drawer {
     $g: 12px
   );
   height: 100%;
-  margin-left: 2.5rem;
+  box-sizing: border-box;
+  width: 100%;
+  overflow: hidden;
 }
 
 app-main-chat {
   height: 100%;
-  margin-left: -12px;
   flex: 1;
+  box-sizing: border-box;
 }
 
 app-thread {
   width: 30%;
   height: 100%;
+  box-sizing: border-box;
 }
 
 .open-sidebar-btn {
@@ -59,6 +99,8 @@ app-thread {
     font-weight: 500px;
     line-height: 24px;
     cursor: pointer;
+    position: absolute;
+    bottom: 25%;
 
     &:hover {
       color: #797ef3;

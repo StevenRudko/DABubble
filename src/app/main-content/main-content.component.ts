@@ -23,11 +23,11 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrl: './main-content.component.scss',
 })
 export class MainContentComponent {
-  @ViewChild('sidenav') sidenav!: MatSidenav;
+  @ViewChild('drawer') drawer!: MatSidenav;
   sidebarActive: boolean = false;
 
-  openSidebar() {
+  toggleSidebar() {
     this.sidebarActive = !this.sidebarActive;
-    this.sidenav.toggle();
+    this.drawer.toggle();
   }
 }
