@@ -11,5 +11,5 @@ export const MATERIAL_MODULES = [
     MatButtonModule,
     MatInputModule,
     MatFormFieldModule,
-    MatDialogModule
+    MatDialogModule,
 ];

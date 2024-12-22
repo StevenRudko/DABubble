@@ -10,7 +10,7 @@ html {
   // Apply the dark theme by default
   @include material.theme((color: (primary: theme-colors.$primary-palette,
         tertiary: theme-colors.$tertiary-palette,
-        theme-type: dark,
+        theme-type: light,
       ),
       typography: Roboto,
       density: 0,
