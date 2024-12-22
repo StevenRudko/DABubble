@@ -1,6 +1,6 @@
-@use '@angular/material';
-@use './assets/styles/fonts.scss';
-@use 'assets/styles/theme-colors.scss'; // location of generated file
+@use "@angular/material";
+@use "./assets/styles/fonts.scss";
+@use "assets/styles/theme-colors.scss"; // location of generated file
 
 * {
   margin: 0;
@@ -8,13 +8,17 @@
 
 html {
   // Apply the dark theme by default
-  @include material.theme((color: (primary: theme-colors.$primary-palette,
+  @include material.theme(
+    (
+      color: (
+        primary: theme-colors.$primary-palette,
         tertiary: theme-colors.$tertiary-palette,
-        theme-type: dark,
+        theme-type: light,
       ),
       typography: Roboto,
       density: 0,
-    ));
+    )
+  );
 
   // Use high contrast dark theme colors when users prefer contrast
   @media (prefers-contrast: more) {
@@ -22,43 +26,45 @@ html {
   }
 }
 
-html, body {
+html,
+body {
   font-size: 16px;
-  width:100%;
-  height:100%;
+  width: 100%;
+  height: 100%;
   box-sizing: border-box;
   font-family: Nunito;
 }
 
-section, .width-100 {
-  width:100%;
+section,
+.width-100 {
+  width: 100%;
   box-sizing: border-box;
 }
 
 .bg-frame-v1 {
   background-color: white;
-  border-radius:30px;
+  border-radius: 30px;
 }
 
 .flex-g {
   flex-grow: 1;
 }
 
-@mixin margin ($ml: 0, $mr: 0, $mt: 0, $mb: 0) {
+@mixin margin($ml: 0, $mr: 0, $mt: 0, $mb: 0) {
   margin-left: $ml;
   margin-right: $mr;
   margin-top: $mt;
   margin-bottom: $mb;
 }
 
-@mixin padding ($pl: 0, $pr: 0, $pt: 0, $pb: 0) {
+@mixin padding($pl: 0, $pr: 0, $pt: 0, $pb: 0) {
   padding-left: $pl;
   padding-right: $pr;
   padding-top: $pt;
   padding-bottom: $pb;
 }
 
-@mixin dFlex ($d: flex, $fd: row, $jc: center, $ai: center, $g: 0px) {
+@mixin dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0px) {
   display: $d;
   flex-direction: $fd;
   justify-content: $jc;

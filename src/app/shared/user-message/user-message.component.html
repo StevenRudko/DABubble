@@ -1,24 +1,22 @@
-<section
-(mouseenter)="onMouseEnter()"
-(mouseleave)="onMouseLeave()">
+<section (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()">
   <div class="user-message-container">
     <div>
       <img class="user-message-img" src="img-placeholder/noah.svg" alt="" />
     </div>
 
     <div class="user-message-box">
-        <div class="user-message-row-top">
-            <p class="user-message-name">Noah Braun</p>
-            <p class="user-message-time">14:25 Uhr</p>
-        </div>
-        <div class="user-message-row-center">
-            <p>Welche Version ist aktuell von Angular?</p>
-        </div>
-        <div class="user-message-row-bottom">
-            <p class="comments-number">2 Antworten</p>
-            <p class="last-comment-time">Letzte Antwort 14:56</p>
-        </div>
+      <div class="user-message-row-top">
+        <p class="user-message-name">Noah Braun</p>
+        <p class="user-message-time">14:25 Uhr</p>
+      </div>
+      <div class="user-message-row-center">
+        <p>Welche Version ist aktuell von Angular?</p>
+      </div>
+      <div class="user-message-row-bottom">
+        <p class="comments-number">2 Antworten</p>
+        <p class="last-comment-time">Letzte Antwort 14:56</p>
+      </div>
     </div>
-
+    <app-message-emojis></app-message-emojis>
   </div>
 </section>

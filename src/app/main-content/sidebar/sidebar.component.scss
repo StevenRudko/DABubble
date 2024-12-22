@@ -14,25 +14,38 @@
 }
 
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  @include styles.dFlex(
+    $d: flex,
+    $fd: row,
+    $jc: space-between,
+    $ai: center,
+    $g: 0
+  );
   width: 100%;
-  padding: 4px 4px 16px 4px;
+  @include styles.padding($pl: 0.5rem, $pr: 0.5rem, $pt: 0.5rem, $pb: 0.5rem);
+
+  .edit-square {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    &:hover {
+      color: #535af1;
+      background-color: #eceefe;
+      border-radius: 50%;
+    }
+  }
 
   .logo-container {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    @include styles.dFlex($d: flex, $ai: center, $g: 1rem);
 
     .logo {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
+      width: 60px;
+      height: 60px;
+      border-radius: 0.5rem;
     }
 
     .logo-text {
-      font-size: 16px;
+      font-size: 1rem;
       font-weight: 600;
     }
   }
@@ -44,77 +57,93 @@
 }
 
 .section {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+  @include styles.dFlex($d: flex, $fd: column, $g: 1rem, $ai: initial);
   width: 100%;
 
   .section-header {
-    display: flex;
-    align-items: center;
-    margin-top: 2rem;
+    @include styles.dFlex($d: flex, $ai: center);
+    margin-top: 1rem;
     font-weight: 500;
 
     .header-content {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      @include styles.dFlex($d: flex, $jc: flex-start, $ai: center, $g: 0.5rem);
       flex: 1;
-      margin-left: 1rem;
+      cursor: pointer;
+      padding: 0.25rem;
+      &:hover {
+        color: #535af1;
+      }
+
+      svg {
+        padding-left: 0.25rem;
+      }
     }
 
     .channel-icon {
-      font-size: 18px;
+      font-size: 1rem;
     }
 
     .add-icon {
       margin-left: auto;
       cursor: pointer;
+      &:hover {
+        color: #535af1;
+        background-color: #eceefe;
+        border-radius: 50%;
+      }
+    }
+
+    span {
+      font-weight: bold;
     }
   }
 
   .channel-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    margin: 0 2.5rem;
-    border-radius: 6px;
+    @include styles.dFlex($d: flex, $jc: flex-start, $g: 0.5rem);
+    margin: 0 2rem;
+    padding: 0.25rem;
+    border-radius: 0.5rem;
     cursor: pointer;
     font-weight: 500;
+    &:hover {
+      color: #535af1;
+      background-color: #eceefe;
+      border-radius: 2rem;
+    }
 
     .channel-hash {
-      margin-right: 4px;
+      margin-right: 0.25rem;
     }
   }
 
   .add-channel {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin: 0 2.5rem;
-    border-radius: 6px;
+    gap: 0.5rem;
+    margin: 0 2rem;
+    padding: 0.25rem;
+    border-radius: 0.5rem;
     cursor: pointer;
+    &:hover {
+      color: #535af1;
+    }
   }
 }
 
 .user-list {
   display: flex;
   flex-direction: column;
-  gap: 2px;
 
   .user-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 6px 8px;
+    @include styles.dFlex($d: flex, $jc: initial, $ai: center, $g: 1rem);
+    padding: 0.5rem;
     margin: 0 2rem;
-    border-radius: 6px;
     cursor: pointer;
     position: relative;
 
     &:hover {
-      background-color: #e5e7eb;
+      background-color: #eceefe;
+      border-radius: 2rem;
     }
 
     .user-avatar {
@@ -124,16 +153,15 @@
     }
 
     span {
-      font-size: 14px;
       color: #374151;
     }
 
     .status-dot {
       position: absolute;
-      bottom: 6px;
+      bottom: 0.5rem;
       left: 3rem;
-      width: 8px;
-      height: 8px;
+      width: 0.5rem;
+      height: 0.5rem;
       background-color: #22c55e;
       border-radius: 50%;
       border: 2px solid #f8f9fe;
