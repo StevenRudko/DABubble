@@ -82,7 +82,6 @@ app-message-emojis {
     @include styles.dFlex($d: flex, $fd: row, $jc: flex-end, $ai: flex-end, $g: 0);
     padding:0 38px;
     position: relative;
-    // top:-20px;
     top:20px;
     z-index: 4;
 }
