@@ -24,7 +24,9 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class MainContentComponent {
   @ViewChild('drawer') drawer!: MatSidenav;
+
   sidebarActive: boolean = false;
+  threadVisible: boolean = true;
 
   toggleSidebar() {
     this.sidebarActive = !this.sidebarActive;
