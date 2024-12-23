@@ -1,4 +1,4 @@
-<app-message-emojis class="width-100" *ngIf="isHoveredActive"></app-message-emojis>
+<app-message-emojis class="width-100" *ngIf="isHoveredActive && messageEmojisOpenStatus"></app-message-emojis>
 
 <section (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()">
   <div class="user-message-container">

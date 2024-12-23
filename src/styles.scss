@@ -50,6 +50,10 @@ section,
   flex-grow: 1;
 }
 
+.row-rev {
+  flex-direction: row-reverse;
+}
+
 @mixin margin($ml: 0, $mr: 0, $mt: 0, $mb: 0) {
   margin-left: $ml;
   margin-right: $mr;
