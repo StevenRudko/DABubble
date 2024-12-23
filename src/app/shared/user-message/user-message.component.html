@@ -12,7 +12,7 @@
       <div class="user-message-row-center">
         <p>Welche Version ist aktuell von Angular?</p>
       </div>
-      <div class="user-message-row-bottom" *ngIf="showBottomRow">
+      <div class="user-message-row-bottom" *ngIf="showBottomRow" (click)="openThread()">
         <p class="comments-number">2 Antworten</p>
         <p class="last-comment-time">Letzte Antwort 14:56</p>
       </div>

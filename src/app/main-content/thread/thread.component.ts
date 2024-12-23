@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { MATERIAL_MODULES } from '../../shared/material-imports';
 import { UserMessageComponent } from '../../shared/user-message/user-message.component';
 import { MessageInputBoxComponent } from '../../shared/message-input-box/message-input-box.component';
@@ -11,5 +11,10 @@ import { MessageInputBoxComponent } from '../../shared/message-input-box/message
   styleUrl: './thread.component.scss',
 })
 export class ThreadComponent {
+  @Output() closeThreadEvent = new EventEmitter<void>();
   replyCount: number = 0;
+
+  closeThread() {
+    this.closeThreadEvent.emit();
+  }
 }

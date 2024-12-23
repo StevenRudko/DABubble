@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { HoverService } from '../../../service/hover.service';
 import { MessageEmojisComponent } from '../message-emojis/message-emojis.component';
 import { NgIf } from '@angular/common';
@@ -12,6 +12,7 @@ import { NgIf } from '@angular/common';
 })
 export class UserMessageComponent {
   @Input() showBottomRow: boolean = true;
+  @Output() openThreadEvent = new EventEmitter<void>();
 
   constructor(private hoverService: HoverService) {}
 
@@ -21,5 +22,9 @@ export class UserMessageComponent {
 
   onMouseLeave() {
     this.hoverService.setHoverStatus(false);
+  }
+
+  openThread() {
+    this.openThreadEvent.emit();
   }
 }
