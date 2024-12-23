@@ -2,21 +2,20 @@
 @use './../../../assets/styles/fonts.scss' as fonts;
 @use './../../../assets/styles/theme-colors.scss' as colors;
 
-.emoji-container .emoji-card {
-    background-color: white;
-    border-radius:30px;
-    border-bottom-right-radius:0px;
-    position:relative;
-    left:270px;
-    bottom:25px;
-    padding:0 8px;
+section {
+    width:auto;
+}
+
+.emoji-card {
+    border-bottom-right-radius: 0px;
+    padding: 0 8px;
 }
 
 .emoji-content {
     @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
-    height:15px;
+    height: 15px;
 }
 
 .check_circle {
-    color:#4BD37B;
+    color: #4BD37B;
 }

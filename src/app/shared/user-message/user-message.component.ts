@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MessageEmojisComponent } from '../message-emojis/message-emojis.component';
 import { NgIf } from '@angular/common';
 import { MATERIAL_MODULES } from '../material-imports';
