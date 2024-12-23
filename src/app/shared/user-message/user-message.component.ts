@@ -1,36 +1,29 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { HoverService } from '../../../service/hover.service';
 import { MessageEmojisComponent } from '../message-emojis/message-emojis.component';
 import { NgIf } from '@angular/common';
+import { MATERIAL_MODULES } from '../material-imports';
 
 @Component({
   selector: 'app-user-message',
   standalone: true,
-  imports: [MessageEmojisComponent, NgIf],
+  imports: [ MessageEmojisComponent, MATERIAL_MODULES, NgIf ],
   templateUrl: './user-message.component.html',
   styleUrl: './user-message.component.scss',
 })
-export class UserMessageComponent implements OnInit {
+export class UserMessageComponent {
   @Input() showBottomRow: boolean = true;
   messageTime: number = 0;
   currentTimeStamp: number = 0;
+  isHoveredActive: boolean = false;
 
-  constructor(private hoverService: HoverService) {}
-
-  ngOnInit() {
-   this.exampleDate(); // Beispiel Datum für messageTime -> entfernen wenn Datum aus Database kommt
-   this.getCurrentTimeStamp();
-   const formattedDateToCompareFromExampleDate = this.getFormattedDate(this.messageTime);
-   const formattedDateToCompareFromCurrentTimeStamp = this.getFormattedDate(this.currentTimeStamp);
-   this.compareBothDate(formattedDateToCompareFromExampleDate, formattedDateToCompareFromCurrentTimeStamp);
-  }
+  constructor() {}
 
   onMouseEnter() {
-    this.hoverService.setHoverStatus(true);
+    this.isHoveredActive = true;
   }
 
   onMouseLeave() {
-    this.hoverService.setHoverStatus(false);
+    this.isHoveredActive = false;
   }
 
   exampleDate() {
