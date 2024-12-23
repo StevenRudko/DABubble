@@ -1,8 +1,6 @@
 <div (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()" class="message-input-container">
   <label for="new-message"></label>
-  <textarea
-    placeholder="Nachricht an #Entwicklerteam"
-  ></textarea>
+  <textarea [placeholder]="placeholder"></textarea>
 
   <div class="bottom-wrapper-icons">
     <div class="interactive-icons">
