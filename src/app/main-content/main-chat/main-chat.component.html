@@ -3,7 +3,7 @@
 
   <div class="main-chat-body">
 
-    <app-main-chat-daily-messages class="width-100"></app-main-chat-daily-messages>
+    <app-main-chat-daily-messages (openThreadEvent)="onOpenThread()" class="width-100"></app-main-chat-daily-messages>
 
     <app-message-input-box></app-message-input-box>
   </div>

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { MainChatHeaderComponent } from './main-chat-header/main-chat-header.component';
 import { MessageInputBoxComponent } from '../../shared/message-input-box/message-input-box.component';
 import { MainChatDailyMessagesComponent } from '../main-chat-daily-messages/main-chat-daily-messages.component';
@@ -14,4 +14,10 @@ import { MainChatDailyMessagesComponent } from '../main-chat-daily-messages/main
   templateUrl: './main-chat.component.html',
   styleUrl: './main-chat.component.scss',
 })
-export class MainChatComponent {}
+export class MainChatComponent {
+  @Output() openThreadEvent = new EventEmitter<void>();
+
+  onOpenThread() {
+    this.openThreadEvent.emit();
+  }
+}
