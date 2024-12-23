@@ -1,7 +1,9 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { MessageEmojisComponent } from '../message-emojis/message-emojis.component';
 import { NgIf } from '@angular/common';
 import { MATERIAL_MODULES } from '../material-imports';
+
+
 
 @Component({
   selector: 'app-user-message',
@@ -13,7 +15,6 @@ import { MATERIAL_MODULES } from '../material-imports';
 export class UserMessageComponent {
   @Input() showBottomRow: boolean = true;
   @Input() messageEmojisOpenStatus: boolean = true;
-
   messageTime: number = 0;
   currentTimeStamp: number = 0;
   isHoveredActive: boolean = false;
