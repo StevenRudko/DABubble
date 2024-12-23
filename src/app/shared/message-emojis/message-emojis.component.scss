@@ -2,13 +2,10 @@
 @use './../../../assets/styles/fonts.scss' as fonts;
 @use './../../../assets/styles/theme-colors.scss' as colors;
 
-section {
-    width:auto;
-}
-
 .emoji-card {
     border-bottom-right-radius: 0px;
     padding: 0 8px;
+    position:absolute;
 }
 
 .emoji-content {
