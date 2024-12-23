@@ -1,0 +1,113 @@
+.dialog-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.dialog-container {
+  background: white;
+  border-radius: 20px;
+  padding: 32px;
+  width: 800px;
+  height: 500px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  position: relative;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  .close {
+    cursor: pointer;
+    &:hover {
+      color: #535af1;
+      background-color: #eceefe;
+      border-radius: 50%;
+      box-shadow: 0 0 0 5px #eceefe;
+    }
+  }
+}
+
+p {
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.input-group {
+  margin-bottom: 16px;
+
+  label {
+    display: block;
+    color: black;
+    margin-bottom: 16px;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  input {
+    width: 100%;
+    height: 60px;
+    border: 1px solid #adb0d9;
+    border-radius: 40px;
+    font-size: 18px;
+    padding-left: 2rem;
+    box-sizing: border-box;
+
+    &::placeholder {
+      color: #999;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: #444df2;
+    }
+  }
+}
+
+.create-btn {
+  float: right;
+  background: #444df2;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 18px;
+  position: absolute;
+  bottom: 2rem;
+  right: 1rem;
+  &:hover {
+    background: #797ef3;
+  }
+}
+
+.optional {
+  color: #686868;
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.tag {
+  position: absolute;
+  margin-top: 1.1rem;
+  margin-left: 0.75rem;
+  color: gray;
+}

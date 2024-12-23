@@ -34,7 +34,7 @@
         </svg>
         <span>Channels</span>
       </div>
-      <mat-icon class="add-icon">add</mat-icon>
+      <mat-icon class="add-icon" (click)="openChannelDialog()">add</mat-icon>
     </div>
 
     <div class="channel-item">
@@ -42,10 +42,11 @@
       <span class="channel-name">Entwicklerteam</span>
     </div>
 
-    <div class="add-channel">
+    <div class="add-channel" (click)="openChannelDialog()">
       <mat-icon>add_circle_outline</mat-icon>
       <span>Channel hinzufügen</span>
     </div>
+
   </div>
 
   <div class="section">
