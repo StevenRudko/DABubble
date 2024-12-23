@@ -11,17 +11,17 @@ import { InputOutput } from '../../service/input-output.service';
   templateUrl: './thread.component.html',
   styleUrl: './thread.component.scss',
 })
-export class ThreadComponent implements OnInit {
+export class ThreadComponent {
   private InputOutputService = inject(InputOutput);
 
   @Output() closeThreadEvent = new EventEmitter<void>();
   replyCount: number = 0;
 
-  ngOnInit(): void {
-    this.InputOutputService.setThreadOpenStatus(false);
-  }
-
   closeThread() {
     this.closeThreadEvent.emit();
+  }
+
+  onMouseEnter() {
+    this.InputOutputService.setThreadOpenStatus(false);
   }
 }
