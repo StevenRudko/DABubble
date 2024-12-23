@@ -78,29 +78,12 @@ section {
     }
 }
 
-.message-date-divider {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    margin: 16px 0;
-    z-index: 1;
-
-    .divider-line {
-        flex-grow: 1;
-        height: 1px;
-        margin-right: 32px;
-        background-color: #adb0d9;
-    }
-
-    .divider-text {
-        position: absolute;
-        text-align:center;
-        position:center;
-        left:calc(100%/4);
-        margin: 0 32px;
-        font-size: 18px;
-        padding: 4px 16px;
-        border: 1px solid grey;
-        z-index: 2;
-    }
+app-message-emojis {
+    @include styles.dFlex($d: flex, $fd: row, $jc: flex-end, $ai: flex-end, $g: 0);
+    padding:0 38px;
+    position: relative;
+    // top:-20px;
+    top:20px;
+    z-index: 4;
 }
+

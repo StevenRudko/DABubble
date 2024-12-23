@@ -1,1 +1,22 @@
-<p>main-chat-daily-messages works!</p>
+<section>
+  <div class="message-date-divider">
+    <div class="divider-text-box bg-frame-v1">
+      <p class="divider-text">Dienstag, 14 Januar</p>
+      <!-- <p class="divider-text">{{ messageDate > currentTimeStamp ? messageDate : "Heute" }}</p> -->
+    </div>
+  </div>
+
+  <app-user-message [showBottomRow]="true" class="width-100"></app-user-message>
+
+  <div class="message-date-divider">
+    <div class="divider-text-box bg-frame-v1">
+      <p class="divider-text">Heute</p>
+      <!-- <p class="divider-text">{{ messageDate > currentTimeStamp ? messageDate : "Heute" }}</p> -->
+    </div>
+  </div>
+
+  <app-user-message [showBottomRow]="false" [messageEmojisOpenStatus]="false" class="width-100"></app-user-message>
+
+</section>
+
+
