@@ -5,7 +5,7 @@
 
 section {
     margin-left: -12px;
-    @include styles.dFlex($d: flex, $fd: row, $jc: space-between, $ai: center, $g: 0);
+    @include styles.dFlex($d: flex, $fd: column, $jc: flex-start, $ai: flex-start, $g: 24px);
     cursor: pointer;
 
     &:hover {
@@ -17,7 +17,7 @@ section {
     }
 
     &:hover .last-comment-time {
-        color:#393939;
+        color: #393939;
     }
 
     width:calc(100% + 24px);
@@ -44,6 +44,7 @@ section {
 .user-message-name {
     font-weight: 700;
     font-size: 17px;
+
     &:hover {
         color: #535AF1;
     }
@@ -60,7 +61,7 @@ section {
     background-color: white;
     padding: 12px;
     background-color: #ECEEFE;
-    border-radius:30px;
+    border-radius: 30px;
     border-top-left-radius: 0px;
 }
 
@@ -70,8 +71,36 @@ section {
 
 .comments-number {
     color: #535AF1;
+
     &:hover {
         font-weight: 700;
         font-size: 16px;
+    }
+}
+
+.message-date-divider {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin: 16px 0;
+    z-index: 1;
+
+    .divider-line {
+        flex-grow: 1;
+        height: 1px;
+        margin-right: 32px;
+        background-color: #adb0d9;
+    }
+
+    .divider-text {
+        position: absolute;
+        text-align:center;
+        position:center;
+        left:calc(100%/4);
+        margin: 0 32px;
+        font-size: 18px;
+        padding: 4px 16px;
+        border: 1px solid grey;
+        z-index: 2;
     }
 }
