@@ -6,11 +6,16 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class InputOutput {
   public showEmojis = false;
+  public ownMessageStyleActive = false;
 
   constructor() {
   }
 
   setThreadOpenStatus(show: boolean): void {
     this.showEmojis = show;
+  }
+
+  setOwnMessageStyle(show: boolean): void {
+    this.ownMessageStyleActive = show;
   }
 }

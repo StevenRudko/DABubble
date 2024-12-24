@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, inject } from '@angular/core';
+import { Component, Output, EventEmitter, inject, OnInit } from '@angular/core';
 import { MATERIAL_MODULES } from '../../shared/material-imports';
 import { UserMessageComponent } from '../../shared/user-message/user-message.component';
 import { InputOutput } from '../../service/input-output.service';
@@ -12,15 +12,13 @@ import { InputOutput } from '../../service/input-output.service';
 })
 export class MainChatDailyMessagesComponent {
   @Output() openThreadEvent = new EventEmitter<void>();
-
-  private InputOutputService = inject(InputOutput);
+  private inputOutputService = inject(InputOutput);
 
   openThread() {
     this.openThreadEvent.emit();
   }
 
   onMouseEnter() {
-    this.InputOutputService.setThreadOpenStatus(true);
+    this.inputOutputService.setThreadOpenStatus(true);
   }
-
 }

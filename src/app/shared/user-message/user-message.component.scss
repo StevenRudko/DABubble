@@ -21,11 +21,23 @@ section {
     }
 
     width:calc(100% + 24px);
+
+    &.myMessageStyle {
+        align-items: flex-end;
+
+        &:hover .user-message-row-center {
+            background-color:#797EF3;
+        }
+    }
 }
 
 .user-message-container {
     @include styles.dFlex($d: flex, $fd: row, $jc: flex-start, $ai: flex-start, $g: 28px);
     @include styles.padding($pl: 28px, $pr: 28px, $pt: 8px, $pb: 8px);
+
+    &.myMessageStyle {
+        flex-direction: row-reverse;
+    }
 }
 
 .user-message-img {
@@ -63,6 +75,13 @@ section {
     background-color: #ECEEFE;
     border-radius: 30px;
     border-top-left-radius: 0px;
+
+    &.myMessageStyle {
+        background-color: #797EF3;
+        color:white;
+        border-radius: 30px;
+        border-top-right-radius: 0px;
+    }
 }
 
 .user-message-row-bottom {
@@ -79,10 +98,9 @@ section {
 }
 
 app-message-emojis {
-    @include styles.dFlex($d: flex, $fd: row, $jc: flex-end, $ai: flex-end, $g: 0);
-    padding:0 38px;
     position: relative;
-    top:20px;
     z-index: 4;
+    @include styles.dFlex($d: flex, $fd: row, $jc: flex-end, $ai: flex-end, $g: 0);
+    padding: 0 38px;
+    top: 20px;
 }
-
