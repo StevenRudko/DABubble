@@ -75,3 +75,13 @@ section,
   align-items: $ai;
   gap: $g;
 }
+
+.member-dialog {
+  .mat-mdc-dialog-container {
+    border-top-right-radius: 0 !important;
+  }
+}
+
+.dialog-backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
