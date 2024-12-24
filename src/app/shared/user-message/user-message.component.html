@@ -4,8 +4,8 @@
     <div>
       <img class="user-message-img" src="img-placeholder/noah.svg" alt="" />
     </div>
-    <div class="user-message-box">
-      <div class="user-message-row-top">
+    <div class="user-message-box"  [ngClass]="{'myMessageStyle': changeMessageStyle}">
+      <div class="user-message-row-top" [ngClass]="{'myMessageStyle': changeMessageStyle}">
         <p class="user-message-name">Noah Braun</p>
         <p class="user-message-time">14:25 Uhr</p>
       </div>

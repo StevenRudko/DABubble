@@ -47,10 +47,18 @@ section {
 
 .user-message-box {
     @include styles.dFlex($d: flex, $fd: column, $jc: flex-start, $ai: flex-start, $g: 12px);
+
+    &.myMessageStyle {
+        align-items: flex-end;
+    }
 }
 
 .user-message-row-top {
     @include styles.dFlex($d: flex, $fd: row, $jc: flex-start, $ai: center, $g: 24px);
+
+    &.myMessageStyle {
+        flex-direction: row-reverse;
+    }
 }
 
 .user-message-name {
