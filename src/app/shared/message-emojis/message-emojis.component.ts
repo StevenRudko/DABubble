@@ -1,7 +1,6 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
 import { MATERIAL_MODULES } from '../material-imports';
 import { InputOutput } from '../../service/input-output.service';
-import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-message-emojis',
@@ -10,11 +9,17 @@ import { NgIf } from '@angular/common';
   templateUrl: './message-emojis.component.html',
   styleUrls: ['./message-emojis.component.scss'],
 })
-export class MessageEmojisComponent implements OnInit {
+export class MessageEmojisComponent implements OnInit{
+  threadMessage: boolean = true;
   private inputOutputService = inject(InputOutput);
-  showEmojis: boolean = this.inputOutputService.showEmojis; 
 
-  ngOnInit(): void {
-    this.showEmojis = this.inputOutputService.showEmojis;
+  constructor() {}
+
+  ngOnInit() {
+    // Abonniere den Service, um auf Änderungen von threadMessage zu reagieren
+    this.inputOutputService.threadMessage$.subscribe((status) => {
+      this.threadMessage = status;
+      console.log( this.threadMessage = status);
+    });
   }
 }

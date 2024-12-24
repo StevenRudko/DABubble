@@ -1,17 +1,19 @@
-import { Component, Input, Output, EventEmitter, OnInit, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter  } from '@angular/core';
 import { MessageEmojisComponent } from '../message-emojis/message-emojis.component';
-import { NgIf } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
 import { MATERIAL_MODULES } from '../material-imports';
 
 @Component({
   selector: 'app-user-message',
   standalone: true,
-  imports: [MessageEmojisComponent, MATERIAL_MODULES, NgIf],
+  imports: [MessageEmojisComponent, CommonModule, MATERIAL_MODULES, NgIf ],
   templateUrl: './user-message.component.html',
   styleUrl: './user-message.component.scss',
 })
 export class UserMessageComponent {
   @Input() showBottomRow: boolean = true;
+  @Input() changeMessageStyle: boolean = false;
+  @Input() showReactionIcons: boolean = true;
   @Input() messageEmojisOpenStatus: boolean = true;
   messageTime: number = 0;
   currentTimeStamp: number = 0;

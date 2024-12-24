@@ -1,16 +1,20 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Input } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root', 
+  providedIn: 'root',
 })
+
 export class InputOutput {
-  public showEmojis = false;
+  // BehaviorSubjects verwenden, um die Daten zu verwalten und zu abonnieren
+  private threadMessageSubject = new BehaviorSubject<boolean>(false);
 
-  constructor() {
-  }
+  // Observable für den Zugriff auf den aktuellen Status
+  threadMessage$ = this.threadMessageSubject.asObservable();
 
-  setThreadOpenStatus(show: boolean): void {
-    this.showEmojis = show;
+  constructor() {}
+
+  setThreadMessageStyle(active: boolean): void {
+    this.threadMessageSubject.next(active);
   }
 }
