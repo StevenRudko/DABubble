@@ -1,24 +1,64 @@
-@if(messageEmojisOpenStatus && isHoveredActive){<app-message-emojis></app-message-emojis>}
-<section (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()" [ngClass]="{'myMessageStyle': changeMessageStyle}">
-  <div class="user-message-container" [ngClass]="{'myMessageStyle': changeMessageStyle}">
+@if(messageEmojisOpenStatus && isHoveredActive){<app-message-emojis
+></app-message-emojis>}
+<section
+  (mouseenter)="onMouseEnter()"
+  (mouseleave)="onMouseLeave()"
+  [ngClass]="{ myMessageStyle: changeMessageStyle }"
+>
+  <div
+    class="user-message-container"
+    [ngClass]="{ myMessageStyle: changeMessageStyle }"
+  >
     <div>
       <img class="user-message-img" src="img-placeholder/noah.svg" alt="" />
     </div>
-    <div class="user-message-box"  [ngClass]="{'myMessageStyle': changeMessageStyle}">
-      <div class="user-message-row-top" [ngClass]="{'myMessageStyle': changeMessageStyle}">
+    <div
+      class="user-message-box"
+      [ngClass]="{ myMessageStyle: changeMessageStyle }"
+    >
+      <div
+        class="user-message-row-top"
+        [ngClass]="{ myMessageStyle: changeMessageStyle }"
+      >
         <p class="user-message-name">Noah Braun</p>
         <p class="user-message-time">14:25 Uhr</p>
       </div>
-      <div class="user-message-row-center" [ngClass]="{'myMessageStyle': changeMessageStyle}">
+      <div
+        class="user-message-row-center"
+        [ngClass]="{ myMessageStyle: changeMessageStyle }"
+      >
         <p>Welche Version ist aktuell von Angular?</p>
       </div>
-      <div class="user-message-row-bottom" *ngIf="showBottomRow" (click)="openThread()">
+      <div
+        class="user-message-row-bottom"
+        *ngIf="showBottomRow"
+        (click)="openThread()"
+      >
         <p class="comments-number">2 Antworten</p>
         <p class="last-comment-time">Letzte Antwort 14:56</p>
       </div>
+      @if (showReactionIcons) {
+      <div class="reaction-icons-row-bottom">
+        <div class="reaction-btn-div bg-frame-v1">
+          <button class="reaction-btn-style">
+            <mat-icon>🚀</mat-icon>
+          </button>
+          <p>1</p>
+        </div>
+        <div class="reaction-btn-div bg-frame-v1">
+          <button class="reaction-btn-style">
+            <mat-icon class="check_circle">check_circle</mat-icon>
+          </button>
+          <p>1</p>
+        </div>
+        <div>
+          <button class="add-reaction-btn" mat-icon-button>
+            <!-- <mat-icon>face_retouching_natural</mat-icon> -->
+            <mat-icon class="add-icon">tag_faces</mat-icon>
+          </button>
+        </div>
+      </div>
+      }
     </div>
   </div>
 </section>
-
-
-

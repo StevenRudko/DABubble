@@ -6,7 +6,7 @@
     </div>
   </div>
 
-  <app-user-message (mouseenter)="onMouseEnter()" [showBottomRow]="true" (openThreadEvent)="openThread()" class="width-100"></app-user-message>
+  <app-user-message (mouseenter)="onMouseEnter()" [showBottomRow]="true" [showReactionIcons]="false" (openThreadEvent)="openThread()" class="width-100"></app-user-message>
 
   <div class="message-date-divider">
     <div class="divider-text-box bg-frame-v1">
@@ -15,6 +15,6 @@
     </div>
   </div>
 
-  <app-user-message [changeMessageStyle]="true" [showBottomRow]="false" [messageEmojisOpenStatus]="false" class="width-100"></app-user-message>
+  <app-user-message [changeMessageStyle]="true" [showBottomRow]="false" [showReactionIcons]="true" [messageEmojisOpenStatus]="false" class="width-100"></app-user-message>
 
 </section>

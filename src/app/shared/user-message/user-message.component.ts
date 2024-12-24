@@ -13,6 +13,7 @@ import { MATERIAL_MODULES } from '../material-imports';
 export class UserMessageComponent {
   @Input() showBottomRow: boolean = true;
   @Input() changeMessageStyle: boolean = false;
+  @Input() showReactionIcons: boolean = true;
   @Input() messageEmojisOpenStatus: boolean = true;
   messageTime: number = 0;
   currentTimeStamp: number = 0;
