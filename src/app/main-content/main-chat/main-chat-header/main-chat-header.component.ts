@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 import { MATERIAL_MODULES } from '../../../shared/material-imports';
 import { MatDialog } from '@angular/material/dialog';
 import { MemberOverviewComponent } from './member-overview/member-overview.component';
@@ -12,11 +12,15 @@ import { MemberOverviewComponent } from './member-overview/member-overview.compo
 })
 export class MainChatHeaderComponent {
   constructor(private dialog: MatDialog) {}
+  @ViewChild('memberListBtn') memberListBtn!: ElementRef;
 
   openMemberDialog() {
+    const btnRect = this.memberListBtn.nativeElement.getBoundingClientRect();
     this.dialog.open(MemberOverviewComponent, {
-      width: '320px',
-      position: { top: '160px' },
+      position: {
+        top: '160px',
+        left: `${btnRect.right - 340}px`,
+      },
       hasBackdrop: true,
       backdropClass: 'dialog-backdrop',
       panelClass: 'member-dialog',
