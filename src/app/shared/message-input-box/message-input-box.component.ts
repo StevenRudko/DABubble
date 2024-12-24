@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MATERIAL_MODULES } from '../material-imports';
 
@@ -9,4 +9,8 @@ import { MATERIAL_MODULES } from '../material-imports';
   templateUrl: './message-input-box.component.html',
   styleUrl: './message-input-box.component.scss',
 })
-export class MessageInputBoxComponent {}
+export class MessageInputBoxComponent {
+  @Input() placeholder: string = 'Nachricht an #Entwicklerteam';
+
+  constructor() {}
+}

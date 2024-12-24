@@ -1,58 +1,122 @@
-@use './../../styles.scss' as styles;
-@use './../../assets/styles/fonts.scss' as fonts;
-@use './../../assets/styles/theme-colors.scss' as colors;
+@use "./../../styles.scss" as styles;
+@use "./../../assets/styles/fonts.scss" as fonts;
+@use "./../../assets/styles/theme-colors.scss" as colors;
 
 section {
-    @include styles.padding($pl: 12px, $pr: 12px, $pt: 12px, $pb: 24px);
-    @include styles.dFlex($d: flex, $fd: row, $jc: space-between, $ai: flex-start, $g: 12px);
-    height: calc(100% - 100px);
+  height: calc(100% - 100px);
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.content-container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 0 12px;
+}
+
+mat-drawer-container {
+  width: 100%;
+  height: 100%;
+  background: transparent !important;
+  box-sizing: border-box;
+}
+
+.sidebar-container {
+  width: 100%;
+  height: 100%;
+  padding-left: 12px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+mat-drawer {
+  width: 20%;
+  border-radius: 8px;
+  overflow: hidden;
+  box-sizing: border-box;
+
+  &::ng-deep .mat-drawer-inner-container {
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+}
+
+.sidenav {
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.mat-drawer-content {
+  box-sizing: border-box;
+  overflow: hidden;
+  padding-left: 12px;
+}
+
+.content-wrapper {
+  @include styles.dFlex(
+    $d: flex,
+    $fd: row,
+    $jc: space-between,
+    $ai: flex-start,
+    $g: 12px
+  );
+  height: 100%;
+  box-sizing: border-box;
+  width: 100%;
+  overflow: hidden;
 }
 
 app-main-chat {
-    height: 100%;
-    margin-left:-12px;
-}
-
-app-sidebar {
-    width: 20%;
-    height: 100%;
+  height: 100%;
+  flex: 1;
+  box-sizing: border-box;
 }
 
 app-thread {
-    width: 30%;
-    height: 100%;
+  width: 30%;
+  height: 100%;
+  box-sizing: border-box;
 }
 
-.open-sidebar-btn mat-card {
+.open-sidebar-btn {
+  position: fixed;
+  left: 0;
+  z-index: 1000;
+  height: 100%;
+  background-color: transparent;
+
+  mat-card {
     @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
-    position: absolute;
-    left:0;
-    bottom:20%;
-    height:40%;
-    width:60px;
-    border-top-left-radius:0px;
-    border-bottom-left-radius:0px;
+    height: 40%;
+    width: 60px;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
     box-shadow: 4px 4px 8px rgba(89, 89, 89, 0.3);
-    font-size:18px;
-    font-weight:500px;
+    font-size: 18px;
+    font-weight: 500px;
     line-height: 24px;
     cursor: pointer;
-  
+    position: absolute;
+    bottom: 25%;
+
     &:hover {
-        color: #797EF3;
-        font-weight: 700;
+      color: #797ef3;
+      font-weight: 700;
     }
   }
+}
 
-  .open-sidebar-content {
-    @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 12px);
-    transform: rotate(270deg);
-    white-space: nowrap;
+.open-sidebar-content {
+  @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 12px);
+  transform: rotate(270deg);
+  white-space: nowrap;
 
-    mat-icon {
-        font-size:20px;
-        width:20px;
-        height:20px;
-    }
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
   }
-  
+}

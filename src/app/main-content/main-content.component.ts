@@ -1,9 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { MainChatComponent } from './main-chat/main-chat.component';
 import { ThreadComponent } from './thread/thread.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
-import { MATERIAL_MODULES } from '../shared/material-imports';
-import { CommonModule, NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
+import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-main-content',
@@ -12,17 +14,22 @@ import { CommonModule, NgIf } from '@angular/common';
     SidebarComponent,
     MainChatComponent,
     ThreadComponent,
-    NgIf,
     CommonModule,
-    MATERIAL_MODULES,
+    MatSidenavModule,
+    MatCardModule,
+    MatIconModule,
   ],
   templateUrl: './main-content.component.html',
   styleUrl: './main-content.component.scss',
 })
 export class MainContentComponent {
-  sidebarActive:boolean = false;
+  @ViewChild('drawer') drawer!: MatSidenav;
 
-  openSidebar() {
+  sidebarActive: boolean = false;
+  threadVisible: boolean = true;
+
+  toggleSidebar() {
     this.sidebarActive = !this.sidebarActive;
+    this.drawer.toggle();
   }
 }

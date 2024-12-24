@@ -6,7 +6,8 @@
   </div>
 
   <div class="wrapper-member">
-    <div class="member-list">
+    <div class="member-list" (click)="openMemberDialog()" #memberListBtn>
+
       <div class="member-list-profiles">
         <div class="circle-outline">
           <img class="member-list-img" src="img-placeholder/noah.svg" alt="" />
@@ -15,11 +16,7 @@
           <img class="member-list-img" src="img-placeholder/sofia.svg" alt="" />
         </div>
         <div class="circle-outline">
-          <img
-            class="member-list-img"
-            src="img-placeholder/frederik.svg"
-            alt=""
-          />
+          <img class="member-list-img" src="img-placeholder/frederik.svg" alt="" />
         </div>
       </div>
       <p class="member-list-number">3</p>
@@ -29,5 +26,6 @@
       <mat-icon class="add-user-icon">person_add_alt</mat-icon>
     </button>
   </div>
-  
+
+
 </header>

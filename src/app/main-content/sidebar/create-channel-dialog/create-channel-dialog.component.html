@@ -1,0 +1,24 @@
+<div class="dialog-backdrop" (click)="onBackdropClick($event)">
+  <div class="dialog-container">
+    <div class="dialog-header">
+      <h2>Channel erstellen</h2>
+      <mat-icon class="close" (click)="onClose()">close</mat-icon>
+    </div>
+
+    <p>Channels dienen deinem Team zur Kommunikation. Am besten sollten sie themenbezogen sein #marketing zum Beispiel.
+    </p>
+
+    <div class="input-group">
+      <label>Channel-Name</label>
+      <mat-icon class="tag">#</mat-icon>
+      <input type="text" placeholder=" z.B. Kooperationsprojekte">
+    </div>
+
+    <div class="input-group">
+      <label>Beschreibung <span class="optional">(optional)</span></label>
+      <input type="text" placeholder="Dein Text hier">
+    </div>
+
+    <button class="create-btn">Erstellen</button>
+  </div>
+</div>

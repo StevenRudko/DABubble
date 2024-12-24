@@ -1,0 +1,25 @@
+@use './../../../styles.scss' as styles;
+@use './../../../assets/styles/fonts.scss' as fonts;
+@use './../../../assets/styles/theme-colors.scss' as colors;
+
+section {
+    @include styles.dFlex($d: flex, $fd: column, $jc: flex-start, $ai: flex-start, $g: 42px);
+    height: 100%;
+}
+
+.message-date-divider {
+    @include styles.dFlex($d: flex, $fd: column, $jc: center, $ai: center, $g: 0);
+    width: 100%;
+    box-sizing: border-box;
+    height: 1px;
+    background-color: #adb0d9;
+}
+
+.divider-text-box {
+    padding: 4px 16px;
+    border: 1px solid #adb0d9;
+}
+
+.divider-text {
+    font-size: 18px;
+}

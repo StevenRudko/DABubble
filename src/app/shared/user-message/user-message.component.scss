@@ -5,7 +5,7 @@
 
 section {
     margin-left: -12px;
-    @include styles.dFlex($d: flex, $fd: row, $jc: space-between, $ai: center, $g: 0);
+    @include styles.dFlex($d: flex, $fd: column, $jc: flex-start, $ai: flex-start, $g: 24px);
     cursor: pointer;
 
     &:hover {
@@ -17,15 +17,32 @@ section {
     }
 
     &:hover .last-comment-time {
-        color:#393939;
+        color: #393939;
+    }
+
+    &:hover .add-reaction-btn {
+        background-color: white;
     }
 
     width:calc(100% + 24px);
+
+    &.myMessageStyle {
+        align-items: flex-end;
+        cursor: unset;
+
+        &:hover .user-message-row-center {
+            background-color: #797EF3;
+        }
+    }
 }
 
 .user-message-container {
     @include styles.dFlex($d: flex, $fd: row, $jc: flex-start, $ai: flex-start, $g: 28px);
     @include styles.padding($pl: 28px, $pr: 28px, $pt: 8px, $pb: 8px);
+
+    &.myMessageStyle {
+        flex-direction: row-reverse;
+    }
 }
 
 .user-message-img {
@@ -35,15 +52,24 @@ section {
 
 .user-message-box {
     @include styles.dFlex($d: flex, $fd: column, $jc: flex-start, $ai: flex-start, $g: 12px);
+
+    &.myMessageStyle {
+        align-items: flex-end;
+    }
 }
 
 .user-message-row-top {
     @include styles.dFlex($d: flex, $fd: row, $jc: flex-start, $ai: center, $g: 24px);
+
+    &.myMessageStyle {
+        flex-direction: row-reverse;
+    }
 }
 
 .user-message-name {
     font-weight: 700;
     font-size: 17px;
+
     &:hover {
         color: #535AF1;
     }
@@ -60,8 +86,15 @@ section {
     background-color: white;
     padding: 12px;
     background-color: #ECEEFE;
-    border-radius:30px;
+    border-radius: 30px;
     border-top-left-radius: 0px;
+
+    &.myMessageStyle {
+        background-color: #797EF3;
+        color: white;
+        border-radius: 30px;
+        border-top-right-radius: 0px;
+    }
 }
 
 .user-message-row-bottom {
@@ -70,8 +103,65 @@ section {
 
 .comments-number {
     color: #535AF1;
+
     &:hover {
         font-weight: 700;
         font-size: 16px;
+    }
+}
+
+.reaction-icons-row-bottom {
+    @include styles.dFlex($d: flex, $fd: row, $jc: flex-end, $ai: center, $g: 12px);
+    margin-top:-6px;
+}
+
+.check_circle {
+    color: #4BD37B;
+}
+
+.reaction-btn-div {
+    @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
+    padding: 2px 6px;
+    background-color: white;
+    border:1px solid #ADB0D9;
+    cursor:pointer;
+}
+
+.reaction-btn-style {
+    @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
+    background-color: white;
+    border:unset;
+    cursor:pointer;
+}
+
+.add-reaction-btn {
+    width: var(--mdc-icon-button-state-layer-size, 30px);
+    height: var(--mdc-icon-button-state-layer-size, 30px);
+    padding: calc(calc(var(--mdc-icon-button-state-layer-size, 30px) - var(--mdc-icon-button-icon-size, 24px)) / 2);
+
+    &:hover {
+        color: #797EF3;
+        font-weight: 700;
+    }
+
+    &:hover .add-icon {
+        font-size:24px;
+    }
+}
+
+.add-icon {
+    font-size:23px;
+}
+
+app-message-emojis {
+    position: relative;
+    z-index: 4;
+    @include styles.dFlex($d: flex, $fd: row, $jc: flex-end, $ai: flex-end, $g: 0);
+    padding: 0 38px;
+    top: 20px;
+
+    &.myMessageStyle {
+        @include styles.dFlex($d: flex, $fd: row, $jc: flex-start, $ai: flex-start, $g: 0);
+        top: -20px;
     }
 }

@@ -1,1 +1,28 @@
-<p>thread works!</p>
+<section>
+  <header>
+    <div class="thread-header">
+      <p>Thread</p>
+      <span class="channel-name"># Entwicklerteam</span>
+    </div>
+    <mat-icon class="close" (click)="closeThread()">close</mat-icon>
+  </header>
+
+  <div class="chat">
+    <div class="messages-container">
+      <app-user-message [showBottomRow]="false" [showReactionIcons]="false"></app-user-message>
+      <div class="thread-divider">
+        <div class="divider-text">
+          {{replyCount}} {{replyCount === 1 ? 'Antwort' : 'Antworten'}}
+        </div>
+        <div class="divider-line"></div>
+      </div>
+    </div>
+
+    <app-user-message [changeMessageStyle]="false" [showBottomRow]="false" [showReactionIcons]="true" [messageEmojisOpenStatus]="true" class="width-100"></app-user-message>
+
+    <app-user-message [changeMessageStyle]="true" [showBottomRow]="false" [showReactionIcons]="true" [messageEmojisOpenStatus]="true" class="width-100"></app-user-message>
+
+    <app-message-input-box placeholder="Antworten..."></app-message-input-box>
+  </div>
+
+</section>
