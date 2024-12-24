@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter  } from '@angular/core';
 import { MessageEmojisComponent } from '../message-emojis/message-emojis.component';
 import { CommonModule, NgIf } from '@angular/common';
 import { MATERIAL_MODULES } from '../material-imports';
@@ -6,7 +6,7 @@ import { MATERIAL_MODULES } from '../material-imports';
 @Component({
   selector: 'app-user-message',
   standalone: true,
-  imports: [MessageEmojisComponent, CommonModule, MATERIAL_MODULES, NgIf],
+  imports: [MessageEmojisComponent, CommonModule, MATERIAL_MODULES, NgIf ],
   templateUrl: './user-message.component.html',
   styleUrl: './user-message.component.scss',
 })

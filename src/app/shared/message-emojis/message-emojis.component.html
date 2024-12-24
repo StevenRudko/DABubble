@@ -1,10 +1,10 @@
 <mat-card class="emoji-card bg-frame-v1">
   <mat-card-content class="emoji-content">
-    @if(showEmojis){
+    @if(threadMessage){
     <button mat-icon-button>
       <mat-icon class="check_circle">check_circle</mat-icon>
     </button>
-    } @if(showEmojis){
+    } @if(threadMessage){
     <button mat-icon-button>
       <mat-icon>🙌</mat-icon>
     </button>
@@ -13,7 +13,7 @@
       <!-- <mat-icon>face_retouching_natural</mat-icon> -->
       <mat-icon>tag_faces</mat-icon>
     </button>
-    @if(showEmojis){
+    @if(threadMessage){
     <button mat-icon-button>
       <mat-icon>insert_comment</mat-icon>
     </button>

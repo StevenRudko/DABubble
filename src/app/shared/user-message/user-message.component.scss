@@ -159,4 +159,9 @@ app-message-emojis {
     @include styles.dFlex($d: flex, $fd: row, $jc: flex-end, $ai: flex-end, $g: 0);
     padding: 0 38px;
     top: 20px;
+
+    &.myMessageStyle {
+        @include styles.dFlex($d: flex, $fd: row, $jc: flex-start, $ai: flex-start, $g: 0);
+        top: -20px;
+    }
 }

@@ -1,5 +1,4 @@
-@if(messageEmojisOpenStatus && isHoveredActive){<app-message-emojis
-></app-message-emojis>}
+@if(messageEmojisOpenStatus && isHoveredActive){<app-message-emojis [ngClass]="{ myMessageStyle: changeMessageStyle }"></app-message-emojis>}
 <section
   (mouseenter)="onMouseEnter()"
   (mouseleave)="onMouseLeave()"

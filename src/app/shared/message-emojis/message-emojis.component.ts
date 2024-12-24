@@ -9,9 +9,17 @@ import { InputOutput } from '../../service/input-output.service';
   templateUrl: './message-emojis.component.html',
   styleUrls: ['./message-emojis.component.scss'],
 })
-export class MessageEmojisComponent {
+export class MessageEmojisComponent implements OnInit{
+  threadMessage: boolean = true;
   private inputOutputService = inject(InputOutput);
-  showEmojis: boolean = this.inputOutputService.showEmojis; 
 
   constructor() {}
+
+  ngOnInit() {
+    // Abonniere den Service, um auf Änderungen von threadMessage zu reagieren
+    this.inputOutputService.threadMessage$.subscribe((status) => {
+      this.threadMessage = status;
+      console.log( this.threadMessage = status);
+    });
+  }
 }

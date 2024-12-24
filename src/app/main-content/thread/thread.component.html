@@ -9,7 +9,7 @@
 
   <div class="chat">
     <div class="messages-container">
-      <app-user-message (mouseenter)="onMouseEnter()" [showBottomRow]="false" [showReactionIcons]="false"></app-user-message>
+      <app-user-message [showBottomRow]="false" [showReactionIcons]="false"></app-user-message>
       <div class="thread-divider">
         <div class="divider-text">
           {{replyCount}} {{replyCount === 1 ? 'Antwort' : 'Antworten'}}
