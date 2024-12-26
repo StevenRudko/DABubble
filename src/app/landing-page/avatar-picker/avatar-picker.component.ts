@@ -10,4 +10,9 @@ import { MATERIAL_MODULES } from '../../shared/material-imports';
 export class AvatarPickerComponent {
 
   avatarPath: string[] = ['img-placeholder/elias.svg', 'img-placeholder/elise.svg', 'img-placeholder/frederik.svg', 'img-placeholder/noah.svg', 'img-placeholder/sofia.svg', 'img-placeholder/steffen.svg',]
+  selectedUserAvatar: string = 'img/person.png';
+
+  selectedAvatar(path: string) {
+    this.selectedUserAvatar = path;
+  }
 }

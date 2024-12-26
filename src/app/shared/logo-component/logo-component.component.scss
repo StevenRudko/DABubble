@@ -10,3 +10,143 @@
         width: 70px;
     }
 }
+
+// start Animation
+
+.animation-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 99999;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    animation: removeAnimationConatiner 0.75s ease-in-out 3.5s forwards;
+
+    .background-color {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(0deg, #313ae5 25%, #555cec 60%, #797ef3 100%);
+        animation: removeBackground 0.75s ease-in-out 2.5s forwards;
+    }
+
+    .ainimation-container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center);
+        animation: moveToHead 0.75s ease-in-out 2.5s forwards;
+
+
+        .animation-logo-container {
+            width: 180px;
+            height: 180px;
+            padding-right: 24px;
+            @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center);
+            animation: changeSize 0.75s ease-in-out 2.5s forwards;
+
+            img {
+                width: 180px;
+                height: 180px;
+                transform: translateX(205px);
+                background-color: rgba(0, 0, 0, 0);
+                animation: logoMove 0.5s ease-in-out 0.5s forwards,
+                changeSize 0.75s ease-in-out 2.5s forwards;
+            }
+        }
+
+        .animation-text-container {
+            overflow: hidden;
+
+            p {
+                font-size: 80px;
+                color: white;
+                transform: translateX(-100%);
+                animation: textMove 0.5s ease-in-out 1.05s forwards,
+                    textStyle 0.75s ease-in-out 2.5s forwards;
+            }
+        }
+    }
+}
+
+@keyframes logoMove {
+    from {
+        transform: translateX(205px);
+    }
+
+    to {
+        transform: translateX(0px);
+    }
+}
+
+@keyframes textMove {
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateX(0%);
+    }
+}
+
+@keyframes removeBackground {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes removeAnimationConatiner {
+    from {
+        z-index: 99999;
+    }
+
+    to {
+        z-index: unset;
+    }
+}
+
+@keyframes textStyle {
+    from {
+        color: white;
+        font-size: 80px;
+    }
+
+    to {
+        color: black;
+        font-size: 38px;
+    }
+}
+
+@keyframes moveToHead {
+    from {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    to {
+        top: 0%;
+        left: 0%;
+        transform: translate(75px, 75px);
+    }
+}
+
+@keyframes changeSize {
+    from {
+        width: 180px;
+        height: 180px;
+    }
+
+    to {
+        height: 70px;
+        width: 70px;
+    }
+}
