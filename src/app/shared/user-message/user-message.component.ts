@@ -1,21 +1,20 @@
-import { Component, Input, Output, EventEmitter  } from '@angular/core';
-import { MessageEmojisComponent } from '../message-emojis/message-emojis.component';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
 import { MATERIAL_MODULES } from '../material-imports';
 
 @Component({
   selector: 'app-user-message',
   standalone: true,
-  imports: [MessageEmojisComponent, CommonModule, MATERIAL_MODULES, NgIf ],
+  imports: [CommonModule, MATERIAL_MODULES, NgIf],
   templateUrl: './user-message.component.html',
   styleUrl: './user-message.component.scss',
 })
 export class UserMessageComponent {
-  @Input() showBottomRow: boolean = true;
-  @Input() changeMessageStyle: boolean = false;
-  @Input() showReactionIcons: boolean = true;
-  @Input() messageEmojisOpenStatus: boolean = true;
   @Input() threadMessage: boolean = false;
+  @Input() ownMessage: boolean = false;
+  @Input() showReactionEmojis: boolean = false;
+  @Input() showAnswerDetails: boolean = true;
+  @Input() showReactionIcons: boolean = true;
 
   messageTime: number = 0;
   currentTimeStamp: number = 0;
@@ -27,10 +26,12 @@ export class UserMessageComponent {
 
   onMouseEnter() {
     this.isHoveredActive = true;
+    this.showReactionEmojis = true;
   }
 
   onMouseLeave() {
     this.isHoveredActive = false;
+    this.showReactionEmojis = false;
   }
 
   exampleDate() {

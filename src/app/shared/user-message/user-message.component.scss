@@ -7,6 +7,8 @@ section {
     margin-left: -12px;
     @include styles.dFlex($d: flex, $fd: column, $jc: flex-start, $ai: flex-start, $g: 24px);
     cursor: pointer;
+    position:relative;
+    z-index: 2;
 
     &:hover {
         background-color: #ECEEFE;
@@ -112,7 +114,7 @@ section {
 
 .reaction-icons-row-bottom {
     @include styles.dFlex($d: flex, $fd: row, $jc: flex-end, $ai: center, $g: 12px);
-    margin-top:-6px;
+    margin-top: -6px;
 }
 
 .check_circle {
@@ -123,15 +125,15 @@ section {
     @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
     padding: 2px 6px;
     background-color: white;
-    border:1px solid #ADB0D9;
-    cursor:pointer;
+    border: 1px solid #ADB0D9;
+    cursor: pointer;
 }
 
 .reaction-btn-style {
     @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
     background-color: white;
-    border:unset;
-    cursor:pointer;
+    border: unset;
+    cursor: pointer;
 }
 
 .add-reaction-btn {
@@ -145,23 +147,39 @@ section {
     }
 
     &:hover .add-icon {
-        font-size:24px;
+        font-size: 24px;
     }
 }
 
 .add-icon {
-    font-size:23px;
+    font-size: 23px;
 }
 
-app-message-emojis {
-    position: relative;
-    z-index: 4;
+.emoji-card-container {
     @include styles.dFlex($d: flex, $fd: row, $jc: flex-end, $ai: flex-end, $g: 0);
-    padding: 0 38px;
-    top: 20px;
+    position: relative;
+    width: 100%;
+    z-index: 4;
+    box-sizing: border-box;
 
     &.myMessageStyle {
-        @include styles.dFlex($d: flex, $fd: row, $jc: flex-start, $ai: flex-start, $g: 0);
-        top: -20px;
+        justify-content: flex-start;
+        align-items: flex-start;
     }
+}
+
+.emoji-card {
+    @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
+    border-bottom-right-radius: 0px;
+    padding: 0 18px;
+    width: 200px;
+}
+
+.emoji-content {
+    @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
+    height: 15px;
+}
+
+.check_circle {
+    color: #4BD37B;
 }
