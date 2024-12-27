@@ -12,10 +12,8 @@ import { InputOutput } from '../../service/input-output.service';
   styleUrl: './thread.component.scss',
 })
 export class ThreadComponent implements OnInit {
-  threadMessage: boolean = true;
-  // private inputOutputService = inject(InputOutput); // Service injizieren
-
-  constructor(public inputOutputService: InputOutput) {}
+  public threadMessage: boolean = true; // Geändert zu true
+  private inputOutputService = inject(InputOutput);
 
   ngOnInit(): void {
     this.inputOutputService.threadMessage$.subscribe((status) => {

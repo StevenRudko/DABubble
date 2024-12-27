@@ -1,15 +1,18 @@
+// input-output.service.ts
 import { Injectable, Input } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+
+interface EmojiConfig {
+  icon: string;
+  type: 'material' | 'emoji';
+}
 
 @Injectable({
   providedIn: 'root',
 })
-
 export class InputOutput {
-  // BehaviorSubjects verwenden, um die Daten zu verwalten und zu abonnieren
+  // Bestehender Code
   private threadMessageSubject = new BehaviorSubject<boolean>(false);
-
-  // Observable für den Zugriff auf den aktuellen Status
   threadMessage$ = this.threadMessageSubject.asObservable();
 
   constructor() {
@@ -20,10 +23,19 @@ export class InputOutput {
     console.log(this.threadMessage$);
   }
 
-  // // Methode zum Abrufen des aktuellen Wertes
-  // getThreadMessageStatus(): boolean {
-  //   return this.threadMessageSubject.getValue();
-  // }
+  // Neue Methode für Emojis
+  getEmojis(isThread: boolean): EmojiConfig[] {
+    if (isThread) {
+      return [{ icon: 'tag_faces', type: 'material' }];
+    } else {
+      return [
+        { icon: 'check_circle', type: 'material' },
+        { icon: '🙌', type: 'emoji' },
+        { icon: 'tag_faces', type: 'material' },
+        { icon: 'insert_comment', type: 'material' },
+      ];
+    }
+  }
 }
 
 
