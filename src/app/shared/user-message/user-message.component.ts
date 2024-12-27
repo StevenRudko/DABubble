@@ -15,12 +15,15 @@ export class UserMessageComponent {
   @Input() changeMessageStyle: boolean = false;
   @Input() showReactionIcons: boolean = true;
   @Input() messageEmojisOpenStatus: boolean = true;
+  @Input() threadMessage: boolean = false;
+
   messageTime: number = 0;
   currentTimeStamp: number = 0;
   isHoveredActive: boolean = false;
   @Output() openThreadEvent = new EventEmitter<void>();
 
-  constructor() {}
+  constructor() {
+  }
 
   onMouseEnter() {
     this.isHoveredActive = true;

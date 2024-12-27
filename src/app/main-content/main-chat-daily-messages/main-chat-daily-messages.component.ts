@@ -11,17 +11,16 @@ import { InputOutput } from '../../service/input-output.service';
   styleUrl: './main-chat-daily-messages.component.scss',
 })
 export class MainChatDailyMessagesComponent implements OnInit{
-  public threadMessage: boolean = true;
-  private inputOutputService = inject(InputOutput); // Service injizieren
+threadMessage: boolean = true;
 
   @Output() openThreadEvent = new EventEmitter<void>();
 
+  constructor(public inputOutputService: InputOutput) {}
+
   ngOnInit() {
-    // Abonniere den Service, um auf Änderungen von threadMessage zu reagieren
-    this.inputOutputService.threadMessage$.subscribe((status) => {
-      this.threadMessage = status;
-      console.log( this.threadMessage = status);
-    });
+    // this.inputOutputService.threadMessage$.subscribe((status) => {
+    //   this.threadMessage = status;
+    // });
   }
 
   openThread() {
