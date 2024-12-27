@@ -136,7 +136,7 @@ section {
     cursor: pointer;
 }
 
-.add-reaction-btn {
+.reaction-btn {
     width: var(--mdc-icon-button-state-layer-size, 30px);
     height: var(--mdc-icon-button-state-layer-size, 30px);
     padding: calc(calc(var(--mdc-icon-button-state-layer-size, 30px) - var(--mdc-icon-button-icon-size, 24px)) / 2);
@@ -146,33 +146,52 @@ section {
         font-weight: 700;
     }
 
-    &:hover .add-icon {
+    &:hover .reaction-btn-icon {
         font-size: 24px;
     }
 }
 
-.add-icon {
+button {
+    mat-icon {
+        font-size: 22px;
+    }
+
+    &:hover {
+        color: #797EF3;
+        font-weight: 700;
+    }
+
+    &:hover mat-icon{
+            font-size: 24px;
+    } 
+}
+
+.reaction-btn-icon {
     font-size: 23px;
 }
 
 .emoji-card-container {
     @include styles.dFlex($d: flex, $fd: row, $jc: flex-end, $ai: flex-end, $g: 0);
-    position: relative;
+    position: absolute;
     width: 100%;
     z-index: 4;
     box-sizing: border-box;
+    padding:0;
+    padding-right:32px;
+    top:-20px;
 
     &.myMessageStyle {
         justify-content: flex-start;
         align-items: flex-start;
+        padding:0;
+        padding-left:24px;
     }
 }
 
 .emoji-card {
     @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
     border-bottom-right-radius: 0px;
-    padding: 0 18px;
-    width: 200px;
+    width: auto;
 }
 
 .emoji-content {

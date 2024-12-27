@@ -1,41 +1,32 @@
-
 <section (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()" [ngClass]="{ myMessageStyle: ownMessage }">
   <div class="emoji-card-container" [ngClass]="{ myMessageStyle: ownMessage }">
-  <mat-card *ngIf="showReactionEmojis" class="emoji-card bg-frame-v1">
-    <mat-card-content class="emoji-content">
-      @if(!threadMessage){
-      <button mat-icon-button>
-        <mat-icon class="check_circle">check_circle</mat-icon>
-      </button>
-      } @if(!threadMessage){
-      <button mat-icon-button>
-        <mat-icon>🙌</mat-icon>
-      </button>
-      }
-      <button mat-icon-button>
-        <!-- <mat-icon>face_retouching_natural</mat-icon> -->
-        <mat-icon>tag_faces</mat-icon>
-      </button>
-      @if(!threadMessage){
-      <button mat-icon-button>
-        <mat-icon>insert_comment</mat-icon>
-      </button>
-      }
-    </mat-card-content>
-  </mat-card>
-</div>
+    <mat-card *ngIf="showReactionEmojis" class="emoji-card bg-frame-v1">
+      <mat-card-content class="emoji-content">
+        <button mat-icon-button *ngIf="!threadMessage">
+          <mat-icon class="check_circle">check_circle</mat-icon>
+        </button>
+        <button mat-icon-button *ngIf="!threadMessage">
+          <mat-icon>🙌</mat-icon>
+        </button>
+        <button mat-icon-button>
+          <!-- <mat-icon>face_retouching_natural</mat-icon> -->
+          <mat-icon>tag_faces</mat-icon>
+        </button>
+        <button mat-icon-button *ngIf="!threadMessage">
+          <mat-icon>insert_comment</mat-icon>
+        </button>
+        <button mat-icon-button *ngIf="ownMessage">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+      </mat-card-content>
+    </mat-card>
+  </div>
 
-  <div
-    class="user-message-container"
-    [ngClass]="{ myMessageStyle: ownMessage }"
-  >
+  <div class="user-message-container" [ngClass]="{ myMessageStyle: ownMessage }">
     <div>
       <img class="user-message-img" src="img-placeholder/noah.svg" alt="" />
     </div>
-    <div
-      class="user-message-box"
-      [ngClass]="{ myMessageStyle: ownMessage }"
-    >
+    <div class="user-message-box" [ngClass]="{ myMessageStyle: ownMessage }">
       <div
         class="user-message-row-top"
         [ngClass]="{ myMessageStyle: ownMessage }"
@@ -57,8 +48,8 @@
         <p class="comments-number">2 Antworten</p>
         <p class="last-comment-time">Letzte Antwort 14:56</p>
       </div>
-      @if (showReactionIcons) {
-      <div class="reaction-icons-row-bottom">
+
+      <div class="reaction-icons-row-bottom" *ngIf="showReactionIcons">
         <div class="reaction-btn-div bg-frame-v1">
           <button class="reaction-btn-style">
             <mat-icon>🚀</mat-icon>
@@ -72,13 +63,13 @@
           <p>1</p>
         </div>
         <div>
-          <button class="add-reaction-btn" mat-icon-button>
+          <button mat-icon-button>
             <!-- <mat-icon>face_retouching_natural</mat-icon> -->
-            <mat-icon class="add-icon">tag_faces</mat-icon>
+            <mat-icon>tag_faces</mat-icon>
           </button>
         </div>
       </div>
-      }
+
     </div>
   </div>
 </section>
