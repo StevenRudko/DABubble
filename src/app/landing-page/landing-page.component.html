@@ -3,20 +3,15 @@
         <app-logo-component></app-logo-component>
         <div class="create-container">
             <p>Neu bei DABubble?</p>
-            <p class="button">Konto erstellen</p>
+            <p class="button-link" [routerLink]="['/reg']" >Konto erstellen</p>
         </div>
     </div>
     <mat-card class="bg-frame-v1 user-auth-section">
-        <!-- <router-outlet></router-outlet> -->
-        <app-user-login></app-user-login>
-        <!-- <app-create-account></app-create-account> -->
-        <!-- <app-avatar-picker></app-avatar-picker> -->
-        <!-- <app-imprint></app-imprint> -->
-        <!-- <app-privacy-policy></app-privacy-policy> -->
+        <router-outlet></router-outlet>
       </mat-card>
     <div class="footer">
-        <p class="button">Impressum</p>
-        <p class="button">Datenschutz</p>
+        <p class="button-link">Impressum</p>
+        <p class="button-link">Datenschutz</p>
     </div>
 </div>
 
