@@ -11,31 +11,14 @@ interface EmojiConfig {
   providedIn: 'root',
 })
 export class InputOutput {
-  // Bestehender Code
-  private threadMessageSubject = new BehaviorSubject<boolean>(false);
-  threadMessage$ = this.threadMessageSubject.asObservable();
+  threadMessage$: boolean = false;
 
-  constructor() {
-  }
+  // BehaviorSubjects verwenden, um die Daten zu verwalten und zu abonnieren
+  // private threadMessageSubject = new BehaviorSubject<boolean>(false);
 
-  setThreadMessageStyle(active: boolean): void {
-    this.threadMessageSubject.next(active);
-    console.log(this.threadMessage$);
-  }
+  // Observable für den Zugriff auf den aktuellen Status
+  // threadMessage$ = this.threadMessageSubject.asObservable();
 
-  // Neue Methode für Emojis
-  getEmojis(isThread: boolean): EmojiConfig[] {
-    if (isThread) {
-      return [{ icon: 'tag_faces', type: 'material' }];
-    } else {
-      return [
-        { icon: 'check_circle', type: 'material' },
-        { icon: '🙌', type: 'emoji' },
-        { icon: 'tag_faces', type: 'material' },
-        { icon: 'insert_comment', type: 'material' },
-      ];
-    }
-  }
+  constructor() {}
+
 }
-
-

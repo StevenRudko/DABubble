@@ -1,12 +1,4 @@
-import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
-  OnInit,
-  inject,
-} from '@angular/core';
-import { MessageEmojisComponent } from '../message-emojis/message-emojis.component';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
 import { MATERIAL_MODULES } from '../material-imports';
 import { InputOutput } from '../../service/input-output.service';
@@ -14,16 +6,17 @@ import { InputOutput } from '../../service/input-output.service';
 @Component({
   selector: 'app-user-message',
   standalone: true,
-  imports: [MessageEmojisComponent, CommonModule, MATERIAL_MODULES, NgIf],
+  imports: [CommonModule, MATERIAL_MODULES, NgIf],
   templateUrl: './user-message.component.html',
   styleUrl: './user-message.component.scss',
 })
-export class UserMessageComponent implements OnInit {
-  @Input() showBottomRow: boolean = true;
-  @Input() changeMessageStyle: boolean = false;
+export class UserMessageComponent {
+  @Input() threadMessage: boolean = false;
+  @Input() ownMessage: boolean = false;
+  @Input() showReactionEmojis: boolean = false;
+  @Input() showAnswerDetails: boolean = true;
   @Input() showReactionIcons: boolean = true;
-  @Input() messageEmojisOpenStatus: boolean = true;
-  @Input() isThread: boolean = false;
+
   messageTime: number = 0;
   currentTimeStamp: number = 0;
   isHoveredActive: boolean = false;
@@ -38,10 +31,12 @@ export class UserMessageComponent implements OnInit {
 
   onMouseEnter() {
     this.isHoveredActive = true;
+    this.showReactionEmojis = true;
   }
 
   onMouseLeave() {
     this.isHoveredActive = false;
+    this.showReactionEmojis = false;
   }
 
   exampleDate() {
