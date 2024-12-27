@@ -1,0 +1,143 @@
+.profile-modal {
+  background: white;
+  border-radius: 30px;
+  width: 340px;
+  height: 500px;
+  padding: 24px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  h2 {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .close-icon {
+    cursor: pointer;
+    &:hover {
+      color: #535af1;
+      background-color: #eceefe;
+      border-radius: 50%;
+      box-shadow: 0 0 0 5px #eceefe;
+    }
+  }
+}
+
+.profile-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  gap: 3rem;
+}
+
+.avatar-container {
+  width: 120px;
+  height: 120px;
+  border-radius: 20px;
+  overflow: hidden;
+
+  .profile-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.user-info {
+  width: 100%;
+
+  .user-name {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+  }
+
+  .status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+
+      &.active {
+        background-color: #22c55e;
+      }
+
+      &.away {
+        background-color: #fbbf24;
+      }
+
+      &.offline {
+        background-color: #9ca3af;
+      }
+    }
+
+    span {
+      color: #6b7280;
+      font-size: 16px;
+      color: #22c55e;
+    }
+  }
+}
+
+.contact-info {
+  width: 100%;
+
+  .info-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+
+    .info-icon {
+      color: #6b7280;
+    }
+  }
+}
+
+.email {
+  color: #535af1;
+  text-decoration: none;
+  font-size: 16px;
+  margin-left: 2.25rem;
+  cursor: pointer;
+}
+
+.mail-header {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.message-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  // width: 100%;
+  padding: 12px 24px;
+  background-color: #535af1;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+
+  &:hover {
+    background-color: #4044c9;
+  }
+
+  mat-icon {
+    font-size: 20px;
+  }
+}
