@@ -1,26 +1,40 @@
-import { Component, Input, Output, EventEmitter  } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  inject,
+} from '@angular/core';
 import { MessageEmojisComponent } from '../message-emojis/message-emojis.component';
 import { CommonModule, NgIf } from '@angular/common';
 import { MATERIAL_MODULES } from '../material-imports';
+import { InputOutput } from '../../service/input-output.service';
 
 @Component({
   selector: 'app-user-message',
   standalone: true,
-  imports: [MessageEmojisComponent, CommonModule, MATERIAL_MODULES, NgIf ],
+  imports: [MessageEmojisComponent, CommonModule, MATERIAL_MODULES, NgIf],
   templateUrl: './user-message.component.html',
   styleUrl: './user-message.component.scss',
 })
-export class UserMessageComponent {
+export class UserMessageComponent implements OnInit {
   @Input() showBottomRow: boolean = true;
   @Input() changeMessageStyle: boolean = false;
   @Input() showReactionIcons: boolean = true;
   @Input() messageEmojisOpenStatus: boolean = true;
+  @Input() isThread: boolean = false;
   messageTime: number = 0;
   currentTimeStamp: number = 0;
   isHoveredActive: boolean = false;
+  isThreadContext: boolean = false;
   @Output() openThreadEvent = new EventEmitter<void>();
 
-  constructor() {}
+  private inputOutputService = inject(InputOutput);
+
+  ngOnInit() {
+    this.isThreadContext = this.isThread;
+  }
 
   onMouseEnter() {
     this.isHoveredActive = true;

@@ -1,4 +1,12 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
+// message-emojis.component.ts
+import {
+  Component,
+  Input,
+  OnInit,
+  OnChanges,
+  SimpleChanges,
+  inject,
+} from '@angular/core';
 import { MATERIAL_MODULES } from '../material-imports';
 import { InputOutput } from '../../service/input-output.service';
 
@@ -9,17 +17,24 @@ import { InputOutput } from '../../service/input-output.service';
   templateUrl: './message-emojis.component.html',
   styleUrls: ['./message-emojis.component.scss'],
 })
-export class MessageEmojisComponent implements OnInit{
-  threadMessage: boolean = true;
+export class MessageEmojisComponent implements OnInit, OnChanges {
+  @Input() isThread: boolean = false;
+  emojis: any[] = [];
   private inputOutputService = inject(InputOutput);
 
-  constructor() {}
-
   ngOnInit() {
-    // Abonniere den Service, um auf Änderungen von threadMessage zu reagieren
-    this.inputOutputService.threadMessage$.subscribe((status) => {
-      this.threadMessage = status;
-      console.log( this.threadMessage = status);
-    });
+    this.updateEmojis();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['isThread']) {
+      this.updateEmojis();
+    }
+  }
+
+  private updateEmojis() {
+    this.emojis = this.inputOutputService.getEmojis(this.isThread);
+    console.log('Thread context:', this.isThread);
+    console.log('Emojis:', this.emojis);
   }
 }
