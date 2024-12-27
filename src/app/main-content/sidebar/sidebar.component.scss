@@ -2,7 +2,7 @@
 
 .sidebar {
   @include styles.margin($ml: 12px, $mr: 12px, $mt: 12px, $mb: 0);
-  @include styles.padding($pl: 1rem, $pr: 1rem, $pt: 1rem, $pb: 0);
+  @include styles.padding($pl: 4px, $pr: 4px, $pt: 6px, $pb: 0);
   @include styles.dFlex(
     $d: flex,
     $fd: column,
@@ -22,7 +22,7 @@
     $g: 0
   );
   width: 100%;
-  @include styles.padding($pl: 0.5rem, $pr: 0.5rem, $pt: 0.5rem, $pb: 0.5rem);
+  @include styles.padding($pl: 0.5rem, $pr: 24px, $pt: 0.5rem, $pb: 0.5rem);
 
   .edit-square {
     width: 40px;
