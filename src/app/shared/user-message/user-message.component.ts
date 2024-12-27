@@ -23,12 +23,6 @@ export class UserMessageComponent {
   isThreadContext: boolean = false;
   @Output() openThreadEvent = new EventEmitter<void>();
 
-  private inputOutputService = inject(InputOutput);
-
-  ngOnInit() {
-    this.isThreadContext = this.isThread;
-  }
-
   onMouseEnter() {
     this.isHoveredActive = true;
     this.showReactionEmojis = true;
