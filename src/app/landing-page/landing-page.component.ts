@@ -6,16 +6,19 @@ import { CreateAccountComponent } from "./create-account/create-account.componen
 import { AvatarPickerComponent } from './avatar-picker/avatar-picker.component';
 import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.component';
 import { ImprintComponent } from './imprint/imprint.component';
+import { RouterLink, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-landing-page',
-  imports: [LogoComponentComponent,
+  imports: [RouterOutlet,
+    LogoComponentComponent,
     MATERIAL_MODULES,
     UserLoginComponent,
     CreateAccountComponent,
     AvatarPickerComponent,
     PrivacyPolicyComponent,
-    ImprintComponent],
+    ImprintComponent,
+    RouterLink],
   templateUrl: './landing-page.component.html',
   styleUrl: './landing-page.component.scss'
 })

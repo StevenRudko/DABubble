@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { HeaderComponent } from '../header/header.component';
 
 @Component({
   selector: 'app-main-content',
@@ -18,6 +19,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatSidenavModule,
     MatCardModule,
     MatIconModule,
+    HeaderComponent
   ],
   templateUrl: './main-content.component.html',
   styleUrl: './main-content.component.scss',
