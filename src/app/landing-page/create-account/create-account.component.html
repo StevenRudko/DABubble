@@ -1,0 +1,55 @@
+<div class="login-cointainer">
+    <h1>Konto erstellen</h1>
+    <span class="login-description">Mit deinem Namen und deiner E-Mail-Adresse hast du dein neues DABubble-Konto.</span>
+    <form class="login-form">
+        <div class="auth-input-container">
+            <mat-icon matSuffix>person_outline</mat-icon>
+            <input type="name" [disabled]="loading" placeholder="Name und Nachname">
+        </div>
+
+        <!-- @if (true) {
+      <mat-error>*Diese E-Mail-Adresse ist leider ungültig.</mat-error>
+      }
+      @if (true) {
+      <mat-error>*Diese E-Mail-Adresse ist leider ungültig.</mat-error>
+      } -->
+
+        <div class="auth-input-container">
+            <mat-icon matSuffix>mail_outline</mat-icon>
+            <input type="email" [disabled]="loading" placeholder="beispielname@email.com">
+        </div>
+
+        <!-- @if (true) {
+      <mat-error>*Diese E-Mail-Adresse ist leider ungültig.</mat-error>
+      }
+      @if (true) {
+      <mat-error>*Diese E-Mail-Adresse ist leider ungültig.</mat-error>
+      } -->
+
+        <div class="auth-input-container">
+            <mat-icon matSuffix>lock_outline</mat-icon>
+            <input type="password" [disabled]="loading" placeholder="Passwort">
+        </div>
+
+        <!-- @if (true) {
+      <mat-error>*Diese E-Mail-Adresse ist leider ungültig.</mat-error>
+      }
+      @if (true) {
+      <mat-error>*Diese E-Mail-Adresse ist leider ungültig.</mat-error>
+      } -->
+
+
+        <div class="privacy-policy-container">
+            <label class="container" [ngClass]="{'hovered': isHovered}">
+                <input type="checkbox">
+                <span class="checkmark"></span>
+            </label>
+            <p class="privacy-policy-text">Ich stimme der
+                <span (mouseenter)="isHovered = true" (mouseleave)="isHovered = false">Datenschutzerklärung</span>
+                zu
+            </p>
+        </div>
+        <button class="btn-full button-base position-bottom-right" disabled>Weiter</button>
+    </form>
+    <mat-icon class="arrow-back">arrow_back</mat-icon>
+</div>

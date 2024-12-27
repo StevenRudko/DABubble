@@ -1,0 +1,18 @@
+<div class="landing-continer">
+    <div class="header">
+        <app-logo-component></app-logo-component>
+        <div class="create-container">
+            <p>Neu bei DABubble?</p>
+            <p class="button-link" [routerLink]="['/reg']" >Konto erstellen</p>
+        </div>
+    </div>
+    <mat-card class="bg-frame-v1 user-auth-section">
+        <router-outlet></router-outlet>
+      </mat-card>
+    <div class="footer">
+        <p class="button-link">Impressum</p>
+        <p class="button-link">Datenschutz</p>
+    </div>
+</div>
+
+

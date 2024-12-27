@@ -1,0 +1,29 @@
+<div class="overlay-content">
+  <div class="overlay-header">
+    <h2>Mitglieder</h2>
+    <mat-icon class="close-icon" (click)="close()">close</mat-icon>
+  </div>
+
+  <div class="user-list">
+    <div class="user-item" (click)="openProfileDialog('Frederik Beck')">
+      <img src="img-placeholder/frederik.svg" class="user-avatar">
+      <span>Frederik Beck (Du)</span>
+      <div class="status-dot"></div>
+    </div>
+    <div class="user-item" (click)="openProfileDialog('Sofia Müller')">
+      <img src="img-placeholder/sofia.svg" class="user-avatar">
+      <span>Sofia Müller</span>
+      <div class="status-dot"></div>
+    </div>
+    <div class="user-item" (click)="openProfileDialog('Noah Braun')">
+      <img src="img-placeholder/noah.svg" class="user-avatar">
+      <span>Noah Braun</span>
+      <div class="status-dot"></div>
+    </div>
+
+    <button class="add-member-btn">
+      <mat-icon>person_add_alt</mat-icon>
+      <span>Mitglieder hinzufügen</span>
+    </button>
+  </div>
+</div>
