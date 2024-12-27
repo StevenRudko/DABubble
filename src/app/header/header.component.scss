@@ -6,6 +6,7 @@ section {
     @include styles.padding($pl: 2rem, $pr: 2rem, $pt: 1rem, $pb: 0);
     @include styles.dFlex($d: flex, $fd: row, $jc: space-between, $ai: center, $g: 0);
     height:100px;
+    box-sizing: border-box;
 }
 
 mat-card {

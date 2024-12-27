@@ -5,6 +5,7 @@
 section {
     @include styles.dFlex($d: flex, $fd: column, $jc: flex-start, $ai: flex-start, $g: 24px);
     height:100%;
+    box-sizing: border-box;
 }
 
 app-message-input-box {
