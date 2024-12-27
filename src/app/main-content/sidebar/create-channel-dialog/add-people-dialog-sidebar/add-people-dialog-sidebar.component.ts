@@ -9,24 +9,23 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogRef } from '@angular/material/dialog';
-import { MatDialog } from '@angular/material/dialog';
-import { AddPeopleDialogSidebarComponent } from './add-people-dialog-sidebar/add-people-dialog-sidebar.component';
 
 @Component({
-  selector: 'app-create-create-channel-dialog',
+  selector: 'app-add-people-dialog-sidebar',
   standalone: true,
   imports: [CommonModule, FormsModule, MatIconModule],
-  templateUrl: './create-channel-dialog.component.html',
-  styleUrl: './create-channel-dialog.component.scss',
+  templateUrl: './add-people-dialog-sidebar.component.html',
+  styleUrl: './add-people-dialog-sidebar.component.scss',
 })
-export class ChannelDialogComponent {
+export class AddPeopleDialogSidebarComponent {
   constructor(
-    @Optional() public dialogRef: MatDialogRef<ChannelDialogComponent>,
-    private dialog: MatDialog
+    @Optional() public dialogRef: MatDialogRef<AddPeopleDialogSidebarComponent>
   ) {}
 
   @Input() isOpen = false;
   @Output() closeDialog = new EventEmitter<void>();
+
+  selectedOption: 'all' | 'specific' = 'all';
 
   onClose(): void {
     if (this.dialogRef) {
@@ -37,16 +36,6 @@ export class ChannelDialogComponent {
   onBackdropClick(event: MouseEvent) {
     if (event.target === event.currentTarget) {
       this.onClose();
-    }
-  }
-
-  openAddPeopleDialog(): void {
-    if (this.dialogRef) {
-      this.dialogRef.afterClosed().subscribe(() => {
-        this.dialog.open(AddPeopleDialogSidebarComponent);
-      });
-
-      this.dialogRef.close();
     }
   }
 }
