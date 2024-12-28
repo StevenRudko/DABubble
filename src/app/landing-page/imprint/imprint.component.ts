@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { MATERIAL_MODULES } from '../../shared/material-imports';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-imprint',
-  imports: [MATERIAL_MODULES],
+  imports: [MATERIAL_MODULES, RouterLink],
   templateUrl: './imprint.component.html',
   styleUrl: './imprint.component.scss'
 })

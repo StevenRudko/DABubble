@@ -1,10 +1,11 @@
 <div class="login-cointainer">
   <h1>Anmeldung</h1>
-  <span class="login-description">Wir empfehlen dir, die E-Mail-Adresse zu nutzen, die du bei der Arbeit verwendest.</span>
-  <form class="login-form">
+  <span class="login-description">Wir empfehlen dir, die E-Mail-Adresse zu nutzen, die du bei der Arbeit
+    verwendest.</span>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="login-form">
     <div class="auth-input-container">
       <mat-icon matSuffix>mail_outline</mat-icon>
-      <input type="email" [disabled]="loading" placeholder="beispielname@email.com">
+      <input type="email" [disabled]="loading" placeholder="beispielname@email.com" formControlName="email">
     </div>
 
     <!-- @if (true) {
@@ -16,7 +17,7 @@
 
     <div class="auth-input-container">
       <mat-icon matSuffix>lock_outline</mat-icon>
-      <input type="password" [disabled]="loading" placeholder="Passwort">
+      <input type="password" [disabled]="loading" placeholder="Passwort" formControlName="password">
     </div>
 
     <!-- @if (true) {
@@ -26,25 +27,25 @@
     <mat-error>*Diese E-Mail-Adresse ist leider ungültig.</mat-error>
     } -->
 
-  </form>
-  <div class="forgot-password-container">
-    <p>Passwort vergessen?</p>
-  </div>
-  <div class="separator">
-    <div class="separator-line"></div>
-    <div class="seperator-text">ODER</div>
-    <div class="separator-line"></div>
-  </div>
-  <div class="google-login-container">
-    <div class="google-button">
-      <img class="google-img" src="img/Google.png">
-      <p>Anmelden mit Google</p>
+    <!-- </form> -->
+    <div class="forgot-password-container">
+      <p>Passwort vergessen?</p>
     </div>
-  </div>
+    <div class="separator">
+      <div class="separator-line"></div>
+      <div class="seperator-text">ODER</div>
+      <div class="separator-line"></div>
+    </div>
+    <div class="google-login-container">
+      <div class="google-button">
+        <img class="google-img" src="img/Google.png">
+        <p>Anmelden mit Google</p>
+      </div>
+    </div>
 
-  <div class="login-button-container">
-    <button class="btn-full button-base">Anmelden</button>
-    <button class="btn-guest button-base">Gäste-Login</button>
-  </div>
-
+    <div class="login-button-container">
+      <button type="submit" class="btn-full button-base">Anmelden</button>
+      <button type="submit" class="btn-guest button-base">Gäste-Login</button>
+    </div>
+  </form>
 </div>

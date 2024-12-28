@@ -1,9 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MATERIAL_MODULES } from '../../shared/material-imports';
-import {ErrorStateMatcher, ShowOnDirtyErrorStateMatcher} from '@angular/material/core';
-import { FormControl, FormGroupDirective, FormsModule, NgForm, Validators, ReactiveFormsModule,} from '@angular/forms';
-import { UserAuth } from '../../models/user-auth';
-import { GoogleAuthProvider } from "firebase/auth";
+import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/material/core';
+import { FormsModule, Validators, ReactiveFormsModule, FormBuilder, } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { AuthService } from '../../service/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-login',
@@ -14,7 +15,21 @@ import { GoogleAuthProvider } from "firebase/auth";
 })
 export class UserLoginComponent {
 
-  userAuth: UserAuth = new UserAuth();
   loading: boolean = false;
+
+  fb = inject(FormBuilder);
+  http = inject(HttpClient);
+  authService = inject(AuthService);
+  router = inject(Router);
+
+  form = this.fb.nonNullable.group({
+    username: ['', Validators.required],
+    email: ['', Validators.required],
+    password: ['', Validators.required],
+  });
+
+  onSubmit(): void {
+    
+  }
 
 }
