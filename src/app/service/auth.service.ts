@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { Auth, user } from '@angular/fire/auth';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { from, Observable } from 'rxjs';
 import { UserInterface } from '../models/user-interface';
 
@@ -27,6 +27,17 @@ export class AuthService {
       email,
       password,
     ).then(() => {});
+    return from(promise);
+  }
+
+  googleLogin() {
+    const provider = new GoogleAuthProvider();
+    const promise = signInWithPopup(this.firebaseAuth, provider);
+    return from(promise);
+  }
+
+  logout(): Observable<void> {
+    const promise = signOut(this.firebaseAuth);
     return from(promise);
   }
 }

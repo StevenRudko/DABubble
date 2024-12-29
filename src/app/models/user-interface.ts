@@ -1,5 +1,6 @@
 export interface UserInterface {
     email: string;
     username:string;
+    localID:string;
+    photoUrl:string | null;
 }
-// alle infos hinzufügen die wir noch brauchen 

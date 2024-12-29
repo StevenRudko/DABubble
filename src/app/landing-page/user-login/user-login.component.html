@@ -31,7 +31,7 @@
       <div class="separator-line"></div>
     </div>
     <div class="google-login-container">
-      <div class="google-button">
+      <div class="google-button" (click)="onGoogleSignIn()">
         <img class="google-img" src="img/Google.png">
         <p>Anmelden mit Google</p>
       </div>
@@ -39,7 +39,7 @@
 
     <div class="login-button-container">
       <button type="submit" class="btn-full button-base">Anmelden</button>
-      <button type="submit" class="btn-guest button-base">Gäste-Login</button>
+      <button (click)="guestLogin()" class="btn-guest button-base">Gäste-Login</button>
     </div>
   </form>
 </div>
