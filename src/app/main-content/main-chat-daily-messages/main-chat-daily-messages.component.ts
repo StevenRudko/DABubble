@@ -4,8 +4,6 @@ import { UserMessageComponent } from '../../shared/user-message/user-message.com
 import { InputOutput } from '../../service/input-output.service';
 import { UserMessage } from '../../models/user-message';
 import { Observable } from 'rxjs';
-import { setIndexConfiguration } from '@angular/fire/firestore';
-
 @Component({
   selector: 'app-main-chat-daily-messages',
   standalone: true,
@@ -41,19 +39,30 @@ export class MainChatDailyMessagesComponent {
   messageTimeStamp: number = 0;
   currentTimeStamp: number = 0;
   userMessageDate: any = undefined;
-  userMessages$: Observable<UserMessage[]>;
+  userMessages$: Observable<UserMessage[]>; // Observable, das in der Template mit async benutzt wird
+  userMessages: UserMessage[] = [];
 
   constructor(private inputOutputService: InputOutput) {
-    this.userMessages$ = this.inputOutputService.userMessages$;
-    this.inputOutputService.getUserMessages();
+    this.inputOutputService.getUserMessages(); // Wir holen die Nachrichten beim Initialisieren der Komponente
+    this.userMessages$ = this.inputOutputService.userMessages$; // Setzen des Observables für die Nachrichten
   }
 
-  openThread() {
-    this.openThreadEvent.emit();
+  async ngOnInit(): Promise<void> {
+    await this.loadUserMessages();
+    this.next();
   }
 
-  ngOnInit(): void {
-    this.getTime();
+  async loadUserMessages() {
+    // Abonnieren des Observables und Loggen der geladenen Nachrichten
+    this.userMessages$.subscribe((messages) => {
+      this.userMessages = messages;
+      console.log('Alle Nachrichten: ', this.userMessages);
+      // console.log('Alle Nachrichten: ', this.userMessages); // Konsolen-Log, sobald Nachrichten geladen sind
+    });
+  }
+
+  next() {
+    // Logik nach dem Laden der Nachrichten
     let messageTime = this.getFormattedDate(this.messageTimeStamp);
     this.getTimeStampToday();
     let currentTime = this.getFormattedDate(this.currentTimeStamp);
@@ -61,22 +70,36 @@ export class MainChatDailyMessagesComponent {
     this.userMessageDate = this.formatedResult(resultDate);
   }
 
-  getTime() {
-    const messageDate = new Date('2025-01-14T00:00:00');
-    this.messageTimeStamp = messageDate.getTime();
-    // console.log('TimeStampExample ', this.messageTimeStamp);
+  openThread() {
+    this.openThreadEvent.emit();
   }
 
-// Eine bestimmte userMessage finden
-// bestimmteUserMessageFinden() {
-//   this.userMessages$.subscribe((messages) => {
-//     if (messages.length > 0) {
-//       console.log('Erste Nachricht: ', messages[0]);
-//     } else {
-//       console.log('Keine Nachrichten vorhanden.');
-//     }
-//   });
-// }
+  // getTime(): void {
+  //   console.log('userMessages:', this.userMessages); // Überprüfen, ob die Daten nun vorhanden sind
+
+  //   if (this.userMessages) {
+  //     this.userMessages.forEach((message: UserMessage) => {
+  //       const timestamp = message.time;
+  //       const messageId = message.userMessageId;
+
+  //       console.log('Timestamp:', timestamp);
+  //       console.log('messageId:', messageId);
+  //     });
+  //   } else {
+  //     console.log('No userMessages found.');
+  //   }
+  // }
+
+  // Eine bestimmte userMessage finden
+  // bestimmteUserMessageFinden() {
+  //   this.userMessages$.subscribe((messages) => {
+  //     if (messages.length > 0) {
+  //       console.log('Erste Nachricht: ', messages[0]);
+  //     } else {
+  //       console.log('Keine Nachrichten vorhanden.');
+  //     }
+  //   });
+  // }
 
   // // Nachrichten filtern nach ChannelId
   // userMessagesFilternNachChannel() {
