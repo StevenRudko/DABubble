@@ -24,7 +24,7 @@ export class CreateAccountComponent {
   router = inject(Router);
   validatorService = inject(ValidatorService)
 
-  errorMessage: string | null = null;
+  // errorMessage: string | null = null;
 
   form = this.fb.nonNullable.group({
     username: ['', [Validators.required, Validators.pattern(/^[A-Za-zÄÖÜäöüß]{2,}\s[A-Za-zÄÖÜäöüß]{2,}$/)]],
@@ -40,9 +40,9 @@ export class CreateAccountComponent {
       next: () => {
       this.router.navigateByUrl('/login')
     },
-    error: (err) => {
-      this.errorMessage = err.code;
-    }
+    // error: (err) => {
+    //   this.errorMessage = err.code;
+    // }
   })
   }
 }

@@ -8,24 +8,18 @@
       <input type="email" [disabled]="loading" placeholder="beispielname@email.com" formControlName="email">
     </div>
 
-    <!-- @if (true) {
-    <mat-error>*Diese E-Mail-Adresse ist leider ungültig.</mat-error>
-    }
-    @if (true) {
-    <mat-error>*Diese E-Mail-Adresse ist leider ungültig.</mat-error>
-    } -->
+    <!-- @if (form.get('password')?.touched && form.get('password')?.errors) {
+      <div class="error-message">*Diese E-Mail-Adresse ist leider ungültig.</div>
+      } -->
 
     <div class="auth-input-container">
       <mat-icon matSuffix>lock_outline</mat-icon>
       <input type="password" [disabled]="loading" placeholder="Passwort" formControlName="password">
     </div>
 
-    <!-- @if (true) {
-    <mat-error>*Diese E-Mail-Adresse ist leider ungültig.</mat-error>
-    }
-    @if (true) {
-    <mat-error>*Diese E-Mail-Adresse ist leider ungültig.</mat-error>
-    } -->
+    <!-- @if (form.get('password')?.touched && form.get('password')?.errors) {
+      <div class="error-message">Falsches Passwort oder E-Mail.. Bitte noch einmal versuchen.</div>
+      } -->
 
     <!-- </form> -->
     <div class="forgot-password-container">

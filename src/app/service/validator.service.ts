@@ -25,5 +25,5 @@ export class ValidatorService {
       }
       return this.errorMessages.length > 0 ? { passwordErrors: this.errorMessages } : null;
     };
-  }  
+  }
 }
