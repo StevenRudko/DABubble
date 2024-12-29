@@ -3,8 +3,8 @@ import { MATERIAL_MODULES } from '../../shared/material-imports';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators, NgForm, FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
-import { AuthService } from '../../service/auth.service';
+// import { HttpClient } from '@angular/common/http';
+// import { AuthService } from '../../service/auth.service';
 import { ValidatorService } from '../../service/validator.service';
 
 @Component({
@@ -19,8 +19,8 @@ export class CreateAccountComponent {
   privatPolicy: boolean = false;
 
   fb= inject(FormBuilder);
-  http = inject(HttpClient);
-  authService = inject(AuthService);
+  // http = inject(HttpClient);
+  // authService = inject(AuthService);
   router = inject(Router);
   validatorService = inject(ValidatorService)
 
@@ -33,16 +33,19 @@ export class CreateAccountComponent {
     agreeToTerms: [false, Validators.requiredTrue],
   });
 
-  onSubmit(): void {
-    const rawForm = this.form.getRawValue();
-    this.authService.register(rawForm.email, rawForm.username, rawForm.password)
-    .subscribe({
-      next: () => {
-      this.router.navigateByUrl('/login')
-    },
-    // error: (err) => {
-    //   this.errorMessage = err.code;
-    // }
-  })
+  onSubmit() {
+    if (this.form.valid) {
+      this.router.navigateByUrl('/avat', { state: { formData: this.form.value } });
+    }
   }
+
+  // onSubmit(): void {
+  //   const rawForm = this.form.getRawValue();
+  //   this.authService.register(rawForm.email, rawForm.username, rawForm.password)
+  //   .subscribe({
+  //     next: () => {
+  //     this.router.navigateByUrl('/login')
+  //   }
+  // })
+  // }
 }

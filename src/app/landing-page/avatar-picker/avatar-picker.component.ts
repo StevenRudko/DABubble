@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MATERIAL_MODULES } from '../../shared/material-imports';
-// import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../service/auth.service';
 
 @Component({
   selector: 'app-avatar-picker',
@@ -10,31 +10,31 @@ import { RouterLink } from '@angular/router';
   styleUrl: './avatar-picker.component.scss'
 })
 export class AvatarPickerComponent {
+  authService = inject(AuthService);
+  router = inject(Router);
 
   avatarPath: string[] = ['img-placeholder/elias.svg', 'img-placeholder/elise.svg', 'img-placeholder/frederik.svg', 'img-placeholder/noah.svg', 'img-placeholder/sofia.svg', 'img-placeholder/steffen.svg',];
   selectedUserAvatar: string = 'img/person.png';
-  // auth: any = getAuth();
-  email: string = 'asdas@hotmail.com';
-  password: string = '123456abcd';
+  formData: any;
 
+  constructor() {
+    const navigation = this.router.getCurrentNavigation();
+    this.formData = navigation?.extras?.state?.['formData'] || null;    
+    if (!this.formData) {
+      this.router.navigateByUrl('/')
+    }
+  }
 
   selectedAvatar(path: string) {
     this.selectedUserAvatar = path;
   }
 
-  // createNewUser() {
-  //   createUserWithEmailAndPassword(this.auth, this.email, this.password);
-  // }
-
-  // createUserWithEmailAndPassword(auth: any, email: string, password: string)
-  //   .then((userCredential: any) => {
-  //     // Signed up 
-  //     const user = userCredential.user;
-  //     // ...
-  //   })
-  //   .catch((error: any) => {
-  //     const errorCode = error.code;
-  //     const errorMessage = error.message;
-  //     // ..
-  //   });
+  onSubmit(): void {
+    this.authService.register(this.formData.email, this.formData.username, this.formData.password, this.selectedUserAvatar)
+      .subscribe({
+        next: () => {
+          this.router.navigateByUrl('/login')
+        }
+      })
+  }
 }

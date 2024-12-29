@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { LogoComponentComponent } from '../shared/logo-component/logo-component.component';
 import { MATERIAL_MODULES } from '../shared/material-imports';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-landing-page',
@@ -13,5 +13,5 @@ import { RouterLink, RouterOutlet } from '@angular/router';
   styleUrl: './landing-page.component.scss'
 })
 export class LandingPageComponent {
-
+  router = inject(Router);
 }

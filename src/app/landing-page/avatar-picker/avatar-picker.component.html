@@ -14,6 +14,6 @@
             }
         </div>
     </div>
-    <button class="btn-full button-base position-bottom-right" disabled>Weiter</button>
+    <button (click)="onSubmit()" class="btn-full button-base position-bottom-right" [disabled]="selectedUserAvatar == 'img/person.png'">Weiter</button>
     <mat-icon class="arrow-back" [routerLink]="['/reg']">arrow_back</mat-icon>
 </div>

@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
 
 export class AppComponent implements OnInit {
   title = 'dabubble';
-
+  firstVisit: boolean = true;
   authService = inject(AuthService)
   router = inject(Router);
 

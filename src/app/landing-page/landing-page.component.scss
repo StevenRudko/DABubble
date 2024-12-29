@@ -55,4 +55,5 @@
 .footer {
     @include styles.dFlex($d: flex, $jc: center, $ai: center, $g: 16px);
     padding: 48px 0;
+    height: 42px;
 }
