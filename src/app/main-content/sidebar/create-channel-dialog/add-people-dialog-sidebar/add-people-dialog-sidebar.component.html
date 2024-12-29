@@ -1,0 +1,31 @@
+// add-people-dialog-sidebar.component.html
+<div class="dialog-backdrop" (click)="onBackdropClick($event)">
+  <div class="dialog-container" [class.expanded]="selectedOption === 'specific'">
+    <div class="dialog-header">
+      <h2>Leute hinzufügen</h2>
+      <mat-icon class="close" (click)="onClose()">close</mat-icon>
+    </div>
+
+    <div class="options-container">
+      <div class="option">
+        <input type="radio" id="allMembers" name="addOption" [(ngModel)]="selectedOption" value="all">
+        <label for="allMembers">
+          <div>Alle Mitglieder von <span class="office-team">OfficeTeam</span> hinzufügen</div>
+        </label>
+      </div>
+
+      <div class="option">
+        <input type="radio" id="specificMembers" name="addOption" [(ngModel)]="selectedOption" value="specific">
+        <label for="specificMembers">
+          <div>Bestimmte Leute hinzufügen</div>
+        </label>
+      </div>
+
+      <div class="input-wrapper" [class.show]="selectedOption === 'specific'">
+        <input type="text" class="name-input" placeholder="Name eingeben">
+      </div>
+    </div>
+
+    <button class="create-btn">Erstellen</button>
+  </div>
+</div>

@@ -2,10 +2,16 @@
 @use "./../../assets/styles/fonts.scss" as fonts;
 @use "./../../assets/styles/theme-colors.scss" as colors;
 
-section {
-  height: calc(100% - 100px);
-  position: relative;
+main {
+  background-color: #ECEEFE;
+  height:100vh;
   width: 100%;
+  box-sizing: border-box;
+  padding-bottom:12px;
+}
+
+section {
+  height:calc(100% - 100px);
   box-sizing: border-box;
 }
 
@@ -33,7 +39,7 @@ mat-drawer-container {
 }
 
 mat-drawer {
-  width: 20%;
+  width: 23%;
   border-radius: 8px;
   overflow: hidden;
   box-sizing: border-box;
@@ -70,13 +76,13 @@ mat-drawer {
 }
 
 app-main-chat {
-  height: 100%;
+  height:100%;
   flex: 1;
   box-sizing: border-box;
 }
 
 app-thread {
-  width: 30%;
+  width: 430px;
   height: 100%;
   box-sizing: border-box;
 }

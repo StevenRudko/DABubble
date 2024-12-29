@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MessageEmojisComponent } from './message-emojis.component';
+import { AddPeopleComponent } from './add-people.component';
 
-describe('MessageEmojisComponent', () => {
-  let component: MessageEmojisComponent;
-  let fixture: ComponentFixture<MessageEmojisComponent>;
+describe('AddPeopleComponent', () => {
+  let component: AddPeopleComponent;
+  let fixture: ComponentFixture<AddPeopleComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MessageEmojisComponent]
+      imports: [AddPeopleComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(MessageEmojisComponent);
+    fixture = TestBed.createComponent(AddPeopleComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

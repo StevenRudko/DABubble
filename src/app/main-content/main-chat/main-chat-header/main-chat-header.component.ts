@@ -2,6 +2,7 @@ import { Component, ViewChild, ElementRef } from '@angular/core';
 import { MATERIAL_MODULES } from '../../../shared/material-imports';
 import { MatDialog } from '@angular/material/dialog';
 import { MemberOverviewComponent } from './member-overview/member-overview.component';
+import { AddPeopleComponent } from './add-people/add-people.component';
 
 @Component({
   selector: 'app-main-chat-header',
@@ -13,6 +14,7 @@ import { MemberOverviewComponent } from './member-overview/member-overview.compo
 export class MainChatHeaderComponent {
   constructor(private dialog: MatDialog) {}
   @ViewChild('memberListBtn') memberListBtn!: ElementRef;
+  @ViewChild('addPeopleBtn') addPeopleBtn!: ElementRef;
 
   openMemberDialog() {
     const btnRect = this.memberListBtn.nativeElement.getBoundingClientRect();
@@ -20,6 +22,19 @@ export class MainChatHeaderComponent {
       position: {
         top: '160px',
         left: `${btnRect.right - 340}px`,
+      },
+      hasBackdrop: true,
+      backdropClass: 'dialog-backdrop',
+      panelClass: 'member-dialog',
+    });
+  }
+
+  openAddPeopleDialog() {
+    const btnRect = this.addPeopleBtn.nativeElement.getBoundingClientRect();
+    this.dialog.open(AddPeopleComponent, {
+      position: {
+        top: '160px',
+        left: `${btnRect.right - 420}px`,
       },
       hasBackdrop: true,
       backdropClass: 'dialog-backdrop',
