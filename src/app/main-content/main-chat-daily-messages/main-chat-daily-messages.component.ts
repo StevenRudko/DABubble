@@ -4,6 +4,7 @@ import { UserMessageComponent } from '../../shared/user-message/user-message.com
 import { InputOutput } from '../../service/input-output.service';
 import { UserMessage } from '../../models/user-message';
 import { Observable } from 'rxjs';
+import { setIndexConfiguration } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-main-chat-daily-messages',
@@ -43,11 +44,8 @@ export class MainChatDailyMessagesComponent {
   userMessages$: Observable<UserMessage[]>;
 
   constructor(private inputOutputService: InputOutput) {
-        // Observable direkt zuweisen
-        this.userMessages$ = this.inputOutputService.userMessages$;
-
-        // Nachrichten von Firebase abrufen
-        this.inputOutputService.getUserMessages();
+    this.userMessages$ = this.inputOutputService.userMessages$;
+    this.inputOutputService.getUserMessages();
   }
 
   openThread() {
@@ -55,9 +53,7 @@ export class MainChatDailyMessagesComponent {
   }
 
   ngOnInit(): void {
-    console.log('usermessages Data: ', this.userMessages$);
-
-    this.exampleDate();
+    this.getTime();
     let messageTime = this.getFormattedDate(this.messageTimeStamp);
     this.getTimeStampToday();
     let currentTime = this.getFormattedDate(this.currentTimeStamp);
@@ -65,12 +61,35 @@ export class MainChatDailyMessagesComponent {
     this.userMessageDate = this.formatedResult(resultDate);
   }
 
-  // Beispiel Datum -> entfernen wenn Datum aus Database kommt
-  exampleDate() {
+  getTime() {
     const messageDate = new Date('2025-01-14T00:00:00');
     this.messageTimeStamp = messageDate.getTime();
     // console.log('TimeStampExample ', this.messageTimeStamp);
   }
+
+// Eine bestimmte userMessage finden
+// bestimmteUserMessageFinden() {
+//   this.userMessages$.subscribe((messages) => {
+//     if (messages.length > 0) {
+//       console.log('Erste Nachricht: ', messages[0]);
+//     } else {
+//       console.log('Keine Nachrichten vorhanden.');
+//     }
+//   });
+// }
+
+  // // Nachrichten filtern nach ChannelId
+  // userMessagesFilternNachChannel() {
+  //   // Filtere die Nachrichten mit channelId == 1
+  //   this.filteredMessages$ = this.userMessages$.pipe(
+  //     map((messages) => messages.filter((message) => message.channelId === 1))
+  //   );
+
+  //   // Logge die gefilterten Nachrichten
+  //   this.filteredMessages$.subscribe((filteredMessages) => {
+  //     console.log('Gefilterte Nachrichten mit channelId 1: ', filteredMessages);
+  //   });
+  // }
 
   getTimeStampToday() {
     const today = new Date();
