@@ -1,6 +1,9 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { MATERIAL_MODULES } from '../../shared/material-imports';
 import { UserMessageComponent } from '../../shared/user-message/user-message.component';
+import { InputOutput } from '../../service/input-output.service';
+import { UserMessage } from '../../models/user-message';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-main-chat-daily-messages',
@@ -9,21 +12,51 @@ import { UserMessageComponent } from '../../shared/user-message/user-message.com
   templateUrl: './main-chat-daily-messages.component.html',
   styleUrl: './main-chat-daily-messages.component.scss',
 })
-export class MainChatDailyMessagesComponent{
+export class MainChatDailyMessagesComponent {
   @Output() openThreadEvent = new EventEmitter<void>();
-  months = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
-  days = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
+  months = [
+    'Januar',
+    'Februar',
+    'März',
+    'April',
+    'Mai',
+    'Juni',
+    'Juli',
+    'August',
+    'September',
+    'Oktober',
+    'November',
+    'Dezember',
+  ];
+  days = [
+    'Sonntag',
+    'Montag',
+    'Dienstag',
+    'Mittwoch',
+    'Donnerstag',
+    'Freitag',
+    'Samstag',
+  ];
   messageTimeStamp: number = 0;
   currentTimeStamp: number = 0;
   userMessageDate: any = undefined;
+  userMessages$: Observable<UserMessage[]>;
 
-  constructor() {}
+  constructor(private inputOutputService: InputOutput) {
+        // Observable direkt zuweisen
+        this.userMessages$ = this.inputOutputService.userMessages$;
+
+        // Nachrichten von Firebase abrufen
+        this.inputOutputService.getUserMessages();
+  }
 
   openThread() {
     this.openThreadEvent.emit();
   }
 
   ngOnInit(): void {
+    console.log('usermessages Data: ', this.userMessages$);
+
     this.exampleDate();
     let messageTime = this.getFormattedDate(this.messageTimeStamp);
     this.getTimeStampToday();
@@ -31,7 +64,6 @@ export class MainChatDailyMessagesComponent{
     let resultDate = this.compareBothDate(messageTime, currentTime);
     this.userMessageDate = this.formatedResult(resultDate);
   }
-
 
   // Beispiel Datum -> entfernen wenn Datum aus Database kommt
   exampleDate() {
@@ -48,7 +80,7 @@ export class MainChatDailyMessagesComponent{
 
   getFormattedDate(timestamp: number): string {
     const date = new Date(timestamp);
- 
+
     // Extrahiere Tag, Monat und Jahr
     const day = date.getDate(); // Tag des Monats
     const month = this.months[date.getMonth()]; // Monat (von 0 bis 11)
@@ -78,15 +110,15 @@ export class MainChatDailyMessagesComponent{
     if (resultDate === 'Heute') {
       return resultDate;
     }
-  
+
     // Umwandlung des resultDate in ein Date-Objekt
-    const dateParts = resultDate.split(' ');  // Teile das Datum in Tag, Monat und Jahr
-    const day = parseInt(dateParts[0], 10);  // Tag (z.B. 25)
-    const month = dateParts[1];  // Monat (z.B. Dezember)
-    const year = parseInt(dateParts[2], 10);  // Jahr (z.B. 2024)
-    const date = new Date(year,this.months.indexOf(month), day); // Jahr, Monat (Index), Tag     // Erstelle ein Date-Objekt aus den extrahierten Teilen
-    const weekday = this.days[date.getDay()];  // z.B. "Dienstag"     // Hole den Wochentag
-    const formattedMonth = this.months[date.getMonth()];  // z.B. "Januar"     // Hole den Monat als Index
-    return `${weekday}, ${day} ${formattedMonth}`;     // Gib das Datum im gewünschten Format zurück
+    const dateParts = resultDate.split(' '); // Teile das Datum in Tag, Monat und Jahr
+    const day = parseInt(dateParts[0], 10); // Tag (z.B. 25)
+    const month = dateParts[1]; // Monat (z.B. Dezember)
+    const year = parseInt(dateParts[2], 10); // Jahr (z.B. 2024)
+    const date = new Date(year, this.months.indexOf(month), day); // Jahr, Monat (Index), Tag     // Erstelle ein Date-Objekt aus den extrahierten Teilen
+    const weekday = this.days[date.getDay()]; // z.B. "Dienstag"     // Hole den Wochentag
+    const formattedMonth = this.months[date.getMonth()]; // z.B. "Januar"     // Hole den Monat als Index
+    return `${weekday}, ${day} ${formattedMonth}`; // Gib das Datum im gewünschten Format zurück
   }
 }
