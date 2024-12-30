@@ -4,6 +4,8 @@ import { UserMessageComponent } from '../../shared/user-message/user-message.com
 import { InputOutput } from '../../service/input-output.service';
 import { UserMessage } from '../../models/user-message';
 import { Observable } from 'rxjs';
+import { UserData } from '../../service/user-data.service';
+import { Firestore } from '@angular/fire/firestore';
 @Component({
   selector: 'app-main-chat-daily-messages',
   standalone: true,
@@ -39,29 +41,34 @@ export class MainChatDailyMessagesComponent {
   messageTimeStamp: number = 0;
   currentTimeStamp: number = 0;
   userMessageDate: any = undefined;
-  userMessages$: Observable<UserMessage[]>; // Observable, das in der Template mit async benutzt wird
-  userMessages: UserMessage[] = [];
+  // userMessages$: Observable<UserMessage[]>; // Observable, das in der Template mit async benutzt wird
+  // userMessages: UserMessage[] = [];
+  userMessage = new UserMessage();
+  userMessages: any[] = [];
 
-  constructor(private inputOutputService: InputOutput) {
-    this.inputOutputService.getUserMessages(); // Wir holen die Nachrichten beim Initialisieren der Komponente
-    this.userMessages$ = this.inputOutputService.userMessages$; // Setzen des Observables für die Nachrichten
+  constructor(private UserData : UserData) {
+    // private inputOutputService: InputOutput
+    this.UserData.getUserMessages(); // Wir holen die Nachrichten beim Initialisieren der Komponente
+    this.userMessages = this.UserData.userMessages; // Setzen des Observables für die Nachrichten
+    console.log('data: ', this.UserData.userMessages);
   }
 
   async ngOnInit(): Promise<void> {
-    await this.loadUserMessages();
+    // await this.loadUserMessages();
     this.next();
   }
 
-  async loadUserMessages() {
-    // Abonnieren des Observables und Loggen der geladenen Nachrichten
-    this.userMessages$.subscribe((messages) => {
-      this.userMessages = messages;
-      console.log('Alle Nachrichten: ', this.userMessages);
-      // console.log('Alle Nachrichten: ', this.userMessages); // Konsolen-Log, sobald Nachrichten geladen sind
-    });
-  }
+  // async loadUserMessages() {
+  //   // Abonnieren des Observables und Loggen der geladenen Nachrichten
+  //   this.userMessages$.subscribe((messages) => {
+  //     this.userMessages = messages;
+  //     console.log('Alle Nachrichten: ', this.userMessages);
+  //     // console.log('Alle Nachrichten: ', this.userMessages); // Konsolen-Log, sobald Nachrichten geladen sind
+  //   });
+  // }
 
   next() {
+
     // Logik nach dem Laden der Nachrichten
     let messageTime = this.getFormattedDate(this.messageTimeStamp);
     this.getTimeStampToday();
