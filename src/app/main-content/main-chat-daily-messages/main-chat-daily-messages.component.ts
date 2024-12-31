@@ -19,7 +19,6 @@ import { UserMessageInterface } from '../../models/user-message';
   templateUrl: './main-chat-daily-messages.component.html',
   styleUrl: './main-chat-daily-messages.component.scss',
 })
-
 export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   @Output() openThreadEvent = new EventEmitter<void>();
 
@@ -63,6 +62,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
 
   ngOnInit(): Promise<void> {
     this.next();
+    this.getTime();
     return Promise.resolve();
   }
 
@@ -75,22 +75,19 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     // this.userMessageDate = this.formatedResult(resultDate);
   }
 
-  openThread() {
-    this.openThreadEvent.emit();
+  getTime(): void {
+    console.log('Hier wird es auch angezeigt?: ', this.userMessages);
+    // if (this.userMessages) {
+    //   this.userMessages.forEach((message: UserMessageInterface) => {
+    //     const timestamp = message.time;
+    //     const messageId = message.userMessageId;
+    //     console.log('Timestamp:', timestamp);
+    //     console.log('messageId:', messageId);
+    //   });
+    // } else {
+    //   console.log('No userMessages found.');
+    // }
   }
-
-  // getTime(): void {
-  //   if (this.userMessages) {
-  //     this.userMessages.forEach((message: UserMessage) => {
-  //       const timestamp = message.time;
-  //       const messageId = message.userMessageId;
-  //       console.log('Timestamp:', timestamp);
-  //       console.log('messageId:', messageId);
-  //     });
-  //   } else {
-  //     console.log('No userMessages found.');
-  //   }
-  // }
 
   // bestimmteUserMessageFinden() {
   //   if (this.userMessages.length > 0) {
@@ -158,5 +155,9 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
+  }
+
+  openThread() {
+    this.openThreadEvent.emit();
   }
 }
