@@ -2,38 +2,39 @@ import { Injectable } from '@angular/core';
 import { Firestore } from '@angular/fire/firestore';
 import { collection, getDocs, onSnapshot } from 'firebase/firestore';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { UserMessage } from '../models/user-message';
+import { UserMessageInterface } from '../models/user-message';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserData {
-  private userMessagesSubject = new BehaviorSubject<any[]>([]);
+  private userMessagesSubject = new BehaviorSubject<UserMessageInterface[]>([]);
   userMessages$ = this.userMessagesSubject.asObservable();
 
   constructor(private firestore: Firestore) {
-    this.getUserMessages(); // Direkt im Constructor aufrufen statt in ngOnInit
+    this.getUserMessages();
   }
 
-  // Methode, um alle Benutzer aus Firestore zu laden
   async getUserMessages() {
     try {
       const userCollection = collection(this.firestore, 'userMessages');
-
-      // Echtzeit-Listener für Updates
+      
       onSnapshot(userCollection, (querySnapshot) => {
         const messages = querySnapshot.docs.map((doc) => {
-          return { userMessageId: doc.id, ...doc.data() };
+          return {
+            userMessageId: doc.id,
+            ...doc.data(),
+          } as UserMessageInterface;
         });
-
-        this.userMessagesSubject.next(messages); // Update den BehaviorSubject
-        console.log('Benutzerliste:', messages);
+        // Update den BehaviorSubject
+        this.userMessagesSubject.next(messages);
+        // console.log('Benutzerliste:', messages);
       });
 
       // Initialer Abruf der Daten
       const initialSnapshot = await getDocs(userCollection);
       const initialMessages = initialSnapshot.docs.map((doc) => {
-        return { userMessageId: doc.id, ...doc.data() };
+        return { userMessageId: doc.id, ...doc.data() } as UserMessageInterface;
       });
       this.userMessagesSubject.next(initialMessages);
     } catch (error) {

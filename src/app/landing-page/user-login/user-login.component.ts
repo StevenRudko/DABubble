@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-login',
+  standalone: true,
   imports: [MATERIAL_MODULES, FormsModule, ReactiveFormsModule],
   providers: [{ provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher }],
   templateUrl: './user-login.component.html',
