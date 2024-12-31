@@ -6,6 +6,17 @@ import { UserMessage } from '../../models/user-message';
 import { Observable } from 'rxjs';
 import { UserData } from '../../service/user-data.service';
 import { Firestore } from '@angular/fire/firestore';
+
+interface UserMessageData {
+  channelId: number;
+  directUserId: number;
+  time: number;
+  message: string;
+  authorId: number;
+  comments: number[];
+  emojis: string[]; 
+}
+
 @Component({
   selector: 'app-main-chat-daily-messages',
   standalone: true,
@@ -13,6 +24,7 @@ import { Firestore } from '@angular/fire/firestore';
   templateUrl: './main-chat-daily-messages.component.html',
   styleUrl: './main-chat-daily-messages.component.scss',
 })
+
 export class MainChatDailyMessagesComponent {
   @Output() openThreadEvent = new EventEmitter<void>();
   months = [
