@@ -46,47 +46,88 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     'Samstag',
   ];
 
-  messageTimeStamp: number = 0;
-  currentTimeStamp: number = 0;
+  dateToday = new Date();
+  timeToday: any;
+  messageTime: any;
   userMessageDate: any = undefined;
   userMessages: UserMessageInterface[] = [];
   userMessages$: Observable<any> = new Observable<any>();
   private subscription!: Subscription; // Das ! sagt TypeScript, dass wir uns um die Initialisierung kümmern
 
-  constructor(private userData: UserData) {
-    this.subscription = this.userData.userMessages$.subscribe((messages) => {
-      this.userMessages = messages;
-      this.next();
-    });
-  }
+  constructor(private userData: UserData) {}
 
   ngOnInit(): Promise<void> {
-    this.next();
-    this.getTime();
+    this.subscription = this.userData.userMessages$.subscribe((messages) => {
+      this.userMessages = messages;
+      this.getTimeToday();
+      this.loadMessages();
+      // this.loadMessagesByTime();
+      // this.getTime();
+    });
     return Promise.resolve();
   }
 
-  next() {
+  getTimeToday() {
+    const todayTimeStamp = this.dateToday.getTime();
+    this.timeToday = this.formatTimeStamp(todayTimeStamp); 
+    // console.log('getFormatTime: ', this.timeToday);
+  }
+
+  formatTimeStamp(timestamp: number): string {
+    const date = new Date(timestamp);
+    const day = date.getDate();
+    const month = this.months[date.getMonth()];
+    const year = date.getFullYear();
+    return `${day} ${month} ${year}`;
+  }
+
+  loadMessages() {
     console.log('Hier sind die user Messages endlich: ', this.userMessages);
+    if (this.userMessages) {
+      const timestampArr: any = [];
+      this.userMessages.forEach((message: UserMessageInterface) => {
+        const timestamp: any = message.time;
+        const msgTimeStampSeconds = timestamp.seconds;
+        const msgTimeStampNano = timestamp.nanoseconds;
+        const millis = (msgTimeStampSeconds * 1000) + (msgTimeStampNano / 1000000);
+        this.getMsgTime(millis);
+        // console.log('Datum heute: ', this.timeToday);
+        // console.log('Datum message: ', this.messageTime);
+        const msgTime1 = new Date(millis);
+        const todayTime1 = new Date(this.timeToday);
+        console.log('msgTime1: ', msgTime1);
+        // console.log('todayTime1: ', todayTime1);
+        // const messageId = message.userMessageId;
+        if (msgTime1 < todayTime1) {
+          // return msgTimeStamp;
+          console.log('Älter');
+        } else if (msgTime1 === todayTime1) {
+          console.log('Heute');
+        } else if (msgTime1 > todayTime1) {
+          console.log('Zukunft');
+        }
+          else {
+          return console.error('Fehler beim Vergleichen der Daten');
+        }
+        // console.log('Timestamp:', timestampSeconds);
+        // console.log('messageId:', messageId);
+        // timestampArr.push(timestampSeconds);
+        // console.log('timestampArr: ', timestampArr);
+      });
+    } else {
+      console.error('No userMessages found.');
+    }
+    // this.getFormattedDate(this.currentTimeStamp);
     // let messageTime = this.getFormattedDate(this.messageTimeStamp);
     // this.getTimeStampToday();
-    // let currentTime = this.getFormattedDate(this.currentTimeStamp);
+    //
     // let resultDate = this.compareBothDate(messageTime, currentTime);
     // this.userMessageDate = this.formatedResult(resultDate);
   }
 
-  getTime(): void {
-    console.log('Hier wird es auch angezeigt?: ', this.userMessages);
-    // if (this.userMessages) {
-    //   this.userMessages.forEach((message: UserMessageInterface) => {
-    //     const timestamp = message.time;
-    //     const messageId = message.userMessageId;
-    //     console.log('Timestamp:', timestamp);
-    //     console.log('messageId:', messageId);
-    //   });
-    // } else {
-    //   console.log('No userMessages found.');
-    // }
+  getMsgTime(timeStamp:any): void {
+    this.messageTime = this.formatTimeStamp(timeStamp); 
+    // console.log('getFormatTime: ', this.messageTime);
   }
 
   // bestimmteUserMessageFinden() {
@@ -96,6 +137,8 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   //     console.log('Keine Nachrichten vorhanden.');
   //   }
   // }
+
+
 
   // userMessagesFilternNachChannel(channelId: number) {
   //   const filteredMessages = this.userMessages.filter(
@@ -108,31 +151,6 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   //     filteredMessages
   //   );
   //   return filteredMessages;
-  // }
-
-  // getTimeStampToday() {
-  //   const today = new Date();
-  //   this.currentTimeStamp = today.getTime();
-  // }
-
-  // getFormattedDate(timestamp: number): string {
-  //   const date = new Date(timestamp);
-
-  //   const day = date.getDate();
-  //   const month = this.months[date.getMonth()];
-  //   const year = date.getFullYear();
-
-  //   return `${day} ${month} ${year}`;
-  // }
-
-  // compareBothDate(messageTime: any, currentTime: any) {
-  //   if (messageTime < currentTime) {
-  //     return messageTime;
-  //   } else if (messageTime === currentTime) {
-  //     return 'Heute';
-  //   } else {
-  //     return console.error('Fehler beim Vergleichen der Daten');
-  //   }
   // }
 
   // formatedResult(resultDate: string) {
