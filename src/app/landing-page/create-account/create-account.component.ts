@@ -2,9 +2,7 @@ import { Component, inject } from '@angular/core';
 import { MATERIAL_MODULES } from '../../shared/material-imports';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import { FormBuilder, ReactiveFormsModule, Validators, NgForm, FormsModule } from '@angular/forms';
-// import { HttpClient } from '@angular/common/http';
-// import { AuthService } from '../../service/auth.service';
+import { FormBuilder, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { ValidatorService } from '../../service/validator.service';
 
 @Component({
@@ -19,12 +17,8 @@ export class CreateAccountComponent {
   privatPolicy: boolean = false;
 
   fb= inject(FormBuilder);
-  // http = inject(HttpClient);
-  // authService = inject(AuthService);
   router = inject(Router);
   validatorService = inject(ValidatorService)
-
-  // errorMessage: string | null = null;
 
   form = this.fb.nonNullable.group({
     username: ['', [Validators.required, Validators.pattern(/^[A-Za-zÄÖÜäöüß]{2,}\s[A-Za-zÄÖÜäöüß]{2,}$/)]],
@@ -38,14 +32,4 @@ export class CreateAccountComponent {
       this.router.navigateByUrl('/avat', { state: { formData: this.form.value } });
     }
   }
-
-  // onSubmit(): void {
-  //   const rawForm = this.form.getRawValue();
-  //   this.authService.register(rawForm.email, rawForm.username, rawForm.password)
-  //   .subscribe({
-  //     next: () => {
-  //     this.router.navigateByUrl('/login')
-  //   }
-  // })
-  // }
 }

@@ -8,12 +8,16 @@
             <h2>Frederik Beck</h2>
             <p>Aus der Liste wählen</p>
         </div>
-        <div class="avatar-img-container">
-            @for(avatar of avatarPath; track avatar) {
+        <form class="login-form">
+            <div class="avatar-img-container">
+                @for(avatar of avatarPath; track avatar) {
                 <img (click)="selectedAvatar(avatar)" src="{{avatar}}">
-            }
-        </div>
+                }
+            </div>
+            <button (click)="onSubmit()" class="btn-full button-base position-bottom-right"
+                [disabled]="selectedUserAvatar == 'img/person.png'">Weiter</button>
+        </form>
     </div>
-    <button (click)="onSubmit()" class="btn-full button-base position-bottom-right" [disabled]="selectedUserAvatar == 'img/person.png'">Weiter</button>
-    <mat-icon class="arrow-back" [routerLink]="['/reg']">arrow_back</mat-icon>
+
+    <mat-icon class="arrow-back close-back" [routerLink]="['/reg']">arrow_back</mat-icon>
 </div>

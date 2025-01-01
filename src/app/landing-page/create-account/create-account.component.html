@@ -40,5 +40,5 @@
         [disabled]="!(form.get('username')?.valid && form.get('email')?.valid && form.get('password')?.valid && form.get('agreeToTerms')?.valid)"
         >Weiter</button>
     </form>
-    <mat-icon class="arrow-back" [routerLink]="['']">arrow_back</mat-icon>
+    <mat-icon class="arrow-back close-back" [routerLink]="['']">arrow_back</mat-icon>
 </div>

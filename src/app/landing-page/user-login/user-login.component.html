@@ -5,26 +5,23 @@
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="login-form">
     <div class="auth-input-container">
       <mat-icon matSuffix>mail_outline</mat-icon>
-      <input type="email" [disabled]="loading" placeholder="beispielname@email.com" formControlName="email">
+      <input type="email" placeholder="beispielname@email.com" formControlName="email">
+      
+      @if (form.get('email')?.touched && form.get('email')?.errors) {
+        <div class="error-message">Diese E-Mail-Adresse ist leider ungültig.</div>
+        }
     </div>
-
-    <!-- @if (form.get('password')?.touched && form.get('password')?.errors) {
-      <div class="error-message">*Diese E-Mail-Adresse ist leider ungültig.</div>
-      } -->
 
     <div class="auth-input-container">
       <mat-icon matSuffix>lock_outline</mat-icon>
-      <input type="password" [disabled]="loading" placeholder="Passwort" formControlName="password">
+      <input type="password" placeholder="Passwort" formControlName="password">
+
+      @if (form.get('password')?.touched && form.get('password')?.errors || this.error) {
+        <div class="error-message">Falsches Passwort oder E-Mail.. Bitte noch einmal versuchen.</div>
+        }
     </div>
 
-    <!-- @if (form.get('password')?.touched && form.get('password')?.errors) {
-      <div class="error-message">Falsches Passwort oder E-Mail.. Bitte noch einmal versuchen.</div>
-      } -->
-
-    <!-- </form> -->
-    <div class="forgot-password-container">
-      <p>Passwort vergessen?</p>
-    </div>
+      <p class="forgot-pw" [routerLink]="['/reset-password']">Passwort vergessen?</p>
     <div class="separator">
       <div class="separator-line"></div>
       <div class="seperator-text">ODER</div>
