@@ -1,9 +1,17 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnDestroy,
+  inject,
+} from '@angular/core';
 import { MATERIAL_MODULES } from '../../shared/material-imports';
 import { UserMessageComponent } from '../../shared/user-message/user-message.component';
-import { InputOutput } from '../../service/input-output.service';
-import { UserMessage } from '../../models/user-message';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
+import { UserData } from '../../service/user-data.service';
+import { UserMessageInterface } from '../../models/user-message';
+
 @Component({
   selector: 'app-main-chat-daily-messages',
   standalone: true,
@@ -11,8 +19,9 @@ import { Observable } from 'rxjs';
   templateUrl: './main-chat-daily-messages.component.html',
   styleUrl: './main-chat-daily-messages.component.scss',
 })
-export class MainChatDailyMessagesComponent {
+export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   @Output() openThreadEvent = new EventEmitter<void>();
+
   months = [
     'Januar',
     'Februar',
@@ -36,131 +45,143 @@ export class MainChatDailyMessagesComponent {
     'Freitag',
     'Samstag',
   ];
-  messageTimeStamp: number = 0;
-  currentTimeStamp: number = 0;
+
+  dateToday = new Date();
+  timeToday: any;
+  messageTime: any;
   userMessageDate: any = undefined;
-  userMessages$: Observable<UserMessage[]>; // Observable, das in der Template mit async benutzt wird
-  userMessages: UserMessage[] = [];
+  userMessages: UserMessageInterface[] = [];
+  userMessages$: Observable<any> = new Observable<any>();
+  private subscription!: Subscription; // Das ! sagt TypeScript, dass wir uns um die Initialisierung kümmern
 
-  constructor(private inputOutputService: InputOutput) {
-    this.inputOutputService.getUserMessages(); // Wir holen die Nachrichten beim Initialisieren der Komponente
-    this.userMessages$ = this.inputOutputService.userMessages$; // Setzen des Observables für die Nachrichten
-  }
+  constructor(private userData: UserData) {}
 
-  async ngOnInit(): Promise<void> {
-    await this.loadUserMessages();
-    this.next();
-  }
-
-  async loadUserMessages() {
-    // Abonnieren des Observables und Loggen der geladenen Nachrichten
-    this.userMessages$.subscribe((messages) => {
+  ngOnInit(): Promise<void> {
+    this.subscription = this.userData.userMessages$.subscribe((messages) => {
       this.userMessages = messages;
-      console.log('Alle Nachrichten: ', this.userMessages);
-      // console.log('Alle Nachrichten: ', this.userMessages); // Konsolen-Log, sobald Nachrichten geladen sind
+      this.getTimeToday();
+      this.loadMessages();
+      // this.loadMessagesByTime();
+      // this.getTime();
     });
+    return Promise.resolve();
   }
 
-  next() {
-    // Logik nach dem Laden der Nachrichten
-    let messageTime = this.getFormattedDate(this.messageTimeStamp);
-    this.getTimeStampToday();
-    let currentTime = this.getFormattedDate(this.currentTimeStamp);
-    let resultDate = this.compareBothDate(messageTime, currentTime);
-    this.userMessageDate = this.formatedResult(resultDate);
+  getTimeToday() {
+    const todayTimeStamp = this.dateToday.getTime();
+    this.timeToday = this.formatTimeStamp(todayTimeStamp);
+    // console.log('getFormatTime: ', this.timeToday);
+  }
+
+  formatTimeStamp(timestamp: number): string {
+    const date = new Date(timestamp);
+    const day = date.getDate();
+    const month = this.months[date.getMonth()];
+    const year = date.getFullYear();
+    return `${day} ${month} ${year}`;
+  }
+
+  loadMessages() {
+    console.log('Hier sind die user Messages endlich: ', this.userMessages);
+    if (this.userMessages) {
+      const timestampArr: any = [];
+      this.userMessages.forEach((message: UserMessageInterface) => {
+        const allMessagesToday: any = [];
+        const timestamp: any = message.time;
+        const msgTimeStampSeconds = timestamp.seconds;
+        const msgTimeStampNano = timestamp.nanoseconds;
+        const millis = msgTimeStampSeconds * 1000 + msgTimeStampNano / 1000000;
+        this.getMsgTime(millis);
+        // console.log('Datum heute: ', this.timeToday);
+        // console.log('Datum message: ', this.messageTime);
+
+        const msgTime1 = new Date(millis);
+        const todayTime1 = new Date(this.timeToday);
+        // Uhrzeit auf Mitternacht setzen, da nur der Tag für uns relevant ist
+        msgTime1.setHours(0, 0, 0, 0);
+        todayTime1.setHours(0, 0, 0, 0);
+        // console.log('msgTime1: ', msgTime1);
+        // console.log('todayTime1: ', todayTime1);
+
+        // Vergleiche nur das Datum
+        if (msgTime1 < todayTime1) {
+          console.log('Älter');
+        } else if (msgTime1.getTime() === todayTime1.getTime()) {
+          console.log('Heute');
+          allMessagesToday.push(msgTime1);
+          console.log(allMessagesToday);
+        } else if (msgTime1 > todayTime1) {
+          console.log('Zukunft');
+        } else {
+          return console.error('Fehler beim Vergleichen der Daten');
+        }
+
+        // console.log('Timestamp:', timestampSeconds);
+        // console.log('messageId:', messageId);
+        // timestampArr.push(timestampSeconds);
+        // console.log('timestampArr: ', timestampArr);
+      });
+    } else {
+      console.error('No userMessages found.');
+    }
+
+    // this.getFormattedDate(this.currentTimeStamp);
+    // let messageTime = this.getFormattedDate(this.messageTimeStamp);
+    // this.getTimeStampToday();
+    //
+    // let resultDate = this.compareBothDate(messageTime, currentTime);
+    // this.userMessageDate = this.formatedResult(resultDate);
+  }
+
+  getMsgTime(timeStamp: any): void {
+    this.messageTime = this.formatTimeStamp(timeStamp);
+    // console.log('getFormatTime: ', this.messageTime);
+  }
+
+  // bestimmteUserMessageFinden() {
+  //   if (this.userMessages.length > 0) {
+  //     console.log('Erste Nachricht:', this.userMessages[0]);
+  //   } else {
+  //     console.log('Keine Nachrichten vorhanden.');
+  //   }
+  // }
+
+  // userMessagesFilternNachChannel(channelId: number) {
+  //   const filteredMessages = this.userMessages.filter(
+  //     (message) => message.channelId === channelId
+  //   );
+  //   console.log(
+  //     'Gefilterte Nachrichten mit channelId',
+  //     channelId,
+  //     ':',
+  //     filteredMessages
+  //   );
+  //   return filteredMessages;
+  // }
+
+  // formatedResult(resultDate: string) {
+  //   if (resultDate === 'Heute') {
+  //     return resultDate;
+  //   }
+
+  //   const dateParts = resultDate.split(' ');
+  //   const day = parseInt(dateParts[0], 10);
+  //   const month = dateParts[1];
+  //   const year = parseInt(dateParts[2], 10);
+  //   const date = new Date(year, this.months.indexOf(month), day);
+  //   const weekday = this.days[date.getDay()];
+  //   const formattedMonth = this.months[date.getMonth()];
+
+  //   return `${weekday}, ${day} ${formattedMonth}`;
+  // }
+
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
   openThread() {
     this.openThreadEvent.emit();
-  }
-
-  // getTime(): void {
-  //   console.log('userMessages:', this.userMessages); // Überprüfen, ob die Daten nun vorhanden sind
-
-  //   if (this.userMessages) {
-  //     this.userMessages.forEach((message: UserMessage) => {
-  //       const timestamp = message.time;
-  //       const messageId = message.userMessageId;
-
-  //       console.log('Timestamp:', timestamp);
-  //       console.log('messageId:', messageId);
-  //     });
-  //   } else {
-  //     console.log('No userMessages found.');
-  //   }
-  // }
-
-  // Eine bestimmte userMessage finden
-  // bestimmteUserMessageFinden() {
-  //   this.userMessages$.subscribe((messages) => {
-  //     if (messages.length > 0) {
-  //       console.log('Erste Nachricht: ', messages[0]);
-  //     } else {
-  //       console.log('Keine Nachrichten vorhanden.');
-  //     }
-  //   });
-  // }
-
-  // // Nachrichten filtern nach ChannelId
-  // userMessagesFilternNachChannel() {
-  //   // Filtere die Nachrichten mit channelId == 1
-  //   this.filteredMessages$ = this.userMessages$.pipe(
-  //     map((messages) => messages.filter((message) => message.channelId === 1))
-  //   );
-
-  //   // Logge die gefilterten Nachrichten
-  //   this.filteredMessages$.subscribe((filteredMessages) => {
-  //     console.log('Gefilterte Nachrichten mit channelId 1: ', filteredMessages);
-  //   });
-  // }
-
-  getTimeStampToday() {
-    const today = new Date();
-    this.currentTimeStamp = today.getTime();
-    // console.log('TimeStampToday ', this.currentTimeStamp);
-  }
-
-  getFormattedDate(timestamp: number): string {
-    const date = new Date(timestamp);
-
-    // Extrahiere Tag, Monat und Jahr
-    const day = date.getDate(); // Tag des Monats
-    const month = this.months[date.getMonth()]; // Monat (von 0 bis 11)
-    const year = date.getFullYear(); // Jahr
-
-    // Rückgabe im Format: "Tag Monat Jahr"
-    return `${day} ${month} ${year}`;
-  }
-
-  compareBothDate(messageTime: any, currentTime: any) {
-    // console.log('messageTime ', messageTime);
-    // console.log('currentTime ', currentTime);
-
-    if (messageTime < currentTime) {
-      // console.log('Älter');
-      return messageTime;
-    } else if (messageTime === currentTime) {
-      // console.log('Heute');
-      return 'Heute';
-    } else {
-      return console.error('Fehler beim Verlgeichen der Daten');
-    }
-  }
-
-  formatedResult(resultDate: string) {
-    // Wenn resultDate 'Heute' ist, gib es einfach zurück
-    if (resultDate === 'Heute') {
-      return resultDate;
-    }
-
-    // Umwandlung des resultDate in ein Date-Objekt
-    const dateParts = resultDate.split(' '); // Teile das Datum in Tag, Monat und Jahr
-    const day = parseInt(dateParts[0], 10); // Tag (z.B. 25)
-    const month = dateParts[1]; // Monat (z.B. Dezember)
-    const year = parseInt(dateParts[2], 10); // Jahr (z.B. 2024)
-    const date = new Date(year, this.months.indexOf(month), day); // Jahr, Monat (Index), Tag     // Erstelle ein Date-Objekt aus den extrahierten Teilen
-    const weekday = this.days[date.getDay()]; // z.B. "Dienstag"     // Hole den Wochentag
-    const formattedMonth = this.months[date.getMonth()]; // z.B. "Januar"     // Hole den Monat als Index
-    return `${weekday}, ${day} ${formattedMonth}`; // Gib das Datum im gewünschten Format zurück
   }
 }

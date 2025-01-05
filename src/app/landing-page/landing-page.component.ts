@@ -21,6 +21,7 @@ import { UserAccountInfoService } from '../service/user-account-info.service';
  */
 @Component({
   selector: 'app-landing-page',
+  standalone: true,
   imports: [RouterOutlet,
     LogoComponentComponent,
     MATERIAL_MODULES,
