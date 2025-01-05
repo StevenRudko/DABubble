@@ -16,6 +16,7 @@ export class UserMessageComponent {
   @Input() showReactionEmojis: boolean = false;
   @Input() showAnswerDetails: boolean = true;
   @Input() showReactionIcons: boolean = true;
+  @Input() messages: { timestamp: number; userId: number; message: string; hours: number; minutes: number }[] = [];
 
   isHoveredActive: boolean = false;
   isThreadContext: boolean = false;

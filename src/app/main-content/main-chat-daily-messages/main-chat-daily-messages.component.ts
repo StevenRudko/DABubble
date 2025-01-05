@@ -11,11 +11,12 @@ import { UserMessageComponent } from '../../shared/user-message/user-message.com
 import { Observable, Subscription } from 'rxjs';
 import { UserData } from '../../service/user-data.service';
 import { UserMessageInterface } from '../../models/user-message';
+import { CommonModule, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-main-chat-daily-messages',
   standalone: true,
-  imports: [MATERIAL_MODULES, UserMessageComponent],
+  imports: [MATERIAL_MODULES, CommonModule, UserMessageComponent],
   templateUrl: './main-chat-daily-messages.component.html',
   styleUrl: './main-chat-daily-messages.component.scss',
 })
@@ -53,6 +54,13 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   userMessages: UserMessageInterface[] = [];
   userMessages$: Observable<any> = new Observable<any>();
   private subscription!: Subscription; // Das ! sagt TypeScript, dass wir uns um die Initialisierung kümmern
+  allMsgToday: {
+    timestamp: number;
+    userId: number;
+    message: string;
+    hours: number;
+    minutes: number;
+  }[] = [];
 
   constructor(private userData: UserData) {}
 
@@ -86,7 +94,6 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     if (this.userMessages) {
       const timestampArr: any = [];
       this.userMessages.forEach((message: UserMessageInterface) => {
-        const allMessagesToday: any = [];
         const timestamp: any = message.time;
         const msgTimeStampSeconds = timestamp.seconds;
         const msgTimeStampNano = timestamp.nanoseconds;
@@ -108,8 +115,26 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
           console.log('Älter');
         } else if (msgTime1.getTime() === todayTime1.getTime()) {
           console.log('Heute');
-          allMessagesToday.push(msgTime1);
-          console.log(allMessagesToday);
+          // Überprüfen, ob der User bereits Nachrichten hat
+
+          const exactTime = new Date(millis);
+          const timeHours = exactTime.getHours();
+          const timeMinutes = exactTime.getMinutes();
+
+          if (!this.allMsgToday.find((msg) => msg.timestamp === millis)) {
+            // Füge die Nachricht als Objekt ins Array ein
+            this.allMsgToday.push({
+              timestamp: millis, // Zeitstempel
+              userId: message.directUserId,
+              message: message.message,
+              hours: timeHours,
+              minutes: timeMinutes,
+            });
+
+            this.allMsgToday.sort((a, b) => a.timestamp - b.timestamp);
+
+            console.log('Alle Nachrichten von Heute: ', this.allMsgToday);
+          }
         } else if (msgTime1 > todayTime1) {
           console.log('Zukunft');
         } else {
@@ -131,12 +156,15 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     //
     // let resultDate = this.compareBothDate(messageTime, currentTime);
     // this.userMessageDate = this.formatedResult(resultDate);
+    this.loadMessagesToday();
   }
 
   getMsgTime(timeStamp: any): void {
     this.messageTime = this.formatTimeStamp(timeStamp);
     // console.log('getFormatTime: ', this.messageTime);
   }
+
+  loadMessagesToday() {}
 
   // bestimmteUserMessageFinden() {
   //   if (this.userMessages.length > 0) {
@@ -183,5 +211,15 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
 
   openThread() {
     this.openThreadEvent.emit();
+  }
+
+  getMessagesArray(): {
+    timestamp: number;
+    userId: number;
+    message: string;
+    hours: number;
+    minutes: number;
+  }[] {
+    return this.allMsgToday;
   }
 }

@@ -10,11 +10,17 @@
 
   <div class="message-date-divider">
     <div class="divider-text-box bg-frame-v1">
-      <p class="divider-text">Heute</p>
+      
+     @if(allMsgToday){ 
+      <div>
+        <p class="divider-text">Heute</p>
+      </div>
+    }
+      
       <!-- <p class="divider-text">{{ messageDate > currentTimeStamp ? messageDate : "Heute" }}</p> -->
     </div>
   </div>
 
-  <app-user-message [threadMessage]="false" [ownMessage]="true" [showAnswerDetails]="false" [showReactionIcons]="true" class="width-100"></app-user-message>
+    <app-user-message [messages]="getMessagesArray()" [threadMessage]="false" [ownMessage]="true" [showAnswerDetails]="false" [showReactionIcons]="true" class="width-100"></app-user-message>
 
 </section>

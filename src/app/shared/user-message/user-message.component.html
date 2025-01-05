@@ -1,4 +1,9 @@
-<section (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()" [ngClass]="{ myMessageStyle: ownMessage }">
+<section 
+  *ngFor="let msg of messages"
+  (mouseenter)="onMouseEnter()"
+  (mouseleave)="onMouseLeave()"
+  [ngClass]="{ myMessageStyle: ownMessage }"
+>
   <div class="emoji-card-container" [ngClass]="{ myMessageStyle: ownMessage }">
     <mat-card *ngIf="showReactionEmojis" class="emoji-card bg-frame-v1">
       <mat-card-content class="emoji-content">
@@ -22,7 +27,10 @@
     </mat-card>
   </div>
 
-  <div class="user-message-container" [ngClass]="{ myMessageStyle: ownMessage }">
+  <div
+    class="user-message-container"
+    [ngClass]="{ myMessageStyle: ownMessage }"
+  >
     <div>
       <img class="user-message-img" src="img-placeholder/noah.svg" alt="" />
     </div>
@@ -32,14 +40,15 @@
         [ngClass]="{ myMessageStyle: ownMessage }"
       >
         <p class="user-message-name">Noah Braun</p>
-        <p class="user-message-time">14:25 Uhr</p>
+        <p class="user-message-time">{{ msg.hours }}:{{ msg.minutes }} Uhr</p>
       </div>
       <div
         class="user-message-row-center"
         [ngClass]="{ myMessageStyle: ownMessage }"
       >
-        <p>Welche Version ist aktuell von Angular?</p>
+        <p>{{ msg.message }}</p>
       </div>
+
       <div
         class="user-message-row-bottom"
         *ngIf="showAnswerDetails"
@@ -69,7 +78,6 @@
           </button>
         </div>
       </div>
-
     </div>
   </div>
 </section>
