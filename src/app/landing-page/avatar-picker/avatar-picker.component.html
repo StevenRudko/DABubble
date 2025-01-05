@@ -8,15 +8,15 @@
             <h2>Frederik Beck</h2>
             <p>Aus der Liste wählen</p>
         </div>
-        <form class="login-form">
+        <div class="login-form">
             <div class="avatar-img-container">
                 @for(avatar of avatarPath; track avatar) {
                 <img (click)="selectedAvatar(avatar)" src="{{avatar}}">
                 }
             </div>
-            <button (click)="onSubmit()" class="btn-full button-base position-bottom-right"
-                [disabled]="selectedUserAvatar == 'img/person.png'">Weiter</button>
-        </form>
+            <button (click)="createAccount()" class="btn-full button-base position-bottom-right"
+                [disabled]="disabled">Weiter</button>
+        </div>
     </div>
 
     <mat-icon class="arrow-back close-back" [routerLink]="['/reg']">arrow_back</mat-icon>

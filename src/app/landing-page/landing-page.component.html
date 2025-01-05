@@ -1,6 +1,6 @@
 <div class="landing-continer">
     <div class="header">
-        <app-logo-component></app-logo-component>
+        <app-logo-component></app-logo-component> 
         <div class="create-container">
             @if (this.router.url === '/';) {
             <p>Neu bei DABubble?</p>
@@ -15,6 +15,17 @@
         @if (this.router.url === '/';) {
         <p class="button-link" [routerLink]="['/imprint']">Impressum</p>
         <p class="button-link" [routerLink]="['/privacy-policy']">Datenschutz</p>
+        }
+    </div>
+
+    <div class="user-info-overlay">
+        @if (userAccInfo.show) {
+        <div class="user-info-container">
+            @if (userAccInfo.currentMessage == userAccInfo.messages[1]) {
+            <mat-icon class="material-icons">send</mat-icon>
+            }
+            <span>{{userAccInfo.currentMessage}}</span>
+        </div>
         }
     </div>
 </div>

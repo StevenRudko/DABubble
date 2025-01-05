@@ -4,7 +4,7 @@
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="login-form">
         <div class="auth-input-container">
             <mat-icon matSuffix>person_outline</mat-icon>
-            <input type="name" [disabled]="loading" placeholder="Name und Nachname" formControlName="username">
+            <input type="name" placeholder="Name und Nachname" formControlName="username">
 
             @if (form.get('username')?.touched && form.get('username')?.errors) {
             <div class="error-message">Bitte geben Sie einen Vor- und Nachnamen ein.</div>
@@ -13,7 +13,7 @@
 
         <div class="auth-input-container">
             <mat-icon matSuffix>mail_outline</mat-icon>
-            <input type="email" [disabled]="loading" placeholder="beispielname@email.com" formControlName="email">
+            <input type="email" placeholder="beispielname@email.com" formControlName="email">
 
             @if (form.get('email')?.touched && form.get('email')?.errors) {
             <div class="error-message">Diese E-Mail-Adresse ist leider ungültig.</div>
@@ -22,7 +22,7 @@
 
         <div class="auth-input-container">
             <mat-icon matSuffix>lock_outline</mat-icon>
-            <input type="password" [disabled]="loading" placeholder="Passwort" formControlName="password">
+            <input type="password" placeholder="Passwort" formControlName="password">
 
             @if (form.get('password')?.touched && form.get('password')?.errors) {
             <div class="error-message">{{this.validatorService.errorMessages}}.</div>
