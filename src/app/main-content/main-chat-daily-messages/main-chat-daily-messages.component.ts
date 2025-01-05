@@ -69,7 +69,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
 
   getTimeToday() {
     const todayTimeStamp = this.dateToday.getTime();
-    this.timeToday = this.formatTimeStamp(todayTimeStamp); 
+    this.timeToday = this.formatTimeStamp(todayTimeStamp);
     // console.log('getFormatTime: ', this.timeToday);
   }
 
@@ -86,29 +86,36 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     if (this.userMessages) {
       const timestampArr: any = [];
       this.userMessages.forEach((message: UserMessageInterface) => {
+        const allMessagesToday: any = [];
         const timestamp: any = message.time;
         const msgTimeStampSeconds = timestamp.seconds;
         const msgTimeStampNano = timestamp.nanoseconds;
-        const millis = (msgTimeStampSeconds * 1000) + (msgTimeStampNano / 1000000);
+        const millis = msgTimeStampSeconds * 1000 + msgTimeStampNano / 1000000;
         this.getMsgTime(millis);
         // console.log('Datum heute: ', this.timeToday);
         // console.log('Datum message: ', this.messageTime);
+
         const msgTime1 = new Date(millis);
         const todayTime1 = new Date(this.timeToday);
-        console.log('msgTime1: ', msgTime1);
+        // Uhrzeit auf Mitternacht setzen, da nur der Tag für uns relevant ist
+        msgTime1.setHours(0, 0, 0, 0);
+        todayTime1.setHours(0, 0, 0, 0);
+        // console.log('msgTime1: ', msgTime1);
         // console.log('todayTime1: ', todayTime1);
-        // const messageId = message.userMessageId;
+
+        // Vergleiche nur das Datum
         if (msgTime1 < todayTime1) {
-          // return msgTimeStamp;
           console.log('Älter');
-        } else if (msgTime1 === todayTime1) {
+        } else if (msgTime1.getTime() === todayTime1.getTime()) {
           console.log('Heute');
+          allMessagesToday.push(msgTime1);
+          console.log(allMessagesToday);
         } else if (msgTime1 > todayTime1) {
           console.log('Zukunft');
-        }
-          else {
+        } else {
           return console.error('Fehler beim Vergleichen der Daten');
         }
+
         // console.log('Timestamp:', timestampSeconds);
         // console.log('messageId:', messageId);
         // timestampArr.push(timestampSeconds);
@@ -117,6 +124,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     } else {
       console.error('No userMessages found.');
     }
+
     // this.getFormattedDate(this.currentTimeStamp);
     // let messageTime = this.getFormattedDate(this.messageTimeStamp);
     // this.getTimeStampToday();
@@ -125,8 +133,8 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     // this.userMessageDate = this.formatedResult(resultDate);
   }
 
-  getMsgTime(timeStamp:any): void {
-    this.messageTime = this.formatTimeStamp(timeStamp); 
+  getMsgTime(timeStamp: any): void {
+    this.messageTime = this.formatTimeStamp(timeStamp);
     // console.log('getFormatTime: ', this.messageTime);
   }
 
@@ -137,8 +145,6 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   //     console.log('Keine Nachrichten vorhanden.');
   //   }
   // }
-
-
 
   // userMessagesFilternNachChannel(channelId: number) {
   //   const filteredMessages = this.userMessages.filter(
