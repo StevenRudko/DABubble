@@ -11,13 +11,14 @@
     <div class="input-group">
       <label>Channel-Name</label>
       <mat-icon class="tag">#</mat-icon>
-      <input type="text" placeholder=" z.B. Kooperationsprojekte">
+      <input type="text" [(ngModel)]="channelName" placeholder="z.B. Kooperationsprojekte">
     </div>
 
     <div class="input-group">
       <label>Beschreibung <span class="optional">(optional)</span></label>
-      <input type="text" placeholder="Dein Text hier">
+      <input type="text" [(ngModel)]="channelDescription" placeholder="Dein Text hier">
     </div>
 
-    <button class="create-btn" (click)="openAddPeopleDialog()">Erstellen</button>  </div>
+    <button class="create-btn" (click)="openAddPeopleDialog()">Erstellen</button>
+  </div>
 </div>
