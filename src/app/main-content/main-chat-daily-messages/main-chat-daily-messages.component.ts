@@ -61,6 +61,22 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     hours: number;
     minutes: number;
   }[] = [];
+  allMsgPast: {
+    timestamp: number;
+    userId: number;
+    message: string;
+    hours: number;
+    minutes: number;
+  }[] = [];
+  groupedMessages: {
+    [date: string]: {
+      timestamp: number;
+      userId: number;
+      message: string;
+      hours: number;
+      minutes: number;
+    }[];
+  } = {};
 
   constructor(private userData: UserData) {}
 
@@ -69,6 +85,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
       this.userMessages = messages;
       this.getTimeToday();
       this.loadMessages();
+      this.loadOldMessages();
       // this.loadMessagesByTime();
       // this.getTime();
     });
@@ -79,6 +96,11 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     const todayTimeStamp = this.dateToday.getTime();
     this.timeToday = this.formatTimeStamp(todayTimeStamp);
     // console.log('getFormatTime: ', this.timeToday);
+  }
+
+  getMsgTime(timeStamp: any): void {
+    this.messageTime = this.formatTimeStamp(timeStamp);
+    // console.log('getFormatTime: ', this.messageTime);
   }
 
   formatTimeStamp(timestamp: number): string {
@@ -98,7 +120,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
         const msgTimeStampSeconds = timestamp.seconds;
         const msgTimeStampNano = timestamp.nanoseconds;
         const millis = msgTimeStampSeconds * 1000 + msgTimeStampNano / 1000000;
-        this.getMsgTime(millis);
+        // this.getMsgTime(millis);
         // console.log('Datum heute: ', this.timeToday);
         // console.log('Datum message: ', this.messageTime);
 
@@ -109,31 +131,38 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
         todayTime1.setHours(0, 0, 0, 0);
         // console.log('msgTime1: ', msgTime1);
         // console.log('todayTime1: ', todayTime1);
+        const exactTime = new Date(millis);
+        const timeHours = exactTime.getHours();
+        const timeMinutes = exactTime.getMinutes();
 
         // Vergleiche nur das Datum
         if (msgTime1 < todayTime1) {
           console.log('Älter');
+
+          if (!this.allMsgPast.find((msg) => msg.timestamp === millis)) {
+            // Damit sich Nachrichten nicht doppeln
+            this.allMsgPast.push({
+              timestamp: millis,
+              userId: message.directUserId,
+              message: message.message,
+              hours: timeHours,
+              minutes: timeMinutes,
+            });
+          }
+
+          // console.log('Alle Nachrichten aus der Vergangenheit: ', this.allMsgPast);
         } else if (msgTime1.getTime() === todayTime1.getTime()) {
-          console.log('Heute');
-          // Überprüfen, ob der User bereits Nachrichten hat
-
-          const exactTime = new Date(millis);
-          const timeHours = exactTime.getHours();
-          const timeMinutes = exactTime.getMinutes();
-
           if (!this.allMsgToday.find((msg) => msg.timestamp === millis)) {
-            // Füge die Nachricht als Objekt ins Array ein
+            // Damit sich Nachrichten nicht doppeln
             this.allMsgToday.push({
-              timestamp: millis, // Zeitstempel
+              timestamp: millis,
               userId: message.directUserId,
               message: message.message,
               hours: timeHours,
               minutes: timeMinutes,
             });
 
-            this.allMsgToday.sort((a, b) => a.timestamp - b.timestamp);
-
-            console.log('Alle Nachrichten von Heute: ', this.allMsgToday);
+            this.allMsgToday.sort((a, b) => a.timestamp - b.timestamp); // Nachrichten werden dem Datum nach sortiert
           }
         } else if (msgTime1 > todayTime1) {
           console.log('Zukunft');
@@ -157,11 +186,6 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     // let resultDate = this.compareBothDate(messageTime, currentTime);
     // this.userMessageDate = this.formatedResult(resultDate);
     this.loadMessagesToday();
-  }
-
-  getMsgTime(timeStamp: any): void {
-    this.messageTime = this.formatTimeStamp(timeStamp);
-    // console.log('getFormatTime: ', this.messageTime);
   }
 
   loadMessagesToday() {}
@@ -203,6 +227,23 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   //   return `${weekday}, ${day} ${formattedMonth}`;
   // }
 
+  loadOldMessages() {
+    console.log('Das sind die alten Nachrichten: ', this.allMsgPast);
+    this.allMsgPast.sort((a, b) => a.timestamp - b.timestamp);
+    this.groupedMessages = {};
+
+    this.allMsgPast.forEach((msg) => {
+      const time = this.formatTimeStamp(msg.timestamp);
+      console.log('time der alten Nachrichten: ', time);
+      if (!this.groupedMessages[time]) {
+        this.groupedMessages[time] = [];
+      }
+      this.groupedMessages[time].push(msg);
+      console.log('groupedMessages: ', this.groupedMessages);
+    });
+    
+  }
+
   ngOnDestroy() {
     if (this.subscription) {
       this.subscription.unsubscribe();
@@ -213,7 +254,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     this.openThreadEvent.emit();
   }
 
-  getMessagesArray(): {
+  getMessagesToday(): {
     timestamp: number;
     userId: number;
     message: string;
@@ -221,5 +262,39 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     minutes: number;
   }[] {
     return this.allMsgToday;
+  }
+
+  getMessagesPast(): {
+    timestamp: number;
+    userId: number;
+    message: string;
+    hours: number;
+    minutes: number;
+  }[] {
+    return this.allMsgPast;
+  }
+
+  getGroupedMessages(): {
+    timestamp: number;
+    userId: number;
+    message: string;
+    hours: number;
+    minutes: number;
+  }[] {
+    // Extrahiere alle Nachrichten aus den Gruppen und flache sie in ein einzelnes Array ab
+    const allGroupedMessages: {
+      timestamp: number;
+      userId: number;
+      message: string;
+      hours: number;
+      minutes: number;
+    }[] = [];
+  
+    // Iteriere über alle Gruppen (Die Werte der gruppierten Nachrichten)
+    Object.values(this.groupedMessages).forEach(group => {
+      allGroupedMessages.push(...group); // Alle Nachrichten der aktuellen Gruppe hinzufügen
+    });
+  
+    return allGroupedMessages;
   }
 }
