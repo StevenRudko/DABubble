@@ -106,7 +106,7 @@ export class UserLoginComponent {
    * @returns {void}
    */
   guestLogin(): void {
-    const values = { email: 'test@mail.com', password: 'ABCD1234@' };
+    const values = { email: 'Max Musterman', password: '1234ABcd@' };
     this.form.patchValue(values);
     const subscription = this.form.valueChanges.subscribe(() => {
       if (this.form.valid) {
