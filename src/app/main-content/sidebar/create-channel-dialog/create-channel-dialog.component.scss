@@ -66,12 +66,11 @@ p {
     border: 1px solid #adb0d9;
     border-radius: 40px;
     font-size: 16px;
-    padding-left: 1rem;
+    padding-left: 2rem;
     box-sizing: border-box;
 
     &::placeholder {
       color: #999;
-      padding-left: 1rem;
     }
 
     &:focus {

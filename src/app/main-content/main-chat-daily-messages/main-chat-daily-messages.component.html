@@ -1,20 +1,25 @@
-<section>
-  <div class="message-date-divider">
+<section #chatContainer  (scroll)="onScroll()">
+
+  @if(allMsgPast.length){ 
+  <div class="message-date-divider" *ngFor="let msg of getGroupedMessages()">
     <div class="divider-text-box bg-frame-v1">
-      <p class="divider-text">{{ messageTime }}</p>
+      <p class="divider-text">{{ msg.timestamp | date: 'dd.MM.yyyy' }}</p>
       <!-- <p class="divider-text">{{ messageDate > currentTimeStamp ? messageDate : "Heute" }}</p> -->
     </div>
   </div>
+  
+  <app-user-message [messagesOld]="getGroupedMessages()" [threadMessage]="false" [ownMessage]="false" [showAnswerDetails]="true" [showReactionIcons]="false" (openThreadEvent)="openThread()" class="width-100"></app-user-message>
+}
 
-  <app-user-message [threadMessage]="false" [ownMessage]="false" [showAnswerDetails]="true" [showReactionIcons]="false" (openThreadEvent)="openThread()" class="width-100"></app-user-message>
-
+  @if(allMsgToday.length){ 
   <div class="message-date-divider">
     <div class="divider-text-box bg-frame-v1">
-      <p class="divider-text">Heute</p>
-      <!-- <p class="divider-text">{{ messageDate > currentTimeStamp ? messageDate : "Heute" }}</p> -->
+      <div>
+        <p class="divider-text">Heute</p>
+      </div>
     </div>
   </div>
-
-  <app-user-message [threadMessage]="false" [ownMessage]="true" [showAnswerDetails]="false" [showReactionIcons]="true" class="width-100"></app-user-message>
-
+    <app-user-message [messagesToday]="getMessagesToday()" [threadMessage]="false" [ownMessage]="true" [showAnswerDetails]="false" [showReactionIcons]="true" class="width-100"></app-user-message>
+  }
+  
 </section>

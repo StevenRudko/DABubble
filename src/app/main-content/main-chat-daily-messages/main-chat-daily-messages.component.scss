@@ -4,7 +4,9 @@
 
 section {
     @include styles.dFlex($d: flex, $fd: column, $jc: flex-start, $ai: flex-start, $g: 42px);
-    height: 100%;
+    height:360px;
+    overflow-y: scroll;
+    padding-top:18px;
 }
 
 .message-date-divider {
