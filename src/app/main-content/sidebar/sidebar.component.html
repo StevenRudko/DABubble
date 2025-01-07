@@ -70,37 +70,25 @@
 
       <div class="collapsible-content" [class.collapsed]="!isDirectMessageSectionExpanded">
         <div class="user-list">
-          <div class="user-item">
-            <img src="img-placeholder/frederik.svg" class="user-avatar">
-            <span>Frederik Beck (Du)</span>
-            <div class="status-dot"></div>
-          </div>
-          <div class="user-item">
-            <img src="img-placeholder/sofia.svg" class="user-avatar">
-            <span>Sofia Müller</span>
-            <div class="status-dot"></div>
-          </div>
-          <div class="user-item">
-            <img src="img-placeholder/noah.svg" class="user-avatar">
-            <span>Noah Braun</span>
-            <div class="status-dot"></div>
-          </div>
-          <div class="user-item">
-            <img src="img-placeholder/elise.svg" class="user-avatar">
-            <span>Elise Roth</span>
-            <div class="status-dot"></div>
-          </div>
-          <div class="user-item">
-            <img src="img-placeholder/elias.svg" class="user-avatar">
-            <span>Elias Neumann</span>
-            <div class="status-dot"></div>
-          </div>
-          <div class="user-item">
-            <img src="img-placeholder/steffen.svg" class="user-avatar">
-            <span>Steffen Hoffmann</span>
-            <div class="status-dot"></div>
-          </div>
+          <ng-container *ngIf="currentUser$ | async as user">
+            <div class="user-item">
+              <img [src]="user.photoURL || 'img-placeholder/default-avatar.svg'" class="user-avatar"
+                [alt]="user.displayName">
+              <span>{{ user.displayName || user.email }} (Du)</span>
+              <div class="status-dot online"></div>
+            </div>
+          </ng-container>
+
+          <ng-container *ngFor="let otherUser of allUsers$ | async">
+            <div class="user-item" *ngIf="(currentUser$ | async)?.uid !== otherUser.uid">
+              <img [src]="otherUser.photoURL || 'img-placeholder/default-avatar.svg'" class="user-avatar"
+                [alt]="otherUser.displayName">
+              <span>{{ otherUser.displayName || otherUser.email }}</span>
+              <div class="status-dot" [class.online]="otherUser.online"></div>
+            </div>
+          </ng-container>
         </div>
       </div>
     </div>
   </div>
+</div>
