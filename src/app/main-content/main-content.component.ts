@@ -50,6 +50,7 @@ export class MainContentComponent {
   }
 
   ngOnInit(): void {
+    this.presenceService.setOnlineStatus();
     this.presenceService.onlineUsers$.subscribe((statusData) => {
       this.onlineUsers = Object.keys(statusData || {}).filter(
         (uid) => statusData[uid] === 'online'

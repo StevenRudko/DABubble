@@ -21,12 +21,11 @@ export class PresenceService {
     this.auth.onAuthStateChanged((user) => {
       if (user) {
         const userStatusRef = ref(this.db, `status/${user.uid}`);
-
-        // Setze den Status auf "online"
         set(userStatusRef, 'online');
-
-        // Automatisch auf "offline" setzen, wenn die Verbindung getrennt wird
         onDisconnect(userStatusRef).set('offline');
+        window.addEventListener('beforeunload', () => {
+          set(userStatusRef, 'offline'); // Optional: Verhindert "Geisterbenutzer" bei Hard-Disconnects
+        });
       }
     });
   }
