@@ -73,17 +73,18 @@ export class AuthService {
     password: string,
     photoUrl: string
   ): Observable<void> {
-    const promise = createUserWithEmailAndPassword(
-      this.firebaseAuth,
-      email,
-      password
-    ).then((response) => {
-      this.updateUserProfile(response.user, username, photoUrl);
-      this.saveUserInfoToFirestore(response.user);
-    });
-
+    const promise = (async () => {
+      const response = await createUserWithEmailAndPassword(
+        this.firebaseAuth,
+        email,
+        password
+      );
+      await this.updateUserProfile(response.user, username, photoUrl);
+      await this.saveUserInfoToFirestore(response.user);
+    })();
     return from(promise);
   }
+  
 
   /**
    * Logs in a user using email and password authentication.
