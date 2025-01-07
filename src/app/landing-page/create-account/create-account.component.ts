@@ -92,13 +92,13 @@ export class CreateAccountComponent {
 
   /**
    * Handles form submission.
-   * Navigates to the avatar selection page if the form is valid.
+   * Navigates to the avatar-picker selection page if the form is valid.
    * Passes form data as state to the next route.
    * @returns {void}
    */
   onSubmit(): void {
     if (this.form.valid) {
-      this.router.navigateByUrl('/avat', {
+      this.router.navigateByUrl('/avatar-picker', {
         state: { formData: this.form.value },
       });
     }

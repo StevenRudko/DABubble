@@ -11,30 +11,37 @@ import { Router } from '@angular/router';
   styleUrl: './app.component.scss',
 })
 
-export class AppComponent implements OnInit {
+export class AppComponent { //implements OnInit 
   title = 'dabubble';
   firstVisit: boolean = true;
   authService = inject(AuthService)
   router = inject(Router);
 
-  ngOnInit(): void {
-    this.authService.user$.subscribe(user => {
-      if (user) {
-        this.authService.currentUserSig.set({
-          email: user.email!,
-          username: user.displayName!,
-          localID: user.uid!,
-          photoUrl: user.photoURL,
-      })
-      } else {
-        this.authService.currentUserSig.set(null);
-      }
-      console.log(this.authService.currentUserSig());
-    })
-  }
+  // ngOnInit(): void {
+  //   this.authService.user$.subscribe(user => {
+  //     if (user) {
+  //       this.authService.currentUserSig.set({
+  //         email: user.email!,
+  //         username: user.displayName!,
+  //         localID: user.uid!,
+  //         photoUrl: user.photoURL,
+  //     })
+  //     } else {
+  //       this.authService.currentUserSig.set(null);
+  //     }
+  //     console.log(this.authService.currentUserSig());
+  //   })
+  // }
 
   logout(): void {
-    this.authService.logout();
-    this.router.navigateByUrl('')
+    this.authService.logout().subscribe({
+      next: () => {
+        this.router.navigateByUrl('');
+      },
+      error: (error) => {
+        console.error('Fehler beim Logout:', error);
+      },
+    });
   }
+  
 }

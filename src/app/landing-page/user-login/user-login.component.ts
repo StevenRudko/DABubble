@@ -66,7 +66,7 @@ export class UserLoginComponent {
   /**
    * Handles form submission for user login.
    * - Sends the email and password to the AuthService for authentication.
-   * - Navigates to the login success page on success.
+   * - Navigates to the main success page on success.
    * - Displays an error message on failure.
    * @returns {void}
    */
@@ -74,7 +74,7 @@ export class UserLoginComponent {
     const rawForm = this.form.getRawValue();
     this.authService.login(rawForm.email, rawForm.password).subscribe({
       next: () => {
-        this.router.navigateByUrl('/login');
+        this.router.navigateByUrl('/main');
       },
       error: (error) => {
         this.error = true;
@@ -85,20 +85,19 @@ export class UserLoginComponent {
 
   /**
    * Initiates Google Sign-In for user authentication.
-   * - On success, navigates to the login success page.
+   * - On success, navigates to the main success page.
    * - Logs any errors to the console.
    * @returns {void}
    */
-  onGoogleSignIn(): void {
-    this.authService.googleLogin().subscribe({
-      next: () => {
-        this.router.navigateByUrl('/login');
-      },
-      error: (error) => {
-        console.error('Google Sign-In error:', error);
-      },
-    });
+  async onGoogleSignIn(): Promise<void> {
+    try {
+      await this.authService.googleLogin(); // Ruft die asynchrone Login-Methode auf
+      this.router.navigateByUrl('/main'); // Navigation nach erfolgreichem Login
+    } catch (error) {
+      console.error('Google Sign-In error:', error); // Fehlerprotokollierung
+    }
   }
+  
 
   /**
    * Enables a guest login by auto-filling the form with default credentials

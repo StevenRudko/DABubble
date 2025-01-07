@@ -87,7 +87,7 @@ export class AvatarPickerComponent {
     const navigation = this.router.getCurrentNavigation();
     this.formData = navigation?.extras?.state?.['formData'] || null;
     if (!this.formData) {
-      this.router.navigateByUrl('/');
+      this.router.navigateByUrl('');
     }
   }
 
@@ -106,7 +106,7 @@ export class AvatarPickerComponent {
   /**
    * Creates a user account using the provided form data and selected avatar.
    * Upon successful registration, a message is displayed, and the user is redirected
-   * to the login page.
+   * to the main page.
    */
   createAccount(): void {
     this.disabled = true;
@@ -122,8 +122,11 @@ export class AvatarPickerComponent {
         next: () => {
           this.userAccInfo.showMessage(0);
           setTimeout(() => {
-            this.router.navigateByUrl('/login');
+            this.router.navigateByUrl('/main');
           }, 1500);
+        },
+        error: (error) => {
+          console.error('Show error', error);
         },
       });
   }
