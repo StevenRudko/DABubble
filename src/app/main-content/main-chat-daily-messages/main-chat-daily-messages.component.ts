@@ -5,6 +5,9 @@ import {
   OnInit,
   OnDestroy,
   inject,
+  ChangeDetectorRef,
+  ElementRef,
+  ViewChild,
 } from '@angular/core';
 import { MATERIAL_MODULES } from '../../shared/material-imports';
 import { UserMessageComponent } from '../../shared/user-message/user-message.component';
@@ -47,6 +50,9 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     'Samstag',
   ];
 
+  @ViewChild('chatContainer') chatContainer!: ElementRef;
+  private isUserScrolled = false;
+
   dateToday = new Date();
   timeToday: any;
   messageTime: any;
@@ -78,7 +84,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     }[];
   } = {};
 
-  constructor(private userData: UserData) {}
+  constructor(private userData: UserData, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): Promise<void> {
     this.subscription = this.userData.userMessages$.subscribe((messages) => {
@@ -241,7 +247,6 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
       this.groupedMessages[time].push(msg);
       console.log('groupedMessages: ', this.groupedMessages);
     });
-    
   }
 
   ngOnDestroy() {
@@ -289,12 +294,43 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
       hours: number;
       minutes: number;
     }[] = [];
-  
+
     // Iteriere über alle Gruppen (Die Werte der gruppierten Nachrichten)
-    Object.values(this.groupedMessages).forEach(group => {
+    Object.values(this.groupedMessages).forEach((group) => {
       allGroupedMessages.push(...group); // Alle Nachrichten der aktuellen Gruppe hinzufügen
     });
-  
+
     return allGroupedMessages;
+  }
+
+  // Methode, um festzustellen, ob der Benutzer nach oben gescrollt hat
+  onScroll() {
+    const container = this.chatContainer.nativeElement;
+    // Überprüfen, ob der Benutzer fast am unteren Ende des Containers ist
+    if (
+      container.scrollTop + container.clientHeight <
+      container.scrollHeight - 10
+    ) {
+      this.isUserScrolled = true;
+    } else {
+      this.isUserScrolled = false;
+    }
+  }
+
+  // Scrollt nach unten, aber nur, wenn der Benutzer nicht nach oben gescrollt hat
+  private scrollToBottom(): void {
+    const container = this.chatContainer?.nativeElement;
+    if (container && !this.isUserScrolled) {
+      container.scrollTop = container.scrollHeight;
+    }
+  }
+
+  ngAfterViewInit(): void {
+    this.cdr.detectChanges();
+    this.scrollToBottom(); // Initiales Scrollen nach unten
+  }
+
+  ngAfterViewChecked(): void {
+    this.scrollToBottom(); // Nach jeder Änderung das Scrollen ausführen, wenn nötig
   }
 }

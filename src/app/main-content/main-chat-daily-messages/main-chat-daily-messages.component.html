@@ -1,6 +1,4 @@
-<section>
-
-  
+<section #chatContainer  (scroll)="onScroll()">
 
   @if(allMsgPast.length){ 
   <div class="message-date-divider" *ngFor="let msg of getGroupedMessages()">
