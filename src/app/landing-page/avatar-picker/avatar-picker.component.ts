@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { MATERIAL_MODULES } from '../../shared/material-imports';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
 import { UserAccountInfoService } from '../../service/user-account-info.service';
 
@@ -10,11 +10,11 @@ import { UserAccountInfoService } from '../../service/user-account-info.service'
  */
 @Component({
   selector: 'app-avatar-picker',
-  imports: [MATERIAL_MODULES, RouterLink],
+  imports: [MATERIAL_MODULES],
   templateUrl: './avatar-picker.component.html',
   styleUrl: './avatar-picker.component.scss',
 })
-export class AvatarPickerComponent {  
+export class AvatarPickerComponent {
   /**
    * AuthService for registering new users
    * @type {AuthService}
@@ -31,7 +31,7 @@ export class AvatarPickerComponent {
    * UserAccountInfoService for displaying status messages
    * @type {UserAccountInfoService}
    */
-  userAccInfo: UserAccountInfoService = inject(UserAccountInfoService);  
+  userAccInfo: UserAccountInfoService = inject(UserAccountInfoService);
 
   /**
    * A list of available avatar image paths.
@@ -46,14 +46,14 @@ export class AvatarPickerComponent {
     'img-placeholder/sofia.svg',
     'img-placeholder/steffen.svg',
   ];
-  
+
   /**
    * The path of the currently selected user avatar.
    * Defaults to a placeholder image.
    * @type {string}
    */
   selectedUserAvatar: string = 'img/person.png';
-  
+
   /**
    Contains form data passed via navigation state.
    * If no data is available, the user is redirected to the homepage.
@@ -66,18 +66,13 @@ export class AvatarPickerComponent {
    * @type {boolean}
    */
   disabled: boolean = true;
-  
+
   /**
    * Status flag to indicate whether avatars can be selected.
    * @type {boolean}
    */
   status: boolean = true;
 
-  /**
-   * Loads form data from the navigation state or redirects to the homepage
-   * if no data is available.
-   */
-  
   /**
    * Loads form data from the navigation state or redirects to the homepage
    * if no data is available.
@@ -104,9 +99,10 @@ export class AvatarPickerComponent {
   }
 
   /**
-   * Creates a user account using the provided form data and selected avatar.
-   * Upon successful registration, a message is displayed, and the user is redirected
-   * to the main page.
+   * Creates a new user account.
+   * - Disables the form and updates the status to prevent duplicate submissions.
+   * - Registers the user via the `AuthService` using the provided form data and avatar.
+   * @returns {void}
    */
   createAccount(): void {
     this.disabled = true;
@@ -127,7 +123,23 @@ export class AvatarPickerComponent {
         },
         error: (error) => {
           console.error('Show error', error);
+          this.router.navigateByUrl('/register', {
+            state: { form: this.formData, emailError: error },
+          });
         },
       });
+  }
+
+  /**
+   * Navigates back to the registration form.
+   * - Redirects the user to the `/register` route.
+   * - Passes the `formData` as state to prefill the registration form.
+   *
+   * @returns {void}
+   */
+  backToForm() {
+    this.router.navigateByUrl('/register', {
+      state: { form: this.formData },
+    });
   }
 }

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { MATERIAL_MODULES } from '../../shared/material-imports';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
@@ -60,6 +60,14 @@ export class CreateAccountComponent {
   validatorService: ValidatorService = inject(ValidatorService);
 
   /**
+   * Stores error details related to the email field.
+   * - Populated when there is an issue during registration (e.g., invalid email or email already in use).
+   * - Retrieved from the navigation state passed via the router.
+   * @type {any}
+   */
+  emailError: any;
+
+  /**
    * Reactive form group for user account creation.
    * Fields:
    * - `username`: Full name (first and last name, min. 2 characters each, required).
@@ -89,6 +97,23 @@ export class CreateAccountComponent {
     ],
     agreeToTerms: [false, Validators.requiredTrue],
   });
+
+  /**
+   * Initializes the component by checking for navigation state.
+   * - Retrieves `form` and `emailError` data from the navigation state, if available.
+   * - Prefills the form with the retrieved data.
+   * - Sets the `emailError` property if an error is passed through the state.
+   * @constructor
+   */
+  constructor() {
+    const navigation = this.router.getCurrentNavigation();
+    const state = navigation?.extras.state as { form: any, emailError: any };
+    if (state?.form) {
+      this.form.patchValue(state.form);
+    } if (state?.emailError) {
+      this.emailError = state.emailError;
+    }
+  }
 
   /**
    * Handles form submission.

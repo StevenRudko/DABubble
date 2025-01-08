@@ -21,8 +21,8 @@ import { Firestore, doc, setDoc } from '@angular/fire/firestore';
 
 /**
  * The AuthService provides methods for user authentication and account management.
- * It uses Firebase Authentication to handle user registration, login, logout,
- * password resets, and profile updates.
+ * It handles registration, login, logout, password reset, and online status management.
+ * Additionally, it saves user information to Firestore.
  */
 @Injectable({
   providedIn: 'root',
@@ -43,6 +43,15 @@ export class AuthService {
   //  */
   // currentUserSig = signal<UserInterface | null | undefined>(undefined);
 
+  /**
+  * Initializes the AuthService with necessary dependencies.
+  * - Sets session storage persistence for Firebase authentication.
+  * - Initializes the `user$` observable to monitor authentication state changes.
+  * @param {Auth} firebaseAuth - The Firebase authentication instance used for authentication operations.
+  * @param {Firestore} firestore - The Firestore instance used for storing and retrieving user data.
+  * @param {PresenceService} presenceService - Service for managing the user's online/offline status.
+  * @constructor
+  */
   constructor(
     private firebaseAuth: Auth,
     private firestore: Firestore,
@@ -52,15 +61,19 @@ export class AuthService {
     this.user$ = user(this.firebaseAuth);
   }
 
-  // Setzt die Persistenz auf Session Storage
+  /**
+   * Sets session storage persistence for Firebase authentication.
+   * Ensures the authentication session is tied to the browser session.
+   * @private
+   * @returns {void}
+   */
   private setSessionStoragePersistence(): void {
     setPersistence(this.firebaseAuth, browserSessionPersistence);
   }
 
   /**
-   * Registers a new user with email, password, and additional profile information.
+   * Registers a new user and saves their information to Firestore.
    * - Updates the user's profile with a display name and photo URL.
-   *
    * @param {string} email - The email address of the new user.
    * @param {string} username - The display name of the new user.
    * @param {string} password - The password for the new user account.
@@ -84,13 +97,10 @@ export class AuthService {
     })();
     return from(promise);
   }
-  
+
 
   /**
-   * Logs in a user using email and password authentication.
-   * - Authenticates the user with Firebase.
-   * - Sets the user's online status after a successful login.
-   *
+   * Logs in a user with email and password and sets their online status.
    * @param {string} email - The email address of the user.
    * @param {string} password - The user's password.
    * @returns {Observable<void>} - An observable that completes when the login is successful.
@@ -106,21 +116,25 @@ export class AuthService {
     return from(promise);
   }
 
-
+  /**
+   * Logs in a user using Google Authentication and saves their information to Firestore.
+   * @returns {Promise<void>} - Promise that resolves when the login and saving are successful.
+   * @throws {Error} - Throws an error if the login or saving process fails.
+   */
   async googleLogin(): Promise<void> {
     const provider = new GoogleAuthProvider();
-  
+
     try {
       const result = await signInWithPopup(this.firebaseAuth, provider);
       const user = result.user;
-  
+
       if (!user) {
         console.error('Google-Login fehlgeschlagen: Kein Benutzerobjekt gefunden');
         throw new Error('Google-Login fehlgeschlagen');
       }
 
       await this.saveUserInfoToFirestore(user);
-  
+
       this.presenceService.setOnlineStatus();
     } catch (error) {
       console.error('Fehler beim Google-Login:', error);
@@ -133,7 +147,6 @@ export class AuthService {
    * - Signs the user out using Firebase Authentication.
    * - Clears the session storage to remove temporary data.
    * - Sets the user's offline status after a successful logout.
-   *
    * @returns {Observable<void>} - An observable that completes when the logout is successful.
    */
   logout(): Observable<void> {
@@ -146,7 +159,6 @@ export class AuthService {
 
   /**
    * Sends a password reset email to the specified email address.
-   *
    * @param {string} email - The email address to send the password reset email to.
    * @returns {Promise<void>} - Promise that resolves when the email is sent successfully.
    */
@@ -156,7 +168,6 @@ export class AuthService {
 
   /**
    * Updates the Firebase user's profile with a display name and photo URL.
-   *
    * @private
    * @param {User} user - The Firebase user object.
    * @param {string} displayName - The display name to set for the user.
@@ -174,6 +185,13 @@ export class AuthService {
     });
   }
 
+  /**
+   * Saves user information (email, username, photoURL) to Firestore.
+   * @private
+   * @param {User} user - The Firebase user object.
+   * @returns {Promise<void>} - Promise that resolves when the information is successfully saved.
+   * @throws {Error} - Throws an error if the saving process fails.
+   */
   private async saveUserInfoToFirestore(user: User): Promise<void> {
     try {
       const userRef = doc(this.firestore, `users/${user.uid}`);

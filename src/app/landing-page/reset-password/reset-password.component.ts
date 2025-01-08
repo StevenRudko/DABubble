@@ -9,6 +9,7 @@ import {
 } from '@angular/forms';
 import { UserAccountInfoService } from '../../service/user-account-info.service';
 import { AuthService } from '../../service/auth.service';
+import { Firestore, collection, getDocs } from '@angular/fire/firestore';
 
 /**
  * The ResetPasswordComponent allows users to reset their password by providing their email address.
@@ -40,11 +41,18 @@ export class ResetPasswordComponent {
   userAccInfo: UserAccountInfoService = inject(UserAccountInfoService);
 
   /**
-   * AuthService instance for handling authentication-related actions, such as sending
-   * password reset emails.
-   * @type {AuthService}
+   * Error flag for the email field.
+   * - Set to `false` when the email field gains focus.
+   * @type {boolean}
    */
-  authService: AuthService = inject(AuthService);
+  emailError: boolean = false;
+
+  /**
+   * Stores a list of email addresses retrieved from the Firestore database.
+   * - Populated during the `ngOnInit` lifecycle hook.
+   * @type {string[]}
+   */
+  emails: string[] = [];
 
   /**
    * Reactive form group for the email input.
@@ -57,30 +65,61 @@ export class ResetPasswordComponent {
   });
 
   /**
+   * Initializes the component with the necessary services.
+   * @param {AuthService} authService - The authentication service for managing user authentication.
+   * @param {Firestore} firestore - The Firestore instance for database operations.
+   */
+  constructor(
+    private authService: AuthService,
+    private firestore: Firestore
+  ) { }
+
+  /**
+   * Lifecycle hook that initializes the component.
+   * - Fetches all user email addresses from the Firestore `users` collection.
+   * - Updates the `emails` property with the list of retrieved email addresses.
+   * @returns {Promise<void>} - A promise that resolves when the email addresses are successfully fetched.
+   */
+  async ngOnInit(): Promise<void> {
+    const colRef = collection(this.firestore, 'users');
+    const snapshot = await getDocs(colRef);
+    this.emails = snapshot.docs.map((doc) => doc.data()['email']);
+  }
+
+  /**
    * Handles the form submission for password reset.
    * - Validates the form and sends a password reset email using `AuthService`.
    * - Displays a success message and navigates to the homepage after a short delay.
    * - Catches errors during the process and displays an alert with the error message.
-   *
    * @returns {void}
    */
   onSubmit(): void {
-    if (this.form.invalid) {
-      return;
-    }
-
+    if (this.form.invalid) { return; }
     const email = this.form.value.email!;
-    this.authService
-      .sendPasswordResetMail(email)
-      .then(() => {
-        this.userAccInfo.showMessage(1);
-        setTimeout(() => {
-          this.router.navigate(['']);
-        }, 1500);
-      })
-      .catch((error) => {
-        console.error('Fehler beim Zurücksetzen des Passworts:', error);
-        alert('Fehler: ' + error.message);
-      });
+    if (this.emails.includes(email)) {
+      this.authService
+        .sendPasswordResetMail(email)
+        .then(() => {
+          this.userAccInfo.showMessage(1);
+          setTimeout(() => {
+            this.router.navigate(['']);
+          }, 1500);
+        })
+        .catch((error) => {
+          console.error('Fehler beim Zurücksetzen des Passworts:', error);
+          alert('Fehler: ' + error.message);
+        });
+    } else {
+      this.emailError = true;
+    }
+  }
+
+  /**
+   * Resets the email error flag when the email field gains focus.
+   * - Typically called on the `focus` event of the email input field.
+   * @returns {void}
+   */
+  onEmailFocus(): void {
+    this.emailError = false;
   }
 }
