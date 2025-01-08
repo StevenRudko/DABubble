@@ -21,6 +21,7 @@ interface UserProfile {
   displayName: string | null;
   photoURL: string | null;
   online?: boolean;
+  username?: string;
 }
 
 @Component({
@@ -74,18 +75,18 @@ export class SidebarComponent implements OnInit {
     this.isDirectMessageSectionExpanded = !this.isDirectMessageSectionExpanded;
   }
 
-  // Hilfsmethode um den aktuellen Benutzer zu identifizieren
   isCurrentUser(userId: string): Observable<boolean> {
     return this.currentUser$.pipe(map((user) => user?.uid === userId));
   }
 
-  // Hilfsmethode für Profilbild Fallback
   getPhotoURL(user: User | UserProfile): string {
     return user.photoURL || 'img-placeholder/default-avatar.svg';
   }
 
-  // Hilfsmethode für Anzeigename Fallback
   getDisplayName(user: User | UserProfile): string {
-    return user.displayName || user.email || 'Unbenannter Benutzer';
+    if ('username' in user && user.username) {
+      return user.username;
+    }
+    return user.displayName || 'Unbenannter Benutzer';
   }
 }
