@@ -37,7 +37,7 @@
       <mat-icon class="add-icon" (click)="openChannelDialog()">add</mat-icon>
     </div>
 
-    <div class="collapsible-content" [class.collapsed]="!isChannelSectionExpanded">
+    <div class="collapsible-content channel-list" [class.collapsed]="!isChannelSectionExpanded">
       <div class="channel-item" *ngFor="let channel of channels$ | async">
         <mat-icon>tag</mat-icon>
         <span class="channel-name">{{ channel.name }}</span>
@@ -48,6 +48,7 @@
         <span>Channel hinzufügen</span>
       </div>
     </div>
+
 
     <div class="section">
       <div class="section-header">
@@ -68,7 +69,7 @@
         </div>
       </div>
 
-      <div class="collapsible-content" [class.collapsed]="!isDirectMessageSectionExpanded">
+      <div class="collapsible-content direct-messages" [class.collapsed]="!isDirectMessageSectionExpanded">
         <div class="user-list">
           <ng-container *ngIf="currentUser$ | async as user">
             <div class="user-item">
@@ -81,9 +82,8 @@
 
           <ng-container *ngFor="let otherUser of allUsers$ | async">
             <div class="user-item" *ngIf="(currentUser$ | async)?.uid !== otherUser.uid">
-              <img [src]="otherUser.photoURL || 'img-placeholder/default-avatar.svg'" class="user-avatar"
-                [alt]="otherUser.displayName">
-              <span>{{ otherUser.displayName || otherUser.email }}</span>
+              <img [src]="getPhotoURL(otherUser)" class="user-avatar" [alt]="getDisplayName(otherUser)">
+              <span>{{ getDisplayName(otherUser) }}</span>
               <div class="status-dot" [class.online]="otherUser.online"></div>
             </div>
           </ng-container>
