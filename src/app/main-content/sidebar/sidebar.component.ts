@@ -8,6 +8,7 @@ import { Firestore, collection, collectionData } from '@angular/fire/firestore';
 import { Observable, map } from 'rxjs';
 import { AuthService } from '../../service/auth.service';
 import { User } from 'firebase/auth';
+import { ChatService } from '../../service/chat.service';
 
 interface Channel {
   id: string;
@@ -41,7 +42,8 @@ export class SidebarComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private firestore: Firestore,
-    private authService: AuthService
+    private authService: AuthService,
+    private chatService: ChatService
   ) {
     // Channels laden
     const channelsCollection = collection(this.firestore, 'channels');
@@ -88,5 +90,13 @@ export class SidebarComponent implements OnInit {
       return user.username;
     }
     return user.displayName || 'Unbenannter Benutzer';
+  }
+
+  selectChannel(channelId: string) {
+    this.chatService.selectChannel(channelId);
+  }
+
+  selectDirectMessage(userId: string) {
+    this.chatService.selectDirectMessage(userId);
   }
 }
