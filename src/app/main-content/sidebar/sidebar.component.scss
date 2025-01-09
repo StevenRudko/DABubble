@@ -23,6 +23,7 @@
     $g: 0
   );
   width: 100%;
+  flex-shrink: 0;
   @include styles.padding($pl: 0.5rem, $pr: 24px, $pt: 0.5rem, $pb: 0.5rem);
 
   .edit-square {
@@ -73,6 +74,7 @@
     display: flex;
     flex-direction: column;
     min-height: 0;
+    max-height: calc(100vh - 200px);
   }
 
   .section-header {
@@ -147,8 +149,11 @@
   flex-direction: column;
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding-right: 6px;
   margin-bottom: 1rem;
+  min-height: 0;
+  max-height: 100%;
 
   &::-webkit-scrollbar {
     width: 6px;
@@ -225,7 +230,7 @@
   gap: 1rem;
 
   &.channel-list {
-    max-height: 250px;
+    max-height: 200px;
     overflow-y: auto;
     padding-right: 6px;
 
@@ -240,6 +245,11 @@
     &::-webkit-scrollbar-thumb {
       background-color: #adb0d9;
       border-radius: 20px;
+      display: none;
+    }
+
+    &:hover::-webkit-scrollbar-thumb {
+      display: block;
     }
   }
 
@@ -249,6 +259,7 @@
     flex-direction: column;
     min-height: 0;
     overflow: hidden;
+    max-height: calc(100vh - 300px);
   }
 
   &.collapsed {
