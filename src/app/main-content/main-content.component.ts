@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { MainChatComponent } from './main-chat/main-chat.component';
 import { ThreadComponent } from './thread/thread.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
@@ -51,12 +51,6 @@ export class MainContentComponent {
 
   ngOnInit(): void {
     this.presenceService.setOnlineStatus();
-    this.presenceService.onlineUsers$.subscribe((statusData) => {
-      this.onlineUsers = Object.keys(statusData || {}).filter(
-        (uid) => statusData[uid] === 'online'
-      );
-      console.log('Gefilterte Online-Benutzer:', this.onlineUsers);
-    });
   }
 
   toggleSidebar() {

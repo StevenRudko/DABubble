@@ -91,10 +91,10 @@ export class UserLoginComponent {
    */
   async onGoogleSignIn(): Promise<void> {
     try {
-      await this.authService.googleLogin(); // Ruft die asynchrone Login-Methode auf
-      this.router.navigateByUrl('/main'); // Navigation nach erfolgreichem Login
+      await this.authService.googleLogin();
+      this.router.navigateByUrl('/main');
     } catch (error) {
-      console.error('Google Sign-In error:', error); // Fehlerprotokollierung
+      console.error('Google Sign-In error:', error);
     }
   }
   

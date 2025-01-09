@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Database, ref, set, onDisconnect, onValue } from '@angular/fire/database';
 import { Auth } from '@angular/fire/auth';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, map, Observable } from 'rxjs';
 
 /**
  * The PresenceService manages the online/offline status of authenticated users.
@@ -26,7 +26,7 @@ export class PresenceService {
    * @type {Observable<Record<string, string>>}
    */
   onlineUsers$ = this.onlineUsersSubject.asObservable();
-  
+
   /**
    * Initializes the PresenceService with dependencies and sets up a listener
    * for changes to the `status` node in the Realtime Database.
@@ -54,7 +54,7 @@ export class PresenceService {
         set(userStatusRef, 'online');
         onDisconnect(userStatusRef).set('offline');
         window.addEventListener('beforeunload', () => {
-          set(userStatusRef, 'offline'); // Optional: Verhindert "Geisterbenutzer" bei Hard-Disconnects
+          set(userStatusRef, 'offline');
         });
       }
     });
@@ -80,10 +80,28 @@ export class PresenceService {
    * @param {(users: Record<string, string>) => void} callback - Callback function that receives the list of users.
    * @returns {void}
    */
-  getOnlineUsers(callback: (users: Record<string, string>) => void): void {
-    const statusRef = ref(this.db, 'status');
-    onValue(statusRef, (snapshot) => {
-      callback(snapshot.val());
-    });
+  // getOnlineUsers(callback: (users: Record<string, string>) => void): void {
+  //   const statusRef = ref(this.db, 'status');
+  //   onValue(statusRef, (snapshot) => {
+  //     callback(snapshot.val());
+  //   });
+  // }
+
+  getOnlineUsers(): Observable<string[]> {
+    return this.onlineUsers$.pipe(
+      map((statusData) =>
+        Object.keys(statusData || {}).filter(
+          (uid) => statusData[uid] === 'online'
+        )
+      )
+    );
   }
+
+
+  // Funktion zum abrufen der User die online sind
+  // this.presenceService.getOnlineUsers().subscribe((onlineUsers) => {
+  //   this.string = onlineUsers;
+  //   console.log('Online USER' ,this.onlineUsers);
+  // });
+
 }

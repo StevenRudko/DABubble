@@ -33,7 +33,7 @@ export class AuthService {
    * Automatically updates when the authentication state changes.
    * @type {Observable<User | null>}
    */
-  user$: Observable<User | null>; // = user(this.firebaseAuth)
+  user$: Observable<User | null>;
 
   // keep for new featuress
   // /**
@@ -123,18 +123,14 @@ export class AuthService {
    */
   async googleLogin(): Promise<void> {
     const provider = new GoogleAuthProvider();
-
     try {
       const result = await signInWithPopup(this.firebaseAuth, provider);
       const user = result.user;
-
       if (!user) {
         console.error('Google-Login fehlgeschlagen: Kein Benutzerobjekt gefunden');
         throw new Error('Google-Login fehlgeschlagen');
       }
-
       await this.saveUserInfoToFirestore(user);
-
       this.presenceService.setOnlineStatus();
     } catch (error) {
       console.error('Fehler beim Google-Login:', error);
