@@ -1,6 +1,7 @@
 <div class="message-input-container">
   <label for="new-message"></label>
-  <textarea [placeholder]="placeholder"></textarea>
+  <textarea [(ngModel)]="messageText" [placeholder]="placeholder">
+  </textarea>
 
   <div class="bottom-wrapper-icons">
     <div class="interactive-icons">
@@ -12,7 +13,7 @@
       </div>
     </div>
 
-    <div class="send-icon-div">
+    <div class="send-icon-div" (click)="sendMessage()">
       <mat-icon>send</mat-icon>
     </div>
   </div>

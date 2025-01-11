@@ -38,7 +38,7 @@
     </div>
 
     <div class="collapsible-content channel-list" [class.collapsed]="!isChannelSectionExpanded">
-      <div class="channel-item" *ngFor="let channel of channels$ | async">
+      <div class="channel-item" *ngFor="let channel of channels$ | async" (click)="selectChannel(channel.id)">
         <mat-icon>tag</mat-icon>
         <span class="channel-name">{{ channel.name }}</span>
       </div>
@@ -81,7 +81,8 @@
           </ng-container>
 
           <ng-container *ngFor="let otherUser of allUsers$ | async">
-            <div class="user-item" *ngIf="(currentUser$ | async)?.uid !== otherUser.uid">
+            <div class="user-item" *ngIf="(currentUser$ | async)?.uid !== otherUser.uid"
+              (click)="selectDirectMessage(otherUser.uid)">
               <img [src]="getPhotoURL(otherUser)" class="user-avatar" [alt]="getDisplayName(otherUser)">
               <span>{{ getDisplayName(otherUser) }}</span>
               <div class="status-dot" [class.online]="otherUser.online"></div>

@@ -1,10 +1,7 @@
 <section #chatContainer (scroll)="onScroll()">
   <!-- Alte Nachrichten -->
   <div class="message-wrapper" *ngIf="allMsgPast.length">
-    <div
-      class="messages-by-date-container"
-      *ngFor="let entry of groupedMessages | keyvalue"
-    >
+    <div class="messages-by-date-container" *ngFor="let entry of groupedMessages | keyvalue">
       <!-- Anzeige der Trennlinie für das Datum -->
       <div class="divider-line">
         <div class="divider-text-box bg-frame-v1">
@@ -12,16 +9,9 @@
         </div>
       </div>
       <!-- Iteration durch Nachrichten für dieses Datum -->
-      <app-user-message
-        *ngFor="let msg of entry.value"
-        [messagesOld]="[msg]"
-        [threadMessage]="false"
-        [ownMessage]="false"
-        [showAnswerDetails]="true"
-        [showReactionIcons]="false"
-        (openThreadEvent)="openThread()"
-        class="width-100"
-      >
+      <app-user-message *ngFor="let msg of entry.value" [messagesOld]="[msg]" [threadMessage]="false"
+        [ownMessage]="false" [showAnswerDetails]="true" [showReactionIcons]="false" (openThreadEvent)="openThread()"
+        class="width-100">
       </app-user-message>
     </div>
   </div>
@@ -34,15 +24,9 @@
         <p class="divider-text">Heute</p>
       </div>
     </div>
-    
+
   </div>
-  <app-user-message
-    [messagesToday]="getMessagesToday()"
-    [threadMessage]="false"
-    [ownMessage]="true"
-    [showAnswerDetails]="false"
-    [showReactionIcons]="true"
-    class="width-100"
-  ></app-user-message>
+  <app-user-message [messagesToday]="getMessagesToday()" [threadMessage]="false" [ownMessage]="true"
+    [showAnswerDetails]="false" [showReactionIcons]="true" class="width-100"></app-user-message>
   }
 </section>

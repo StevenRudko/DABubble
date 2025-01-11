@@ -4,7 +4,6 @@ import {
   EventEmitter,
   OnInit,
   OnDestroy,
-  inject,
   ChangeDetectorRef,
   ElementRef,
   ViewChild,
@@ -26,6 +25,7 @@ import { UserInterface } from '../../models/user-interface';
 })
 export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   @Output() openThreadEvent = new EventEmitter<void>();
+  @ViewChild('chatContainer') chatContainer!: ElementRef;
 
   months = [
     'Januar',
@@ -41,6 +41,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     'November',
     'Dezember',
   ];
+
   days = [
     'Sonntag',
     'Montag',
@@ -50,9 +51,6 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     'Freitag',
     'Samstag',
   ];
-
-  @ViewChild('chatContainer') chatContainer!: ElementRef;
-  private isUserScrolled = false;
 
   dateToday = new Date();
   timeToday: any;
@@ -111,15 +109,24 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     return Promise.resolve();
   }
 
+  private mapMessages(messages: any[]): UserMessageInterface[] {
+    return messages.map((msg) => ({
+      ...msg,
+      comments: msg.comments || {},
+      emojis: msg.emojis || {},
+      time: msg.time || { seconds: Date.now() / 1000, nanoseconds: 0 },
+      directUserId: String(msg.directUserId || ''),
+      channelId: String(msg.channelId || ''),
+      authorId: String(msg.authorId || ''),
+    }));
+
   getTimeToday() {
     const todayTimeStamp = this.dateToday.getTime();
     this.timeToday = this.formatTimeStamp(todayTimeStamp);
-    // console.log('getFormatTime: ', this.timeToday);
   }
 
   getMsgTime(timeStamp: any): void {
     this.messageTime = this.formatTimeStamp(timeStamp);
-    // console.log('getFormatTime: ', this.messageTime);
   }
 
   formatTimeStamp(timestamp: number): string {
@@ -133,7 +140,9 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   loadMessages() {
     // console.log('Hier sind die user Messages endlich: ', this.userMessages);
     if (this.userMessages) {
-      const timestampArr: any = [];
+      this.allMsgToday = [];
+      this.allMsgPast = [];
+
       this.userMessages.forEach((message: UserMessageInterface) => {
         const timestamp: any = message.time;
         const msgTimeStampSeconds = timestamp.seconds;
@@ -146,19 +155,17 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
 
         const msgTime1 = new Date(millis);
         const todayTime1 = new Date(this.timeToday);
-        // Uhrzeit auf Mitternacht setzen, da nur der Tag für uns relevant ist
         msgTime1.setHours(0, 0, 0, 0);
         todayTime1.setHours(0, 0, 0, 0);
-        // console.log('msgTime1: ', msgTime1);
-        // console.log('todayTime1: ', todayTime1);
+
         const exactTime = new Date(millis);
         const timeHours = exactTime.getHours();
         const timeMinutes = exactTime.getMinutes();
         let userName: string = '';
-        
+
         // console.log('dies ist der author: ', message.authorId);
         // console.log('dies sind die user: ', this.user);
-        
+
 
         // AuthorId(string) in Namen umwandeln
         const user = this.user.find(
@@ -232,10 +239,11 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+  onScroll() {
+    const container = this.chatContainer.nativeElement;
+    this.isUserScrolled =
+      container.scrollTop + container.clientHeight <
+      container.scrollHeight - 10;
   }
 
   openThread() {
