@@ -16,12 +16,19 @@ section {
     box-sizing: border-box;
 }
 
-.message-date-divider {
-    @include styles.dFlex($d: flex, $fd: column, $jc: center, $ai: center, $g: 0);
-    height: 1px;
+.messages-by-date-container {
+    @include styles.dFlex($d: flex, $fd: column, $jc: center, $ai: center, $g: 42px);
     width: 100%;
+    box-sizing: border-box;
     height:auto;
+}
 
+.divider-line {
+    @include styles.dFlex($d: flex, $fd: column, $jc: center, $ai: center, $g: 0px);
+    height: 1px;
+    background-color: #adb0d9;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .divider-text-box {

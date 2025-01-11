@@ -60,6 +60,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   userMessages: UserMessageInterface[] = [];
   userMessages$: Observable<any> = new Observable<any>();
   private subscription!: Subscription; // Das ! sagt TypeScript, dass wir uns um die Initialisierung kümmern
+
   allMsgToday: {
     timestamp: number;
     userId: number;
@@ -67,6 +68,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     hours: number;
     minutes: number;
   }[] = [];
+
   allMsgPast: {
     timestamp: number;
     userId: number;
@@ -74,6 +76,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     hours: number;
     minutes: number;
   }[] = [];
+
   groupedMessages: {
     [date: string]: {
       timestamp: number;
@@ -118,7 +121,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   }
 
   loadMessages() {
-    console.log('Hier sind die user Messages endlich: ', this.userMessages);
+    // console.log('Hier sind die user Messages endlich: ', this.userMessages);
     if (this.userMessages) {
       const timestampArr: any = [];
       this.userMessages.forEach((message: UserMessageInterface) => {
@@ -143,7 +146,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
 
         // Vergleiche nur das Datum
         if (msgTime1 < todayTime1) {
-          console.log('Älter');
+          // console.log('Älter');
 
           if (!this.allMsgPast.find((msg) => msg.timestamp === millis)) {
             // Damit sich Nachrichten nicht doppeln
@@ -171,67 +174,16 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
             this.allMsgToday.sort((a, b) => a.timestamp - b.timestamp); // Nachrichten werden dem Datum nach sortiert
           }
         } else if (msgTime1 > todayTime1) {
-          console.log('Zukunft');
+          // console.log('Zukunft');
         } else {
           return console.error('Fehler beim Vergleichen der Daten');
         }
-
-        // console.log('Timestamp:', timestampSeconds);
-        // console.log('messageId:', messageId);
-        // timestampArr.push(timestampSeconds);
-        // console.log('timestampArr: ', timestampArr);
       });
     } else {
       console.error('No userMessages found.');
     }
-
-    // this.getFormattedDate(this.currentTimeStamp);
-    // let messageTime = this.getFormattedDate(this.messageTimeStamp);
-    // this.getTimeStampToday();
-    //
-    // let resultDate = this.compareBothDate(messageTime, currentTime);
-    // this.userMessageDate = this.formatedResult(resultDate);
-    this.loadMessagesToday();
   }
 
-  loadMessagesToday() {}
-
-  // bestimmteUserMessageFinden() {
-  //   if (this.userMessages.length > 0) {
-  //     console.log('Erste Nachricht:', this.userMessages[0]);
-  //   } else {
-  //     console.log('Keine Nachrichten vorhanden.');
-  //   }
-  // }
-
-  // userMessagesFilternNachChannel(channelId: number) {
-  //   const filteredMessages = this.userMessages.filter(
-  //     (message) => message.channelId === channelId
-  //   );
-  //   console.log(
-  //     'Gefilterte Nachrichten mit channelId',
-  //     channelId,
-  //     ':',
-  //     filteredMessages
-  //   );
-  //   return filteredMessages;
-  // }
-
-  // formatedResult(resultDate: string) {
-  //   if (resultDate === 'Heute') {
-  //     return resultDate;
-  //   }
-
-  //   const dateParts = resultDate.split(' ');
-  //   const day = parseInt(dateParts[0], 10);
-  //   const month = dateParts[1];
-  //   const year = parseInt(dateParts[2], 10);
-  //   const date = new Date(year, this.months.indexOf(month), day);
-  //   const weekday = this.days[date.getDay()];
-  //   const formattedMonth = this.months[date.getMonth()];
-
-  //   return `${weekday}, ${day} ${formattedMonth}`;
-  // }
 
   loadOldMessages() {
     console.log('Das sind die alten Nachrichten: ', this.allMsgPast);
@@ -240,12 +192,12 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
 
     this.allMsgPast.forEach((msg) => {
       const time = this.formatTimeStamp(msg.timestamp);
-      console.log('time der alten Nachrichten: ', time);
+      // console.log('time der alten Nachrichten: ', time);
       if (!this.groupedMessages[time]) {
         this.groupedMessages[time] = [];
       }
       this.groupedMessages[time].push(msg);
-      console.log('groupedMessages: ', this.groupedMessages);
+      // console.log('groupedMessages: ', this.groupedMessages);
     });
   }
 
