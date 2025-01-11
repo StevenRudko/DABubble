@@ -1,15 +1,26 @@
-<section #chatContainer  (scroll)="onScroll()">
+<section #chatContainer (scroll)="onScroll()">
+  <!-- Alte Nachrichten -->
+  <div class="message-wrapper" *ngIf="allMsgPast.length">
 
-  @if(allMsgPast.length){ 
-  <div class="message-date-divider" *ngFor="let msg of getGroupedMessages()">
-    <div class="divider-text-box bg-frame-v1">
-      <p class="divider-text">{{ msg.timestamp | date: 'dd.MM.yyyy' }}</p>
-      <!-- <p class="divider-text">{{ messageDate > currentTimeStamp ? messageDate : "Heute" }}</p> -->
+    <div class="message-date-divider" *ngFor="let entry of groupedMessages | keyvalue">
+      <!-- Anzeige der Trennlinie für das Datum -->
+      <div class="divider-text-box bg-frame-v1">
+        <p class="divider-text">{{ entry.key | date: 'dd.MM.yyyy' }}</p>
+      </div>
+      <!-- Iteration durch Nachrichten für dieses Datum -->
+      <app-user-message 
+        *ngFor="let msg of entry.value" 
+        [messagesOld]="[msg]" 
+        [threadMessage]="false" 
+        [ownMessage]="false" 
+        [showAnswerDetails]="true" 
+        [showReactionIcons]="false" 
+        (openThreadEvent)="openThread()" 
+        class="width-100">
+      </app-user-message>
     </div>
+    
   </div>
-  
-  <app-user-message [messagesOld]="getGroupedMessages()" [threadMessage]="false" [ownMessage]="false" [showAnswerDetails]="true" [showReactionIcons]="false" (openThreadEvent)="openThread()" class="width-100"></app-user-message>
-}
 
   @if(allMsgToday.length){ 
   <div class="message-date-divider">

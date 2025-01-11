@@ -3,18 +3,25 @@
 @use './../../../assets/styles/theme-colors.scss' as colors;
 
 section {
-    @include styles.dFlex($d: flex, $fd: column, $jc: flex-start, $ai: flex-start, $g: 42px);
-    height:360px;
+    @include styles.dFlex($d: flex, $fd: column, $jc: flex-start, $ai: flex-start, $g: 0px);
+    height: 360px;
     overflow-y: scroll;
-    padding-top:18px;
+    padding-top: 18px;
+}
+
+.message-wrapper {
+    @include styles.dFlex($d: flex, $fd: column, $jc: flex-start, $ai: flex-start, $g: 42px);
+    width: 100%;
+    height:auto;
+    box-sizing: border-box;
 }
 
 .message-date-divider {
     @include styles.dFlex($d: flex, $fd: column, $jc: center, $ai: center, $g: 0);
-    width: 100%;
-    box-sizing: border-box;
     height: 1px;
-    background-color: #adb0d9;
+    width: 100%;
+    height:auto;
+
 }
 
 .divider-text-box {

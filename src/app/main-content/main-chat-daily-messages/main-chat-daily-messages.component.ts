@@ -333,4 +333,12 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   ngAfterViewChecked(): void {
     this.scrollToBottom(); // Nach jeder Änderung das Scrollen ausführen, wenn nötig
   }
+
+  trackByDate(index: number, group: any): string {
+    return group[0]?.timestamp; // Einzigartiger Schlüssel für die Datumsgruppe
+  }
+  
+  trackByMessage(index: number, msg: any): number {
+    return msg.timestamp; // Einzigartiger Schlüssel für jede Nachricht
+  }
 }
