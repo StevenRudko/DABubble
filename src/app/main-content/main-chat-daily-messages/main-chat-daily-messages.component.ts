@@ -7,22 +7,16 @@ import {
   ChangeDetectorRef,
   ElementRef,
   ViewChild,
+  AfterViewInit,
+  AfterViewChecked,
 } from '@angular/core';
 import { MATERIAL_MODULES } from '../../shared/material-imports';
 import { UserMessageComponent } from '../../shared/user-message/user-message.component';
 import { Observable, Subscription } from 'rxjs';
 import { UserData } from '../../service/user-data.service';
 import { UserMessageInterface } from '../../models/user-message';
-import { CommonModule, NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { UserInterface } from '../../models/user-interface';
-
-
-interface message {
-  id: number;
-  name: string;
-  email: string;
-  isActive: boolean;
-}
 
 @Component({
   selector: 'app-main-chat-daily-messages',
@@ -31,7 +25,9 @@ interface message {
   templateUrl: './main-chat-daily-messages.component.html',
   styleUrl: './main-chat-daily-messages.component.scss',
 })
-export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
+export class MainChatDailyMessagesComponent
+  implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked
+{
   @Output() openThreadEvent = new EventEmitter<void>();
   @ViewChild('chatContainer') chatContainer!: ElementRef;
 
@@ -61,14 +57,15 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   ];
 
   dateToday = new Date();
-  timeToday: any;
-  messageTime: any;
+  timeToday: string = '';
+  messageTime: string = '';
   userMessageDate: any = undefined;
   userMessages: UserMessageInterface[] = [];
   userMessages$: Observable<any> = new Observable<any>();
   user: UserInterface[] = [];
   users$: Observable<any> = new Observable<any>();
-  private subscription!: Subscription; // Das ! sagt TypeScript, dass wir uns um die Initialisierung kümmern
+  private subscription: Subscription = new Subscription();
+  isUserScrolled: boolean = false;
 
   allMsgToday: {
     timestamp: number;
@@ -101,22 +98,27 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
 
   constructor(private userData: UserData, private cdr: ChangeDetectorRef) {}
 
-  ngOnInit(): Promise<void> {
-    this.subscription = this.userData.users$.subscribe((users) => {
-      this.user = users;
+  ngOnInit(): void {
+    this.subscription.add(
+      this.userData.users$.subscribe((users) => {
+        this.user = users;
 
-      this.subscription = this.userData.userMessages$.subscribe((messages) => {
-        this.userMessages = messages;
-        this.getTimeToday();
-        this.loadMessages();
-        this.loadOldMessages();
-        // this.loadMessagesByTime();
-        // this.getTime();
+        this.subscription.add(
+          this.userData.userMessages$.subscribe((messages) => {
+            this.userMessages = messages;
+            this.getTimeToday();
+            this.loadMessages();
+            this.loadOldMessages();
+          })
+        );
+      })
+    );
+  }
 
-    });    
-  });
-
-    return Promise.resolve();
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
   private mapMessages(messages: any[]): UserMessageInterface[] {
@@ -129,13 +131,14 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
       channelId: String(msg.channelId || ''),
       authorId: String(msg.authorId || ''),
     }));
+  }
 
-  getTimeToday() {
+  getTimeToday(): void {
     const todayTimeStamp = this.dateToday.getTime();
     this.timeToday = this.formatTimeStamp(todayTimeStamp);
   }
 
-  getMsgTime(timeStamp: any): void {
+  getMsgTime(timeStamp: number): void {
     this.messageTime = this.formatTimeStamp(timeStamp);
   }
 
@@ -147,8 +150,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     return `${day} ${month} ${year}`;
   }
 
-  loadMessages() {
-    // console.log('Hier sind die user Messages endlich: ', this.userMessages);
+  loadMessages(): void {
     if (this.userMessages) {
       this.allMsgToday = [];
       this.allMsgPast = [];
@@ -158,10 +160,6 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
         const msgTimeStampSeconds = timestamp.seconds;
         const msgTimeStampNano = timestamp.nanoseconds;
         const millis = msgTimeStampSeconds * 1000 + msgTimeStampNano / 1000000;
-
-        // this.getMsgTime(millis);
-        // console.log('Datum heute: ', this.timeToday);
-        // console.log('Datum message: ', this.messageTime);
 
         const msgTime1 = new Date(millis);
         const todayTime1 = new Date(this.timeToday);
@@ -173,28 +171,16 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
         const timeMinutes = exactTime.getMinutes();
         let userName: string = '';
 
-        // console.log('dies ist der author: ', message.authorId);
-        // console.log('dies sind die user: ', this.user);
-
-
-        // AuthorId(string) in Namen umwandeln
         const user = this.user.find(
           (user: UserInterface) => user.localID === message.authorId
         );
 
-        // Überprüfe, ob der Benutzer gefunden wurde
         if (user) {
-          console.log('userLocalId: ', user.localID);
           userName = user.username;
-          console.log('erfolgreich: ', userName);
         }
 
-        // Vergleiche nur das Datum
         if (msgTime1 < todayTime1) {
-          // console.log('Älter');
-
           if (!this.allMsgPast.find((msg) => msg.timestamp === millis)) {
-            // Damit sich Nachrichten nicht doppeln
             this.allMsgPast.push({
               timestamp: millis,
               userMessageId: message.userMessageId,
@@ -204,13 +190,8 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
               minutes: timeMinutes,
             });
           }
-
-          console.log('Alle Nachrichten: ', this.allMsgPast);
-
-          // console.log('Alle Nachrichten aus der Vergangenheit: ', this.allMsgPast);
         } else if (msgTime1.getTime() === todayTime1.getTime()) {
           if (!this.allMsgToday.find((msg) => msg.timestamp === millis)) {
-            // Damit sich Nachrichten nicht doppeln
             this.allMsgToday.push({
               timestamp: millis,
               userMessageId: message.userMessageId,
@@ -220,77 +201,46 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
               minutes: timeMinutes,
             });
 
-            this.allMsgToday.sort((a, b) => a.timestamp - b.timestamp); // Nachrichten werden dem Datum nach sortiert
+            this.allMsgToday.sort((a, b) => a.timestamp - b.timestamp);
           }
-        } else if (msgTime1 > todayTime1) {
-          // console.log('Zukunft');
-        } else {
-          return console.error('Fehler beim Vergleichen der Daten');
         }
       });
-    } else {
-      console.error('No userMessages found.');
     }
   }
 
-  loadOldMessages() {
-    // console.log('Das sind die alten Nachrichten: ', this.allMsgPast);
+  loadOldMessages(): void {
     this.allMsgPast.sort((a, b) => a.timestamp - b.timestamp);
     this.groupedMessages = {};
 
     this.allMsgPast.forEach((msg) => {
       const time = this.formatTimeStamp(msg.timestamp);
-      // console.log('time der alten Nachrichten: ', time);
       if (!this.groupedMessages[time]) {
         this.groupedMessages[time] = [];
       }
       this.groupedMessages[time].push(msg);
-      // console.log('groupedMessages: ', this.groupedMessages);
     });
   }
 
-  onScroll() {
+  onScroll(): void {
     const container = this.chatContainer.nativeElement;
     this.isUserScrolled =
       container.scrollTop + container.clientHeight <
       container.scrollHeight - 10;
   }
 
-  openThread() {
+  openThread(): void {
     this.openThreadEvent.emit();
   }
 
-  getMessagesToday(): {
-    timestamp: number;
-    userMessageId: string;
-    author: string;
-    message: string;
-    hours: number;
-    minutes: number;
-  }[] {
+  getMessagesToday() {
     return this.allMsgToday;
   }
 
-  getMessagesPast(): {
-    timestamp: number;
-    userMessageId: string;
-    author: string;
-    message: string;
-    hours: number;
-    minutes: number;
-  }[] {
+  getMessagesPast() {
     return this.allMsgPast;
   }
 
-  getGroupedMessages(): {
-    timestamp: number;
-    userMessageId: string;
-    author: string;
-    message: string;
-    hours: number;
-    minutes: number;
-  }[] {
-    // Extrahiere alle Nachrichten aus den Gruppen und flache sie in ein einzelnes Array ab
+  getGroupedMessages() {
     const allGroupedMessages: {
       timestamp: number;
       userMessageId: string;
@@ -300,50 +250,33 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
       minutes: number;
     }[] = [];
 
-    // Iteriere über alle Gruppen (Die Werte der gruppierten Nachrichten)
     Object.values(this.groupedMessages).forEach((group) => {
-      allGroupedMessages.push(...group); // Alle Nachrichten der aktuellen Gruppe hinzufügen
+      allGroupedMessages.push(...group);
     });
-
     return allGroupedMessages;
   }
 
-  // Methode, um festzustellen, ob der Benutzer nach oben gescrollt hat
-  onScroll() {
-    const container = this.chatContainer.nativeElement;
-    // Überprüfen, ob der Benutzer fast am unteren Ende des Containers ist
-    if (
-      container.scrollTop + container.clientHeight <
-      container.scrollHeight - 10
-    ) {
-      this.isUserScrolled = true;
-    } else {
-      this.isUserScrolled = false;
-    }
+  ngAfterViewInit(): void {
+    this.cdr.detectChanges();
+    this.scrollToBottom();
   }
 
-  // Scrollt nach unten, aber nur, wenn der Benutzer nicht nach oben gescrollt hat
-  private scrollToBottom(): void {
+  ngAfterViewChecked(): void {
+    this.scrollToBottom();
+  }
+
+  scrollToBottom(): void {
     const container = this.chatContainer?.nativeElement;
     if (container && !this.isUserScrolled) {
       container.scrollTop = container.scrollHeight;
     }
   }
 
-  ngAfterViewInit(): void {
-    this.cdr.detectChanges();
-    this.scrollToBottom(); // Initiales Scrollen nach unten
-  }
-
-  ngAfterViewChecked(): void {
-    this.scrollToBottom(); // Nach jeder Änderung das Scrollen ausführen, wenn nötig
-  }
-
   trackByDate(index: number, group: any): string {
-    return group[0]?.timestamp; // Einzigartiger Schlüssel für die Datumsgruppe
+    return group[0]?.timestamp;
   }
 
   trackByMessage(index: number, msg: any): number {
-    return msg.timestamp; // Einzigartiger Schlüssel für jede Nachricht
+    return msg.timestamp;
   }
 }
