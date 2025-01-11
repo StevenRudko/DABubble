@@ -3,7 +3,7 @@
 @use './../../../assets/styles/theme-colors.scss' as colors;
 
 section {
-    @include styles.dFlex($d: flex, $fd: column, $jc: flex-start, $ai: flex-start, $g: 0px);
+    @include styles.dFlex($d: flex, $fd: column, $jc: flex-start, $ai: flex-start, $g: 48px);
     height: 360px;
     overflow-y: scroll;
     padding-top: 18px;

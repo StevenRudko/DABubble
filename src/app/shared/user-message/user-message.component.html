@@ -1,7 +1,7 @@
 <!-- Alte Nachrichten -->
 
 <section 
-  *ngFor="let msg of messagesOld"
+*ngFor="let msg of messagesOld"
   (mouseenter)="onMouseEnter()"
   (mouseleave)="onMouseLeave()"
   [ngClass]="{ myMessageStyle: ownMessage }"

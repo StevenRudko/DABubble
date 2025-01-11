@@ -27,14 +27,14 @@
   </div>
 
   @if(allMsgToday.length){
-  <div class="message-date-divider">
+  <div class="messages-by-date-container">
+
     <div class="divider-line">
       <div class="divider-text-box bg-frame-v1">
-        <div>
-          <p class="divider-text">Heute</p>
-        </div>
+        <p class="divider-text">Heute</p>
       </div>
     </div>
+    
   </div>
   <app-user-message
     [messagesToday]="getMessagesToday()"

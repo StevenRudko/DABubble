@@ -15,6 +15,7 @@ import { Observable, Subscription } from 'rxjs';
 import { UserData } from '../../service/user-data.service';
 import { UserMessageInterface } from '../../models/user-message';
 import { CommonModule, NgIf } from '@angular/common';
+import { UserInterface } from '../../models/user-interface';
 
 @Component({
   selector: 'app-main-chat-daily-messages',
@@ -59,11 +60,14 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   userMessageDate: any = undefined;
   userMessages: UserMessageInterface[] = [];
   userMessages$: Observable<any> = new Observable<any>();
+  user: UserInterface[] = [];
+  users$: Observable<any> = new Observable<any>();
   private subscription!: Subscription; // Das ! sagt TypeScript, dass wir uns um die Initialisierung kümmern
 
   allMsgToday: {
     timestamp: number;
-    userId: number;
+    userMessageId: string;
+    authorId: string;
     message: string;
     hours: number;
     minutes: number;
@@ -71,7 +75,8 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
 
   allMsgPast: {
     timestamp: number;
-    userId: number;
+    userMessageId: string;
+    authorId: string;
     message: string;
     hours: number;
     minutes: number;
@@ -80,7 +85,8 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   groupedMessages: {
     [date: string]: {
       timestamp: number;
-      userId: number;
+      userMessageId: string;
+      authorId: string;
       message: string;
       hours: number;
       minutes: number;
@@ -90,6 +96,11 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   constructor(private userData: UserData, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): Promise<void> {
+    this.subscription = this.userData.users$.subscribe((users) => {
+      this.user = users;
+
+
+
     this.subscription = this.userData.userMessages$.subscribe((messages) => {
       this.userMessages = messages;
       this.getTimeToday();
@@ -97,6 +108,8 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
       this.loadOldMessages();
       // this.loadMessagesByTime();
       // this.getTime();
+
+    });
     });
     return Promise.resolve();
   }
@@ -144,6 +157,9 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
         const timeHours = exactTime.getHours();
         const timeMinutes = exactTime.getMinutes();
 
+        console.log('dies ist der author: ', message.authorId);
+        console.log('dies sind die user: ', this.user);
+        
         // Vergleiche nur das Datum
         if (msgTime1 < todayTime1) {
           // console.log('Älter');
@@ -152,7 +168,8 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
             // Damit sich Nachrichten nicht doppeln
             this.allMsgPast.push({
               timestamp: millis,
-              userId: message.directUserId,
+              userMessageId: message.userMessageId,
+              authorId: message.authorId,
               message: message.message,
               hours: timeHours,
               minutes: timeMinutes,
@@ -165,7 +182,8 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
             // Damit sich Nachrichten nicht doppeln
             this.allMsgToday.push({
               timestamp: millis,
-              userId: message.directUserId,
+              userMessageId: message.userMessageId,
+              authorId: message.authorId,
               message: message.message,
               hours: timeHours,
               minutes: timeMinutes,
@@ -213,7 +231,8 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
 
   getMessagesToday(): {
     timestamp: number;
-    userId: number;
+    userMessageId: string;
+    authorId: string;
     message: string;
     hours: number;
     minutes: number;
@@ -223,7 +242,8 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
 
   getMessagesPast(): {
     timestamp: number;
-    userId: number;
+    userMessageId: string;
+    authorId: string;
     message: string;
     hours: number;
     minutes: number;
@@ -233,7 +253,8 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
 
   getGroupedMessages(): {
     timestamp: number;
-    userId: number;
+    userMessageId: string;
+    authorId: string;
     message: string;
     hours: number;
     minutes: number;
@@ -241,7 +262,8 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     // Extrahiere alle Nachrichten aus den Gruppen und flache sie in ein einzelnes Array ab
     const allGroupedMessages: {
       timestamp: number;
-      userId: number;
+      userMessageId: string;
+      authorId: string;
       message: string;
       hours: number;
       minutes: number;
