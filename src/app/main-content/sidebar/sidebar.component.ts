@@ -45,16 +45,13 @@ export class SidebarComponent implements OnInit {
     private authService: AuthService,
     private chatService: ChatService
   ) {
-    // Channels laden
     const channelsCollection = collection(this.firestore, 'channels');
     this.channels$ = collectionData(channelsCollection, {
       idField: 'id',
     }) as Observable<Channel[]>;
 
-    // Aktuellen Benutzer laden
     this.currentUser$ = this.authService.user$;
 
-    // Alle Benutzer aus Firestore laden
     const usersCollection = collection(this.firestore, 'users');
     this.allUsers$ = collectionData(usersCollection) as Observable<
       UserProfile[]

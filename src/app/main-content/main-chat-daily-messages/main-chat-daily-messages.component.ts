@@ -4,7 +4,6 @@ import {
   EventEmitter,
   OnInit,
   OnDestroy,
-  inject,
   ChangeDetectorRef,
   ElementRef,
   ViewChild,
@@ -14,15 +13,20 @@ import { UserMessageComponent } from '../../shared/user-message/user-message.com
 import { Observable, Subscription } from 'rxjs';
 import { UserData } from '../../service/user-data.service';
 import { UserMessageInterface } from '../../models/user-message';
-import { CommonModule, NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { ChatService } from '../../service/chat.service';
 
 interface MessageItem {
   timestamp: number;
-  userId: number;
+  userId: number; // Änderung von string zu number
   message: string;
   hours: number;
   minutes: number;
+  authorId?: string;
+  channelId?: string;
+  directUserId?: string;
+  emojis?: any;
+  comments?: any;
 }
 
 @Component({
@@ -50,6 +54,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     'November',
     'Dezember',
   ];
+
   days = [
     'Sonntag',
     'Montag',
@@ -68,7 +73,6 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   private subscription = new Subscription();
   private isUserScrolled = false;
 
-  // Message arrays
   allMsgToday: MessageItem[] = [];
   allMsgPast: MessageItem[] = [];
   groupedMessages: { [date: string]: MessageItem[] } = {};
@@ -80,6 +84,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    // Behalte existierende UserData Subscription
     this.subscription.add(
       this.userData.userMessages$.subscribe((messages) => {
         this.userMessages = messages;
@@ -89,6 +94,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
       })
     );
 
+    // Füge ChatService Subscription hinzu
     this.subscription.add(
       this.chatService.messages$.subscribe((messages) => {
         if (messages && messages.length > 0) {
@@ -96,6 +102,9 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
           this.getTimeToday();
           this.loadMessages();
           this.loadOldMessages();
+          if (!this.isUserScrolled) {
+            this.scrollToBottom();
+          }
         }
       })
     );
@@ -106,10 +115,13 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
       ...msg,
       comments: msg.comments || {},
       emojis: msg.emojis || {},
+      time: msg.time || { seconds: Date.now() / 1000, nanoseconds: 0 },
+      directUserId: String(msg.directUserId || ''),
+      channelId: String(msg.channelId || ''),
+      authorId: String(msg.authorId || ''),
     }));
   }
 
-  // Deine bestehenden Methoden bleiben unverändert...
   getTimeToday() {
     const todayTimeStamp = this.dateToday.getTime();
     this.timeToday = this.formatTimeStamp(todayTimeStamp);
@@ -128,9 +140,10 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   }
 
   loadMessages() {
-    console.log('Hier sind die user Messages endlich: ', this.userMessages);
     if (this.userMessages) {
-      const timestampArr: any = [];
+      this.allMsgToday = [];
+      this.allMsgPast = [];
+
       this.userMessages.forEach((message: UserMessageInterface) => {
         const timestamp: any = message.time;
         const msgTimeStampSeconds = timestamp.seconds;
@@ -146,41 +159,36 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
         const timeHours = exactTime.getHours();
         const timeMinutes = exactTime.getMinutes();
 
-        if (msgTime1 < todayTime1) {
-          console.log('Älter');
+        // Erstelle ein Basis-MessageItem für die UserMessage-Komponente
+        const messageItem: MessageItem = {
+          timestamp: millis,
+          userId: Number(message.directUserId), // Explizite Konvertierung zu number
+          message: message.message,
+          hours: timeHours,
+          minutes: timeMinutes,
+          authorId: String(message.authorId || ''),
+          channelId: String(message.channelId || ''),
+          directUserId: String(message.directUserId || ''),
+          emojis: message.emojis,
+          comments: message.comments,
+        };
 
+        if (msgTime1 < todayTime1) {
           if (!this.allMsgPast.find((msg) => msg.timestamp === millis)) {
-            this.allMsgPast.push({
-              timestamp: millis,
-              userId: message.directUserId,
-              message: message.message,
-              hours: timeHours,
-              minutes: timeMinutes,
-            });
+            this.allMsgPast.push(messageItem);
           }
         } else if (msgTime1.getTime() === todayTime1.getTime()) {
           if (!this.allMsgToday.find((msg) => msg.timestamp === millis)) {
-            this.allMsgToday.push({
-              timestamp: millis,
-              userId: message.directUserId,
-              message: message.message,
-              hours: timeHours,
-              minutes: timeMinutes,
-            });
-
-            this.allMsgToday.sort((a, b) => a.timestamp - b.timestamp);
+            this.allMsgToday.push(messageItem);
           }
         }
       });
-    }
 
-    this.loadMessagesToday();
+      this.allMsgToday.sort((a, b) => a.timestamp - b.timestamp);
+    }
   }
 
-  loadMessagesToday() {}
-
   loadOldMessages() {
-    console.log('Das sind die alten Nachrichten: ', this.allMsgPast);
     this.allMsgPast.sort((a, b) => a.timestamp - b.timestamp);
     this.groupedMessages = {};
 

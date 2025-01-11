@@ -34,7 +34,7 @@ export class ChatService {
 
   constructor(private firestore: Firestore) {}
 
-  async selectChannel(channelId: string) {
+  async selectChannel(channelId: string): Promise<void> {
     try {
       const channelRef = doc(this.firestore, `channels/${channelId}`);
       const channelSnap = await getDoc(channelRef);
@@ -60,12 +60,14 @@ export class ChatService {
           this.messagesSubject.next(sortedMessages);
         });
       }
+      return;
     } catch (error) {
       console.error('Error loading channel:', error);
+      return;
     }
   }
 
-  async selectDirectMessage(userId: string) {
+  async selectDirectMessage(userId: string): Promise<void> {
     try {
       const userRef = doc(this.firestore, `users/${userId}`);
       const userSnap = await getDoc(userRef);
@@ -90,8 +92,10 @@ export class ChatService {
           this.messagesSubject.next(sortedMessages);
         });
       }
+      return;
     } catch (error) {
       console.error('Error loading direct messages:', error);
+      return;
     }
   }
 
@@ -115,7 +119,6 @@ export class ChatService {
               (key) => channelData['members'][key] === true
             );
 
-            // Sammle User-Daten für alle Member
             const memberPromises = memberIds.map(async (memberId) => {
               const userRef = doc(this.firestore, `users/${memberId}`);
               const userSnap = await getDoc(userRef);
@@ -129,7 +132,6 @@ export class ChatService {
               return null;
             });
 
-            // Warte auf alle User-Daten und filtere null-Werte
             const members = (await Promise.all(memberPromises)).filter(
               (member): member is ChatMember => member !== null
             );
