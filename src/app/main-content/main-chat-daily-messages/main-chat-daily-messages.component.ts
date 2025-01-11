@@ -17,6 +17,14 @@ import { UserMessageInterface } from '../../models/user-message';
 import { CommonModule, NgIf } from '@angular/common';
 import { UserInterface } from '../../models/user-interface';
 
+
+interface message {
+  id: number;
+  name: string;
+  email: string;
+  isActive: boolean;
+}
+
 @Component({
   selector: 'app-main-chat-daily-messages',
   standalone: true,
@@ -106,8 +114,10 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
         this.loadOldMessages();
         // this.loadMessagesByTime();
         // this.getTime();
-      });
-    });
+
+    });    
+  });
+
     return Promise.resolve();
   }
 
