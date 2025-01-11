@@ -41,7 +41,7 @@
         class="user-message-row-top"
         [ngClass]="{ myMessageStyle: ownMessage }"
       >
-        <p class="user-message-name">Noah Braun</p>
+        <p class="user-message-name">{{ msg.author }}</p>
         <p class="user-message-time">{{ msg.hours }}:{{ msg.minutes }} Uhr</p>
       </div>
       <div
@@ -127,7 +127,7 @@
         class="user-message-row-top"
         [ngClass]="{ myMessageStyle: ownMessage }"
       >
-        <p class="user-message-name">Noah Braun</p>
+        <p class="user-message-name">{{ msg.author }}</p>
         <p class="user-message-time">{{ msg.hours }}:{{ msg.minutes }} Uhr</p>
       </div>
       <div

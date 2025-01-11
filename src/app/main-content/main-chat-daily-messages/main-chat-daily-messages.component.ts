@@ -67,7 +67,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   allMsgToday: {
     timestamp: number;
     userMessageId: string;
-    authorId: string;
+    author: string;
     message: string;
     hours: number;
     minutes: number;
@@ -76,7 +76,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   allMsgPast: {
     timestamp: number;
     userMessageId: string;
-    authorId: string;
+    author: string;
     message: string;
     hours: number;
     minutes: number;
@@ -86,7 +86,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     [date: string]: {
       timestamp: number;
       userMessageId: string;
-      authorId: string;
+      author: string;
       message: string;
       hours: number;
       minutes: number;
@@ -99,17 +99,14 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     this.subscription = this.userData.users$.subscribe((users) => {
       this.user = users;
 
-
-
-    this.subscription = this.userData.userMessages$.subscribe((messages) => {
-      this.userMessages = messages;
-      this.getTimeToday();
-      this.loadMessages();
-      this.loadOldMessages();
-      // this.loadMessagesByTime();
-      // this.getTime();
-
-    });
+      this.subscription = this.userData.userMessages$.subscribe((messages) => {
+        this.userMessages = messages;
+        this.getTimeToday();
+        this.loadMessages();
+        this.loadOldMessages();
+        // this.loadMessagesByTime();
+        // this.getTime();
+      });
     });
     return Promise.resolve();
   }
@@ -142,6 +139,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
         const msgTimeStampSeconds = timestamp.seconds;
         const msgTimeStampNano = timestamp.nanoseconds;
         const millis = msgTimeStampSeconds * 1000 + msgTimeStampNano / 1000000;
+
         // this.getMsgTime(millis);
         // console.log('Datum heute: ', this.timeToday);
         // console.log('Datum message: ', this.messageTime);
@@ -156,10 +154,24 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
         const exactTime = new Date(millis);
         const timeHours = exactTime.getHours();
         const timeMinutes = exactTime.getMinutes();
-
-        console.log('dies ist der author: ', message.authorId);
-        console.log('dies sind die user: ', this.user);
+        let userName: string = '';
         
+        // console.log('dies ist der author: ', message.authorId);
+        // console.log('dies sind die user: ', this.user);
+        
+
+        // AuthorId(string) in Namen umwandeln
+        const user = this.user.find(
+          (user: UserInterface) => user.localID === message.authorId
+        );
+
+        // Überprüfe, ob der Benutzer gefunden wurde
+        if (user) {
+          console.log('userLocalId: ', user.localID);
+          userName = user.username;
+          console.log('erfolgreich: ', userName);
+        }
+
         // Vergleiche nur das Datum
         if (msgTime1 < todayTime1) {
           // console.log('Älter');
@@ -169,12 +181,14 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
             this.allMsgPast.push({
               timestamp: millis,
               userMessageId: message.userMessageId,
-              authorId: message.authorId,
+              author: userName,
               message: message.message,
               hours: timeHours,
               minutes: timeMinutes,
             });
           }
+
+          console.log('Alle Nachrichten: ', this.allMsgPast);
 
           // console.log('Alle Nachrichten aus der Vergangenheit: ', this.allMsgPast);
         } else if (msgTime1.getTime() === todayTime1.getTime()) {
@@ -183,7 +197,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
             this.allMsgToday.push({
               timestamp: millis,
               userMessageId: message.userMessageId,
-              authorId: message.authorId,
+              author: userName,
               message: message.message,
               hours: timeHours,
               minutes: timeMinutes,
@@ -202,9 +216,8 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     }
   }
 
-
   loadOldMessages() {
-    console.log('Das sind die alten Nachrichten: ', this.allMsgPast);
+    // console.log('Das sind die alten Nachrichten: ', this.allMsgPast);
     this.allMsgPast.sort((a, b) => a.timestamp - b.timestamp);
     this.groupedMessages = {};
 
@@ -232,7 +245,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   getMessagesToday(): {
     timestamp: number;
     userMessageId: string;
-    authorId: string;
+    author: string;
     message: string;
     hours: number;
     minutes: number;
@@ -243,7 +256,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   getMessagesPast(): {
     timestamp: number;
     userMessageId: string;
-    authorId: string;
+    author: string;
     message: string;
     hours: number;
     minutes: number;
@@ -254,7 +267,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   getGroupedMessages(): {
     timestamp: number;
     userMessageId: string;
-    authorId: string;
+    author: string;
     message: string;
     hours: number;
     minutes: number;
@@ -263,7 +276,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     const allGroupedMessages: {
       timestamp: number;
       userMessageId: string;
-      authorId: string;
+      author: string;
       message: string;
       hours: number;
       minutes: number;
@@ -311,7 +324,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   trackByDate(index: number, group: any): string {
     return group[0]?.timestamp; // Einzigartiger Schlüssel für die Datumsgruppe
   }
-  
+
   trackByMessage(index: number, msg: any): number {
     return msg.timestamp; // Einzigartiger Schlüssel für jede Nachricht
   }
