@@ -1,8 +1,0 @@
-@use './../../../styles.scss' as styles;
-@use './../../../assets/styles/fonts.scss' as fonts;
-@use './../../../assets/styles/theme-colors.scss' as colors;
-
-.profile-overview-div {
-    @include styles.dFlex($d: flex, $fd: row, $jc: flex-start, $ai: center, $g: 0);
-    padding:30px;
-}

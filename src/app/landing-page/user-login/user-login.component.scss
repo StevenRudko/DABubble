@@ -1,9 +1,17 @@
 @use './../../../styles.scss' as styles;
 
-.forgot-password-container {
+.forgot-pw {
+    width: fit-content;
+    border-radius: 30px;
+    padding: 5px 15px;
     font-family: Figtree;
     font-size: 1.125rem;
     color: #797EF3;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #ECEEFE;
+    }
 }
 
 .separator {
@@ -68,5 +76,9 @@
     &:hover {
         background-color: #535AF1;
         color: #FFFFFF;
+    }
+
+    &:active {
+        background-color: #444DF2;
     }
 }

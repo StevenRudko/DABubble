@@ -1,0 +1,37 @@
+@use './../../../styles.scss' as styles;
+@use './../../../assets/styles/fonts.scss' as fonts;
+@use './../../../assets/styles/theme-colors.scss' as colors;
+
+.profile-overview-div {
+    @include styles.dFlex($d: flex, $fd: column, $jc: flex-start, $ai: center, $g: 0);
+    padding: 28px 48px;
+    position: fixed;
+    top: 100px;
+    right: 22px;
+    border-top-right-radius: 0;
+}
+
+.profile-overivew-content {
+    @include styles.dFlex($d: flex, $fd: column, $jc: flex-start, $ai: center, $g: 12px);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.profile-overview-btn {
+    @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
+    padding: 8px 12px;
+    width:150px;
+    cursor: pointer;
+    border-radius: 30px;
+
+    p {
+        font-size: 22px;
+    }
+
+    &:hover {
+        background-color: #ECEEFE;
+        color:#797EF3;
+        font-size:24px;
+        font-weight:700;
+    }
+}

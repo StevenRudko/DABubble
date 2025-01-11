@@ -36,7 +36,7 @@ p {
 }
 
 .avatar-img-container {
-    @include styles.dFlex($d: flex, $fd: unset, $jc: space-between, $ai: center);
+    @include styles.dFlex($d: flex, $fd: unset, $jc: space-between, $ai: center, $g: 8px);
     width: 100%;
     padding-top: 8px;
     margin-bottom: 120px;

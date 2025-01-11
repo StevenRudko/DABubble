@@ -60,6 +60,24 @@ SHARED (
     if message is empty componente
 )
 
-Service (
-    
-)
+
+USER :
+        Noah Braun
+        noah-braun@mail.com
+        1234ABcd@
+
+        Frederik Beck
+        frederik-beck@mail.com
+        1234ABcd@
+
+        Elise Roth
+        elise-roth@mail.com
+        1234ABcd@
+
+        Sofia Müller
+        sofia-mueller@mail.com
+        1234ABcd@
+
+        Max Musterman
+        max-musterman@mail.com
+        1234ABcd@

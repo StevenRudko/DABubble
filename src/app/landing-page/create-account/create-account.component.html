@@ -1,55 +1,47 @@
 <div class="login-cointainer">
     <h1>Konto erstellen</h1>
     <span class="login-description">Mit deinem Namen und deiner E-Mail-Adresse hast du dein neues DABubble-Konto.</span>
-    <form class="login-form">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="login-form">
         <div class="auth-input-container">
             <mat-icon matSuffix>person_outline</mat-icon>
-            <input type="name" [disabled]="loading" placeholder="Name und Nachname">
-        </div>
+            <input type="name" placeholder="Name und Nachname" formControlName="username">
 
-        <!-- @if (true) {
-      <mat-error>*Diese E-Mail-Adresse ist leider ungültig.</mat-error>
-      }
-      @if (true) {
-      <mat-error>*Diese E-Mail-Adresse ist leider ungültig.</mat-error>
-      } -->
+            @if (form.get('username')?.touched && form.get('username')?.errors) {
+            <div class="error-message">Bitte geben Sie einen Vor- und Nachnamen ein.</div>
+            }
+        </div>
 
         <div class="auth-input-container">
             <mat-icon matSuffix>mail_outline</mat-icon>
-            <input type="email" [disabled]="loading" placeholder="beispielname@email.com">
-        </div>
+            <input type="email" placeholder="beispielname@email.com" formControlName="email">
 
-        <!-- @if (true) {
-      <mat-error>*Diese E-Mail-Adresse ist leider ungültig.</mat-error>
-      }
-      @if (true) {
-      <mat-error>*Diese E-Mail-Adresse ist leider ungültig.</mat-error>
-      } -->
+            @if (form.get('email')?.touched && form.get('email')?.errors) {
+            <div class="error-message">Diese E-Mail-Adresse ist leider ungültig.</div>
+            }
+            @if (this.emailError && !form.get('email')?.dirty) {
+            <div class="error-message">Diese E-Mail-Adresse ist bereits vorhanden.</div>
+            }
+        </div>
 
         <div class="auth-input-container">
             <mat-icon matSuffix>lock_outline</mat-icon>
-            <input type="password" [disabled]="loading" placeholder="Passwort">
+            <input type="password" placeholder="Passwort" formControlName="password">
+
+            @if (form.get('password')?.touched && form.get('password')?.errors) {
+            <div class="error-message">{{this.validatorService.errorMessages}}.</div>
+            }
         </div>
-
-        <!-- @if (true) {
-      <mat-error>*Diese E-Mail-Adresse ist leider ungültig.</mat-error>
-      }
-      @if (true) {
-      <mat-error>*Diese E-Mail-Adresse ist leider ungültig.</mat-error>
-      } -->
-
 
         <div class="privacy-policy-container">
             <label class="container" [ngClass]="{'hovered': isHovered}">
-                <input type="checkbox">
+                <input type="checkbox" formControlName="agreeToTerms">
                 <span class="checkmark"></span>
             </label>
-            <p class="privacy-policy-text">Ich stimme der
-                <span (mouseenter)="isHovered = true" (mouseleave)="isHovered = false">Datenschutzerklärung</span>
-                zu
-            </p>
+            <p class="privacy-policy-text">Ich stimme der<span (mouseenter)="isHovered = true" (mouseleave)="isHovered = false">Datenschutzerklärung</span>zu</p>
         </div>
-        <button class="btn-full button-base position-bottom-right" disabled>Weiter</button>
+        <button type="submit" class="btn-full button-base position-bottom-right"
+        [disabled]="!(form.get('username')?.valid && form.get('email')?.valid && form.get('password')?.valid && form.get('agreeToTerms')?.valid)"
+        >Weiter</button>
     </form>
-    <mat-icon class="arrow-back">arrow_back</mat-icon>
+    <mat-icon class="arrow-back close-back" [routerLink]="['']">arrow_back</mat-icon>
 </div>
