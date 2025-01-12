@@ -11,24 +11,31 @@
             </ng-container>
         </div>
         <ng-container *ngIf="currentUser$ | async as user">
-            <div class="user-info">
-                <h3 class="user-name">{{ user.displayName }}</h3>
-                <div class="status">
-                    <div class="status-dot"></div>
-                    <span>Aktiv</span>
+            <div>
+                <div class="user-info">
+                    <h3 class="user-name">{{ user.displayName }}</h3>
+                    <div class="status">
+                        <div class="status-dot"></div>
+                        <span>Aktiv</span>
+                    </div>
                 </div>
-            </div>
 
-            <div class="contact-info">
-                <div class="info-row">
-                    <mat-icon class="info-icon">email</mat-icon>
-                    <span class="mail-header">E-Mail-Adresse</span>
+                <div class="contact-info">
+                    <div class="info-row">
+                        <mat-icon class="info-icon">email</mat-icon>
+                        <span class="mail-header">E-Mail-Adresse</span>
+                    </div>
+                    <span class="email">{{ user.email }}</span>
                 </div>
-                <span class="email">{{ user.email }}</span>
             </div>
         </ng-container>
+        <div>
+            <form action="">
+                <input type="name">
+            </form>
+        </div>
         <!-- <button class="message-btn" (click)="sendDirectMessage()"> -->
-            <!-- <mat-icon>chat</mat-icon>
+        <!-- <mat-icon>chat</mat-icon>
             Nachricht -->
         <!-- </button> -->
     </div>

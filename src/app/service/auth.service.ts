@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { Auth, user } from '@angular/fire/auth';
 import {
   createUserWithEmailAndPassword,
@@ -36,7 +36,7 @@ export class AuthService {
   user$: Observable<User | null>;
 
   // keep for new featuress
-  // /**
+  /**
   //  * Signal to store and manage the current application user.
   //  * This can include additional user data beyond what Firebase provides.
   //  * @type {signal<UserInterface | null | undefined>}
@@ -170,7 +170,7 @@ export class AuthService {
    * @param {string} photoUrl - The profile photo URL to set for the user.
    * @returns {Promise<void>} - Promise that resolves when the profile is successfully updated.
    */
-  private updateUserProfile(
+  updateUserProfile(
     user: User,
     displayName: string,
     photoUrl: string
