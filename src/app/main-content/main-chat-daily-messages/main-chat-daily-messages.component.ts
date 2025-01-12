@@ -71,7 +71,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   user: UserInterface[] = [];
   users$: Observable<any> = new Observable<any>();
   private subscription!: Subscription; // Das ! sagt TypeScript, dass wir uns um die Initialisierung kümmern
-  irgendwas: boolean = true;
+  // kommentar
 
   allMsgToday: {
     timestamp: number;
