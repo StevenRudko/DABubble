@@ -20,3 +20,5 @@ export class ThreadComponent {
     this.closeThreadEvent.emit();
   }
 }
+
+// kommentar
