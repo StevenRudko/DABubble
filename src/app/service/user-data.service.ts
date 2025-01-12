@@ -3,6 +3,7 @@ import { Firestore } from '@angular/fire/firestore';
 import { collection, getDocs, onSnapshot } from 'firebase/firestore';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { UserMessageInterface } from '../models/user-message';
+import { UserInterface } from '../models/user-interface';
 
 @Injectable({
   providedIn: 'root',
@@ -11,14 +12,20 @@ export class UserData {
   private userMessagesSubject = new BehaviorSubject<UserMessageInterface[]>([]);
   userMessages$ = this.userMessagesSubject.asObservable();
 
+  private usersSubject = new BehaviorSubject<UserInterface[]>([]);
+  users$ = this.usersSubject.asObservable();
+
   constructor(private firestore: Firestore) {
     this.getUserMessages();
+    this.getUsers();
   }
 
-  async getUserMessages() {
+  // Abrufen der Benutzernachrichten
+  getUserMessages() {
     try {
       const userCollection = collection(this.firestore, 'userMessages');
       
+      // Live-Updates mit onSnapshot
       onSnapshot(userCollection, (querySnapshot) => {
         const messages = querySnapshot.docs.map((doc) => {
           return {
@@ -26,30 +33,58 @@ export class UserData {
             ...doc.data(),
           } as UserMessageInterface;
         });
-        // Update den BehaviorSubject
         this.userMessagesSubject.next(messages);
-        // console.log('Benutzerliste:', messages);
       });
 
-      // Initialer Abruf der Daten
-      const initialSnapshot = await getDocs(userCollection);
-      const initialMessages = initialSnapshot.docs.map((doc) => {
-        return { userMessageId: doc.id, ...doc.data() } as UserMessageInterface;
-      });
-      this.userMessagesSubject.next(initialMessages);
+      // Initialer Abruf der Nachrichten
+      // Dieser Schritt ist optional, da onSnapshot bereits immer die neuesten Daten liefert
+      // const initialSnapshot = await getDocs(userCollection);
+      // const initialMessages = initialSnapshot.docs.map((doc) => {
+      //   return { userMessageId: doc.id, ...doc.data() } as UserMessageInterface;
+      // });
+      // this.userMessagesSubject.next(initialMessages);
     } catch (error) {
-      console.error('Fehler beim Abrufen der Benutzerdaten:', error);
-      this.userMessagesSubject.next([]); // Im Fehlerfall leeres Array
+      console.error('Fehler beim Abrufen der Benutzernachrichten:', error);
+      this.userMessagesSubject.next([]); // Leeres Array im Fehlerfall
     }
   }
 
+  // Abrufen der Benutzer
+  getUsers() {
+    try {
+      const userCollection = collection(this.firestore, 'users');
+      
+      // Live-Updates mit onSnapshot
+      onSnapshot(userCollection, (querySnapshot) => {
+        const users = querySnapshot.docs.map((doc) => {
+          return {
+            localID: doc.id, // Der korrekte Wert für User
+            ...doc.data(),
+          } as UserInterface;
+        });
+        this.usersSubject.next(users);
+      });
+
+      // Initialer Abruf der Benutzer
+      // Dieser Schritt ist optional, da onSnapshot bereits immer die neuesten Daten liefert
+      // const initialSnapshot = await getDocs(userCollection);
+      // const initialUsers = initialSnapshot.docs.map((doc) => {
+      //   return { localID: doc.id, ...doc.data() } as UserInterface;
+      // });
+      // this.usersSubject.next(initialUsers);
+    } catch (error) {
+      console.error('Fehler beim Abrufen der Benutzer:', error);
+      this.usersSubject.next([]); // Leeres Array im Fehlerfall
+    }
+  }
+  
   // Optional: Methode zum Abrufen der aktuellen Nachrichten
-  getCurrentMessages(): any[] {
+  getCurrentMessages(): UserMessageInterface[] {
     return this.userMessagesSubject.value;
   }
 
   // Optional: Methode zum Filtern nach Channel
-  getMessagesByChannel(channelId: number): Observable<any[]> {
+  getMessagesByChannel(channelId: number): Observable<UserMessageInterface[]> {
     return new Observable((observer) => {
       this.userMessages$.subscribe((messages) => {
         const filtered = messages.filter((msg) => msg.channelId === channelId);
@@ -58,9 +93,9 @@ export class UserData {
     });
   }
 
-  // Optional: Methode zum Hinzufügen einer neuen Nachricht
-  addMessage(message: any) {
-    const currentMessages = this.userMessagesSubject.value;
-    this.userMessagesSubject.next([...currentMessages, message]);
-  }
+  // // Optional: Methode zum Hinzufügen einer neuen Nachricht
+  // addMessage(message: UserMessageInterface) {
+  //   const currentMessages = this.userMessagesSubject.value;
+  //   this.userMessagesSubject.next([...currentMessages, message]);
+  // }
 }

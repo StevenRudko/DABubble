@@ -15,6 +15,15 @@ import { Observable, Subscription } from 'rxjs';
 import { UserData } from '../../service/user-data.service';
 import { UserMessageInterface } from '../../models/user-message';
 import { CommonModule, NgIf } from '@angular/common';
+import { UserInterface } from '../../models/user-interface';
+
+
+interface message {
+  id: number;
+  name: string;
+  email: string;
+  isActive: boolean;
+}
 
 @Component({
   selector: 'app-main-chat-daily-messages',
@@ -59,25 +68,33 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   userMessageDate: any = undefined;
   userMessages: UserMessageInterface[] = [];
   userMessages$: Observable<any> = new Observable<any>();
+  user: UserInterface[] = [];
+  users$: Observable<any> = new Observable<any>();
   private subscription!: Subscription; // Das ! sagt TypeScript, dass wir uns um die Initialisierung kümmern
+
   allMsgToday: {
     timestamp: number;
-    userId: number;
+    userMessageId: string;
+    author: string;
     message: string;
     hours: number;
     minutes: number;
   }[] = [];
+
   allMsgPast: {
     timestamp: number;
-    userId: number;
+    userMessageId: string;
+    author: string;
     message: string;
     hours: number;
     minutes: number;
   }[] = [];
+
   groupedMessages: {
     [date: string]: {
       timestamp: number;
-      userId: number;
+      userMessageId: string;
+      author: string;
       message: string;
       hours: number;
       minutes: number;
@@ -87,14 +104,20 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   constructor(private userData: UserData, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): Promise<void> {
-    this.subscription = this.userData.userMessages$.subscribe((messages) => {
-      this.userMessages = messages;
-      this.getTimeToday();
-      this.loadMessages();
-      this.loadOldMessages();
-      // this.loadMessagesByTime();
-      // this.getTime();
-    });
+    this.subscription = this.userData.users$.subscribe((users) => {
+      this.user = users;
+
+      this.subscription = this.userData.userMessages$.subscribe((messages) => {
+        this.userMessages = messages;
+        this.getTimeToday();
+        this.loadMessages();
+        this.loadOldMessages();
+        // this.loadMessagesByTime();
+        // this.getTime();
+
+    });    
+  });
+
     return Promise.resolve();
   }
 
@@ -118,7 +141,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   }
 
   loadMessages() {
-    console.log('Hier sind die user Messages endlich: ', this.userMessages);
+    // console.log('Hier sind die user Messages endlich: ', this.userMessages);
     if (this.userMessages) {
       const timestampArr: any = [];
       this.userMessages.forEach((message: UserMessageInterface) => {
@@ -126,6 +149,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
         const msgTimeStampSeconds = timestamp.seconds;
         const msgTimeStampNano = timestamp.nanoseconds;
         const millis = msgTimeStampSeconds * 1000 + msgTimeStampNano / 1000000;
+
         // this.getMsgTime(millis);
         // console.log('Datum heute: ', this.timeToday);
         // console.log('Datum message: ', this.messageTime);
@@ -140,21 +164,41 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
         const exactTime = new Date(millis);
         const timeHours = exactTime.getHours();
         const timeMinutes = exactTime.getMinutes();
+        let userName: string = '';
+        
+        // console.log('dies ist der author: ', message.authorId);
+        // console.log('dies sind die user: ', this.user);
+        
+
+        // AuthorId(string) in Namen umwandeln
+        const user = this.user.find(
+          (user: UserInterface) => user.localID === message.authorId
+        );
+
+        // Überprüfe, ob der Benutzer gefunden wurde
+        if (user) {
+          console.log('userLocalId: ', user.localID);
+          userName = user.username;
+          console.log('erfolgreich: ', userName);
+        }
 
         // Vergleiche nur das Datum
         if (msgTime1 < todayTime1) {
-          console.log('Älter');
+          // console.log('Älter');
 
           if (!this.allMsgPast.find((msg) => msg.timestamp === millis)) {
             // Damit sich Nachrichten nicht doppeln
             this.allMsgPast.push({
               timestamp: millis,
-              userId: message.directUserId,
+              userMessageId: message.userMessageId,
+              author: userName,
               message: message.message,
               hours: timeHours,
               minutes: timeMinutes,
             });
           }
+
+          console.log('Alle Nachrichten: ', this.allMsgPast);
 
           // console.log('Alle Nachrichten aus der Vergangenheit: ', this.allMsgPast);
         } else if (msgTime1.getTime() === todayTime1.getTime()) {
@@ -162,7 +206,8 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
             // Damit sich Nachrichten nicht doppeln
             this.allMsgToday.push({
               timestamp: millis,
-              userId: message.directUserId,
+              userMessageId: message.userMessageId,
+              author: userName,
               message: message.message,
               hours: timeHours,
               minutes: timeMinutes,
@@ -171,81 +216,29 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
             this.allMsgToday.sort((a, b) => a.timestamp - b.timestamp); // Nachrichten werden dem Datum nach sortiert
           }
         } else if (msgTime1 > todayTime1) {
-          console.log('Zukunft');
+          // console.log('Zukunft');
         } else {
           return console.error('Fehler beim Vergleichen der Daten');
         }
-
-        // console.log('Timestamp:', timestampSeconds);
-        // console.log('messageId:', messageId);
-        // timestampArr.push(timestampSeconds);
-        // console.log('timestampArr: ', timestampArr);
       });
     } else {
       console.error('No userMessages found.');
     }
-
-    // this.getFormattedDate(this.currentTimeStamp);
-    // let messageTime = this.getFormattedDate(this.messageTimeStamp);
-    // this.getTimeStampToday();
-    //
-    // let resultDate = this.compareBothDate(messageTime, currentTime);
-    // this.userMessageDate = this.formatedResult(resultDate);
-    this.loadMessagesToday();
   }
 
-  loadMessagesToday() {}
-
-  // bestimmteUserMessageFinden() {
-  //   if (this.userMessages.length > 0) {
-  //     console.log('Erste Nachricht:', this.userMessages[0]);
-  //   } else {
-  //     console.log('Keine Nachrichten vorhanden.');
-  //   }
-  // }
-
-  // userMessagesFilternNachChannel(channelId: number) {
-  //   const filteredMessages = this.userMessages.filter(
-  //     (message) => message.channelId === channelId
-  //   );
-  //   console.log(
-  //     'Gefilterte Nachrichten mit channelId',
-  //     channelId,
-  //     ':',
-  //     filteredMessages
-  //   );
-  //   return filteredMessages;
-  // }
-
-  // formatedResult(resultDate: string) {
-  //   if (resultDate === 'Heute') {
-  //     return resultDate;
-  //   }
-
-  //   const dateParts = resultDate.split(' ');
-  //   const day = parseInt(dateParts[0], 10);
-  //   const month = dateParts[1];
-  //   const year = parseInt(dateParts[2], 10);
-  //   const date = new Date(year, this.months.indexOf(month), day);
-  //   const weekday = this.days[date.getDay()];
-  //   const formattedMonth = this.months[date.getMonth()];
-
-  //   return `${weekday}, ${day} ${formattedMonth}`;
-  // }
-
   loadOldMessages() {
-    console.log('Das sind die alten Nachrichten: ', this.allMsgPast);
+    // console.log('Das sind die alten Nachrichten: ', this.allMsgPast);
     this.allMsgPast.sort((a, b) => a.timestamp - b.timestamp);
     this.groupedMessages = {};
 
     this.allMsgPast.forEach((msg) => {
       const time = this.formatTimeStamp(msg.timestamp);
-      console.log('time der alten Nachrichten: ', time);
+      // console.log('time der alten Nachrichten: ', time);
       if (!this.groupedMessages[time]) {
         this.groupedMessages[time] = [];
       }
       this.groupedMessages[time].push(msg);
-      console.log('groupedMessages: ', this.groupedMessages);
+      // console.log('groupedMessages: ', this.groupedMessages);
     });
   }
 
@@ -261,7 +254,8 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
 
   getMessagesToday(): {
     timestamp: number;
-    userId: number;
+    userMessageId: string;
+    author: string;
     message: string;
     hours: number;
     minutes: number;
@@ -271,7 +265,8 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
 
   getMessagesPast(): {
     timestamp: number;
-    userId: number;
+    userMessageId: string;
+    author: string;
     message: string;
     hours: number;
     minutes: number;
@@ -281,7 +276,8 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
 
   getGroupedMessages(): {
     timestamp: number;
-    userId: number;
+    userMessageId: string;
+    author: string;
     message: string;
     hours: number;
     minutes: number;
@@ -289,7 +285,8 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     // Extrahiere alle Nachrichten aus den Gruppen und flache sie in ein einzelnes Array ab
     const allGroupedMessages: {
       timestamp: number;
-      userId: number;
+      userMessageId: string;
+      author: string;
       message: string;
       hours: number;
       minutes: number;
@@ -332,5 +329,13 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
 
   ngAfterViewChecked(): void {
     this.scrollToBottom(); // Nach jeder Änderung das Scrollen ausführen, wenn nötig
+  }
+
+  trackByDate(index: number, group: any): string {
+    return group[0]?.timestamp; // Einzigartiger Schlüssel für die Datumsgruppe
+  }
+
+  trackByMessage(index: number, msg: any): number {
+    return msg.timestamp; // Einzigartiger Schlüssel für jede Nachricht
   }
 }
