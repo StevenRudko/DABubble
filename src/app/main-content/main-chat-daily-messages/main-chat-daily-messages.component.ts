@@ -180,7 +180,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
         }
       }
     }else {
-      console.error('userName nicht vorhanden');
+      // console.error('userName nicht vorhanden');
     }
 
     // console.log('Alle Nachrichten aus der Vergangenheit: ', this.allMsgPast);
@@ -204,9 +204,9 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
         }
       }
     } else {
-      console.error('userName nicht vorhanden');
+      // console.error('userName nicht vorhanden');
     }
-    console.log('Alle Nachrichten von Heute: ', this.allMsgToday);
+    // console.log('Alle Nachrichten von Heute: ', this.allMsgToday);
   }
 
   loadOldMessages() {
