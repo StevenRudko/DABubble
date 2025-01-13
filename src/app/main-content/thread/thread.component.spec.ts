@@ -21,3 +21,5 @@ describe('ThreadComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+
+// kommentar
