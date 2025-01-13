@@ -70,22 +70,25 @@
       </div>
 
       <div class="collapsible-content direct-messages" [class.collapsed]="!isDirectMessageSectionExpanded">
+        <!-- Ersetzen Sie den user-list div mit diesem Code -->
         <div class="user-list">
-          <ng-container *ngIf="currentUser$ | async as user">
-            <div class="user-item">
-              <img [src]="user.photoURL || 'img-placeholder/default-avatar.svg'" class="user-avatar"
-                [alt]="user.displayName">
-              <span>{{ user.displayName || user.email }} (Du)</span>
+          <!-- Eigener Account immer zuerst -->
+          <ng-container *ngFor="let user of allUsers$ | async">
+            <div class="user-item" *ngIf="(currentUser$ | async)?.uid === user.uid"
+              (click)="selectDirectMessage(user.uid)">
+              <img [src]="getPhotoURL(user)" class="user-avatar" [alt]="getDisplayName(user)">
+              <span>{{ getDisplayName(user) }} (Du)</span>
               <div class="status-dot online"></div>
             </div>
           </ng-container>
 
-          <ng-container *ngFor="let otherUser of allUsers$ | async">
-            <div class="user-item" *ngIf="(currentUser$ | async)?.uid !== otherUser.uid"
-              (click)="selectDirectMessage(otherUser.uid)">
-              <img [src]="getPhotoURL(otherUser)" class="user-avatar" [alt]="getDisplayName(otherUser)">
-              <span>{{ getDisplayName(otherUser) }}</span>
-              <div class="status-dot" [class.online]="otherUser.online"></div>
+          <!-- Alle anderen Benutzer danach -->
+          <ng-container *ngFor="let user of allUsers$ | async">
+            <div class="user-item" *ngIf="(currentUser$ | async)?.uid !== user.uid"
+              (click)="selectDirectMessage(user.uid)">
+              <img [src]="getPhotoURL(user)" class="user-avatar" [alt]="getDisplayName(user)">
+              <span>{{ getDisplayName(user) }}</span>
+              <div class="status-dot" [class.online]="user.online"></div>
             </div>
           </ng-container>
         </div>

@@ -52,10 +52,11 @@ export class SidebarComponent implements OnInit {
 
     this.currentUser$ = this.authService.user$;
 
+    // Hier den idField Parameter hinzufügen
     const usersCollection = collection(this.firestore, 'users');
-    this.allUsers$ = collectionData(usersCollection) as Observable<
-      UserProfile[]
-    >;
+    this.allUsers$ = collectionData(usersCollection, {
+      idField: 'uid', // Dies stellt sicher, dass die Firestore-ID als uid-Feld verfügbar ist
+    }) as Observable<UserProfile[]>;
   }
 
   ngOnInit() {
@@ -94,6 +95,7 @@ export class SidebarComponent implements OnInit {
   }
 
   selectDirectMessage(userId: string) {
+    console.log('Selecting direct message user:', userId);
     this.chatService.selectDirectMessage(userId);
   }
 }

@@ -69,16 +69,22 @@ export class ChatService {
 
   async selectDirectMessage(userId: string): Promise<void> {
     try {
+      console.log('ChatService: Loading direct message user:', userId);
       const userRef = doc(this.firestore, `users/${userId}`);
       const userSnap = await getDoc(userRef);
 
       if (userSnap.exists()) {
         const userData = userSnap.data() as Omit<DirectUser, 'uid'>;
+        console.log('ChatService: User data loaded:', userData);
+
+        // Wichtig: Channel auf null setzen
+        this.currentChannelSubject.next(null);
+
+        // Dann den DirectUser setzen
         this.currentDirectUserSubject.next({
           ...userData,
           uid: userId,
         });
-        this.currentChannelSubject.next(null);
 
         const messagesCollection = collection(this.firestore, 'userMessages');
         const q = query(

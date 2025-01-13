@@ -33,6 +33,15 @@ export class MainChatHeaderComponent {
     this.currentDirectUser$ = this.chatService.currentDirectUser$;
     this.channelMembers$ = new Observable<ChatMember[]>();
 
+    // Debug logs hinzufügen
+    this.currentChannel$.subscribe((channel) => {
+      console.log('Current channel:', channel);
+    });
+
+    this.currentDirectUser$.subscribe((user) => {
+      console.log('Current direct message user:', user);
+    });
+
     this.currentChannel$.subscribe((channel) => {
       if (channel) {
         this.channelMembers$ = this.chatService.getChannelMembers(channel.id);
@@ -45,7 +54,20 @@ export class MainChatHeaderComponent {
   }
 
   getDisplayName(member: ChatMember | DirectUser | null): string {
-    return member?.displayName || member?.email || 'Unbenannter Benutzer';
+    if (!member) return 'Unbenannter Benutzer';
+
+    // Type assertion um auf username zuzugreifen
+    const userWithUsername = member as { username?: string };
+    if (userWithUsername.username) {
+      return userWithUsername.username;
+    }
+    if (member.displayName) {
+      return member.displayName;
+    }
+    if (member.email) {
+      return member.email;
+    }
+    return 'Unbenannter Benutzer';
   }
 
   openMemberDialog() {

@@ -23,6 +23,7 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
   messageText: string = '';
   private currentChannel: any;
   private currentUser: any;
+  private currentDirectUser: any;
   private subscriptions: Subscription = new Subscription();
 
   constructor(
@@ -35,6 +36,12 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.chatService.currentChannel$.subscribe((channel) => {
         this.currentChannel = channel;
+      })
+    );
+
+    this.subscriptions.add(
+      this.chatService.currentDirectUser$.subscribe((directUser) => {
+        this.currentDirectUser = directUser;
       })
     );
 
@@ -54,26 +61,29 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
         return;
       }
 
+      // Prüfen ob es eine Direktnachricht oder Channelnachricht ist
+      const isDirectMessage = !!this.currentDirectUser;
+
       const messageData = {
         authorId: this.currentUser.uid,
-        channelId: this.currentChannel?.id || null,
-        message: this.messageText,
+        // Wenn Direktnachricht, dann kein channelId
+        channelId: isDirectMessage ? null : this.currentChannel?.id || null,
+        // Wenn Direktnachricht, dann directUserId setzen
+        directUserId: isDirectMessage ? this.currentDirectUser.uid : null,
+        message: this.messageText.trim(),
         time: serverTimestamp(),
         comments: {
-          0: 1, // Standardwert für comments
+          0: 1,
         },
         emojis: {
-          0: 'hands', // Standardwert für emojis
+          0: 'hands',
         },
-        userMessageId: Date.now(), // Temporäre ID-Generierung
-        directUserId: null, // Für Channel-Nachrichten nicht benötigt
+        userMessageId: Date.now(),
       };
 
-      // Füge Nachricht zur Collection hinzu
       const messagesRef = collection(this.firestore, 'userMessages');
       await addDoc(messagesRef, messageData);
 
-      // Setze Nachrichtenfeld zurück
       this.messageText = '';
     } catch (error) {
       console.error('Fehler beim Senden der Nachricht:', error);

@@ -18,6 +18,9 @@ import {
 } from '../../models/user-message';
 import { CommonModule } from '@angular/common';
 import { UserInterface } from '../../models/user-interface';
+import { ChatService } from '../../service/chat.service';
+import { AuthService } from '../../service/auth.service';
+
 @Component({
   selector: 'app-main-chat-daily-messages',
   standalone: true,
@@ -83,18 +86,55 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   allMsgPast: renderMessageInterface[] = [];
   groupedMessages: { [date: string]: renderMessageInterface[] } = {};
 
-  constructor(private userData: UserData, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private userData: UserData,
+    private cdr: ChangeDetectorRef,
+    private chatService: ChatService, // NEU: ChatService hinzufügen
+    private authService: AuthService // NEU
+  ) {}
 
   // abonniert die Daten aus der DB und ruft die init-Funtkion auf
   ngOnInit(): Promise<void> {
     this.subscription = combineLatest([
       this.userData.users$,
       this.userData.userMessages$,
-    ]).subscribe(([users, messages]) => {
-      this.user = users;
-      this.userMessages = messages;
-      this.initChat();
-    });
+      this.chatService.currentChannel$,
+      this.chatService.currentDirectUser$,
+      this.authService.user$,
+    ]).subscribe(
+      ([users, messages, currentChannel, directUser, currentAuthUser]) => {
+        this.user = users;
+
+        if (currentChannel) {
+          // Channel Nachrichten
+          this.userMessages = messages.filter(
+            (msg) =>
+              msg.channelId && msg.channelId.toString() === currentChannel.id
+          );
+        } else if (directUser && currentAuthUser) {
+          // Direkt Nachrichten
+          this.userMessages = messages.filter((msg) => {
+            const isDirectMessage = !!msg.directUserId; // Prüfen ob directUserId existiert
+            const isMessageBetweenUsers =
+              // Ich sende an den anderen
+              (msg.authorId === currentAuthUser.uid &&
+                msg.directUserId === directUser.uid) ||
+              // Der andere sendet an mich
+              (msg.authorId === directUser.uid &&
+                msg.directUserId === currentAuthUser.uid);
+            return isDirectMessage && isMessageBetweenUsers;
+          });
+        } else {
+          this.userMessages = [];
+        }
+
+        // Arrays leeren vor dem Neuladen
+        this.allMsgToday = [];
+        this.allMsgPast = [];
+
+        this.initChat();
+      }
+    );
     return Promise.resolve();
   }
 
@@ -110,7 +150,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     this.getTimeToday();
     this.loadMessages();
     this.loadOldMessages();
-    console.log(this.emojiList['rocket']); 
+    console.log(this.emojiList['rocket']);
   }
 
   // ruft das heutige Datum ab und wandelt es ins entsprechende Format um
@@ -129,11 +169,15 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
 
   // lädt und verarbeitet die Daten aus der DB weiter
   loadMessages() {
-    // console.log('UserMessages: ', this.userMessages);
     if (!this.userMessages) {
       console.error('No userMessages found.');
       return;
     }
+
+    // Arrays vor dem Laden leeren
+    this.allMsgToday = [];
+    this.allMsgPast = [];
+
     this.userMessages.forEach((msg: UserMessageInterface) => {
       this.getMsgTime(msg);
       this.getUserName(msg);
