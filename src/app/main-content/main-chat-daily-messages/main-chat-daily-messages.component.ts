@@ -51,6 +51,15 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     'Samstag',
   ];
 
+  emojiList: { [key: string]: string } = {
+    rocket: '🚀',
+    smile: '😊',
+    heart: '❤️',
+    laughing: '😂',
+    thumbsUp: '👍',
+    star: '⭐',
+  };
+
   @ViewChild('chatContainer') chatContainer!: ElementRef;
   private isUserScrolled = false;
 
@@ -101,6 +110,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     this.getTimeToday();
     this.loadMessages();
     this.loadOldMessages();
+    console.log(this.emojiList['rocket']); 
   }
 
   // ruft das heutige Datum ab und wandelt es ins entsprechende Format um
@@ -177,6 +187,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
             timestamp: this.msgTime,
             userMessageId: msg.userMessageId,
             author: this.userName,
+            emojis: msg.emojis,
             message: msg.message,
             hours: this.msgTimeHours,
             minutes: this.msgTimeMins,
@@ -201,6 +212,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
             author: this.userName,
             userMessageId: msg.userMessageId,
             message: msg.message,
+            emojis: msg.emojis,
             hours: this.msgTimeHours,
             minutes: this.msgTimeMins,
           });

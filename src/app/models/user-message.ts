@@ -13,6 +13,7 @@ export interface renderMessageInterface {
     author: any;
     userMessageId: string;
     message: string;
+    emojis: string[];
     hours: number;
     minutes: number;
 }
