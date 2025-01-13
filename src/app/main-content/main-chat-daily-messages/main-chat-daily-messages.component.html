@@ -16,7 +16,7 @@
         *ngFor="let msg of entry.value"
         [messagesOld]="[msg]"
         [threadMessage]="false"
-        [ownMessage]="false"
+        [ownMessage]="ownMessageStyle"
         [showAnswerDetails]="true"
         [showReactionIcons]="false"
         (openThreadEvent)="openThread()"
@@ -25,6 +25,8 @@
       </app-user-message>
     </div>
   </div>
+
+  <!-- [ownMessage]="false" herausgenommen, weil wert in der ts übergeben wird-->
 
   @if(allMsgToday.length){
   <div class="messages-by-date-container">
@@ -39,7 +41,7 @@
   <app-user-message
     [messagesToday]="getMessagesToday()"
     [threadMessage]="false"
-    [ownMessage]="true"
+    [ownMessage]="ownMessageStyle"
     [showAnswerDetails]="false"
     [showReactionIcons]="true"
     class="width-100"

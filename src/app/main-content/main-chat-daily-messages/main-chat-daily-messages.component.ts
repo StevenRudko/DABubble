@@ -27,7 +27,6 @@ import { UserInterface } from '../../models/user-interface';
 })
 export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   @Output() openThreadEvent = new EventEmitter<void>();
-
   months = [
     'Januar',
     'Februar',
@@ -62,6 +61,8 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   msgTimeHours: any;
   msgTimeMins: any;
   userName: string = '';
+  currentUser: string = '';
+  ownMessageStyle: boolean = false;
   // userMessageDate: any = undefined;
   userMessages: UserMessageInterface[] = [];
   userMessages$: Observable<any> = new Observable<any>();
@@ -128,6 +129,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
       this.getUserName(msg);
       this.getAllMessagesPast(msg);
       this.getAllMessagesToday(msg);
+      this.changeMessageStyle(msg);
     });
   }
 
@@ -152,7 +154,9 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   // holt sich den usernamen aus der anderen Sammlung entsprechend der authorId
   getUserName(msg: UserMessageInterface) {
     // console.log('dies sind die user: ', this.user);
-    const userFound = this.user.find((user: UserInterface) => user.localID === msg.authorId);
+    const userFound = this.user.find(
+      (user: UserInterface) => user.localID === msg.authorId
+    );
     if (userFound) {
       // console.log('authorId: ', msg.authorId);
       // console.log('loaclId ', userFound.localID);
@@ -165,7 +169,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
 
   // lädt alle alten Nachrichten in das Array allMsgPast
   getAllMessagesPast(msg: UserMessageInterface) {
-    if(this.userName) {
+    if (this.userName) {
       if (this.msgDateTime < this.todayDateTime) {
         if (!this.allMsgPast.find((msg) => msg.timestamp === this.msgTime)) {
           // Damit sich Nachrichten nicht doppeln
@@ -179,7 +183,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
           });
         }
       }
-    }else {
+    } else {
       // console.error('userName nicht vorhanden');
     }
 
@@ -188,7 +192,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
 
   // lädt alle alten Nachrichten in das Array allMsgToday
   getAllMessagesToday(msg: UserMessageInterface) {
-    if(this.userName) {
+    if (this.userName) {
       if (this.msgDateTime.getTime() === this.todayDateTime.getTime()) {
         if (!this.allMsgToday.find((msg) => msg.timestamp === this.msgTime)) {
           // Damit sich Nachrichten nicht doppeln
@@ -207,6 +211,14 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
       // console.error('userName nicht vorhanden');
     }
     // console.log('Alle Nachrichten von Heute: ', this.allMsgToday);
+  }
+
+  changeMessageStyle(msg: UserMessageInterface) {
+    if (msg.authorId === this.currentUser) {
+      this.ownMessageStyle = true;
+    } else {
+      this.ownMessageStyle = false;
+    }
   }
 
   loadOldMessages() {
