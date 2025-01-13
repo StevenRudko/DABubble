@@ -1,52 +1,51 @@
 <section #chatContainer (scroll)="onScroll()">
+  <!-- Empty State Preview -->
+  <div class="empty-chat-preview" *ngIf="!allMsgPast.length && !allMsgToday.length">
+    <div class="profile-preview">
+      <div class="preview-header">
+        <div class="clickable-area" (click)="openProfileDialog()">
+          <img [src]="getCurrentUserPhotoURL()" class="user-avatar" [alt]="getCurrentUserName()">
+          <span class="user-name">{{ getCurrentUserName() }} (Du)</span>
+        </div>
+      </div>
+      <div class="preview-content">
+        <p class="preview-text" *ngIf="isOwnProfile()">
+          <span style="font-weight: bold;">Dieser Raum ist nur für dich da.</span> Mache dir Notizen, liste deine To-dos
+          auf oder bewahre Links und Dateien
+          griffbereit auf. Du kannst hier auch gerne Dinge mit dir selbst besprechen.
+        </p>
+        <p class="preview-text" *ngIf="!isOwnProfile()">
+          Diese Unterhaltung findet nur zwischen <a (click)="openProfileDialog()" class="user-link">&#64;{{
+            getCurrentUserName() }}</a> und dir statt.
+        </p>
+      </div>
+    </div>
+  </div>
+
   <!-- Alte Nachrichten -->
   <div class="message-wrapper" *ngIf="allMsgPast.length">
-    <div
-      class="messages-by-date-container"
-      *ngFor="let entry of groupedMessages | keyvalue"
-    >
-      <!-- Anzeige der Trennlinie für das Datum -->
+    <div class="messages-by-date-container" *ngFor="let entry of groupedMessages | keyvalue">
       <div class="divider-line">
         <div class="divider-text-box bg-frame-v1">
           <p class="divider-text">{{ entry.key | date : "dd.MM.yyyy" }}</p>
         </div>
       </div>
-      <!-- Iteration durch Nachrichten für dieses Datum -->
-      <app-user-message
-        *ngFor="let msg of entry.value"
-        [messagesOld]="[msg]"
-        [threadMessage]="false"
-        [ownMessage]="ownMessageStyle"
-        [showAnswerDetails]="true"
-        [showReactionIcons]="false"
-        (openThreadEvent)="openThread()"
-        class="width-100"
-      >
+      <app-user-message *ngFor="let msg of entry.value" [messagesOld]="[msg]" [threadMessage]="false"
+        [ownMessage]="ownMessageStyle" [showAnswerDetails]="true" [showReactionIcons]="false"
+        (openThreadEvent)="openThread()" class="width-100">
       </app-user-message>
     </div>
   </div>
 
-  <!-- [ownMessage]="false" herausgenommen, weil wert in der ts übergeben wird-->
-
-  @if(allMsgToday.length){
-  <div class="messages-by-date-container">
-
+  <!-- Heutige Nachrichten -->
+  <div class="messages-by-date-container" *ngIf="allMsgToday.length">
     <div class="divider-line">
       <div class="divider-text-box bg-frame-v1">
         <p class="divider-text">Heute</p>
       </div>
     </div>
-    
+    <app-user-message [messagesToday]="getMessagesToday()" [threadMessage]="false" [ownMessage]="ownMessageStyle"
+      [showAnswerDetails]="false" [showReactionIcons]="true" class="width-100">
+    </app-user-message>
   </div>
-  <app-user-message
-    [messagesToday]="getMessagesToday()"
-    [threadMessage]="false"
-    [ownMessage]="ownMessageStyle"
-    [showAnswerDetails]="false"
-    [showReactionIcons]="true"
-    class="width-100"
-  ></app-user-message>
-  }
 </section>
-
-<!-- kommentar -->

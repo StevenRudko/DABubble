@@ -20,11 +20,18 @@ import { CommonModule } from '@angular/common';
 import { UserInterface } from '../../models/user-interface';
 import { ChatService } from '../../service/chat.service';
 import { AuthService } from '../../service/auth.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ProfileOverviewComponent } from '../../shared/profile-overview/profile-overview.component';
 
 @Component({
   selector: 'app-main-chat-daily-messages',
   standalone: true,
-  imports: [MATERIAL_MODULES, CommonModule, UserMessageComponent],
+  imports: [
+    MATERIAL_MODULES,
+    CommonModule,
+    UserMessageComponent,
+    ProfileOverviewComponent,
+  ],
   templateUrl: './main-chat-daily-messages.component.html',
   styleUrl: './main-chat-daily-messages.component.scss',
 })
@@ -85,12 +92,15 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   allMsgToday: renderMessageInterface[] = [];
   allMsgPast: renderMessageInterface[] = [];
   groupedMessages: { [date: string]: renderMessageInterface[] } = {};
+  currentAuthUser: any;
+  currentDirectUser: any;
 
   constructor(
     private userData: UserData,
     private cdr: ChangeDetectorRef,
     private chatService: ChatService, // NEU: ChatService hinzufügen
-    private authService: AuthService // NEU
+    private authService: AuthService, // NEU
+    private dialog: MatDialog // NEU
   ) {}
 
   // abonniert die Daten aus der DB und ruft die init-Funtkion auf
@@ -104,6 +114,8 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     ]).subscribe(
       ([users, messages, currentChannel, directUser, currentAuthUser]) => {
         this.user = users;
+        this.currentAuthUser = currentAuthUser;
+        this.currentDirectUser = directUser;
 
         if (currentChannel) {
           // Channel Nachrichten
@@ -354,5 +366,64 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
 
   trackByMessage(index: number, msg: any): number {
     return msg.timestamp; // Einzigartiger Schlüssel für jede Nachricht
+  }
+  // Neue Methoden:
+  getCurrentUserPhotoURL(): string {
+    if (this.currentDirectUser) {
+      return (
+        this.currentDirectUser.photoURL || 'img-placeholder/default-avatar.svg'
+      );
+    }
+    return (
+      this.currentAuthUser?.photoURL || 'img-placeholder/default-avatar.svg'
+    );
+  }
+
+  getCurrentUserName(): string {
+    if (this.currentDirectUser) {
+      return (
+        this.currentDirectUser.username ||
+        this.currentDirectUser.displayName ||
+        'Unbenannter Benutzer'
+      );
+    }
+    return this.currentAuthUser?.displayName || 'Du';
+  }
+
+  getCurrentUserEmail(): string {
+    if (this.currentDirectUser) {
+      return this.currentDirectUser.email || '';
+    }
+    return this.currentAuthUser?.email || '';
+  }
+
+  openProfileDialog() {
+    const userData = {
+      name: this.getCurrentUserName(),
+      email: this.getCurrentUserEmail(),
+      avatar: this.getCurrentUserPhotoURL(),
+      status: 'active' as const,
+    };
+
+    const isOwnProfile =
+      !this.currentDirectUser ||
+      this.currentDirectUser.uid === this.currentAuthUser?.uid;
+
+    const dialogConfig = {
+      data: userData,
+      panelClass: isOwnProfile
+        ? ['profile-dialog', 'right-aligned']
+        : ['profile-dialog', 'center-aligned'],
+      width: '400px', // Optional: Setzen Sie eine feste Breite
+    };
+
+    this.dialog.open(ProfileOverviewComponent, dialogConfig);
+  }
+
+  isOwnProfile(): boolean {
+    return (
+      !this.currentDirectUser ||
+      this.currentDirectUser.uid === this.currentAuthUser?.uid
+    );
   }
 }
