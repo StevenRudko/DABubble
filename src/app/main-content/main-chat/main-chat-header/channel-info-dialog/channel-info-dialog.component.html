@@ -7,7 +7,6 @@
   </div>
 
   <div class="content-wrapper">
-    <!-- Channel Name Section -->
     <div class="section-box" [class.editing]="isEditingName">
       <div class="section-header">
         <span>Channel-Name</span>
@@ -34,9 +33,7 @@
       </div>
     </div>
 
-    <!-- Description Section with Created By -->
     <div class="section-box">
-      <!-- Description Part -->
       <div class="description-part" [class.editing]="isEditingDescription">
         <div class="section-header">
           <span>Beschreibung</span>
@@ -61,7 +58,6 @@
 
       <hr class="divider">
 
-      <!-- Created By Part -->
       <div class="created-by-part">
         <div class="section-header">
           <span>Erstellt von</span>
@@ -73,7 +69,6 @@
     </div>
   </div>
 
-  <!-- Footer Actions -->
   <div class="dialog-footer">
     <button mat-button class="footer-button" (click)="leaveChannel()">
       Channel verlassen

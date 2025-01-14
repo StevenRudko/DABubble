@@ -1,5 +1,3 @@
-// In profile-overview.component.ts
-
 import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
@@ -27,42 +25,44 @@ interface UserData {
   styleUrl: './profile-overview.component.scss',
 })
 export class ProfileOverviewComponent {
+  /**
+   * Initializes the profile overview component
+   */
   constructor(
     public dialogRef: MatDialogRef<ProfileOverviewComponent>,
     @Inject(MAT_DIALOG_DATA) public data: UserData,
     private chatService: ChatService,
-    private dialog: MatDialog // MatDialog Service hinzugefügt
+    private dialog: MatDialog
   ) {}
 
+  /**
+   * Closes the dialog
+   */
   close(): void {
     this.dialogRef.close();
   }
 
+  /**
+   * Gets localized status text
+   */
   getStatusText(status: string): string {
-    switch (status) {
-      case 'active':
-        return 'Aktiv';
-      case 'away':
-        return 'Abwesend';
-      case 'offline':
-        return 'Offline';
-      default:
-        return '';
-    }
+    const statusMap: Record<string, string> = {
+      active: 'Aktiv',
+      away: 'Abwesend',
+      offline: 'Offline',
+    };
+    return statusMap[status] || '';
   }
 
+  /**
+   * Opens direct message with user
+   */
   sendDirectMessage(): void {
-    // Dialog schließen
     this.dialogRef.close();
-
-    // Alle offenen Dialoge schließen
     this.dialog.closeAll();
 
-    // Direktnachricht öffnen mit der userId
     if (this.data.uid) {
       this.chatService.selectDirectMessage(this.data.uid);
-    } else {
-      console.error('No user ID available for direct message');
     }
   }
 }

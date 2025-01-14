@@ -1,4 +1,3 @@
-// In member-overview.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
@@ -6,14 +5,7 @@ import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { ProfileOverviewComponent } from '../../../../shared/profile-overview/profile-overview.component';
 import { ChatService } from '../../../../service/chat.service';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import {
-  Firestore,
-  doc,
-  getDoc,
-  collection,
-  query,
-  getDocs,
-} from '@angular/fire/firestore';
+import { Firestore, doc, getDoc, collection } from '@angular/fire/firestore';
 import { AddPeopleComponent } from '../add-people/add-people.component';
 
 interface MemberData {
@@ -45,6 +37,9 @@ export class MemberOverviewComponent implements OnInit {
   isLoading: boolean = true;
   memberCache = new Map<string, MemberData>();
 
+  /**
+   * Initializes member overview component
+   */
   constructor(
     private dialogRef: MatDialogRef<MemberOverviewComponent>,
     private dialog: MatDialog,
@@ -52,7 +47,17 @@ export class MemberOverviewComponent implements OnInit {
     private firestore: Firestore
   ) {}
 
+  /**
+   * Subscribes to channel changes and loads members
+   */
   ngOnInit() {
+    this.subscribeToChannel();
+  }
+
+  /**
+   * Sets up channel subscription
+   */
+  private subscribeToChannel(): void {
     this.chatService.currentChannel$.subscribe(async (channel) => {
       if (channel) {
         this.currentChannelId = channel.id;
@@ -63,43 +68,55 @@ export class MemberOverviewComponent implements OnInit {
     });
   }
 
-  async loadMembers(channelId: string) {
+  /**
+   * Gets member IDs from channel data
+   */
+  private async getMemberIds(channelId: string): Promise<string[]> {
+    const channelDoc = await getDoc(doc(this.firestore, 'channels', channelId));
+    if (!channelDoc.exists()) return [];
+
+    const channelData = channelDoc.data() as ChannelData;
+    return Object.entries(channelData.members || {})
+      .filter(([_, value]) => value === true)
+      .map(([key]) => key);
+  }
+
+  /**
+   * Creates member data object
+   */
+  private createMemberData(memberId: string, userData: any): MemberData {
+    return {
+      uid: memberId,
+      email: userData.email || '',
+      username: userData.username || '',
+      photoURL: userData.photoURL || 'img-placeholder/default-avatar.svg',
+      online: userData.online || false,
+    };
+  }
+
+  /**
+   * Loads single member data
+   */
+  private async loadMemberData(memberId: string): Promise<MemberData | null> {
+    if (this.memberCache.has(memberId)) {
+      return this.memberCache.get(memberId)!;
+    }
+
+    const userDoc = await getDoc(doc(this.firestore, 'users', memberId));
+    if (!userDoc.exists()) return null;
+
+    const memberData = this.createMemberData(memberId, userDoc.data());
+    this.memberCache.set(memberId, memberData);
+    return memberData;
+  }
+
+  /**
+   * Loads all members for a channel
+   */
+  async loadMembers(channelId: string): Promise<void> {
     try {
-      const channelDoc = await getDoc(
-        doc(this.firestore, 'channels', channelId)
-      );
-      if (!channelDoc.exists()) return;
-
-      const channelData = channelDoc.data() as ChannelData;
-      const memberIds = Object.entries(channelData['members'] || {})
-        .filter(([_, value]) => value === true)
-        .map(([key]) => key);
-
-      // Parallel loading of all member data
-      const memberPromises = memberIds.map(async (memberId) => {
-        // Check cache first
-        if (this.memberCache.has(memberId)) {
-          return this.memberCache.get(memberId)!;
-        }
-
-        const userDoc = await getDoc(doc(this.firestore, 'users', memberId));
-        if (!userDoc.exists()) return null;
-
-        const userData = userDoc.data() as MemberData;
-        const memberData = {
-          uid: memberId,
-          email: userData.email || '',
-          username: userData.username || '',
-          photoURL: userData.photoURL || 'img-placeholder/default-avatar.svg',
-          online: userData.online || false,
-        };
-
-        // Cache the member data
-        this.memberCache.set(memberId, memberData);
-        return memberData;
-      });
-
-      // Wait for all promises to resolve
+      const memberIds = await this.getMemberIds(channelId);
+      const memberPromises = memberIds.map((id) => this.loadMemberData(id));
       const members = (await Promise.all(memberPromises)).filter(
         (member): member is MemberData => member !== null
       );
@@ -109,11 +126,17 @@ export class MemberOverviewComponent implements OnInit {
     }
   }
 
-  close() {
+  /**
+   * Closes the dialog
+   */
+  close(): void {
     this.dialogRef.close();
   }
 
-  openProfileDialog(member: MemberData) {
+  /**
+   * Opens profile dialog for member
+   */
+  openProfileDialog(member: MemberData): void {
     const userData = {
       name: member.username,
       email: member.email,
@@ -128,13 +151,14 @@ export class MemberOverviewComponent implements OnInit {
     });
   }
 
-  openAddPeopleDialog() {
-    this.dialogRef.close(); // Schließe das aktuelle Dialog-Fenster
+  /**
+   * Opens add people dialog
+   */
+  openAddPeopleDialog(): void {
+    this.dialogRef.close();
 
     this.dialog.open(AddPeopleComponent, {
-      position: {
-        top: '160px',
-      },
+      position: { top: '160px' },
       hasBackdrop: true,
       backdropClass: 'dialog-backdrop',
       panelClass: 'member-dialog',

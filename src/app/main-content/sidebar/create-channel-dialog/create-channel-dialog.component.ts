@@ -24,55 +24,78 @@ export class ChannelDialogComponent {
   channelName: string = '';
   channelDescription: string = '';
   minNameLength = 3;
+  @Input() isOpen = false;
+  @Output() closeDialog = new EventEmitter<void>();
 
+  /**
+   * Initializes the channel dialog component
+   */
   constructor(
     @Optional() public dialogRef: MatDialogRef<ChannelDialogComponent>,
     private dialog: MatDialog,
     private firestore: Firestore
   ) {}
 
-  @Input() isOpen = false;
-  @Output() closeDialog = new EventEmitter<void>();
-
+  /**
+   * Validates if channel name meets minimum length requirement
+   */
   get isChannelNameValid(): boolean {
     return this.channelName.trim().length >= this.minNameLength;
   }
 
+  /**
+   * Closes the dialog
+   */
   onClose(): void {
     if (this.dialogRef) {
       this.dialogRef.close();
     }
   }
 
-  onBackdropClick(event: MouseEvent) {
+  /**
+   * Handles backdrop click to close dialog
+   */
+  onBackdropClick(event: MouseEvent): void {
     if (event.target === event.currentTarget) {
       this.onClose();
     }
   }
 
+  /**
+   * Creates channel data object
+   */
+  private createChannelData(): any {
+    return {
+      name: this.channelName.trim(),
+      description: this.channelDescription.trim(),
+      type: 'public',
+      createdAt: new Date().toISOString(),
+      members: {},
+    };
+  }
+
+  /**
+   * Opens add people dialog after channel creation
+   */
+  private openPeopleDialog(channelId: string): void {
+    this.dialog.open(AddPeopleDialogSidebarComponent, {
+      data: { channelId },
+    });
+  }
+
+  /**
+   * Creates new channel and opens people dialog
+   */
   async openAddPeopleDialog(): Promise<void> {
-    if (!this.isChannelNameValid) {
-      return;
-    }
+    if (!this.isChannelNameValid || !this.dialogRef) return;
 
-    if (this.dialogRef) {
-      try {
-        const channelRef = collection(this.firestore, 'channels');
-        const newChannel = await addDoc(channelRef, {
-          name: this.channelName.trim(),
-          description: this.channelDescription.trim(),
-          type: 'public',
-          createdAt: new Date().toISOString(),
-          members: {},
-        });
-
-        this.dialogRef.close(newChannel.id);
-        this.dialog.open(AddPeopleDialogSidebarComponent, {
-          data: { channelId: newChannel.id },
-        });
-      } catch (error) {
-        console.error('Error creating channel:', error);
-      }
+    try {
+      const channelRef = collection(this.firestore, 'channels');
+      const newChannel = await addDoc(channelRef, this.createChannelData());
+      this.dialogRef.close(newChannel.id);
+      this.openPeopleDialog(newChannel.id);
+    } catch (error) {
+      console.error('Error creating channel:', error);
     }
   }
 }

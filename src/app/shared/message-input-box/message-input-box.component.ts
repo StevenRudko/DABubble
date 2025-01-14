@@ -1,4 +1,3 @@
-// In message-input-box.component.ts
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MATERIAL_MODULES } from '../material-imports';
@@ -11,6 +10,14 @@ import {
 import { ChatService } from '../../service/chat.service';
 import { AuthService } from '../../service/auth.service';
 import { Subscription } from 'rxjs';
+
+interface User {
+  uid: string;
+  username?: string;
+  displayName: string | null;
+  email: string | null;
+  photoURL?: string | null;
+}
 
 @Component({
   selector: 'app-message-input-box',
@@ -27,14 +34,28 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
   private currentDirectUser: any;
   private subscriptions: Subscription = new Subscription();
 
+  /**
+   * Initializes message input component
+   */
   constructor(
     private firestore: Firestore,
     private chatService: ChatService,
     private authService: AuthService
   ) {}
 
-  ngOnInit() {
-    // Channel Subscription
+  /**
+   * Sets up subscriptions on init
+   */
+  ngOnInit(): void {
+    this.setupChannelSubscription();
+    this.setupDirectMessageSubscription();
+    this.setupUserSubscription();
+  }
+
+  /**
+   * Sets up channel subscription
+   */
+  private setupChannelSubscription(): void {
     this.subscriptions.add(
       this.chatService.currentChannel$.subscribe((channel) => {
         this.currentChannel = channel;
@@ -43,20 +64,26 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
         }
       })
     );
+  }
 
-    // Direct Message User Subscription
+  /**
+   * Sets up direct message subscription
+   */
+  private setupDirectMessageSubscription(): void {
     this.subscriptions.add(
-      this.chatService.currentDirectUser$.subscribe((directUser) => {
-        this.currentDirectUser = directUser;
-        if (directUser) {
-          // Nutze die getDisplayName-Funktion ähnlich wie in der Sidebar
-          const displayName = this.getDisplayName(directUser);
-          this.placeholder = `Nachricht an ${displayName}`;
+      this.chatService.currentDirectUser$.subscribe((user) => {
+        this.currentDirectUser = user;
+        if (user) {
+          this.placeholder = `Nachricht an ${this.getDisplayName(user)}`;
         }
       })
     );
+  }
 
-    // Current User Subscription
+  /**
+   * Sets up user subscription
+   */
+  private setupUserSubscription(): void {
     this.subscriptions.add(
       this.authService.user$.subscribe((user) => {
         this.currentUser = user;
@@ -64,58 +91,54 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
     );
   }
 
-  getDisplayName(user: any): string {
+  /**
+   * Gets display name for user
+   */
+  getDisplayName(user: User): string {
     if (!user) return 'Unbenannter Benutzer';
-
-    // Prüfe zuerst auf username (aus Firebase)
     if (user.username) return user.username;
-    // Fallback auf displayName
     if (user.displayName) return user.displayName;
-    // Letzter Fallback auf Email
     if (user.email) return user.email;
-
     return 'Unbenannter Benutzer';
   }
 
-  async sendMessage() {
-    if (!this.messageText.trim()) return;
+  /**
+   * Creates message data object
+   */
+  private createMessageData(): any {
+    const isDirectMessage = !!this.currentDirectUser;
+    return {
+      authorId: this.currentUser.uid,
+      channelId: isDirectMessage ? null : this.currentChannel?.id || null,
+      directUserId: isDirectMessage ? this.currentDirectUser.uid : null,
+      message: this.messageText.trim(),
+      time: serverTimestamp(),
+      comments: { 0: 1 },
+      emojis: { 0: 'hands' },
+      userMessageId: Date.now(),
+    };
+  }
+
+  /**
+   * Sends message to firestore
+   */
+  async sendMessage(): Promise<void> {
+    if (!this.messageText.trim() || !this.currentUser) return;
 
     try {
-      if (!this.currentUser) {
-        console.error('Kein Benutzer angemeldet');
-        return;
-      }
-
-      // Prüfen ob es eine Direktnachricht oder Channelnachricht ist
-      const isDirectMessage = !!this.currentDirectUser;
-
-      const messageData = {
-        authorId: this.currentUser.uid,
-        // Wenn Direktnachricht, dann kein channelId
-        channelId: isDirectMessage ? null : this.currentChannel?.id || null,
-        // Wenn Direktnachricht, dann directUserId setzen
-        directUserId: isDirectMessage ? this.currentDirectUser.uid : null,
-        message: this.messageText.trim(),
-        time: serverTimestamp(),
-        comments: {
-          0: 1,
-        },
-        emojis: {
-          0: 'hands',
-        },
-        userMessageId: Date.now(),
-      };
-
+      const messageData = this.createMessageData();
       const messagesRef = collection(this.firestore, 'userMessages');
       await addDoc(messagesRef, messageData);
-
       this.messageText = '';
     } catch (error) {
-      console.error('Fehler beim Senden der Nachricht:', error);
+      console.error('Error sending message:', error);
     }
   }
 
-  ngOnDestroy() {
+  /**
+   * Cleanup subscriptions on destroy
+   */
+  ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
 }

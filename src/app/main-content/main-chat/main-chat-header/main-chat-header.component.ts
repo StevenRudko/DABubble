@@ -1,4 +1,3 @@
-// src/app/main-content/main-chat/main-chat-header/main-chat-header.component.ts
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { MATERIAL_MODULES } from '../../../shared/material-imports';
 import { MatDialog } from '@angular/material/dialog';
@@ -32,6 +31,9 @@ export class MainChatHeaderComponent {
   currentDirectUser$: Observable<DirectUser | null>;
   channelMembers$: Observable<ChatMember[]>;
 
+  /**
+   * Initializes component and sets up observables
+   */
   constructor(
     private dialog: MatDialog,
     private chatService: ChatService,
@@ -43,17 +45,17 @@ export class MainChatHeaderComponent {
     this.channelMembers$ = new Observable<ChatMember[]>();
 
     this.currentChannel$.subscribe((channel) => {
-      console.log('Current channel:', channel);
       if (channel) {
         this.channelMembers$ = this.chatService.getChannelMembers(channel.id);
       }
     });
 
-    this.currentDirectUser$.subscribe((user) => {
-      console.log('Current direct message user:', user);
-    });
+    this.currentDirectUser$.subscribe();
   }
 
+  /**
+   * Opens channel info dialog with channel data
+   */
   openChannelInfoDialog(channel: Channel): void {
     const dialogRef = this.dialog.open(ChannelInfoDialogComponent, {
       data: {
@@ -62,20 +64,24 @@ export class MainChatHeaderComponent {
         description: channel.description,
         userId: this.auth.currentUser?.uid,
       },
-      maxWidth: '100vw', // 100% der Viewport-Breite
-      width: '800px', // Fixe Breite von 800px
-      panelClass: ['channel-dialog', 'wide-dialog'], // Extra Klasse für Styling
+      maxWidth: '100vw',
+      width: '800px',
+      panelClass: ['channel-dialog', 'wide-dialog'],
     });
 
-    dialogRef.afterClosed().subscribe(() => {
-      // Optional: Channel aus der Liste entfernen, falls er verlassen wurde
-    });
+    dialogRef.afterClosed().subscribe();
   }
 
+  /**
+   * Gets photo URL for member or default avatar
+   */
   getPhotoURL(member: ChatMember | DirectUser | null): string {
     return member?.photoURL || 'img-placeholder/default-avatar.svg';
   }
 
+  /**
+   * Gets display name for member from available fields
+   */
   getDisplayName(member: ChatMember | DirectUser | null): string {
     if (!member) return 'Unbenannter Benutzer';
 
@@ -92,6 +98,9 @@ export class MainChatHeaderComponent {
     return 'Unbenannter Benutzer';
   }
 
+  /**
+   * Opens member overview dialog positioned relative to button
+   */
   openMemberDialog() {
     const btnRect = this.memberListBtn.nativeElement.getBoundingClientRect();
     this.dialog.open(MemberOverviewComponent, {
@@ -105,6 +114,9 @@ export class MainChatHeaderComponent {
     });
   }
 
+  /**
+   * Opens add people dialog positioned relative to button
+   */
   openAddPeopleDialog() {
     const btnRect = this.addPeopleBtn.nativeElement.getBoundingClientRect();
     this.dialog.open(AddPeopleComponent, {
@@ -118,6 +130,9 @@ export class MainChatHeaderComponent {
     });
   }
 
+  /**
+   * Opens profile dialog for user
+   */
   openProfileDialog(user: DirectUser) {
     const userData = {
       name: this.getDisplayName(user),

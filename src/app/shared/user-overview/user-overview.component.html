@@ -1,35 +1,32 @@
 <div class="profile-modal">
-    <div class="modal-header">
-        <h2>Profil</h2>
-        <mat-icon class="close-icon" (click)="close()">close</mat-icon>
-    </div>
+  <div class="modal-header">
+    <h2>Profil</h2>
+    <mat-icon class="close-icon" (click)="close()">close</mat-icon>
+  </div>
 
-    <div class="profile-content">
-        <div class="avatar-container">
-            <ng-container *ngIf="currentUser$ | async as user">
-                <img [src]="user.photoURL" [alt]="user.displayName" class="profile-avatar">
-            </ng-container>
+  <div class="profile-content">
+    <div class="avatar-container">
+      <ng-container *ngIf="currentUser$ | async as user">
+        <img [src]="user.photoURL" [alt]="user.displayName" class="profile-avatar">
+      </ng-container>
+    </div>
+    <ng-container *ngIf="currentUser$ | async as user">
+      <div class="user-info">
+        <h3 class="user-name">{{ user.displayName }}</h3>
+        <div class="status">
+          <div class="status-dot"></div>
+          <span>Aktiv</span>
         </div>
-        <ng-container *ngIf="currentUser$ | async as user">
-            <div class="user-info">
-                <h3 class="user-name">{{ user.displayName }}</h3>
-                <div class="status">
-                    <div class="status-dot"></div>
-                    <span>Aktiv</span>
-                </div>
-            </div>
+      </div>
 
-            <div class="contact-info">
-                <div class="info-row">
-                    <mat-icon class="info-icon">email</mat-icon>
-                    <span class="mail-header">E-Mail-Adresse</span>
-                </div>
-                <span class="email">{{ user.email }}</span>
-            </div>
-        </ng-container>
-        <!-- <button class="message-btn" (click)="sendDirectMessage()"> -->
-            <!-- <mat-icon>chat</mat-icon>
-            Nachricht -->
-        <!-- </button> -->
-    </div>
+      <div class="contact-info">
+        <div class="info-row">
+          <mat-icon class="info-icon">email</mat-icon>
+          <span class="mail-header">E-Mail-Adresse</span>
+        </div>
+        <span class="email">{{ user.email }}</span>
+      </div>
+    </ng-container>
+
+  </div>
 </div>

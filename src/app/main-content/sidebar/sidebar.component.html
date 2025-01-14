@@ -70,9 +70,9 @@
       </div>
 
       <div class="collapsible-content direct-messages" [class.collapsed]="!isDirectMessageSectionExpanded">
-        <!-- Ersetzen Sie den user-list div mit diesem Code -->
+
         <div class="user-list">
-          <!-- Eigener Account immer zuerst -->
+
           <ng-container *ngFor="let user of allUsers$ | async">
             <div class="user-item" *ngIf="(currentUser$ | async)?.uid === user.uid"
               (click)="selectDirectMessage(user.uid)">
@@ -82,7 +82,7 @@
             </div>
           </ng-container>
 
-          <!-- Alle anderen Benutzer danach -->
+
           <ng-container *ngFor="let user of allUsers$ | async">
             <div class="user-item" *ngIf="(currentUser$ | async)?.uid !== user.uid"
               (click)="selectDirectMessage(user.uid)">

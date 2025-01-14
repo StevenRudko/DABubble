@@ -1,4 +1,3 @@
-// sidebar.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
@@ -33,12 +32,15 @@ interface UserProfile {
   styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent implements OnInit {
-  channels$: Observable<Channel[]>;
-  currentUser$: Observable<User | null>;
-  allUsers$: Observable<UserProfile[]>;
+  channels$!: Observable<Channel[]>;
+  currentUser$!: Observable<User | null>;
+  allUsers$!: Observable<UserProfile[]>;
   isChannelSectionExpanded: boolean = true;
   isDirectMessageSectionExpanded: boolean = true;
 
+  /**
+   * Initializes the sidebar component
+   */
   constructor(
     private dialog: MatDialog,
     private firestore: Firestore,
@@ -52,37 +54,55 @@ export class SidebarComponent implements OnInit {
 
     this.currentUser$ = this.authService.user$;
 
-    // Hier den idField Parameter hinzufügen
     const usersCollection = collection(this.firestore, 'users');
     this.allUsers$ = collectionData(usersCollection, {
-      idField: 'uid', // Dies stellt sicher, dass die Firestore-ID als uid-Feld verfügbar ist
+      idField: 'uid',
     }) as Observable<UserProfile[]>;
   }
 
-  ngOnInit() {
-    // Weitere Initialisierungen falls nötig
+  /**
+   * Lifecycle hook for initialization
+   */
+  ngOnInit(): void {}
+
+  /**
+   * Opens the channel creation dialog
+   */
+  openChannelDialog(): void {
+    this.dialog.open(ChannelDialogComponent);
   }
 
-  openChannelDialog() {
-    const dialogRef = this.dialog.open(ChannelDialogComponent);
-  }
-
-  toggleChannelSection() {
+  /**
+   * Toggles the channel section visibility
+   */
+  toggleChannelSection(): void {
     this.isChannelSectionExpanded = !this.isChannelSectionExpanded;
   }
 
-  toggleDirectMessageSection() {
+  /**
+   * Toggles the direct message section visibility
+   */
+  toggleDirectMessageSection(): void {
     this.isDirectMessageSectionExpanded = !this.isDirectMessageSectionExpanded;
   }
 
+  /**
+   * Checks if given ID matches current user
+   */
   isCurrentUser(userId: string): Observable<boolean> {
     return this.currentUser$.pipe(map((user) => user?.uid === userId));
   }
 
+  /**
+   * Gets the photo URL for a user
+   */
   getPhotoURL(user: User | UserProfile): string {
     return user.photoURL || 'img-placeholder/default-avatar.svg';
   }
 
+  /**
+   * Gets the display name for a user
+   */
   getDisplayName(user: User | UserProfile): string {
     if ('username' in user && user.username) {
       return user.username;
@@ -90,12 +110,17 @@ export class SidebarComponent implements OnInit {
     return user.displayName || 'Unbenannter Benutzer';
   }
 
-  selectChannel(channelId: string) {
+  /**
+   * Selects a channel
+   */
+  selectChannel(channelId: string): void {
     this.chatService.selectChannel(channelId);
   }
 
-  selectDirectMessage(userId: string) {
-    console.log('Selecting direct message user:', userId);
+  /**
+   * Selects a user for direct messaging
+   */
+  selectDirectMessage(userId: string): void {
     this.chatService.selectDirectMessage(userId);
   }
 }
