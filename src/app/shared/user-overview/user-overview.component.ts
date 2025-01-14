@@ -3,14 +3,13 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { AuthService } from '../../service/auth.service';
-import { Observable } from 'rxjs';
-import { User } from '@angular/fire/auth';
 import {
   FormBuilder,
   ReactiveFormsModule,
   Validators,
   FormsModule,
 } from '@angular/forms';
+import { UserInfosService } from '../../service/user-infos.service';
 
 /**
  * The UserOverviewComponent allows the user to view and update their profile information,
@@ -34,42 +33,6 @@ export class UserOverviewComponent {
    * @type {FormBuilder}
    */
   fb: FormBuilder = inject(FormBuilder);
-
-  /**
-   * The currently authenticated user.
-   * @type {User}
-   */
-  currentUser!: User; //| null = null;
-
-  /**
-   * The display name of the currently authenticated user.
-   * @type {string | null}
-   */
-  displayName: string | any = '';
-
-  /**
-   * The profile photo URL of the currently authenticated user.
-   * @type {any}
-   */
-  photoURL: any;
-
-  /**
-  * The email address of the currently authenticated user.
-  * @type {string | null}
-  */
-  email: string | null = null;
-
-  /**
-   * The unique identifier (UID) of the currently authenticated user.
-   * @type {any}
-   */
-  uId: any = '';
-
-  /**
-   * Observable for monitoring the authentication state of the user.
-   * @type {Observable<User | null>}
-   */
-  currentUser$!: Observable<User | null>;
 
   /**
    * Flag to toggle the edit mode for updating the user's profile.
@@ -97,9 +60,9 @@ export class UserOverviewComponent {
    */
   constructor(
     private authService: AuthService,
+    public userInfoService: UserInfosService
   ) {
-    this.currentUser$ = this.authService.user$;
-    this.getUserInfo();
+    this.userInfoService.getUserInfo();
   }
 
   /**
@@ -111,9 +74,9 @@ export class UserOverviewComponent {
    * @returns {void}
    */
   onSubmit(): void {
-    this.authService.updateUserProfile(this.currentUser, this.form.controls.username.value, this.photoURL)
+    this.authService.updateUserProfile(this.userInfoService.currentUser, this.form.controls.username.value, this.userInfoService.photoURL)
       .then(() => {
-        this.authService.updateUserNameInFirestore(this.uId, this.form.controls.username.value)
+        this.authService.updateUserNameInFirestore(this.userInfoService.uId, this.form.controls.username.value)
         this.dialogRef.close();
       })
       .catch((error) => {
@@ -130,26 +93,9 @@ export class UserOverviewComponent {
     this.dialogRef.close();
   }
 
-  /**
-   * Retrieves and sets the current user's profile information.
-   * - Updates the component properties with user details such as `displayName`, `photoURL`, `email`, and `uId`.
-   * - Logs the user details to the console.
-   * 
-   * @returns {void}
-   */
-  getUserInfo(): void {
-    this.currentUser$.subscribe(user => {
-      if (user) {
-        this.currentUser = user;
-        this.displayName = user.displayName;
-        this.photoURL = user.photoURL;
-        this.email = user.email;
-        this.uId = user.uid;
-        this.patchNameInInput();
-      } else {
-        console.log('Kein Benutzer angemeldet.');
-      }
-    });
+  openEdit() {
+    this.edit = true;
+    this.patchNameInInput();
   }
 
   /**
@@ -162,9 +108,9 @@ export class UserOverviewComponent {
    *
    * @returns {void}
    */
-  patchNameInInput() {
+  patchNameInInput(): void {
     this.form.patchValue({
-      username: this.displayName,
+      username: this.userInfoService.displayName,
     });
   }
 }
