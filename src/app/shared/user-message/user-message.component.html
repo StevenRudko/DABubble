@@ -45,7 +45,7 @@
         <div class="reaction-btn-div bg-frame-v1">
 
           <button class="reaction-btn-style">
-            <mat-icon>{{ msg.emojis }}</mat-icon>
+            <mat-icon>emoji</mat-icon>
           </button>
           <p>1</p>
         </div>
@@ -65,8 +65,6 @@
     </div>
   </div>
 </section>
-
-
 
 <section *ngFor="let msg of messagesToday" (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()"
   [ngClass]="{ myMessageStyle: ownMessage }">
@@ -114,7 +112,7 @@
       <div class="reaction-icons-row-bottom" *ngIf="showReactionIcons">
         <div class="reaction-btn-div bg-frame-v1">
           <button class="reaction-btn-style">
-            <mat-icon>{{ msg.emojis[0] }}</mat-icon>
+            <mat-icon>emoji</mat-icon>
           </button>
           <p>1</p>
         </div>
