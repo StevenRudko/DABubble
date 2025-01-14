@@ -7,3 +7,13 @@ export interface UserMessageInterface {
     comments: number[];
     emojis: string[];
 }
+
+export interface renderMessageInterface {
+    timestamp: number;
+    author: any;
+    userMessageId: string;
+    message: string;
+    emojis: string[];
+    hours: number;
+    minutes: number;
+}

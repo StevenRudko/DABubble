@@ -1,31 +1,37 @@
+<!-- main-chat-header.component.html -->
 <header>
-  <div class="selection-name">
-    <span>#</span>
-    <p>Entwicklerteam</p>
-    <mat-icon>keyboard_arrow_down</mat-icon>
-  </div>
-
-  <div class="wrapper-member">
-    <div class="member-list" (click)="openMemberDialog()" #memberListBtn>
-
-      <div class="member-list-profiles">
-        <div class="circle-outline">
-          <img class="member-list-img" src="img-placeholder/noah.svg" alt="" />
-        </div>
-        <div class="circle-outline">
-          <img class="member-list-img" src="img-placeholder/sofia.svg" alt="" />
-        </div>
-        <div class="circle-outline">
-          <img class="member-list-img" src="img-placeholder/frederik.svg" alt="" />
-        </div>
-      </div>
-      <p class="member-list-number">3</p>
+  <!-- Channel View -->
+  <ng-container *ngIf="currentChannel$ | async as channel">
+    <div class="selection-name">
+      <span>#</span>
+      <p>{{ channel.name }}</p>
+      <mat-icon>keyboard_arrow_down</mat-icon>
     </div>
 
-    <button #addPeopleBtn (click)="openAddPeopleDialog()">
-      <mat-icon class="add-user-icon">person_add_alt</mat-icon>
-    </button>
-  </div>
+    <div class="wrapper-member">
+      <div class="member-list" (click)="openMemberDialog()" #memberListBtn>
+        <div class="member-list-profiles">
+          <ng-container *ngIf="channelMembers$ | async as members">
+            <div class="circle-outline" *ngFor="let member of members.slice(0, 3)">
+              <img class="member-list-img" [src]="getPhotoURL(member)" [alt]="getDisplayName(member)" />
+            </div>
+          </ng-container>
+        </div>
+        <p class="member-list-number">{{ (channelMembers$ | async)?.length || 0 }}</p>
+      </div>
 
+      <button #addPeopleBtn (click)="openAddPeopleDialog()">
+        <mat-icon class="add-user-icon">person_add_alt</mat-icon>
+      </button>
+    </div>
+  </ng-container>
 
+  <!-- Direct Message View -->
+  <ng-container *ngIf="currentDirectUser$ | async as user">
+    <div class="selection-name">
+      <img [src]="getPhotoURL(user)" class="user-avatar" [alt]="getDisplayName(user)">
+      <p>{{ getDisplayName(user) }}</p>
+      <div class="status-dot" [class.online]="user.online"></div>
+    </div>
+  </ng-container>
 </header>

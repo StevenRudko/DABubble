@@ -62,8 +62,9 @@
 
       <div class="reaction-icons-row-bottom" *ngIf="showReactionIcons">
         <div class="reaction-btn-div bg-frame-v1">
+
           <button class="reaction-btn-style">
-            <mat-icon>🚀</mat-icon>
+            <mat-icon>{{ msg.emojis }}</mat-icon>
           </button>
           <p>1</p>
         </div>
@@ -149,7 +150,7 @@
       <div class="reaction-icons-row-bottom" *ngIf="showReactionIcons">
         <div class="reaction-btn-div bg-frame-v1">
           <button class="reaction-btn-style">
-            <mat-icon>🚀</mat-icon>
+            <mat-icon>{{ msg.emojis[0] }}</mat-icon>
           </button>
           <p>1</p>
         </div>
@@ -169,3 +170,5 @@
     </div>
   </div>
 </section>
+
+<!-- // kommentar -->

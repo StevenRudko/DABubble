@@ -4,27 +4,20 @@ import {
   EventEmitter,
   OnInit,
   OnDestroy,
-  inject,
   ChangeDetectorRef,
   ElementRef,
   ViewChild,
 } from '@angular/core';
 import { MATERIAL_MODULES } from '../../shared/material-imports';
 import { UserMessageComponent } from '../../shared/user-message/user-message.component';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, combineLatest } from 'rxjs';
 import { UserData } from '../../service/user-data.service';
-import { UserMessageInterface } from '../../models/user-message';
-import { CommonModule, NgIf } from '@angular/common';
+import {
+  UserMessageInterface,
+  renderMessageInterface,
+} from '../../models/user-message';
+import { CommonModule } from '@angular/common';
 import { UserInterface } from '../../models/user-interface';
-
-
-interface message {
-  id: number;
-  name: string;
-  email: string;
-  isActive: boolean;
-}
-
 @Component({
   selector: 'app-main-chat-daily-messages',
   standalone: true,
@@ -34,7 +27,6 @@ interface message {
 })
 export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   @Output() openThreadEvent = new EventEmitter<void>();
-
   months = [
     'Januar',
     'Februar',
@@ -59,170 +51,185 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     'Samstag',
   ];
 
+  emojiList: { [key: string]: string } = {
+    rocket: '🚀',
+    smile: '😊',
+    heart: '❤️',
+    laughing: '😂',
+    thumbsUp: '👍',
+    star: '⭐',
+  };
+
   @ViewChild('chatContainer') chatContainer!: ElementRef;
   private isUserScrolled = false;
 
-  dateToday = new Date();
-  timeToday: any;
-  messageTime: any;
-  userMessageDate: any = undefined;
+  timeDateToday: any;
+  msgTime: any;
+  msgDateTime: any;
+  todayDateTime: any;
+  msgTimeHours: any;
+  msgTimeMins: any;
+  userName: string = '';
+  currentUser: string = '';
+  ownMessageStyle: boolean = false;
+  // userMessageDate: any = undefined;
   userMessages: UserMessageInterface[] = [];
   userMessages$: Observable<any> = new Observable<any>();
   user: UserInterface[] = [];
   users$: Observable<any> = new Observable<any>();
-  private subscription!: Subscription; // Das ! sagt TypeScript, dass wir uns um die Initialisierung kümmern
+  subscription!: Subscription; // Das ! sagt TypeScript, dass wir uns um die Initialisierung kümmern
 
-  allMsgToday: {
-    timestamp: number;
-    userMessageId: string;
-    author: string;
-    message: string;
-    hours: number;
-    minutes: number;
-  }[] = [];
-
-  allMsgPast: {
-    timestamp: number;
-    userMessageId: string;
-    author: string;
-    message: string;
-    hours: number;
-    minutes: number;
-  }[] = [];
-
-  groupedMessages: {
-    [date: string]: {
-      timestamp: number;
-      userMessageId: string;
-      author: string;
-      message: string;
-      hours: number;
-      minutes: number;
-    }[];
-  } = {};
+  allMsgToday: renderMessageInterface[] = [];
+  allMsgPast: renderMessageInterface[] = [];
+  groupedMessages: { [date: string]: renderMessageInterface[] } = {};
 
   constructor(private userData: UserData, private cdr: ChangeDetectorRef) {}
 
+  // abonniert die Daten aus der DB und ruft die init-Funtkion auf
   ngOnInit(): Promise<void> {
-    this.subscription = this.userData.users$.subscribe((users) => {
+    this.subscription = combineLatest([
+      this.userData.users$,
+      this.userData.userMessages$,
+    ]).subscribe(([users, messages]) => {
       this.user = users;
-
-      this.subscription = this.userData.userMessages$.subscribe((messages) => {
-        this.userMessages = messages;
-        this.getTimeToday();
-        this.loadMessages();
-        this.loadOldMessages();
-        // this.loadMessagesByTime();
-        // this.getTime();
-
-    });    
-  });
-
+      this.userMessages = messages;
+      this.initChat();
+    });
     return Promise.resolve();
   }
 
+  // Abo auflösen
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+
+  // Alle Funktionen werden hier initialisiert
+  initChat() {
+    this.getTimeToday();
+    this.loadMessages();
+    this.loadOldMessages();
+    console.log(this.emojiList['rocket']); 
+  }
+
+  // ruft das heutige Datum ab und wandelt es ins entsprechende Format um
   getTimeToday() {
-    const todayTimeStamp = this.dateToday.getTime();
-    this.timeToday = this.formatTimeStamp(todayTimeStamp);
-    // console.log('getFormatTime: ', this.timeToday);
+    const todayTimeStamp = new Date().getTime();
+    this.timeDateToday = this.formatTimeStamp(todayTimeStamp);
   }
 
-  getMsgTime(timeStamp: any): void {
-    this.messageTime = this.formatTimeStamp(timeStamp);
-    // console.log('getFormatTime: ', this.messageTime);
-  }
-
+  // nimmt nur die brauchbaren Elemente vom Datum heraus
   formatTimeStamp(timestamp: number): string {
     const date = new Date(timestamp);
-    const day = date.getDate();
-    const month = this.months[date.getMonth()];
-    const year = date.getFullYear();
-    return `${day} ${month} ${year}`;
+    return `${date.getDate()} ${
+      this.months[date.getMonth()]
+    } ${date.getFullYear()}`;
   }
 
+  // lädt und verarbeitet die Daten aus der DB weiter
   loadMessages() {
-    // console.log('Hier sind die user Messages endlich: ', this.userMessages);
-    if (this.userMessages) {
-      const timestampArr: any = [];
-      this.userMessages.forEach((message: UserMessageInterface) => {
-        const timestamp: any = message.time;
-        const msgTimeStampSeconds = timestamp.seconds;
-        const msgTimeStampNano = timestamp.nanoseconds;
-        const millis = msgTimeStampSeconds * 1000 + msgTimeStampNano / 1000000;
-
-        // this.getMsgTime(millis);
-        // console.log('Datum heute: ', this.timeToday);
-        // console.log('Datum message: ', this.messageTime);
-
-        const msgTime1 = new Date(millis);
-        const todayTime1 = new Date(this.timeToday);
-        // Uhrzeit auf Mitternacht setzen, da nur der Tag für uns relevant ist
-        msgTime1.setHours(0, 0, 0, 0);
-        todayTime1.setHours(0, 0, 0, 0);
-        // console.log('msgTime1: ', msgTime1);
-        // console.log('todayTime1: ', todayTime1);
-        const exactTime = new Date(millis);
-        const timeHours = exactTime.getHours();
-        const timeMinutes = exactTime.getMinutes();
-        let userName: string = '';
-        
-        // console.log('dies ist der author: ', message.authorId);
-        // console.log('dies sind die user: ', this.user);
-        
-
-        // AuthorId(string) in Namen umwandeln
-        const user = this.user.find(
-          (user: UserInterface) => user.localID === message.authorId
-        );
-
-        // Überprüfe, ob der Benutzer gefunden wurde
-        if (user) {
-          console.log('userLocalId: ', user.localID);
-          userName = user.username;
-          console.log('erfolgreich: ', userName);
-        }
-
-        // Vergleiche nur das Datum
-        if (msgTime1 < todayTime1) {
-          // console.log('Älter');
-
-          if (!this.allMsgPast.find((msg) => msg.timestamp === millis)) {
-            // Damit sich Nachrichten nicht doppeln
-            this.allMsgPast.push({
-              timestamp: millis,
-              userMessageId: message.userMessageId,
-              author: userName,
-              message: message.message,
-              hours: timeHours,
-              minutes: timeMinutes,
-            });
-          }
-
-          console.log('Alle Nachrichten: ', this.allMsgPast);
-
-          // console.log('Alle Nachrichten aus der Vergangenheit: ', this.allMsgPast);
-        } else if (msgTime1.getTime() === todayTime1.getTime()) {
-          if (!this.allMsgToday.find((msg) => msg.timestamp === millis)) {
-            // Damit sich Nachrichten nicht doppeln
-            this.allMsgToday.push({
-              timestamp: millis,
-              userMessageId: message.userMessageId,
-              author: userName,
-              message: message.message,
-              hours: timeHours,
-              minutes: timeMinutes,
-            });
-
-            this.allMsgToday.sort((a, b) => a.timestamp - b.timestamp); // Nachrichten werden dem Datum nach sortiert
-          }
-        } else if (msgTime1 > todayTime1) {
-          // console.log('Zukunft');
-        } else {
-          return console.error('Fehler beim Vergleichen der Daten');
-        }
-      });
-    } else {
+    // console.log('UserMessages: ', this.userMessages);
+    if (!this.userMessages) {
       console.error('No userMessages found.');
+      return;
+    }
+    this.userMessages.forEach((msg: UserMessageInterface) => {
+      this.getMsgTime(msg);
+      this.getUserName(msg);
+      this.getAllMessagesPast(msg);
+      this.getAllMessagesToday(msg);
+      this.changeMessageStyle(msg);
+    });
+  }
+
+  // vearbeitet die msg time in verschiedene Formate um
+  getMsgTime(msg: UserMessageInterface) {
+    const timestamp: any = msg.time;
+    const msgTimeStampSeconds = timestamp.seconds;
+    const msgTimeStampNano = timestamp.nanoseconds;
+    this.msgTime = msgTimeStampSeconds * 1000 + msgTimeStampNano / 1000000;
+
+    this.msgDateTime = new Date(this.msgTime);
+    this.msgDateTime.setHours(0, 0, 0, 0); // Uhrzeit auf Mitternacht setzen, da nur der Tag für uns relevant ist
+
+    this.todayDateTime = new Date(this.timeDateToday);
+    this.todayDateTime.setHours(0, 0, 0, 0);
+
+    const exactTime = new Date(this.msgTime);
+    this.msgTimeHours = exactTime.getHours();
+    this.msgTimeMins = exactTime.getMinutes();
+  }
+
+  // holt sich den usernamen aus der anderen Sammlung entsprechend der authorId
+  getUserName(msg: UserMessageInterface) {
+    // console.log('dies sind die user: ', this.user);
+    const userFound = this.user.find(
+      (user: UserInterface) => user.localID === msg.authorId
+    );
+    if (userFound) {
+      // console.log('authorId: ', msg.authorId);
+      // console.log('loaclId ', userFound.localID);
+      this.userName = userFound.username;
+      // console.log('UserName: ', this.userName);
+    } else {
+      // return console.error('leider konnte der User nicht gefunden werden');
+    }
+  }
+
+  // lädt alle alten Nachrichten in das Array allMsgPast
+  getAllMessagesPast(msg: UserMessageInterface) {
+    if (this.userName) {
+      if (this.msgDateTime < this.todayDateTime) {
+        if (!this.allMsgPast.find((msg) => msg.timestamp === this.msgTime)) {
+          // Damit sich Nachrichten nicht doppeln
+          this.allMsgPast.push({
+            timestamp: this.msgTime,
+            userMessageId: msg.userMessageId,
+            author: this.userName,
+            emojis: msg.emojis,
+            message: msg.message,
+            hours: this.msgTimeHours,
+            minutes: this.msgTimeMins,
+          });
+        }
+      }
+    } else {
+      // console.error('userName nicht vorhanden');
+    }
+
+    // console.log('Alle Nachrichten aus der Vergangenheit: ', this.allMsgPast);
+  }
+
+  // lädt alle alten Nachrichten in das Array allMsgToday
+  getAllMessagesToday(msg: UserMessageInterface) {
+    if (this.userName) {
+      if (this.msgDateTime.getTime() === this.todayDateTime.getTime()) {
+        if (!this.allMsgToday.find((msg) => msg.timestamp === this.msgTime)) {
+          // Damit sich Nachrichten nicht doppeln
+          this.allMsgToday.push({
+            timestamp: this.msgTime,
+            author: this.userName,
+            userMessageId: msg.userMessageId,
+            message: msg.message,
+            emojis: msg.emojis,
+            hours: this.msgTimeHours,
+            minutes: this.msgTimeMins,
+          });
+          this.allMsgToday.sort((a, b) => a.timestamp - b.timestamp); // Nachrichten werden dem Datum nach sortiert
+        }
+      }
+    } else {
+      // console.error('userName nicht vorhanden');
+    }
+    // console.log('Alle Nachrichten von Heute: ', this.allMsgToday);
+  }
+
+  changeMessageStyle(msg: UserMessageInterface) {
+    if (msg.authorId === this.currentUser) {
+      this.ownMessageStyle = true;
+    } else {
+      this.ownMessageStyle = false;
     }
   }
 
@@ -242,55 +249,21 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
   openThread() {
     this.openThreadEvent.emit();
   }
 
-  getMessagesToday(): {
-    timestamp: number;
-    userMessageId: string;
-    author: string;
-    message: string;
-    hours: number;
-    minutes: number;
-  }[] {
+  getMessagesToday(): renderMessageInterface[] {
     return this.allMsgToday;
   }
 
-  getMessagesPast(): {
-    timestamp: number;
-    userMessageId: string;
-    author: string;
-    message: string;
-    hours: number;
-    minutes: number;
-  }[] {
+  getMessagesPast(): renderMessageInterface[] {
     return this.allMsgPast;
   }
 
-  getGroupedMessages(): {
-    timestamp: number;
-    userMessageId: string;
-    author: string;
-    message: string;
-    hours: number;
-    minutes: number;
-  }[] {
+  getGroupedMessages(): renderMessageInterface[] {
     // Extrahiere alle Nachrichten aus den Gruppen und flache sie in ein einzelnes Array ab
-    const allGroupedMessages: {
-      timestamp: number;
-      userMessageId: string;
-      author: string;
-      message: string;
-      hours: number;
-      minutes: number;
-    }[] = [];
+    const allGroupedMessages: renderMessageInterface[] = [];
 
     // Iteriere über alle Gruppen (Die Werte der gruppierten Nachrichten)
     Object.values(this.groupedMessages).forEach((group) => {
