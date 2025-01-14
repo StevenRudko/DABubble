@@ -16,8 +16,8 @@ export class UserMessageComponent {
   @Input() showReactionEmojis: boolean = false;
   @Input() showAnswerDetails: boolean = true;
   @Input() showReactionIcons: boolean = true;
-  @Input() messagesToday: { timestamp: number; userMessageId: string; author: string, message: string; emojis: string[]; hours: number; minutes: number }[] = [];
-  @Input() messagesOld: { timestamp: number; userMessageId: string; author: string; message: string; emojis: string[]; hours: number; minutes: number }[] = [];
+  @Input() messagesToday: { timestamp: number; userMessageId: string; author: string, message: string; hours: number; minutes: number }[] = [];
+  @Input() messagesOld: { timestamp: number; userMessageId: string; author: string; message: string; hours: number; minutes: number }[] = [];
 
   isHoveredActive: boolean = false;
   isThreadContext: boolean = false;
