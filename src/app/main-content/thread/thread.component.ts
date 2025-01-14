@@ -10,7 +10,6 @@ import { MessageInputBoxComponent } from '../../shared/message-input-box/message
   templateUrl: './thread.component.html',
   styleUrl: './thread.component.scss',
 })
-
 export class ThreadComponent {
   constructor() {}
 
@@ -21,5 +20,3 @@ export class ThreadComponent {
     this.closeThreadEvent.emit();
   }
 }
-
-// kommentar

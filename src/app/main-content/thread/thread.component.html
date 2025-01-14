@@ -9,11 +9,8 @@
 
   <div class="chat">
     <div class="messages-container">
-      <app-user-message
-        [threadMessage]="true"
-        [showAnswerDetails]="false"
-        [showReactionIcons]="false"
-      ></app-user-message>
+      <app-user-message [threadMessage]="true" [showAnswerDetails]="false"
+        [showReactionIcons]="false"></app-user-message>
       <div class="thread-divider">
         <div class="divider-text">
           {{ replyCount }} {{ replyCount === 1 ? "Antwort" : "Antworten" }}
@@ -22,22 +19,12 @@
       </div>
     </div>
 
-    <app-user-message
-      [threadMessage]="true"
-      [showAnswerDetails]="false"
-      [showReactionIcons]="true"
-      class="width-100"
-    ></app-user-message>
+    <app-user-message [threadMessage]="true" [showAnswerDetails]="false" [showReactionIcons]="true"
+      class="width-100"></app-user-message>
 
-    <app-user-message
-      [threadMessage]="true"
-      [showAnswerDetails]="false"
-      [showReactionIcons]="true"
-      class="width-100"
-    ></app-user-message>
+    <app-user-message [threadMessage]="true" [showAnswerDetails]="false" [showReactionIcons]="true"
+      class="width-100"></app-user-message>
 
     <app-message-input-box placeholder="Antworten..."></app-message-input-box>
   </div>
 </section>
-
-<!-- kommentar -->

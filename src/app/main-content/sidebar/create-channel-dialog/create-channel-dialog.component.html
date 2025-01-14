@@ -11,7 +11,11 @@
     <div class="input-group">
       <label>Channel-Name</label>
       <mat-icon class="tag">#</mat-icon>
-      <input type="text" [(ngModel)]="channelName" placeholder="z.B. Kooperationsprojekte">
+      <input type="text" [(ngModel)]="channelName" placeholder="z.B. Kooperationsprojekte"
+        [class.invalid]="channelName.length > 0 && !isChannelNameValid">
+      <div class="validation-message" *ngIf="channelName.length > 0 && !isChannelNameValid">
+        Der Channel-Name muss mindestens {{ minNameLength }} Zeichen lang sein.
+      </div>
     </div>
 
     <div class="input-group">
@@ -19,6 +23,9 @@
       <input type="text" [(ngModel)]="channelDescription" placeholder="Dein Text hier">
     </div>
 
-    <button class="create-btn" (click)="openAddPeopleDialog()">Erstellen</button>
+    <button class="create-btn" [disabled]="!isChannelNameValid" [class.disabled]="!isChannelNameValid"
+      (click)="openAddPeopleDialog()">
+      Erstellen
+    </button>
   </div>
 </div>

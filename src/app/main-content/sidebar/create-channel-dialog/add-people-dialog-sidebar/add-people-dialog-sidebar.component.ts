@@ -21,8 +21,8 @@ import {
   updateDoc,
   doc,
 } from '@angular/fire/firestore';
-import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
-import { map, startWith, tap } from 'rxjs/operators';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 
 interface UserProfile {
   uid: string;
@@ -53,6 +53,9 @@ export class AddPeopleDialogSidebarComponent implements OnInit {
   showDropdown = false;
   allUsers: UserProfile[] = [];
 
+  /**
+   * Initializes the component and sets up user data streams
+   */
   constructor(
     @Optional() public dialogRef: MatDialogRef<AddPeopleDialogSidebarComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { channelId: string },
@@ -63,12 +66,10 @@ export class AddPeopleDialogSidebarComponent implements OnInit {
       idField: 'uid',
     }) as Observable<UserProfile[]>;
 
-    // Speichere alle User in einer lokalen Variable
     this.users$
       .pipe(
         tap((users) => {
           this.allUsers = users;
-          console.log('Loaded users:', users); // Debug-Ausgabe
         })
       )
       .subscribe();
@@ -77,44 +78,47 @@ export class AddPeopleDialogSidebarComponent implements OnInit {
       map((term) => {
         if (!term.trim()) return [];
         const searchTerm = term.toLowerCase();
-        console.log('Searching for:', searchTerm); // Debug-Ausgabe
-
-        const filteredUsers = this.allUsers.filter(
+        return this.allUsers.filter(
           (user) =>
             user.username?.toLowerCase().includes(searchTerm) &&
             !this.selectedUsers.some((selected) => selected.uid === user.uid)
         );
-
-        console.log('Filtered users:', filteredUsers); // Debug-Ausgabe
-        return filteredUsers;
       })
     );
   }
 
-  ngOnInit() {
-    // Initial load of users
-    this.users$
-      .pipe(tap((users) => console.log('Initial users loaded:', users)))
-      .subscribe();
+  /**
+   * Initializes component data
+   */
+  ngOnInit(): void {
+    this.users$.pipe(tap()).subscribe();
   }
 
+  /**
+   * Handles document click events
+   */
   @HostListener('document:click', ['$event'])
-  handleClick(event: MouseEvent) {
+  handleClick(event: MouseEvent): void {
     const searchContainer = document.querySelector('.search-container');
     if (searchContainer && !searchContainer.contains(event.target as Node)) {
       this.showDropdown = false;
     }
   }
 
+  /**
+   * Handles search input events
+   */
   onSearchInput(event: Event): void {
     event.stopPropagation();
     const input = event.target as HTMLInputElement;
     this.searchInput = input.value;
     this.searchTerm.next(input.value);
     this.showDropdown = true;
-    console.log('Search input:', input.value); // Debug-Ausgabe
   }
 
+  /**
+   * Selects a user and updates state
+   */
   selectUser(user: UserProfile): void {
     if (!this.selectedUsers.some((selected) => selected.uid === user.uid)) {
       this.selectedUsers.push(user);
@@ -127,6 +131,9 @@ export class AddPeopleDialogSidebarComponent implements OnInit {
     }
   }
 
+  /**
+   * Removes a user from selection
+   */
   removeUser(user: UserProfile, event: Event): void {
     event.stopPropagation();
     this.selectedUsers = this.selectedUsers.filter(
@@ -134,30 +141,36 @@ export class AddPeopleDialogSidebarComponent implements OnInit {
     );
   }
 
+  /**
+   * Adds users to channel and updates Firestore
+   */
   async addUsers(users: UserProfile[]): Promise<void> {
     if (!users.length) return;
-
     try {
       const channelRef = doc(this.firestore, 'channels', this.data.channelId);
       const members = Object.fromEntries(users.map((user) => [user.uid, true]));
-
       await updateDoc(channelRef, {
         members,
         updatedAt: new Date().toISOString(),
       });
-
       this.dialogRef?.close();
     } catch (error) {
       console.error('Error adding users to channel:', error);
     }
   }
 
+  /**
+   * Adds all users to channel
+   */
   async addAllUsers(): Promise<void> {
     if (this.allUsers.length > 0) {
       await this.addUsers(this.allUsers);
     }
   }
 
+  /**
+   * Handles form submission
+   */
   async onSubmit(): Promise<void> {
     if (this.selectedOption === 'all') {
       await this.addAllUsers();
@@ -166,16 +179,25 @@ export class AddPeopleDialogSidebarComponent implements OnInit {
     }
   }
 
+  /**
+   * Gets user's photo URL
+   */
   getPhotoURL(user: UserProfile): string {
     return user.photoURL || 'img-placeholder/default-avatar.svg';
   }
 
+  /**
+   * Handles backdrop click
+   */
   onBackdropClick(event: MouseEvent): void {
     if (event.target === event.currentTarget) {
       this.onClose();
     }
   }
 
+  /**
+   * Closes the dialog
+   */
   onClose(): void {
     if (this.dialogRef) {
       this.dialogRef.close();

@@ -22,14 +22,14 @@ export class AuthService {
   user$: Observable<User | null>;
 
   /**
-  * Initializes the AuthService with necessary dependencies.
-  * - Sets session storage persistence for Firebase authentication.
-  * - Initializes the `user$` observable to monitor authentication state changes.
-  * @param {Auth} firebaseAuth - The Firebase authentication instance used for authentication operations.
-  * @param {Firestore} firestore - The Firestore instance used for storing and retrieving user data.
-  * @param {PresenceService} presenceService - Service for managing the user's online/offline status.
-  * @constructor
-  */
+   * Initializes the AuthService with necessary dependencies.
+   * - Sets session storage persistence for Firebase authentication.
+   * - Initializes the `user$` observable to monitor authentication state changes.
+   * @param {Auth} firebaseAuth - The Firebase authentication instance used for authentication operations.
+   * @param {Firestore} firestore - The Firestore instance used for storing and retrieving user data.
+   * @param {PresenceService} presenceService - Service for managing the user's online/offline status.
+   * @constructor
+   */
   constructor(
     private firebaseAuth: Auth,
     private firestore: Firestore,
@@ -76,7 +76,6 @@ export class AuthService {
     return from(promise);
   }
 
-
   /**
    * Logs in a user with email and password and sets their online status.
    * @param {string} email - The email address of the user.
@@ -105,7 +104,9 @@ export class AuthService {
       const result = await signInWithPopup(this.firebaseAuth, provider);
       const user = result.user;
       if (!user) {
-        console.error('Google-Login fehlgeschlagen: Kein Benutzerobjekt gefunden');
+        console.error(
+          'Google-Login fehlgeschlagen: Kein Benutzerobjekt gefunden'
+        );
         throw new Error('Google-Login fehlgeschlagen');
       }
       await this.saveUserInfoToFirestore(user);

@@ -18,10 +18,20 @@ import {
 } from '../../models/user-message';
 import { CommonModule } from '@angular/common';
 import { UserInterface } from '../../models/user-interface';
+import { ChatService } from '../../service/chat.service';
+import { AuthService } from '../../service/auth.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ProfileOverviewComponent } from '../../shared/profile-overview/profile-overview.component';
+
 @Component({
   selector: 'app-main-chat-daily-messages',
   standalone: true,
-  imports: [MATERIAL_MODULES, CommonModule, UserMessageComponent],
+  imports: [
+    MATERIAL_MODULES,
+    CommonModule,
+    UserMessageComponent,
+    ProfileOverviewComponent,
+  ],
   templateUrl: './main-chat-daily-messages.component.html',
   styleUrl: './main-chat-daily-messages.component.scss',
 })
@@ -74,19 +84,61 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   allMsgToday: renderMessageInterface[] = [];
   allMsgPast: renderMessageInterface[] = [];
   groupedMessages: { [date: string]: renderMessageInterface[] } = {};
+  currentAuthUser: any;
+  currentDirectUser: any;
 
-  constructor(private userData: UserData, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private userData: UserData,
+    private cdr: ChangeDetectorRef,
+    private chatService: ChatService, // NEU: ChatService hinzufügen
+    private authService: AuthService, // NEU
+    private dialog: MatDialog // NEU
+  ) {}
 
   // abonniert die Daten aus der DB und ruft die init-Funtkion auf
   ngOnInit(): Promise<void> {
     this.subscription = combineLatest([
       this.userData.users$,
       this.userData.userMessages$,
-    ]).subscribe(([users, messages]) => {
-      this.user = users;
-      this.userMessages = messages;
-      this.initChat();
-    });
+      this.chatService.currentChannel$,
+      this.chatService.currentDirectUser$,
+      this.authService.user$,
+    ]).subscribe(
+      ([users, messages, currentChannel, directUser, currentAuthUser]) => {
+        this.user = users;
+        this.currentAuthUser = currentAuthUser;
+        this.currentDirectUser = directUser;
+
+        if (currentChannel) {
+          // Channel Nachrichten
+          this.userMessages = messages.filter(
+            (msg) =>
+              msg.channelId && msg.channelId.toString() === currentChannel.id
+          );
+        } else if (directUser && currentAuthUser) {
+          // Direkt Nachrichten
+          this.userMessages = messages.filter((msg) => {
+            const isDirectMessage = !!msg.directUserId; // Prüfen ob directUserId existiert
+            const isMessageBetweenUsers =
+              // Ich sende an den anderen
+              (msg.authorId === currentAuthUser.uid &&
+                msg.directUserId === directUser.uid) ||
+              // Der andere sendet an mich
+              (msg.authorId === directUser.uid &&
+                msg.directUserId === currentAuthUser.uid);
+            return isDirectMessage && isMessageBetweenUsers;
+          });
+        } else {
+          this.userMessages = [];
+        }
+
+        // Arrays leeren vor dem Neuladen
+        this.allMsgToday = [];
+        this.allMsgPast = [];
+
+        this.initChat();
+      }
+    );
     return Promise.resolve();
   }
 
@@ -102,7 +154,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     this.getTimeToday();
     this.loadMessages();
     this.loadOldMessages();
-    console.log(this.emojiList['rocket']); 
+    console.log(this.emojiList['rocket']);
   }
 
   // ruft das heutige Datum ab und wandelt es ins entsprechende Format um
@@ -121,11 +173,15 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
 
   // lädt und verarbeitet die Daten aus der DB weiter
   loadMessages() {
-    // console.log('UserMessages: ', this.userMessages);
     if (!this.userMessages) {
       console.error('No userMessages found.');
       return;
     }
+
+    // Arrays vor dem Laden leeren
+    this.allMsgToday = [];
+    this.allMsgPast = [];
+
     this.userMessages.forEach((msg: UserMessageInterface) => {
       this.getMsgTime(msg);
       this.getUserName(msg);
@@ -303,5 +359,65 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
 
   trackByMessage(index: number, msg: any): number {
     return msg.timestamp; // Einzigartiger Schlüssel für jede Nachricht
+  }
+  // Neue Methoden:
+  getCurrentUserPhotoURL(): string {
+    if (this.currentDirectUser) {
+      return (
+        this.currentDirectUser.photoURL || 'img-placeholder/default-avatar.svg'
+      );
+    }
+    return (
+      this.currentAuthUser?.photoURL || 'img-placeholder/default-avatar.svg'
+    );
+  }
+
+  getCurrentUserName(): string {
+    if (this.currentDirectUser) {
+      return (
+        this.currentDirectUser.username ||
+        this.currentDirectUser.displayName ||
+        'Unbenannter Benutzer'
+      );
+    }
+    return this.currentAuthUser?.displayName || 'Du';
+  }
+
+  getCurrentUserEmail(): string {
+    if (this.currentDirectUser) {
+      return this.currentDirectUser.email || '';
+    }
+    return this.currentAuthUser?.email || '';
+  }
+
+  openProfileDialog() {
+    const userData = {
+      name: this.getCurrentUserName(),
+      email: this.getCurrentUserEmail(),
+      avatar: this.getCurrentUserPhotoURL(),
+      status: this.currentDirectUser?.online ? 'active' : 'offline',
+      uid: this.currentDirectUser?.uid || this.currentAuthUser?.uid,
+    };
+
+    const isOwnProfile =
+      !this.currentDirectUser ||
+      this.currentDirectUser.uid === this.currentAuthUser?.uid;
+
+    const dialogConfig = {
+      data: userData,
+      panelClass: isOwnProfile
+        ? ['profile-dialog', 'right-aligned']
+        : ['profile-dialog', 'center-aligned'],
+      width: '400px',
+    };
+
+    this.dialog.open(ProfileOverviewComponent, dialogConfig);
+  }
+
+  isOwnProfile(): boolean {
+    return (
+      !this.currentDirectUser ||
+      this.currentDirectUser.uid === this.currentAuthUser?.uid
+    );
   }
 }

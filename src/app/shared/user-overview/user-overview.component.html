@@ -1,54 +1,37 @@
 <div class="profile-modal">
-    <div class="modal-header">
-        <h2>Profil</h2>
-        <mat-icon class="close-icon" (click)="close()">close</mat-icon>
-    </div>
+  <div class="modal-header">
+    <h2>Profil</h2>
+    <mat-icon class="close-icon" (click)="close()">close</mat-icon>
+  </div>
 
-    <div class="profile-content">
-        <div class="avatar-container">
-                <img [src]="photoURL" [alt]="displayName" class="profile-avatar">
+  <div class="profile-content">
+    <div class="avatar-container">
+      <img [src]="photoURL" [alt]="displayName" class="profile-avatar">
+    </div>
+    @if (!edit) {
+    <div class="info-container">
+      <div class="user-info">
+        <div class="name-container">
+          <h3>{{ displayName }}</h3>
+          <p (click)="edit = true">Bearbeiten</p>
         </div>
-        @if (!edit) {
-            <div class="info-container">
-                <div class="user-info">
-                    <div class="name-container">
-                        <h3>{{ displayName }}</h3>
-                        <p (click)="edit = true">Bearbeiten</p>
-                    </div>
-                    <div class="status">
-                        <div class="status-dot"></div>
-                        <span>Aktiv</span>
-                    </div>
-                </div>
+        <div class="status">
+          <div class="status-dot"></div>
+          <span>Aktiv</span>
+        </div>
+      </div>
 
-                <div class="contact-info">
-                    <div class="info-row">
-                        <mat-icon class="info-icon">mail_outline</mat-icon>
-                        <span class="mail-header">E-Mail-Adresse</span>
-                    </div>
-                    <span class="email">{{ email }}</span>
-                </div>
-            </div>
-        }
-        @if (edit) {
-        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
-            <div class="full-name-container">
-                <div class="input-info">
-                    <mat-icon class="material-symbols-outlined" matSuffix>account_circle</mat-icon>
-                    <p>Vollständiger Name</p>
-                </div>
-                <div class="input-container">
-                        <input type="name" placeholder="{{ displayName }}" formControlName="username">
-                    @if (form.get('username')?.touched && form.get('username')?.errors) {
-                    <div class="error-message">Bitte geben Sie einen Vor- und Nachnamen ein.</div>
-                    }
-                </div>
-            </div>
-            <div class="button-container">
-                <button (click)="edit = false" class="btn-zero-fill button-base">Abbrechen</button>
-                <button class="btn-full button-base">Speicher</button>
-            </div>
-        </form>
-        }
+      <div class="contact-info">
+        <div class="info-row">
+          <mat-icon class="info-icon">email</mat-icon>
+          <span class="mail-header">E-Mail-Adresse</span>
+        </div>
+        <span class="email">{{ user.email }}</span>
+      </div>
+      </ng-container>
+      <!-- <button class="message-btn" (click)="sendDirectMessage()"> -->
+      <!-- <mat-icon>chat</mat-icon>
+            Nachricht -->
+      <!-- </button> -->
     </div>
-</div>
+  </div>

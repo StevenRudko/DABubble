@@ -1,42 +1,118 @@
-@use './../../../styles.scss' as styles;
-@use './../../../assets/styles/fonts.scss' as fonts;
-@use './../../../assets/styles/theme-colors.scss' as colors;
+@use "./../../../styles.scss" as styles;
+@use "./../../../assets/styles/fonts.scss" as fonts;
+@use "./../../../assets/styles/theme-colors.scss" as colors;
 
 section {
-    @include styles.dFlex($d: flex, $fd: column, $jc: flex-start, $ai: flex-start, $g: 48px);
-    height: 360px;
-    overflow-y: scroll;
-    padding-top: 18px;
+  @include styles.dFlex(
+    $d: flex,
+    $fd: column,
+    $jc: flex-start,
+    $ai: flex-start,
+    $g: 48px
+  );
+  height: 360px;
+  overflow-y: scroll;
+  padding-top: 18px;
 }
 
 .message-wrapper {
-    @include styles.dFlex($d: flex, $fd: column, $jc: flex-start, $ai: flex-start, $g: 42px);
-    width: 100%;
-    height:auto;
-    box-sizing: border-box;
+  @include styles.dFlex(
+    $d: flex,
+    $fd: column,
+    $jc: flex-start,
+    $ai: flex-start,
+    $g: 42px
+  );
+  width: 100%;
+  height: auto;
+  box-sizing: border-box;
 }
 
 .messages-by-date-container {
-    @include styles.dFlex($d: flex, $fd: column, $jc: center, $ai: center, $g: 42px);
-    width: 100%;
-    box-sizing: border-box;
-    height:auto;
+  @include styles.dFlex(
+    $d: flex,
+    $fd: column,
+    $jc: center,
+    $ai: center,
+    $g: 42px
+  );
+  width: 100%;
+  box-sizing: border-box;
+  height: auto;
 }
 
 .divider-line {
-    @include styles.dFlex($d: flex, $fd: column, $jc: center, $ai: center, $g: 0px);
-    height: 1px;
-    background-color: #adb0d9;
-    width: 100%;
-    box-sizing: border-box;
+  @include styles.dFlex(
+    $d: flex,
+    $fd: column,
+    $jc: center,
+    $ai: center,
+    $g: 0px
+  );
+  height: 1px;
+  background-color: #adb0d9;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .divider-text-box {
-    padding: 4px 16px;
-    border: 1px solid #adb0d9;
+  padding: 4px 16px;
+  border: 1px solid #adb0d9;
 }
 
 .divider-text {
-    font-size: 18px;
+  font-size: 18px;
 }
-  // kommentar
+// kommentar
+
+.empty-chat-preview {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+  padding: 20px;
+
+  .profile-preview {
+    .preview-header {
+      margin-bottom: 16px;
+
+      .clickable-area {
+        display: inline-flex;
+        align-items: end;
+        gap: 12px;
+        cursor: pointer;
+        padding: 8px;
+
+        &:hover {
+          .user-name {
+            color: #535af1;
+          }
+        }
+
+        .user-avatar {
+          width: 80px;
+          height: 80px;
+          border-radius: 50%;
+        }
+
+        .user-name {
+          font-weight: 700;
+          font-size: 24px;
+        }
+      }
+    }
+
+    .preview-text {
+      color: #686868;
+      line-height: 1.5;
+      margin: 0;
+      padding: 0 8px;
+    }
+  }
+
+  .user-link {
+    color: #535af1;
+    cursor: pointer;
+    text-decoration: none;
+  }
+}

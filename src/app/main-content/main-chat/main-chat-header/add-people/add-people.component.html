@@ -10,7 +10,29 @@
   </div>
 
   <div class="search-container">
-    <input type="text" placeholder="Name eingeben" class="search-input">
-    <button class="add-btn">Hinzufügen</button>
+    <div class="tag-input">
+      <div *ngFor="let user of selectedUsers" class="selected-user-tag">
+        <img [src]="getPhotoURL(user)" [alt]="user.username">
+        <span>{{ user.username }}</span>
+        <mat-icon class="remove-user" (click)="removeUser(user, $event)">close</mat-icon>
+      </div>
+
+      <input #searchInputEl type="text" [value]="searchInput" (input)="onSearchInput($event)"
+        placeholder="Name eingeben" class="search-input">
+    </div>
+
+    <div class="search-dropdown" *ngIf="showDropdown && (filteredUsers$ | async)?.length">
+      <div *ngFor="let user of filteredUsers$ | async" class="user-item" (click)="selectUser(user)">
+        <img [src]="getPhotoURL(user)" [alt]="user.username" class="user-avatar">
+        <span>{{ user.username }}</span>
+        <div class="status-dot" *ngIf="user.online"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="button-container">
+    <button class="add-btn" [disabled]="!selectedUsers.length" (click)="addUsers()">
+      Hinzufügen
+    </button>
   </div>
 </div>

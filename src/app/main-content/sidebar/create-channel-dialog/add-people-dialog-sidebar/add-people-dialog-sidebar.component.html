@@ -22,7 +22,7 @@
 
       <div class="input-wrapper" [class.show]="selectedOption === 'specific'">
         <div class="search-container">
-          <!-- Input mit Tags -->
+
           <div class="tag-input">
             <div class="selected-user-tag" *ngFor="let user of selectedUsers">
               <img [src]="getPhotoURL(user)" [alt]="user.username">
@@ -33,7 +33,7 @@
               #searchInputEl>
           </div>
 
-          <!-- Dropdown für Suchergebnisse -->
+
           <div class="search-dropdown" *ngIf="showDropdown && (filteredUsers$ | async)?.length">
             <div class="user-item" *ngFor="let user of filteredUsers$ | async" (click)="selectUser(user)">
               <img [src]="getPhotoURL(user)" class="user-avatar" [alt]="user.username">
