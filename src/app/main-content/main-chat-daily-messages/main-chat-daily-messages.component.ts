@@ -51,15 +51,6 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     'Samstag',
   ];
 
-  emojiList: { [key: string]: string } = {
-    rocket: '🚀',
-    smile: '😊',
-    heart: '❤️',
-    laughing: '😂',
-    thumbsUp: '👍',
-    star: '⭐',
-  };
-
   @ViewChild('chatContainer') chatContainer!: ElementRef;
   private isUserScrolled = false;
 
@@ -73,6 +64,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   currentUser: string = '';
   ownMessageStyle: boolean = false;
   // userMessageDate: any = undefined;
+  emojiList: { [key: string]: string } = {};
   userMessages: UserMessageInterface[] = [];
   userMessages$: Observable<any> = new Observable<any>();
   user: UserInterface[] = [];
@@ -140,6 +132,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
       this.getAllMessagesPast(msg);
       this.getAllMessagesToday(msg);
       this.changeMessageStyle(msg);
+      // this.loadEmojis(msg);
     });
   }
 
