@@ -1,0 +1,33 @@
+@use "./../../../styles.scss" as styles;
+@use "./../../../assets/styles/fonts.scss" as fonts;
+@use "./../../../assets/styles/theme-colors.scss" as colors;
+
+  .emoji-picker {
+    @include styles.dFlex(
+      $d: flex,
+      $fd: row,
+      $jc: flex-start,
+      $ai: flex-start,
+      $g: 12px
+    );
+    width: 100%;
+    height:50%;
+    padding: 20px;
+    flex-wrap: wrap; 
+  }
+  
+  .emoji-row {
+    @include styles.dFlex(
+        $d: flex,
+        $fd: row,
+        $jc: center,
+        $ai: center,
+        $g: 12px
+      );
+    margin: 5px;
+    cursor: pointer;
+    font-size: 2rem; 
+    width: 50px; 
+    height: 50px; 
+  }
+  
