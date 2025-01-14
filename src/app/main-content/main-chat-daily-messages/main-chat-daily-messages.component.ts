@@ -29,8 +29,7 @@ import { ProfileOverviewComponent } from '../../shared/profile-overview/profile-
   imports: [
     MATERIAL_MODULES,
     CommonModule,
-    UserMessageComponent,
-    ProfileOverviewComponent,
+    UserMessageComponent
   ],
   templateUrl: './main-chat-daily-messages.component.html',
   styleUrl: './main-chat-daily-messages.component.scss',
