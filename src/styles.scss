@@ -213,6 +213,21 @@ h1 {
   }
 }
 
+.btn-zero-fill {
+  border: 1px solid #797EF3;
+  background-color: unset;
+  color: #444DF2;
+
+  &:hover {
+      background-color: #535AF1;
+      color: #FFFFFF;
+  }
+
+  &:active {
+      background-color: #444DF2;
+  }
+}
+
 .position-bottom-right {
   position: absolute;
   bottom: 0px;

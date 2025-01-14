@@ -1,23 +1,9 @@
-import { Injectable, inject } from '@angular/core';
-import { Auth, user } from '@angular/fire/auth';
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  updateProfile,
-  signInWithPopup,
-  GoogleAuthProvider,
-  sendPasswordResetEmail,
-  User,
-  setPersistence,
-  browserSessionPersistence,
-} from 'firebase/auth';
+import { Injectable } from '@angular/core';
+import { Auth, user, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, signInWithPopup, GoogleAuthProvider, sendPasswordResetEmail, User, browserSessionPersistence, } from '@angular/fire/auth';
+import { setPersistence } from 'firebase/auth';
 import { from, Observable } from 'rxjs';
 import { PresenceService } from './presence.service';
-import { Firestore, doc, setDoc } from '@angular/fire/firestore';
-
-// keep for new featuress
-// import { UserInterface } from '../models/user-interface';
+import { Firestore, doc, setDoc, updateDoc } from '@angular/fire/firestore';
 
 /**
  * The AuthService provides methods for user authentication and account management.
@@ -34,14 +20,6 @@ export class AuthService {
    * @type {Observable<User | null>}
    */
   user$: Observable<User | null>;
-
-  // keep for new featuress
-  // /**
-  //  * Signal to store and manage the current application user.
-  //  * This can include additional user data beyond what Firebase provides.
-  //  * @type {signal<UserInterface | null | undefined>}
-  //  */
-  // currentUserSig = signal<UserInterface | null | undefined>(undefined);
 
   /**
   * Initializes the AuthService with necessary dependencies.
@@ -170,7 +148,7 @@ export class AuthService {
    * @param {string} photoUrl - The profile photo URL to set for the user.
    * @returns {Promise<void>} - Promise that resolves when the profile is successfully updated.
    */
-  private updateUserProfile(
+  updateUserProfile(
     user: User,
     displayName: string,
     photoUrl: string
@@ -196,13 +174,36 @@ export class AuthService {
         username: user.displayName,
         photoURL: user.photoURL,
       });
-
       console.log('Benutzerinformationen erfolgreich in Firestore gespeichert');
     } catch (error) {
       console.error(
         'Fehler beim Speichern der Benutzerinformationen in Firestore:',
         error
       );
+      throw error;
+    }
+  }
+
+  /**
+   * Updates the username of a user in Firestore.
+   * - Fetches the user's document in the `users` collection using the provided user ID.
+   * - Updates the `username` field with the new username.
+   * 
+   * @param {string} userId - The unique identifier (UID) of the user whose username should be updated.
+   * @param {string} newUsername - The new username to set for the user.
+   * @returns {Promise<void>} - A promise that resolves when the username is successfully updated.
+   * @throws {Error} - Throws an error if the update operation fails.
+   */
+  async updateUserNameInFirestore(userId: string, newUsername: string): Promise<void> {
+    try {
+      const userRef = doc(this.firestore, `users/${userId}`);
+      await updateDoc(userRef, {
+        username: newUsername,
+      });
+
+      console.log('Benutzername erfolgreich in Firestore aktualisiert');
+    } catch (error) {
+      console.error('Fehler beim Aktualisieren des Benutzernamens in Firestore:', error);
       throw error;
     }
   }

@@ -67,18 +67,3 @@
     width: 100%;
     @include styles.dFlex($d: flex, $fd: none, $jc: center, $ai: center, $g: 30px)
 }
-
-.btn-guest {
-    border: 1px solid #797EF3;
-    background-color: unset;
-    color: #444DF2;
-
-    &:hover {
-        background-color: #535AF1;
-        color: #FFFFFF;
-    }
-
-    &:active {
-        background-color: #444DF2;
-    }
-}
