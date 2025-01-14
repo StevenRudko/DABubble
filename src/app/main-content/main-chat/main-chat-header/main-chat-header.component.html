@@ -27,7 +27,7 @@
 
   <!-- Direct Message View -->
   <ng-container *ngIf="currentDirectUser$ | async as user">
-    <div class="selection-name direct-message-header">
+    <div class="selection-name direct-message-header" (click)="openProfileDialog(user)">
       <div style="position: relative; height: 50px;">
         <img [src]="getPhotoURL(user)" class="user-avatar" [alt]="getDisplayName(user)">
         <div class="status-dot" [class.online]="user.online"></div>

@@ -1,3 +1,5 @@
+// In profile-overview.component.ts
+
 import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
@@ -5,13 +7,16 @@ import {
   MatDialogRef,
   MAT_DIALOG_DATA,
   MatDialogModule,
+  MatDialog,
 } from '@angular/material/dialog';
+import { ChatService } from '../../service/chat.service';
 
 interface UserData {
   name: string;
   email: string;
   avatar: string;
   status: 'active' | 'away' | 'offline';
+  uid: string;
 }
 
 @Component({
@@ -24,7 +29,9 @@ interface UserData {
 export class ProfileOverviewComponent {
   constructor(
     public dialogRef: MatDialogRef<ProfileOverviewComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: UserData
+    @Inject(MAT_DIALOG_DATA) public data: UserData,
+    private chatService: ChatService,
+    private dialog: MatDialog // MatDialog Service hinzugefügt
   ) {}
 
   close(): void {
@@ -45,6 +52,17 @@ export class ProfileOverviewComponent {
   }
 
   sendDirectMessage(): void {
-    console.log('Sending message to:', this.data.name);
+    // Dialog schließen
+    this.dialogRef.close();
+
+    // Alle offenen Dialoge schließen
+    this.dialog.closeAll();
+
+    // Direktnachricht öffnen mit der userId
+    if (this.data.uid) {
+      this.chatService.selectDirectMessage(this.data.uid);
+    } else {
+      console.error('No user ID available for direct message');
+    }
   }
 }

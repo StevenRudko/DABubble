@@ -1,3 +1,4 @@
+<!-- In member-overview.component.html -->
 <div class="overlay-content">
   <div class="overlay-header">
     <h2>Mitglieder</h2>
@@ -5,25 +6,23 @@
   </div>
 
   <div class="user-list">
-    <div class="user-item" (click)="openProfileDialog('Frederik Beck')">
-      <img src="img-placeholder/frederik.svg" class="user-avatar">
-      <span>Frederik Beck (Du)</span>
-      <div class="status-dot"></div>
-    </div>
-    <div class="user-item" (click)="openProfileDialog('Sofia Müller')">
-      <img src="img-placeholder/sofia.svg" class="user-avatar">
-      <span>Sofia Müller</span>
-      <div class="status-dot"></div>
-    </div>
-    <div class="user-item" (click)="openProfileDialog('Noah Braun')">
-      <img src="img-placeholder/noah.svg" class="user-avatar">
-      <span>Noah Braun</span>
-      <div class="status-dot"></div>
+    <!-- Loading Spinner -->
+    <div *ngIf="isLoading" class="loading-spinner-container">
+      <mat-spinner diameter="40"></mat-spinner>
     </div>
 
-    <button class="add-member-btn">
-      <mat-icon>person_add_alt</mat-icon>
-      <span>Mitglieder hinzufügen</span>
-    </button>
+    <!-- Member List -->
+    <ng-container *ngIf="!isLoading">
+      <div class="user-item" *ngFor="let member of members" (click)="openProfileDialog(member)">
+        <img [src]="member.photoURL" class="user-avatar" [alt]="member.username">
+        <span>{{ member.username }}</span>
+        <div class="status-dot" [class.online]="member.online"></div>
+      </div>
+
+      <button class="add-member-btn" (click)="openAddPeopleDialog()">
+        <mat-icon>person_add_alt</mat-icon>
+        <span>Mitglieder hinzufügen</span>
+      </button>
+    </ng-container>
   </div>
 </div>

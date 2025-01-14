@@ -12,6 +12,7 @@ import {
   DirectUser,
 } from '../../../models/chat.interfaces';
 import { Observable } from 'rxjs';
+import { ProfileOverviewComponent } from '../../../shared/profile-overview/profile-overview.component';
 
 @Component({
   selector: 'app-main-chat-header',
@@ -93,6 +94,26 @@ export class MainChatHeaderComponent {
       hasBackdrop: true,
       backdropClass: 'dialog-backdrop',
       panelClass: 'member-dialog',
+    });
+  }
+
+  openProfileDialog(user: DirectUser) {
+    const userData = {
+      name: this.getDisplayName(user),
+      email: user.email || '',
+      avatar: this.getPhotoURL(user),
+      status: user.online ? 'active' : 'offline',
+      uid: user.uid, // Wichtig: Die uid muss hier übergeben werden
+    };
+
+    this.dialog.open(ProfileOverviewComponent, {
+      data: userData,
+      position: {
+        top: '160px',
+      },
+      hasBackdrop: true,
+      backdropClass: 'dialog-backdrop',
+      panelClass: 'profile-dialog',
     });
   }
 }

@@ -402,7 +402,8 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
       name: this.getCurrentUserName(),
       email: this.getCurrentUserEmail(),
       avatar: this.getCurrentUserPhotoURL(),
-      status: 'active' as const,
+      status: this.currentDirectUser?.online ? 'active' : 'offline',
+      uid: this.currentDirectUser?.uid || this.currentAuthUser?.uid,
     };
 
     const isOwnProfile =
@@ -414,7 +415,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
       panelClass: isOwnProfile
         ? ['profile-dialog', 'right-aligned']
         : ['profile-dialog', 'center-aligned'],
-      width: '400px', // Optional: Setzen Sie eine feste Breite
+      width: '400px',
     };
 
     this.dialog.open(ProfileOverviewComponent, dialogConfig);

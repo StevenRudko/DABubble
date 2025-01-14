@@ -1,4 +1,5 @@
-import { Component, OnDestroy, OnInit, Input } from '@angular/core';
+// In message-input-box.component.ts
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MATERIAL_MODULES } from '../material-imports';
 import {
@@ -19,8 +20,8 @@ import { Subscription } from 'rxjs';
   styleUrl: './message-input-box.component.scss',
 })
 export class MessageInputBoxComponent implements OnInit, OnDestroy {
-  @Input() placeholder: string = 'Nachricht an #Entwicklerteam';
   messageText: string = '';
+  placeholder: string = 'Nachricht schreiben...';
   private currentChannel: any;
   private currentUser: any;
   private currentDirectUser: any;
@@ -33,23 +34,47 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    // Channel Subscription
     this.subscriptions.add(
       this.chatService.currentChannel$.subscribe((channel) => {
         this.currentChannel = channel;
+        if (channel) {
+          this.placeholder = `Nachricht an #${channel.name}`;
+        }
       })
     );
 
+    // Direct Message User Subscription
     this.subscriptions.add(
       this.chatService.currentDirectUser$.subscribe((directUser) => {
         this.currentDirectUser = directUser;
+        if (directUser) {
+          // Nutze die getDisplayName-Funktion ähnlich wie in der Sidebar
+          const displayName = this.getDisplayName(directUser);
+          this.placeholder = `Nachricht an ${displayName}`;
+        }
       })
     );
 
+    // Current User Subscription
     this.subscriptions.add(
       this.authService.user$.subscribe((user) => {
         this.currentUser = user;
       })
     );
+  }
+
+  getDisplayName(user: any): string {
+    if (!user) return 'Unbenannter Benutzer';
+
+    // Prüfe zuerst auf username (aus Firebase)
+    if (user.username) return user.username;
+    // Fallback auf displayName
+    if (user.displayName) return user.displayName;
+    // Letzter Fallback auf Email
+    if (user.email) return user.email;
+
+    return 'Unbenannter Benutzer';
   }
 
   async sendMessage() {

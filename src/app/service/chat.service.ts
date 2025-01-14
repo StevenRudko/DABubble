@@ -32,6 +32,12 @@ export class ChatService {
   private messagesSubject = new BehaviorSubject<UserMessage[]>([]);
   messages$ = this.messagesSubject.asObservable();
 
+  private channelMembersSubject = new BehaviorSubject<ChatMember[]>([]);
+  channelMembers$ = this.channelMembersSubject.asObservable();
+
+  private currentChannelMembersSubject = new BehaviorSubject<ChatMember[]>([]);
+  currentChannelMembers$ = this.currentChannelMembersSubject.asObservable();
+
   constructor(private firestore: Firestore) {}
 
   async selectChannel(channelId: string): Promise<void> {
@@ -143,14 +149,52 @@ export class ChatService {
             );
 
             subscriber.next(members);
+            this.currentChannelMembersSubject.next(members); // Update the subject
           } else {
             subscriber.next([]);
+            this.currentChannelMembersSubject.next([]);
           }
         })
         .catch((error) => {
           console.error('Error fetching channel members:', error);
           subscriber.next([]);
+          this.currentChannelMembersSubject.next([]);
         });
     });
+  }
+
+  async refreshChannelMembers(channelId: string): Promise<void> {
+    try {
+      const channelRef = doc(this.firestore, `channels/${channelId}`);
+      const channelSnap = await getDoc(channelRef);
+
+      if (channelSnap.exists()) {
+        const channelData = channelSnap.data();
+        const memberIds = Object.keys(channelData['members'] || {}).filter(
+          (key) => channelData['members'][key] === true
+        );
+
+        const memberPromises = memberIds.map(async (memberId) => {
+          const userRef = doc(this.firestore, `users/${memberId}`);
+          const userSnap = await getDoc(userRef);
+          if (userSnap.exists()) {
+            const userData = userSnap.data();
+            return {
+              ...userData,
+              uid: memberId,
+            } as ChatMember;
+          }
+          return null;
+        });
+
+        const members = (await Promise.all(memberPromises)).filter(
+          (member): member is ChatMember => member !== null
+        );
+
+        this.channelMembersSubject.next(members);
+      }
+    } catch (error) {
+      console.error('Error refreshing channel members:', error);
+    }
   }
 }
