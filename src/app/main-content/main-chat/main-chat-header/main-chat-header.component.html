@@ -1,7 +1,7 @@
 <header>
   <!-- Channel View -->
   <ng-container *ngIf="currentChannel$ | async as channel">
-    <div class="selection-name">
+    <div class="selection-name" (click)="openChannelInfoDialog(channel)">
       <span>#</span>
       <p>{{ channel.name }}</p>
       <mat-icon>keyboard_arrow_down</mat-icon>

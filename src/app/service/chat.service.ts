@@ -8,6 +8,8 @@ import {
   getDoc,
   query,
   where,
+  updateDoc,
+  serverTimestamp,
 } from '@angular/fire/firestore';
 import { BehaviorSubject, Observable } from 'rxjs';
 import {
@@ -195,6 +197,53 @@ export class ChatService {
       }
     } catch (error) {
       console.error('Error refreshing channel members:', error);
+    }
+  }
+
+  async updateChannel(
+    channelId: string,
+    updates: {
+      name?: string;
+      description?: string;
+    }
+  ): Promise<void> {
+    try {
+      const channelRef = doc(this.firestore, `channels/${channelId}`);
+      await updateDoc(channelRef, {
+        ...updates,
+        updatedAt: serverTimestamp(),
+      });
+
+      // Channel neu laden nach Update
+      await this.selectChannel(channelId);
+    } catch (error) {
+      console.error('Error updating channel:', error);
+      throw error;
+    }
+  }
+
+  async removeUserFromChannel(
+    channelId: string,
+    userId: string
+  ): Promise<void> {
+    try {
+      const channelRef = doc(this.firestore, `channels/${channelId}`);
+      const channelSnap = await getDoc(channelRef);
+
+      if (channelSnap.exists()) {
+        const data = channelSnap.data();
+        // Verwende Index-Zugriff statt Dot-Notation
+        const members = { ...data['members'] };
+        delete members[userId];
+
+        await updateDoc(channelRef, {
+          members,
+          updatedAt: serverTimestamp(),
+        });
+      }
+    } catch (error) {
+      console.error('Error removing user from channel:', error);
+      throw error;
     }
   }
 }

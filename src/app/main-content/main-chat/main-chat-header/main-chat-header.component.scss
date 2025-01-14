@@ -29,6 +29,13 @@ header {
   );
   font-size: 24px;
   font-weight: 600;
+  padding: 0.5rem;
+  &:hover {
+    color: #535af1;
+    background-color: #eceefe;
+    border-radius: 2rem;
+    cursor: pointer;
+  }
 
   &.direct-message-header {
     padding: 0.5rem;

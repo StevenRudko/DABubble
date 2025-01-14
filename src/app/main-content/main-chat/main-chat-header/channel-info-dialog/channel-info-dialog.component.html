@@ -1,0 +1,82 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <h2 class="title"># {{ channelName }}</h2>
+    <button mat-icon-button class="close-button" (click)="dialogRef.close()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="content-wrapper">
+    <!-- Channel Name Section -->
+    <div class="section-box" [class.editing]="isEditingName">
+      <div class="section-header">
+        <span>Channel-Name</span>
+        <button mat-button color="primary" class="edit-button" *ngIf="!isEditingName" (click)="toggleEditName()">
+          Bearbeiten
+        </button>
+        <button mat-button color="primary" class="save-button" *ngIf="isEditingName" (click)="saveChanges()">
+          Speichern
+        </button>
+      </div>
+      <div class="section-content">
+        <ng-container *ngIf="!isEditingName">
+          <div class="channel-name">
+            <span class="hash">#</span>
+            {{ channelName }}
+          </div>
+        </ng-container>
+        <ng-container *ngIf="isEditingName">
+          <div class="input-container">
+            <span class="hash">#</span>
+            <input [(ngModel)]="channelName" placeholder="Channel-Name">
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+    <!-- Description Section with Created By -->
+    <div class="section-box">
+      <!-- Description Part -->
+      <div class="description-part" [class.editing]="isEditingDescription">
+        <div class="section-header">
+          <span>Beschreibung</span>
+          <button mat-button color="primary" class="edit-button" *ngIf="!isEditingDescription"
+            (click)="toggleEditDescription()">
+            Bearbeiten
+          </button>
+          <button mat-button color="primary" class="save-button" *ngIf="isEditingDescription" (click)="saveChanges()">
+            Speichern
+          </button>
+        </div>
+        <div class="section-content">
+          <ng-container *ngIf="!isEditingDescription">
+            <p>{{ channelDescription || 'Keine Beschreibung vorhanden' }}</p>
+          </ng-container>
+          <ng-container *ngIf="isEditingDescription">
+            <textarea #autosize [(ngModel)]="channelDescription" placeholder="Beschreibung hinzufügen"
+              rows="1"></textarea>
+          </ng-container>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <!-- Created By Part -->
+      <div class="created-by-part">
+        <div class="section-header">
+          <span>Erstellt von</span>
+        </div>
+        <div class="section-content">
+          <p class="creator">{{ createdBy }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Actions -->
+  <div class="dialog-footer">
+    <button mat-button class="footer-button" (click)="leaveChannel()">
+      Channel verlassen
+    </button>
+  </div>
+</div>

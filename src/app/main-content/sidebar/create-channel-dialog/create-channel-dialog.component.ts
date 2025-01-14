@@ -23,6 +23,7 @@ import { Firestore, addDoc, collection } from '@angular/fire/firestore';
 export class ChannelDialogComponent {
   channelName: string = '';
   channelDescription: string = '';
+  minNameLength = 3;
 
   constructor(
     @Optional() public dialogRef: MatDialogRef<ChannelDialogComponent>,
@@ -32,6 +33,10 @@ export class ChannelDialogComponent {
 
   @Input() isOpen = false;
   @Output() closeDialog = new EventEmitter<void>();
+
+  get isChannelNameValid(): boolean {
+    return this.channelName.trim().length >= this.minNameLength;
+  }
 
   onClose(): void {
     if (this.dialogRef) {
@@ -46,12 +51,16 @@ export class ChannelDialogComponent {
   }
 
   async openAddPeopleDialog(): Promise<void> {
+    if (!this.isChannelNameValid) {
+      return;
+    }
+
     if (this.dialogRef) {
       try {
         const channelRef = collection(this.firestore, 'channels');
         const newChannel = await addDoc(channelRef, {
-          name: this.channelName,
-          description: this.channelDescription,
+          name: this.channelName.trim(),
+          description: this.channelDescription.trim(),
           type: 'public',
           createdAt: new Date().toISOString(),
           members: {},

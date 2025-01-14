@@ -1,0 +1,269 @@
+.dialog-container {
+  background-color: white;
+  width: 800px;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  margin-bottom: 16px;
+
+  .title {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    padding-left: 1rem;
+  }
+
+  .close-button {
+    color: black;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent !important;
+    border-radius: 50%;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      color: #4f46e5;
+      background-color: #eceefe !important;
+    }
+  }
+}
+
+.content-wrapper {
+  padding: 0 24px;
+}
+
+.section-box {
+  position: relative;
+  border: 1px solid #adb0d9;
+  border-radius: 20px;
+  padding: 16px;
+  margin-bottom: 16px;
+  transition: border-color 0.3s ease-in-out;
+  min-height: 120px;
+  height: auto;
+
+  &.editing {
+    border-color: transparent;
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+
+    span {
+      color: black;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .edit-button,
+    .save-button {
+      color: #4f46e5;
+      font-size: 16px;
+      background: transparent !important;
+      padding: 8px;
+      border: none !important;
+      transition: all 0.2s ease-in-out;
+
+      &:hover {
+        background: #eceefe !important;
+      }
+    }
+
+    .save-button {
+      border-radius: 20px;
+      padding: 4px 16px;
+    }
+  }
+
+  .section-content {
+    position: relative;
+    min-height: 60px;
+
+    .input-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background-color: white;
+      border: 1px solid #adb0d9;
+      border-radius: 40px;
+      padding: 8px 16px;
+      height: 60px;
+      box-sizing: border-box;
+
+      .hash {
+        color: black;
+        font-size: 20px;
+      }
+
+      input {
+        border: none;
+        background: none;
+        outline: none;
+        width: 100%;
+        font-size: 16px;
+        color: black;
+        font-family: inherit;
+        padding: 8px 0;
+
+        &::placeholder {
+          color: #9ca3af;
+        }
+      }
+    }
+
+    .channel-name {
+      display: flex;
+      align-items: center;
+      min-height: 60px;
+      gap: 8px;
+      padding: 8px 16px;
+
+      .hash {
+        color: black;
+        font-size: 20px;
+      }
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 60px;
+      border: 1px solid #adb0d9;
+      border-radius: 40px;
+      padding: 16px 24px;
+      font-size: 16px;
+      line-height: 1.5;
+      resize: none;
+      color: black;
+      font-family: inherit;
+      box-sizing: border-box;
+      outline: none;
+      overflow: hidden;
+      transition: height 0.2s ease-in-out;
+
+      &::placeholder {
+        color: #9ca3af;
+      }
+
+      &:focus {
+        border-color: #4f46e5;
+      }
+    }
+
+    p {
+      min-height: 60px;
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.5;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+
+.description-part {
+  position: relative;
+
+  &.editing {
+    border-color: transparent;
+  }
+}
+
+.divider {
+  margin: 24px 0;
+  border: none;
+  border-top: 1px solid #adb0d9;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.editing .divider {
+  opacity: 0.5;
+}
+
+.description-part {
+  position: relative;
+  transition: all 0.3s ease-in-out;
+
+  &.editing {
+    .section-content {
+      .input-container,
+      textarea {
+        opacity: 0;
+        animation: fadeIn 0.3s ease-in-out forwards;
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+}
+
+.dialog-footer {
+  padding: 16px 24px;
+  display: flex;
+  justify-content: flex-end;
+
+  .footer-button {
+    font-size: 16px;
+    font-weight: 500;
+    padding: 8px 16px;
+    background-color: #4f46e5;
+    color: white;
+    border-radius: 25px;
+    border: none !important;
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+      background-color: #797ef3 !important;
+      transform: translateY(-1px);
+    }
+  }
+}
+
+// Globale Material Design Überschreibungen
+::ng-deep {
+  .mat-button-focus-overlay,
+  .mat-ripple-element,
+  .mat-mdc-button-persistent-ripple,
+  .mat-mdc-button-touch-target {
+    display: none !important;
+  }
+
+  .mdc-button {
+    border: none !important;
+
+    &::before,
+    &::after {
+      display: none !important;
+    }
+  }
+}
