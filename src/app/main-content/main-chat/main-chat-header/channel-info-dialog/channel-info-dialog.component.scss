@@ -7,8 +7,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 24px;
-  margin-bottom: 16px;
+  padding: 24px;
 
   .title {
     margin: 0;
@@ -46,7 +45,7 @@
   padding: 16px;
   margin-bottom: 16px;
   transition: border-color 0.3s ease-in-out;
-  min-height: 120px;
+  min-height: 100px;
   height: auto;
 
   &.editing {
@@ -87,7 +86,6 @@
 
   .section-content {
     position: relative;
-    min-height: 60px;
 
     .input-container {
       display: flex;
@@ -124,9 +122,7 @@
     .channel-name {
       display: flex;
       align-items: center;
-      min-height: 60px;
       gap: 8px;
-      padding: 8px 16px;
 
       .hash {
         color: black;
@@ -160,13 +156,16 @@
     }
 
     p {
-      min-height: 60px;
       margin: 0;
       font-size: 16px;
       line-height: 1.5;
-      padding: 8px 16px;
       display: flex;
       align-items: center;
+    }
+
+    .creator {
+      color: #4f46e5;
+      font-size: 20px;
     }
   }
 }
