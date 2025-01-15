@@ -6,14 +6,14 @@
 
   <div class="profile-content">
     <div class="avatar-container">
-      <img [src]="photoURL" [alt]="displayName" class="profile-avatar">
+      <img [src]="this.userInfoService.photoURL" [alt]="this.userInfoService.displayName" class="profile-avatar">
     </div>
     @if (!edit) {
     <div class="info-container">
       <div class="user-info">
         <div class="name-container">
-          <h3>{{ displayName }}</h3>
-          <p (click)="edit = true">Bearbeiten</p>
+          <h3>{{ this.userInfoService.displayName }}</h3>
+          <p (click)="openEdit()">Bearbeiten</p>
         </div>
         <div class="status">
           <div class="status-dot"></div>
@@ -26,7 +26,7 @@
           <mat-icon class="info-icon">mail_outline</mat-icon>
           <span class="mail-header">E-Mail-Adresse</span>
         </div>
-        <span class="email">{{ email }}</span>
+        <span class="email">{{ this.userInfoService.email }}</span>
       </div>
     </div>
     }
@@ -38,7 +38,7 @@
           <p>Vollständiger Name</p>
         </div>
         <div class="input-container">
-          <input type="name" placeholder="{{ displayName }}" formControlName="username">
+          <input type="name" placeholder="{{ this.userInfoService.displayName }}" formControlName="username">
           @if (form.get('username')?.touched && form.get('username')?.errors) {
           <div class="error-message">Bitte geben Sie einen Vor- und Nachnamen ein.</div>
           }

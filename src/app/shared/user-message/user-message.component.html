@@ -1,7 +1,8 @@
-<section *ngFor="let msg of messagesOld" (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()"
+<section *ngFor="let msg of messagesOld" (mouseenter)="onMouseEnter(msg.userMessageId)" 
+(mouseleave)="onMouseLeave(msg.userMessageId)"
   [ngClass]="{ myMessageStyle: ownMessage }">
   <div class="emoji-card-container" [ngClass]="{ myMessageStyle: ownMessage }">
-    <mat-card *ngIf="showReactionEmojis" class="emoji-card bg-frame-v1">
+    <mat-card *ngIf="hoverStateMap[msg.userMessageId]" class="emoji-card bg-frame-v1">
       <mat-card-content class="emoji-content">
         <button mat-icon-button *ngIf="!threadMessage">
           <mat-icon class="check_circle">check_circle</mat-icon>
@@ -9,8 +10,7 @@
         <button mat-icon-button *ngIf="!threadMessage">
           <mat-icon>🙌</mat-icon>
         </button>
-        <button mat-icon-button>
-
+        <button mat-icon-button (click)="openEmojiPicker()">
           <mat-icon>tag_faces</mat-icon>
         </button>
         <button mat-icon-button *ngIf="!threadMessage">
@@ -56,8 +56,7 @@
           <p>1</p>
         </div>
         <div>
-          <button mat-icon-button>
-
+          <button mat-icon-button (click)="openEmojiPicker()">
             <mat-icon>tag_faces</mat-icon>
           </button>
         </div>
@@ -66,10 +65,10 @@
   </div>
 </section>
 
-<section *ngFor="let msg of messagesToday" (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()"
-  [ngClass]="{ myMessageStyle: ownMessage }">
+<section *ngFor="let msg of messagesToday" (mouseenter)="onMouseEnter(msg.userMessageId)" 
+(mouseleave)="onMouseLeave(msg.userMessageId)" [ngClass]="{ myMessageStyle: ownMessage }">
   <div class="emoji-card-container" [ngClass]="{ myMessageStyle: ownMessage }">
-    <mat-card *ngIf="showReactionEmojis" class="emoji-card bg-frame-v1">
+    <mat-card *ngIf="hoverStateMap[msg.userMessageId]" class="emoji-card bg-frame-v1">
       <mat-card-content class="emoji-content">
         <button mat-icon-button *ngIf="!threadMessage">
           <mat-icon class="check_circle">check_circle</mat-icon>
@@ -77,8 +76,7 @@
         <button mat-icon-button *ngIf="!threadMessage">
           <mat-icon>🙌</mat-icon>
         </button>
-        <button mat-icon-button>
-
+        <button mat-icon-button (click)="openEmojiPicker()">
           <mat-icon>tag_faces</mat-icon>
         </button>
         <button mat-icon-button *ngIf="!threadMessage">
@@ -123,8 +121,7 @@
           <p>1</p>
         </div>
         <div>
-          <button mat-icon-button>
-
+          <button mat-icon-button (click)="openEmojiPicker()">
             <mat-icon>tag_faces</mat-icon>
           </button>
         </div>

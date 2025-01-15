@@ -1,0 +1,6 @@
+  <!-- Anzeige der verfügbaren Emojis -->
+  <div class="emoji-picker">
+    <div class="emoji-row" *ngFor="let emoji of emojiList" (click)="onEmojiSelect(emoji)">
+      <span>{{ emoji.emoji }}</span>
+    </div>
+  </div>
