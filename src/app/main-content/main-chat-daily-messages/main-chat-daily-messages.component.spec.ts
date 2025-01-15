@@ -21,5 +21,3 @@ describe('MainChatDailyMessagesComponent', () => {
     expect(component).toBeTruthy();
   });
 });
-
-  // kommentar

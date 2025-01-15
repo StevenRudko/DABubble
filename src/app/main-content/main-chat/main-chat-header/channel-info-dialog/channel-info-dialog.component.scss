@@ -172,28 +172,13 @@
 
 .description-part {
   position: relative;
-
-  &.editing {
-    border-color: transparent;
-  }
-}
-
-.divider {
-  margin: 24px 0;
-  border: none;
-  border-top: 1px solid #adb0d9;
-  transition: opacity 0.3s ease-in-out;
-}
-
-.editing .divider {
-  opacity: 0.5;
-}
-
-.description-part {
-  position: relative;
   transition: all 0.3s ease-in-out;
 
   &.editing {
+    ~ .divider {
+      opacity: 0.5;
+    }
+
     .section-content {
       .input-container,
       textarea {
@@ -202,6 +187,18 @@
       }
     }
   }
+}
+
+.section-box:has(.description-part.editing) {
+  border-color: transparent;
+  transition: border-color 0.3s ease-in-out;
+}
+
+.divider {
+  margin: 24px 0;
+  border: none;
+  border-top: 1px solid #adb0d9;
+  transition: opacity 0.3s ease-in-out;
 }
 
 @keyframes fadeIn {
@@ -248,7 +245,6 @@
   }
 }
 
-// Globale Material Design Überschreibungen
 ::ng-deep {
   .mat-button-focus-overlay,
   .mat-ripple-element,
