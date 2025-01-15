@@ -26,11 +26,7 @@ import { ProfileOverviewComponent } from '../../shared/profile-overview/profile-
 @Component({
   selector: 'app-main-chat-daily-messages',
   standalone: true,
-  imports: [
-    MATERIAL_MODULES,
-    CommonModule,
-    UserMessageComponent
-  ],
+  imports: [MATERIAL_MODULES, CommonModule, UserMessageComponent],
   templateUrl: './main-chat-daily-messages.component.html',
   styleUrl: './main-chat-daily-messages.component.scss',
 })
@@ -85,6 +81,8 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   groupedMessages: { [date: string]: renderMessageInterface[] } = {};
   currentAuthUser: any;
   currentDirectUser: any;
+  currentChannel$: Observable<any>;
+  currentDirectUser$: Observable<any>;
 
   constructor(
     private userData: UserData,
@@ -92,7 +90,10 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     private chatService: ChatService, // NEU: ChatService hinzufügen
     private authService: AuthService, // NEU
     private dialog: MatDialog // NEU
-  ) {}
+  ) {
+    this.currentChannel$ = this.chatService.currentChannel$;
+    this.currentDirectUser$ = this.chatService.currentDirectUser$;
+  }
 
   // abonniert die Daten aus der DB und ruft die init-Funtkion auf
   ngOnInit(): Promise<void> {
@@ -411,5 +412,27 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
       !this.currentDirectUser ||
       this.currentDirectUser.uid === this.currentAuthUser?.uid
     );
+  }
+
+  /**
+   * Gets the formatted creation time string for a channel
+   */
+  getChannelCreationTime(createdAt: string): string {
+    const creationDate = new Date(createdAt);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if (creationDate >= today) {
+      return 'heute';
+    } else if (creationDate >= yesterday) {
+      return 'gestern';
+    } else {
+      return `am ${creationDate.getDate()}. ${
+        this.months[creationDate.getMonth()]
+      } ${creationDate.getFullYear()}`;
+    }
   }
 }
