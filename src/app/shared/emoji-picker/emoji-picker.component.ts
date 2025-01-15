@@ -4,7 +4,7 @@ import { Component, OnInit } from '@angular/core';
 @Component({
   selector: 'app-emoji-picker',
   standalone: true,
-  imports: [CommonModule, NgFor, NgIf],
+  imports: [CommonModule, NgFor],
   templateUrl: './emoji-picker.component.html',
   styleUrls: ['./emoji-picker.component.scss'],
 })

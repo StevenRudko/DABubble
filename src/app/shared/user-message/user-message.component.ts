@@ -1,14 +1,13 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
 import { MATERIAL_MODULES } from '../material-imports';
-import { InputOutput } from '../../service/input-output.service';
 import { EmojiPickerComponent } from '../emoji-picker/emoji-picker.component';
 import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-user-message',
   standalone: true,
-  imports: [CommonModule, MATERIAL_MODULES, NgIf, EmojiPickerComponent],
+  imports: [CommonModule, MATERIAL_MODULES, NgIf],
   templateUrl: './user-message.component.html',
   styleUrl: './user-message.component.scss',
 })
@@ -41,7 +40,7 @@ export class UserMessageComponent {
   openEmojiPicker(): void {
     const dialogRef = this.dialog.open(EmojiPickerComponent, {});
     dialogRef.afterClosed().subscribe((result) => {
-      console.log('The dialog was closed');
+      // console.log('The dialog was closed');
     });
   }
 }
