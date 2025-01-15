@@ -3,6 +3,7 @@ import { CommonModule, NgIf } from '@angular/common';
 import { MATERIAL_MODULES } from '../material-imports';
 import { EmojiPickerComponent } from '../emoji-picker/emoji-picker.component';
 import { MatDialog } from '@angular/material/dialog';
+import { MessagesEditOptionsComponent } from '../messages-edit-options/messages-edit-options.component';
 
 @Component({
   selector: 'app-user-message',
@@ -39,6 +40,13 @@ export class UserMessageComponent {
 
   openEmojiPicker(): void {
     const dialogRef = this.dialog.open(EmojiPickerComponent, {});
+    dialogRef.afterClosed().subscribe((result) => {
+      // console.log('The dialog was closed');
+    });
+  }
+
+  openEditOptions(): void {
+    const dialogRef = this.dialog.open(MessagesEditOptionsComponent, {});
     dialogRef.afterClosed().subscribe((result) => {
       // console.log('The dialog was closed');
     });

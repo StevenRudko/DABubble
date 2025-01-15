@@ -1,0 +1,23 @@
+@use "./../../../styles.scss" as styles;
+@use "./../../../assets/styles/fonts.scss" as fonts;
+@use "./../../../assets/styles/theme-colors.scss" as colors;
+
+.edited-options-container {
+    @include styles.dFlex(
+        $d: flex,
+        $fd: column,
+        $jc: flex-start,
+        $ai: flex-start,
+        $g: 4px,
+      );
+
+    border-top-left-radius:0px;
+    padding:20px;
+    position:relative;
+    // gap: 0;
+    // padding: 28px 48px;
+    // position: fixed;
+    // top: 100px;
+    // right: 22px;
+    // border-top-right-radius: 0;
+}

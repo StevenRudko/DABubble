@@ -16,7 +16,7 @@
         <button mat-icon-button *ngIf="!threadMessage">
           <mat-icon>insert_comment</mat-icon>
         </button>
-        <button mat-icon-button *ngIf="ownMessage">
+        <button mat-icon-button *ngIf="msg.isOwnMessage" (click)="openEditOptions()">
           <mat-icon>more_vert</mat-icon>
         </button>
       </mat-card-content>
@@ -82,7 +82,7 @@
         <button mat-icon-button *ngIf="!threadMessage">
           <mat-icon>insert_comment</mat-icon>
         </button>
-        <button mat-icon-button *ngIf="ownMessage">
+        <button mat-icon-button *ngIf="msg.isOwnMessage" (click)="openEditOptions()">
           <mat-icon>more_vert</mat-icon>
         </button>
       </mat-card-content>
