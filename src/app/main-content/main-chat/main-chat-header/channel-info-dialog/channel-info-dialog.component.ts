@@ -5,6 +5,7 @@ import {
   ViewChildren,
   QueryList,
   ElementRef,
+  OnInit,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -16,6 +17,8 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ChatService } from '../../../../service/chat.service';
+import { Firestore, doc, getDoc } from '@angular/fire/firestore';
+import { firstValueFrom } from 'rxjs';
 
 /**
  * Interface defining the required data structure for the channel dialog
@@ -44,14 +47,14 @@ interface ChannelDialogData {
   templateUrl: './channel-info-dialog.component.html',
   styleUrls: ['./channel-info-dialog.component.scss'],
 })
-export class ChannelInfoDialogComponent implements AfterViewInit {
+export class ChannelInfoDialogComponent implements AfterViewInit, OnInit {
   @ViewChildren('autosize') textareas!: QueryList<ElementRef>;
 
   isEditingName = false;
   isEditingDescription = false;
   channelName: string;
   channelDescription: string;
-  createdBy: string;
+  createdBy: string = 'Wird geladen...';
 
   /**
    * Initializes the component with channel data
@@ -59,11 +62,18 @@ export class ChannelInfoDialogComponent implements AfterViewInit {
   constructor(
     public dialogRef: MatDialogRef<ChannelInfoDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ChannelDialogData,
-    private chatService: ChatService
+    private chatService: ChatService,
+    private firestore: Firestore
   ) {
     this.channelName = data.name;
     this.channelDescription = data.description || '';
-    this.createdBy = data.createdBy || 'Unknown';
+  }
+
+  /**
+   * Loads creator information on component initialization
+   */
+  async ngOnInit() {
+    await this.loadCreatorInfo();
   }
 
   /**
@@ -74,6 +84,54 @@ export class ChannelInfoDialogComponent implements AfterViewInit {
       this.adjustAllTextareas();
       this.setupTextareaListeners();
     });
+  }
+
+  /**
+   * Fetches channel document from Firestore
+   */
+  private async getChannelDoc() {
+    return await getDoc(doc(this.firestore, 'channels', this.data.channelId));
+  }
+
+  /**
+   * Retrieves creator user document based on channel data
+   */
+  private async getCreatorUser(channelData: any) {
+    if (!channelData || !channelData['createdBy']) {
+      return null;
+    }
+    return await getDoc(doc(this.firestore, 'users', channelData['createdBy']));
+  }
+
+  /**
+   * Extracts display name from user data with fallback
+   */
+  private getUserDisplayName(userData: any): string {
+    if (!userData) return 'Unbekannter Benutzer';
+    return (
+      userData['username'] ||
+      userData['displayName'] ||
+      userData['email'] ||
+      'Unbekannter Benutzer'
+    );
+  }
+
+  /**
+   * Loads and sets channel creator information
+   */
+  private async loadCreatorInfo(): Promise<void> {
+    try {
+      const channelDoc = await this.getChannelDoc();
+      if (!channelDoc.exists()) return;
+
+      const userDoc = await this.getCreatorUser(channelDoc.data());
+      if (!userDoc?.exists()) return;
+
+      this.createdBy = this.getUserDisplayName(userDoc.data());
+    } catch (error) {
+      console.error('Error:', error);
+      this.createdBy = 'Nicht verfügbar';
+    }
   }
 
   /**

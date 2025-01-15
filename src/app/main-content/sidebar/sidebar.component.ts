@@ -8,6 +8,7 @@ import { Observable, map } from 'rxjs';
 import { AuthService } from '../../service/auth.service';
 import { User } from 'firebase/auth';
 import { ChatService } from '../../service/chat.service';
+import { take } from 'rxjs/operators';
 
 interface Channel {
   id: string;
@@ -111,10 +112,16 @@ export class SidebarComponent implements OnInit {
   }
 
   /**
-   * Selects a channel
+   * Selects a channel only if it's different from the current one
    */
   selectChannel(channelId: string): void {
-    this.chatService.selectChannel(channelId);
+    this.chatService.currentChannel$
+      .pipe(take(1))
+      .subscribe((currentChannel) => {
+        if (!currentChannel || currentChannel.id !== channelId) {
+          this.chatService.selectChannel(channelId);
+        }
+      });
   }
 
   /**
