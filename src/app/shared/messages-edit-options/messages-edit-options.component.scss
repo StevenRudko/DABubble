@@ -3,21 +3,28 @@
 @use "./../../../assets/styles/theme-colors.scss" as colors;
 
 .edited-options-container {
-    @include styles.dFlex(
-        $d: flex,
-        $fd: column,
-        $jc: flex-start,
-        $ai: flex-start,
-        $g: 4px,
-      );
+    @include styles.dFlex($d: flex, $fd: column, $jc: center, $ai: center, $g: 12px);
+    padding: 10px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    border-top-left-radius: 0;
+    width:400px;
+    box-sizing: border-box;
+}
 
-    border-top-left-radius:0px;
-    padding:20px;
-    position:relative;
-    // gap: 0;
-    // padding: 28px 48px;
-    // position: fixed;
-    // top: 100px;
-    // right: 22px;
-    // border-top-right-radius: 0;
+button {
+    @include styles.dFlex($d: flex, $fd: column, $jc: center, $ai: center, $g: 0);
+    padding: 16px 24px;
+    width: 100%;
+    box-sizing: border-box;
+    cursor: pointer;
+
+    &:hover {
+        mat-icon-button {
+            border-radius: 10px;
+        }
+        color: #797EF3;
+        font-weight: 700;
+    }
 }
