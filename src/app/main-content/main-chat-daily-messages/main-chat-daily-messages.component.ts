@@ -153,7 +153,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     this.getTimeToday();
     this.loadMessages();
     this.loadOldMessages();
-    console.log(this.emojiList['rocket']);
+    // console.log(this.emojiList['rocket']);
   }
 
   // ruft das heutige Datum ab und wandelt es ins entsprechende Format um
@@ -186,7 +186,6 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
       this.getUserName(msg);
       this.getAllMessagesPast(msg);
       this.getAllMessagesToday(msg);
-      this.changeMessageStyle(msg);
       // this.loadEmojis(msg);
     });
   }
@@ -237,6 +236,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
             author: this.userName,
             emojis: msg.emojis,
             message: msg.message,
+            isOwnMessage: msg.isOwnMessage = msg.authorId === this.currentAuthUser.uid,
             hours: this.msgTimeHours,
             minutes: this.msgTimeMins,
           });
@@ -260,6 +260,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
             author: this.userName,
             userMessageId: msg.userMessageId,
             message: msg.message,
+            isOwnMessage: msg.isOwnMessage = msg.authorId === this.currentAuthUser.uid,
             emojis: msg.emojis,
             hours: this.msgTimeHours,
             minutes: this.msgTimeMins,
@@ -271,14 +272,6 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
       // console.error('userName nicht vorhanden');
     }
     // console.log('Alle Nachrichten von Heute: ', this.allMsgToday);
-  }
-
-  changeMessageStyle(msg: UserMessageInterface) {
-    if (msg.authorId === this.currentUser) {
-      this.ownMessageStyle = true;
-    } else {
-      this.ownMessageStyle = false;
-    }
   }
 
   loadOldMessages() {

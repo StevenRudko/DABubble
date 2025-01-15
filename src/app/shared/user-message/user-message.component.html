@@ -1,7 +1,7 @@
 <section *ngFor="let msg of messagesOld" (mouseenter)="onMouseEnter(msg.userMessageId)" 
 (mouseleave)="onMouseLeave(msg.userMessageId)"
-  [ngClass]="{ myMessageStyle: ownMessage }">
-  <div class="emoji-card-container" [ngClass]="{ myMessageStyle: ownMessage }">
+[ngClass]="{ myMessageStyle: msg.isOwnMessage }">
+  <div class="emoji-card-container" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
     <mat-card *ngIf="hoverStateMap[msg.userMessageId]" class="emoji-card bg-frame-v1">
       <mat-card-content class="emoji-content">
         <button mat-icon-button *ngIf="!threadMessage">
@@ -23,16 +23,16 @@
     </mat-card>
   </div>
 
-  <div class="user-message-container" [ngClass]="{ myMessageStyle: ownMessage }">
+  <div class="user-message-container" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
     <div>
       <img class="user-message-img" src="img-placeholder/noah.svg" alt="" />
     </div>
-    <div class="user-message-box" [ngClass]="{ myMessageStyle: ownMessage }">
-      <div class="user-message-row-top" [ngClass]="{ myMessageStyle: ownMessage }">
+    <div class="user-message-box" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
+      <div class="user-message-row-top" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
         <p class="user-message-name">{{ msg.author }}</p>
         <p class="user-message-time">{{ msg.hours }}:{{ msg.minutes }} Uhr</p>
       </div>
-      <div class="user-message-row-center" [ngClass]="{ myMessageStyle: ownMessage }">
+      <div class="user-message-row-center" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
         <p>{{ msg.message }}</p>
       </div>
 
@@ -66,8 +66,8 @@
 </section>
 
 <section *ngFor="let msg of messagesToday" (mouseenter)="onMouseEnter(msg.userMessageId)" 
-(mouseleave)="onMouseLeave(msg.userMessageId)" [ngClass]="{ myMessageStyle: ownMessage }">
-  <div class="emoji-card-container" [ngClass]="{ myMessageStyle: ownMessage }">
+(mouseleave)="onMouseLeave(msg.userMessageId)" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
+  <div class="emoji-card-container" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
     <mat-card *ngIf="hoverStateMap[msg.userMessageId]" class="emoji-card bg-frame-v1">
       <mat-card-content class="emoji-content">
         <button mat-icon-button *ngIf="!threadMessage">
@@ -89,16 +89,16 @@
     </mat-card>
   </div>
 
-  <div class="user-message-container" [ngClass]="{ myMessageStyle: ownMessage }">
+  <div class="user-message-container" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
     <div>
       <img class="user-message-img" src="img-placeholder/noah.svg" alt="" />
     </div>
-    <div class="user-message-box" [ngClass]="{ myMessageStyle: ownMessage }">
-      <div class="user-message-row-top" [ngClass]="{ myMessageStyle: ownMessage }">
+    <div class="user-message-box" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
+      <div class="user-message-row-top" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
         <p class="user-message-name">{{ msg.author }}</p>
         <p class="user-message-time">{{ msg.hours }}:{{ msg.minutes }} Uhr</p>
       </div>
-      <div class="user-message-row-center" [ngClass]="{ myMessageStyle: ownMessage }">
+      <div class="user-message-row-center" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
         <p>{{ msg.message }}</p>
       </div>
 

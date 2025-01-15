@@ -6,6 +6,7 @@ export interface UserMessageInterface {
   message: string;
   comments: number[];
   emojis: string[];
+  isOwnMessage: boolean;
   directUserId?: string; // NEU: für Direktnachrichten
 }
 
@@ -14,6 +15,7 @@ export interface renderMessageInterface {
   author: any;
   userMessageId: string;
   message: string;
+  isOwnMessage: boolean;
   emojis: string[];
   hours: number;
   minutes: number;
