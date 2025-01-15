@@ -35,6 +35,7 @@ export interface renderMessageInterface {
   emojis: string[];
   /** Hour component of the message time */
   hours: number;
+  isOwnMessage: boolean;
   /** Minute component of the message time */
   minutes: number;
 }
