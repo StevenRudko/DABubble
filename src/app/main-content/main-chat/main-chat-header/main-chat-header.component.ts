@@ -31,10 +31,8 @@ export class MainChatHeaderComponent {
   currentChannel$: Observable<Channel | null>;
   currentDirectUser$: Observable<DirectUser | null>;
   channelMembers$: Observable<ChatMember[]>;
+  isNewMessage$: Observable<boolean>;
 
-  /**
-   * Initializes component and sets up observables with optimized member loading
-   */
   constructor(
     private dialog: MatDialog,
     private chatService: ChatService,
@@ -44,8 +42,8 @@ export class MainChatHeaderComponent {
     this.currentChannel$ = this.chatService.currentChannel$;
     this.currentDirectUser$ = this.chatService.currentDirectUser$;
     this.channelMembers$ = new Observable<ChatMember[]>();
+    this.isNewMessage$ = this.chatService.isNewMessage$;
 
-    // Optimized channel member loading
     this.currentChannel$
       .pipe(
         distinctUntilChanged((prev, curr) => prev?.id === curr?.id),
