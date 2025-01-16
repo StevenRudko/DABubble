@@ -7,6 +7,7 @@ import { AuthService } from '../service/auth.service';
 import { Observable } from 'rxjs';
 import { User } from 'firebase/auth';
 import { UserMenuComponent } from './user-menu/user-menu.component';
+import { UserInfosService } from '../service/user-infos.service';
 
 @Component({
   selector: 'app-header',
@@ -20,7 +21,8 @@ export class HeaderComponent {
 
   constructor(
     private dialog: MatDialog,
-    private authService: AuthService
+    private authService: AuthService,
+    public userInfo: UserInfosService
   ) {
     this.currentUser$ = this.authService.user$;    
   }

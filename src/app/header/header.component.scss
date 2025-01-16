@@ -19,8 +19,10 @@ mat-card {
 }
 
 mat-card-content {
-    p {
+    input {
         color: rgba(104, 104, 104);
+        outline: none;
+        border: none;
     }
 }
 

@@ -2,25 +2,23 @@
   <app-logo-component></app-logo-component>
   <mat-card>
     <div>
-      <mat-card-content>
-        <p>Devspace durchsuchen</p>
+      <mat-card-content><s></s>
+        <input placeholder="Devspace durchsuchen">
       </mat-card-content>
     </div>
     <div><mat-icon>search</mat-icon></div>
   </mat-card>
 
   <div class="profile-container" (click)="openDialog()">
-    <ng-container *ngIf="currentUser$ | async as user">
       <div class="profile-div">
-        <p class="profile-name">{{user.displayName}}</p>
+        <p class="profile-name">{{this.userInfo.displayName}}</p>
         <div class="img-placeholder-div">
-          <img [src]="user.photoURL || 'img-placeholder/default-avatar.svg'"/>
+          <img [src]="this.userInfo.photoURL || 'img-placeholder/default-avatar.svg'"/>
           <div class="status-circle-outline">
             <div class="status-circle-inline"></div>
           </div>
         </div>
       </div>
-    </ng-container>
     <mat-icon>keyboard_arrow_down</mat-icon>
   </div>
 </section>
