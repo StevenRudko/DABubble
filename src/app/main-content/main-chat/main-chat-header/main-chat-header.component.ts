@@ -12,10 +12,52 @@ import {
   ChatMember,
   DirectUser,
 } from '../../../models/chat.interfaces';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { ProfileOverviewComponent } from '../../../shared/profile-overview/profile-overview.component';
 import { ChannelInfoDialogComponent } from './channel-info-dialog/channel-info-dialog.component';
 import { take, distinctUntilChanged, filter } from 'rxjs/operators';
+import {
+  Firestore,
+  collection,
+  query,
+  where,
+  getDocs,
+  DocumentData,
+} from '@angular/fire/firestore';
+
+/**
+ * Interface for Firestore channel documents
+ */
+interface ChannelDocument extends DocumentData {
+  name: string;
+  description?: string;
+  type: string;
+  members?: Record<string, boolean>;
+}
+
+/**
+ * Interface for Firestore user documents
+ */
+interface UserDocument extends DocumentData {
+  username?: string;
+  displayName?: string;
+  email?: string;
+  photoURL?: string;
+  online?: boolean;
+}
+
+/**
+ * Interface for search result items
+ */
+interface SearchResult {
+  id: string;
+  type: 'channel' | 'user';
+  name: string;
+  email?: string;
+  photoURL?: string;
+  description?: string;
+  online?: boolean;
+}
 
 @Component({
   selector: 'app-main-chat-header',
@@ -27,23 +69,40 @@ import { take, distinctUntilChanged, filter } from 'rxjs/operators';
 export class MainChatHeaderComponent {
   @ViewChild('memberListBtn') memberListBtn!: ElementRef;
   @ViewChild('addPeopleBtn') addPeopleBtn!: ElementRef;
+  @ViewChild('searchInputEl') searchInputEl!: ElementRef;
 
   currentChannel$: Observable<Channel | null>;
   currentDirectUser$: Observable<DirectUser | null>;
   channelMembers$: Observable<ChatMember[]>;
   isNewMessage$: Observable<boolean>;
 
+  // Search related properties
+  searchInput = '';
+  private searchTerm = new BehaviorSubject<string>('');
+  searchResults: SearchResult[] = [];
+  selectedResult: SearchResult | null = null;
+  showSearchDropdown = false;
+
   constructor(
     private dialog: MatDialog,
     private chatService: ChatService,
     private auth: Auth,
-    private router: Router
+    private router: Router,
+    private firestore: Firestore
   ) {
     this.currentChannel$ = this.chatService.currentChannel$;
     this.currentDirectUser$ = this.chatService.currentDirectUser$;
     this.channelMembers$ = new Observable<ChatMember[]>();
     this.isNewMessage$ = this.chatService.isNewMessage$;
 
+    this.setupInitialSubscriptions();
+    this.setupSearchSubscription();
+  }
+
+  /**
+   * Initializes component subscriptions
+   */
+  private setupInitialSubscriptions(): void {
     this.currentChannel$
       .pipe(
         distinctUntilChanged((prev, curr) => prev?.id === curr?.id),
@@ -54,6 +113,169 @@ export class MainChatHeaderComponent {
       });
 
     this.currentDirectUser$.subscribe();
+  }
+
+  /**
+   * Sets up search term subscription
+   */
+  private setupSearchSubscription(): void {
+    this.searchTerm.subscribe(async (term) => {
+      this.searchResults = await this.searchDatabase(term);
+    });
+  }
+
+  /**
+   * Searches database for channels and users
+   * @param term Search term to query
+   */
+  private async searchDatabase(term: string): Promise<SearchResult[]> {
+    if (!term.trim()) return [];
+
+    try {
+      if (term.startsWith('#')) {
+        return await this.searchChannels(term.substring(1));
+      } else if (term.startsWith('@')) {
+        // Search both username and email when using @
+        const usernameResults = await this.searchUsers(
+          term.substring(1),
+          'username'
+        );
+        const emailResults = await this.searchUsers(term.substring(1), 'email');
+        // Combine results and remove duplicates
+        return [...usernameResults, ...emailResults].filter(
+          (result, index, self) =>
+            index === self.findIndex((r) => r.id === result.id)
+        );
+      } else {
+        // If no special character, search both email and username
+        const emailResults = await this.searchUsers(term, 'email');
+        const usernameResults = await this.searchUsers(term, 'username');
+        return [...emailResults, ...usernameResults].filter(
+          (result, index, self) =>
+            index === self.findIndex((r) => r.id === result.id)
+        );
+      }
+    } catch (error) {
+      console.error('Search error:', error);
+    }
+    return [];
+  }
+
+  /**
+   * Searches channels collection
+   * @param term Channel name to search for
+   */
+  private async searchChannels(term: string): Promise<SearchResult[]> {
+    const channelsRef = collection(this.firestore, 'channels');
+    const q = query(
+      channelsRef,
+      where('name', '>=', term),
+      where('name', '<=', term + '\uf8ff')
+    );
+    const snapshot = await getDocs(q);
+
+    return snapshot.docs.map((doc) => {
+      const data = doc.data() as ChannelDocument;
+      return {
+        id: doc.id,
+        type: 'channel' as const,
+        name: data.name || '',
+        description: data.description,
+      };
+    });
+  }
+
+  /**
+   * Searches users collection
+   * @param term Search term for user
+   * @param field Field to search (username or email)
+   */
+  private async searchUsers(
+    term: string,
+    field: string
+  ): Promise<SearchResult[]> {
+    const usersRef = collection(this.firestore, 'users');
+    const q = query(
+      usersRef,
+      where(field, '>=', term),
+      where(field, '<=', term + '\uf8ff')
+    );
+    const snapshot = await getDocs(q);
+
+    return snapshot.docs.map((doc) => {
+      const data = doc.data() as UserDocument;
+      return {
+        id: doc.id,
+        type: 'user' as const,
+        name: data.username || data.displayName || data.email || '',
+        email: data.email,
+        photoURL: data.photoURL,
+        online: data.online,
+      };
+    });
+  }
+
+  /**
+   * Handles search input changes
+   * @param event Input event from search field
+   */
+  onSearchInput(event: Event): void {
+    // If there's already a selected result, don't search
+    if (this.selectedResult) {
+      event.preventDefault();
+      return;
+    }
+
+    event.stopPropagation();
+    const input = event.target as HTMLInputElement;
+    this.searchInput = input.value;
+    this.searchTerm.next(input.value);
+    this.showSearchDropdown = true;
+  }
+
+  /**
+   * Selects a search result and saves it to the service
+   * @param result Selected search result
+   */
+  selectSearchResult(result: SearchResult): void {
+    this.selectedResult = result;
+    this.resetSearch();
+    this.chatService.setSelectedSearchResult(result);
+  }
+
+  /**
+   * Gets the currently selected recipient for messaging
+   */
+  getSelectedRecipient(): { id: string; type: 'channel' | 'user' } | null {
+    if (!this.selectedResult) return null;
+    return {
+      id: this.selectedResult.id,
+      type: this.selectedResult.type,
+    };
+  }
+
+  /**
+   * Removes the selected result and enables search
+   */
+  removeSelectedResult(): void {
+    this.selectedResult = null;
+    this.chatService.setSelectedSearchResult(null);
+    this.resetSearch();
+
+    // Focus the input after removing the selection
+    setTimeout(() => {
+      this.searchInputEl?.nativeElement?.focus();
+    });
+  }
+
+  /**
+   * Resets search state
+   */
+  private resetSearch(): void {
+    this.searchInput = '';
+    this.searchTerm.next('');
+    this.showSearchDropdown = false;
+    this.searchResults = [];
   }
 
   /**
@@ -88,9 +310,9 @@ export class MainChatHeaderComponent {
   getDisplayName(member: ChatMember | DirectUser | null): string {
     if (!member) return 'Unbenannter Benutzer';
 
-    const userWithUsername = member as { username?: string };
-    if (userWithUsername.username) {
-      return userWithUsername.username;
+    const memberWithUsername = member as { username?: string | undefined };
+    if (memberWithUsername?.username) {
+      return memberWithUsername.username;
     }
     if (member.displayName) {
       return member.displayName;

@@ -1,15 +1,59 @@
 <header [class.new-message-header]="isNewMessage$ | async">
-  <!-- Neue Nachricht Section -->
+  <!-- New Message Section -->
   <ng-container *ngIf="isNewMessage$ | async; else normalContent">
     <div class="new-message-container">
-      <h2>Neue Nachricht</h2>
-      <div class="input-wrapper">
-        <input type="text" placeholder="An: #channel, oder @jemand oder E-Mail Adresse" class="new-message-input">
+      <h2>New Message</h2>
+      <div class="search-container">
+        <div class="tag-input">
+          <ng-container *ngIf="selectedResult">
+            <div class="selected-tag" [ngClass]="selectedResult.type">
+              <ng-container [ngSwitch]="selectedResult.type">
+                <ng-container *ngSwitchCase="'channel'">
+                  <span class="hashtag">#</span>
+                  <span>{{ selectedResult.name }}</span>
+                </ng-container>
+                <ng-container *ngSwitchCase="'user'">
+                  <img [src]="selectedResult.photoURL || 'img-placeholder/default-avatar.svg'"
+                    [alt]="selectedResult.name">
+                  <span>{{ selectedResult.name }}</span>
+                </ng-container>
+              </ng-container>
+              <mat-icon class="remove-tag" (click)="removeSelectedResult()">close</mat-icon>
+            </div>
+          </ng-container>
+
+          <input #searchInputEl type="text" [value]="searchInput" (input)="onSearchInput($event)"
+            [disabled]="selectedResult !== null" placeholder="To: #channel, @someone or email" class="search-input"
+            [class.disabled]="selectedResult !== null">
+        </div>
+
+        <div class="search-dropdown" *ngIf="showSearchDropdown && searchResults.length">
+          <div *ngFor="let result of searchResults" class="result-item" (click)="selectSearchResult(result)">
+            <ng-container [ngSwitch]="result.type">
+              <ng-container *ngSwitchCase="'channel'">
+                <span class="hashtag">#</span>
+                <div class="result-details">
+                  <span class="name">{{ result.name }}</span>
+                  <span *ngIf="result.description" class="description">{{ result.description }}</span>
+                </div>
+              </ng-container>
+              <ng-container *ngSwitchCase="'user'">
+                <img [src]="result.photoURL || 'img-placeholder/default-avatar.svg'" [alt]="result.name"
+                  class="user-avatar">
+                <div class="result-details">
+                  <span class="name">{{ result.name }}</span>
+                  <span class="email">{{ result.email }}</span>
+                </div>
+                <div class="status-dot" *ngIf="result.online"></div>
+              </ng-container>
+            </ng-container>
+          </div>
+        </div>
       </div>
     </div>
   </ng-container>
 
-  <!-- Normaler Content (Channel oder DirectMessage) -->
+  <!-- Normal Content (Channel or DirectMessage) -->
   <ng-template #normalContent>
     <!-- Channel Content -->
     <ng-container *ngIf="currentChannel$ | async as channel">
