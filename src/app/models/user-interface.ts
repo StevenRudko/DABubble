@@ -30,6 +30,6 @@ export interface UserInterface {
      * - Can be `null` if the user has not set a profile photo.
      * @type {string | null}
      */
-    photoUrl: string | null;
+    photoURL: string | null;
   }
   

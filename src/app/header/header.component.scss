@@ -14,8 +14,18 @@ mat-card {
     @include styles.dFlex($d: flex, $fd: row, $jc: space-between, $ai: center, $g: 0);
     background-color: white;
     width: 50%;
+    height: 50px;
     box-shadow: unset;
+    box-sizing: border-box;
     border-radius: 50px;
+    position: relative;
+
+    input {
+        color: rgba(104, 104, 104);
+        border: unset;
+        outline: unset;
+        width: 100%;
+    }
 }
 
 mat-card-content {
@@ -23,7 +33,17 @@ mat-card-content {
         color: rgba(104, 104, 104);
         border: unset;
         outline: unset;
+        width: 100%;
     }
+}
+
+app-search-bar {
+    position: absolute;
+    top: 50px;
+    left: 0px;
+    width: 100%;
+    background-color: rgb(228, 133, 133);
+    z-index: 2;
 }
 
 mat-icon {
@@ -53,8 +73,8 @@ mat-icon {
 }
 
 .profile-name {
-    font-size: 18px;
-    font-weight: 600;
+    font-size: 1.5rem;
+    font-weight: 700;
 }
 
 .status-circle-outline {

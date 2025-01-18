@@ -1,12 +1,14 @@
 <section>
   <app-logo-component></app-logo-component>
   <mat-card>
-    <div>
-      <mat-card-content>
-        <input type="text" placeholder="Devspace durchsuchen">
-      </mat-card-content>
-    </div>
+    <!-- <div> -->
+      <!-- <mat-card-content> -->
+        <input type="text" placeholder="Devspace durchsuchen" [(ngModel)]="searchQuery"
+        (input)="onSearch()">
+      <!-- </mat-card-content> -->
+    <!-- </div> -->
     <div><mat-icon>search</mat-icon></div>
+    <app-search-bar [searchQuery]="searchQuery"></app-search-bar>
   </mat-card>
 
   <div class="profile-container" (click)="openDialog()">

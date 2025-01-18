@@ -1,1 +1,17 @@
-<p>search-bar works!</p>
+@for (result of searchResults; track $index) {
+    @if (result.type == 'message') {
+        @if (result.channelID) {
+            <!-- Channel Nachricht -->
+            <div>{{result.content}}</div>
+        } @else {
+            <!-- Direkt nachricht -->
+            <div>{{result.content}}</div>
+        }
+}
+    @if (result.type == 'user') {
+        <div>
+            <img src="{{result.photoURL}}" alt="">
+            {{result.content}}
+        </div>
+    }
+}
