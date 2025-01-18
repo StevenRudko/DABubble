@@ -17,7 +17,7 @@ export interface UserMessageInterface {
   /** Array of emoji reactions to this message */
   emojis: string[];
   isOwnMessage: boolean;
-  directUserId?: string; // NEU: für Direktnachrichten
+  directUserId?: string;
 }
 
 /**

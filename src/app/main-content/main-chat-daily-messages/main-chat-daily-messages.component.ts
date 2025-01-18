@@ -83,16 +83,18 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   currentDirectUser: any;
   currentChannel$: Observable<any>;
   currentDirectUser$: Observable<any>;
+  isNewMessage$: Observable<boolean>;
 
   constructor(
     private userData: UserData,
     private cdr: ChangeDetectorRef,
-    private chatService: ChatService, // NEU: ChatService hinzufügen
+    public chatService: ChatService, // NEU: ChatService hinzufügen
     private authService: AuthService, // NEU
     private dialog: MatDialog // NEU
   ) {
     this.currentChannel$ = this.chatService.currentChannel$;
     this.currentDirectUser$ = this.chatService.currentDirectUser$;
+    this.isNewMessage$ = this.chatService.isNewMessage$;
   }
 
   // abonniert die Daten aus der DB und ruft die init-Funtkion auf
@@ -237,7 +239,8 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
             author: this.userName,
             emojis: msg.emojis,
             message: msg.message,
-            isOwnMessage: msg.isOwnMessage = msg.authorId === this.currentAuthUser.uid,
+            isOwnMessage: (msg.isOwnMessage =
+              msg.authorId === this.currentAuthUser.uid),
             hours: this.msgTimeHours,
             minutes: this.msgTimeMins,
           });
@@ -261,7 +264,8 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
             author: this.userName,
             userMessageId: msg.userMessageId,
             message: msg.message,
-            isOwnMessage: msg.isOwnMessage = msg.authorId === this.currentAuthUser.uid,
+            isOwnMessage: (msg.isOwnMessage =
+              msg.authorId === this.currentAuthUser.uid),
             emojis: msg.emojis,
             hours: this.msgTimeHours,
             minutes: this.msgTimeMins,

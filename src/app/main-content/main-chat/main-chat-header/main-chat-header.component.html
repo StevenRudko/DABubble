@@ -1,37 +1,95 @@
-<header>
-  <ng-container *ngIf="currentChannel$ | async as channel">
-    <div class="selection-name" (click)="openChannelInfoDialog(channel)">
-      <span>#</span>
-      <p>{{ channel.name }}</p>
-      <mat-icon>keyboard_arrow_down</mat-icon>
-    </div>
-
-    <div class="wrapper-member">
-      <div class="member-list" (click)="openMemberDialog()" #memberListBtn>
-        <div class="member-list-profiles">
-          <ng-container *ngIf="channelMembers$ | async as members">
-            <div class="circle-outline" *ngFor="let member of members.slice(0, 3)">
-              <img class="member-list-img" [src]="getPhotoURL(member)" [alt]="getDisplayName(member)" />
+<header [class.new-message-header]="isNewMessage$ | async">
+  <!-- New Message Section -->
+  <ng-container *ngIf="isNewMessage$ | async; else normalContent">
+    <div class="new-message-container">
+      <h2>New Message</h2>
+      <div class="search-container">
+        <div class="tag-input">
+          <ng-container *ngIf="selectedResult">
+            <div class="selected-tag" [ngClass]="selectedResult.type">
+              <ng-container [ngSwitch]="selectedResult.type">
+                <ng-container *ngSwitchCase="'channel'">
+                  <span class="hashtag">#</span>
+                  <span>{{ selectedResult.name }}</span>
+                </ng-container>
+                <ng-container *ngSwitchCase="'user'">
+                  <img [src]="selectedResult.photoURL || 'img-placeholder/default-avatar.svg'"
+                    [alt]="selectedResult.name">
+                  <span>{{ selectedResult.name }}</span>
+                </ng-container>
+              </ng-container>
+              <mat-icon class="remove-tag" (click)="removeSelectedResult()">close</mat-icon>
             </div>
           </ng-container>
+
+          <input #searchInputEl type="text" [value]="searchInput" (input)="onSearchInput($event)"
+            [disabled]="selectedResult !== null" placeholder="To: #channel, @someone or email" class="search-input"
+            [class.disabled]="selectedResult !== null">
         </div>
-        <p class="member-list-number">{{ (channelMembers$ | async)?.length || 0 }}</p>
-      </div>
 
-      <button #addPeopleBtn (click)="openAddPeopleDialog()">
-        <mat-icon class="add-user-icon">person_add_alt</mat-icon>
-      </button>
+        <div class="search-dropdown" *ngIf="showSearchDropdown && searchResults.length">
+          <div *ngFor="let result of searchResults" class="result-item" (click)="selectSearchResult(result)">
+            <ng-container [ngSwitch]="result.type">
+              <ng-container *ngSwitchCase="'channel'">
+                <span class="hashtag">#</span>
+                <div class="result-details">
+                  <span class="name">{{ result.name }}</span>
+                  <span *ngIf="result.description" class="description">{{ result.description }}</span>
+                </div>
+              </ng-container>
+              <ng-container *ngSwitchCase="'user'">
+                <img [src]="result.photoURL || 'img-placeholder/default-avatar.svg'" [alt]="result.name"
+                  class="user-avatar">
+                <div class="result-details">
+                  <span class="name">{{ result.name }}</span>
+                  <span class="email">{{ result.email }}</span>
+                </div>
+                <div class="status-dot" *ngIf="result.online"></div>
+              </ng-container>
+            </ng-container>
+          </div>
+        </div>
+      </div>
     </div>
   </ng-container>
 
-
-  <ng-container *ngIf="currentDirectUser$ | async as user">
-    <div class="selection-name direct-message-header" (click)="openProfileDialog(user)">
-      <div style="position: relative; height: 50px;">
-        <img [src]="getPhotoURL(user)" class="user-avatar" [alt]="getDisplayName(user)">
-        <div class="status-dot" [class.online]="user.online"></div>
+  <!-- Normal Content (Channel or DirectMessage) -->
+  <ng-template #normalContent>
+    <!-- Channel Content -->
+    <ng-container *ngIf="currentChannel$ | async as channel">
+      <div class="selection-name" (click)="openChannelInfoDialog(channel)">
+        <span>#</span>
+        <p>{{ channel.name }}</p>
+        <mat-icon>keyboard_arrow_down</mat-icon>
       </div>
-      <p>{{ getDisplayName(user) }}</p>
-    </div>
-  </ng-container>
+
+      <div class="wrapper-member">
+        <div class="member-list" (click)="openMemberDialog()" #memberListBtn>
+          <div class="member-list-profiles">
+            <ng-container *ngIf="channelMembers$ | async as members">
+              <div class="circle-outline" *ngFor="let member of members.slice(0, 3)">
+                <img class="member-list-img" [src]="getPhotoURL(member)" [alt]="getDisplayName(member)" />
+              </div>
+            </ng-container>
+          </div>
+          <p class="member-list-number">{{ (channelMembers$ | async)?.length || 0 }}</p>
+        </div>
+
+        <button #addPeopleBtn (click)="openAddPeopleDialog()">
+          <mat-icon class="add-user-icon">person_add_alt</mat-icon>
+        </button>
+      </div>
+    </ng-container>
+
+    <!-- DirectMessage Content -->
+    <ng-container *ngIf="currentDirectUser$ | async as user">
+      <div class="selection-name direct-message-header" (click)="openProfileDialog(user)">
+        <div style="position: relative; height: 50px;">
+          <img [src]="getPhotoURL(user)" class="user-avatar" [alt]="getDisplayName(user)">
+          <div class="status-dot" [class.online]="user.online"></div>
+        </div>
+        <p>{{ getDisplayName(user) }}</p>
+      </div>
+    </ng-container>
+  </ng-template>
 </header>

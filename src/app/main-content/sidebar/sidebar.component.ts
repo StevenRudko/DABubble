@@ -9,6 +9,7 @@ import { AuthService } from '../../service/auth.service';
 import { User } from 'firebase/auth';
 import { ChatService } from '../../service/chat.service';
 import { take } from 'rxjs/operators';
+import { FormsModule } from '@angular/forms';
 
 interface Channel {
   id: string;
@@ -28,7 +29,7 @@ interface UserProfile {
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MatIconModule],
+  imports: [CommonModule, MatDialogModule, MatIconModule, FormsModule],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
 })
@@ -38,6 +39,9 @@ export class SidebarComponent implements OnInit {
   allUsers$!: Observable<UserProfile[]>;
   isChannelSectionExpanded: boolean = true;
   isDirectMessageSectionExpanded: boolean = true;
+  showNewMessage: boolean = false;
+  newMessageInput: string = '';
+  isNewMessage$: Observable<boolean>;
 
   /**
    * Initializes the sidebar component
@@ -46,12 +50,15 @@ export class SidebarComponent implements OnInit {
     private dialog: MatDialog,
     private firestore: Firestore,
     private authService: AuthService,
-    private chatService: ChatService
+    public chatService: ChatService
   ) {
     const channelsCollection = collection(this.firestore, 'channels');
     this.channels$ = collectionData(channelsCollection, {
       idField: 'id',
     }) as Observable<Channel[]>;
+
+    this.currentUser$ = this.authService.user$;
+    this.isNewMessage$ = this.chatService.isNewMessage$;
 
     this.currentUser$ = this.authService.user$;
 
@@ -129,5 +136,12 @@ export class SidebarComponent implements OnInit {
    */
   selectDirectMessage(userId: string): void {
     this.chatService.selectDirectMessage(userId);
+  }
+
+  /**
+   * Toggles the new message input visibility
+   */
+  onEditSquareClick() {
+    this.chatService.toggleNewMessage();
   }
 }
