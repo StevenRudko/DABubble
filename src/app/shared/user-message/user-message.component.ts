@@ -4,6 +4,7 @@ import { MATERIAL_MODULES } from '../material-imports';
 import { EmojiPickerComponent } from '../emoji-picker/emoji-picker.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MessagesEditOptionsComponent } from '../messages-edit-options/messages-edit-options.component';
+import { UserMsgOptionsComponent } from '../user-msg-options/user-msg-options.component';
 
 @Component({
   selector: 'app-user-message',
@@ -18,8 +19,7 @@ export class UserMessageComponent {
   @Input() showReactionEmojis: boolean = false;
   @Input() showAnswerDetails: boolean = true;
   @Input() showReactionIcons: boolean = true;
-  @Input() messagesToday: { timestamp: number; userMessageId: string; author: string, isOwnMessage: boolean; message: string; emojis: string[]; hours: number; minutes: number }[] = [];
-  @Input() messagesOld: { timestamp: number; userMessageId: string; author: string; isOwnMessage: boolean; message: string; emojis: string[]; hours: number; minutes: number }[] = [];
+  @Input() allMessages: { timestamp: number; userMessageId: string; author: string, isOwnMessage: boolean; message: string; emojis: string[]; hours: number; minutes: number }[] = [];
 
   hoverStateMap: { [userMessageId: string]: boolean } = {};
   @Output() openThreadEvent = new EventEmitter<void>();
@@ -32,6 +32,17 @@ export class UserMessageComponent {
 
   onMouseEnter(msgId: string) {
     this.hoverStateMap[msgId] = true;
+  
+    // Öffne den Dialog zur Anzeige der Optionen
+    const dialogRef = this.dialog.open(UserMsgOptionsComponent, {
+      backdropClass: 'custom-backdrop',  // Dies kann je nach deinem Design geändert werden
+      data: { userMessageId: msgId }    // Hier kannst du beliebige Daten übergeben, z.B. die Message-ID
+    });
+  
+    dialogRef.afterClosed().subscribe((result) => {
+      // Hier kannst du etwas tun, wenn der Dialog geschlossen wird
+      // console.log('Der Dialog wurde geschlossen');
+    });
   }
 
   onMouseLeave(msgId: string) {

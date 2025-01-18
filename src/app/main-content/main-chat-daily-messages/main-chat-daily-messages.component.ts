@@ -76,8 +76,8 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   users$: Observable<any> = new Observable<any>();
   subscription!: Subscription; // Das ! sagt TypeScript, dass wir uns um die Initialisierung kümmern
 
-  allMsgToday: renderMessageInterface[] = [];
-  allMsgPast: renderMessageInterface[] = [];
+  allMessages: renderMessageInterface[] = [];
+  // allMsgPast: renderMessageInterface[] = [];
   groupedMessages: { [date: string]: renderMessageInterface[] } = {};
   currentAuthUser: any;
   currentDirectUser: any;
@@ -133,11 +133,10 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
         } else {
           this.userMessages = [];
         }
-        
-        // Arrays leeren vor dem Neuladen
-        this.allMsgToday = [];
-        this.allMsgPast = [];
 
+        // Array leeren vor dem Neuladen
+        this.allMessages = [];
+        // this.allMsgPast = [];
         this.initChat();
       }
     );
@@ -155,7 +154,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   initChat() {
     this.getTimeToday();
     this.loadMessages();
-    this.loadOldMessages();
+    // this.loadOldMessages();
     // console.log(this.emojiList['rocket']);
   }
 
@@ -174,23 +173,33 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   }
 
   // lädt und verarbeitet die Daten aus der DB weiter
+  // Lädt und verarbeitet die Nachrichten, sortiert und gruppiert sie nach Datum
   loadMessages() {
     if (!this.userMessages) {
       console.error('No userMessages found.');
       return;
     }
 
+    // Wenn die Nachrichten bereits geladen wurden, beende die Funktion
+    if (this.allMessages.length > 0) {
+      return;
+    }
+
     // Arrays vor dem Laden leeren
-    this.allMsgToday = [];
-    this.allMsgPast = [];
+    this.allMessages = [];
+    this.groupedMessages = {};
 
     this.userMessages.forEach((msg: UserMessageInterface) => {
       this.getMsgTime(msg);
       this.getUserName(msg);
-      this.getAllMessagesPast(msg);
-      this.getAllMessagesToday(msg);
-      // this.loadEmojis(msg);
+      this.getAllMessages(msg);
     });
+
+    // Sortiere alle Nachrichten nach dem Zeitstempel (älteste zuerst)
+    this.sortMessagesByTime();
+
+    // Gruppiere die Nachrichten nach Datum
+    this.groupMessagesByDate();
   }
 
   // vearbeitet die msg time in verschiedene Formate um
@@ -227,96 +236,64 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     }
   }
 
-  // lädt alle alten Nachrichten in das Array allMsgPast
-  getAllMessagesPast(msg: UserMessageInterface) {
+  // lädt alle alten Nachrichten in das Array allMessages
+  getAllMessages(msg: UserMessageInterface) {
     if (this.userName) {
-      if (this.msgDateTime < this.todayDateTime) {
-        if (!this.allMsgPast.find((msg) => msg.timestamp === this.msgTime)) {
-          // Damit sich Nachrichten nicht doppeln
-          this.allMsgPast.push({
-            timestamp: this.msgTime,
-            userMessageId: msg.userMessageId,
-            author: this.userName,
-            emojis: msg.emojis,
-            message: msg.message,
-            isOwnMessage: (msg.isOwnMessage =
-              msg.authorId === this.currentAuthUser.uid),
-            hours: this.msgTimeHours,
-            minutes: this.msgTimeMins,
-          });
-        }
-      }
-    } else {
-      // console.error('userName nicht vorhanden');
+      this.allMessages.push({
+        timestamp: this.msgTime,
+        userMessageId: msg.userMessageId,
+        author: this.userName,
+        emojis: msg.emojis,
+        message: msg.message,
+        isOwnMessage: (msg.isOwnMessage =
+          msg.authorId === this.currentAuthUser.uid),
+        hours: this.msgTimeHours,
+        minutes: this.msgTimeMins,
+      });
     }
-
-    // console.log('Alle Nachrichten aus der Vergangenheit: ', this.allMsgPast);
   }
 
-  // lädt alle alten Nachrichten in das Array allMsgToday
-  getAllMessagesToday(msg: UserMessageInterface) {
-    if (this.userName) {
-      if (this.msgDateTime.getTime() === this.todayDateTime.getTime()) {
-        if (!this.allMsgToday.find((msg) => msg.timestamp === this.msgTime)) {
-          // Damit sich Nachrichten nicht doppeln
-          this.allMsgToday.push({
-            timestamp: this.msgTime,
-            author: this.userName,
-            userMessageId: msg.userMessageId,
-            message: msg.message,
-            isOwnMessage: (msg.isOwnMessage =
-              msg.authorId === this.currentAuthUser.uid),
-            emojis: msg.emojis,
-            hours: this.msgTimeHours,
-            minutes: this.msgTimeMins,
-          });
-          this.allMsgToday.sort((a, b) => a.timestamp - b.timestamp); // Nachrichten werden dem Datum nach sortiert
-        }
-      }
-    } else {
-      // console.error('userName nicht vorhanden');
-    }
-    // console.log('Alle Nachrichten von Heute: ', this.allMsgToday);
+  sortMessagesByTime() {
+    this.allMessages.sort((a, b) => b.timestamp - a.timestamp);
   }
 
-  loadOldMessages() {
-    // console.log('Das sind die alten Nachrichten: ', this.allMsgPast);
-    this.allMsgPast.sort((a, b) => a.timestamp - b.timestamp);
-    this.groupedMessages = {};
+  // Funktion zum Gruppieren der Nachrichten nach Datum
+  groupMessagesByDate() {
+    const today = new Date().setHours(0, 0, 0, 0); // Setzt heute auf Mitternacht (00:00)
+    
+    this.allMessages.forEach((msg) => {
+      const msgDate = new Date(msg.timestamp).setHours(0, 0, 0, 0); // Setzt die Nachricht auf Mitternacht
 
-    this.allMsgPast.forEach((msg) => {
-      const time = this.formatTimeStamp(msg.timestamp);
-      // console.log('time der alten Nachrichten: ', time);
-      if (!this.groupedMessages[time]) {
-        this.groupedMessages[time] = [];
+      const dateKey = msgDate === today ? 'HEUTE' : msgDate.toString(); // "HEUTE" für Nachrichten vom heutigen Tag
+
+      // Gruppiere Nachrichten nach Datum
+      if (!this.groupedMessages[dateKey]) {
+        this.groupedMessages[dateKey] = [];
       }
-      this.groupedMessages[time].push(msg);
-      // console.log('groupedMessages: ', this.groupedMessages);
+      // Überprüfen, ob die Nachricht bereits hinzugefügt wurde, um Duplikate zu vermeiden
+      if (
+        !this.groupedMessages[dateKey].some(
+          (existingMsg) => existingMsg.userMessageId === msg.userMessageId
+        )
+      ) {
+        this.groupedMessages[dateKey].push(msg);
+      }
     });
+
+    // Für das heutige Datum die "HEUTE"-Nachrichten ans Ende verschieben
+    if (this.groupedMessages['HEUTE']) {
+      const todayMessages = this.groupedMessages['HEUTE'];
+      delete this.groupedMessages['HEUTE'];
+      this.groupedMessages['HEUTE'] = todayMessages;
+    }
   }
 
   openThread() {
     this.openThreadEvent.emit();
   }
 
-  getMessagesToday(): renderMessageInterface[] {
-    return this.allMsgToday;
-  }
-
-  getMessagesPast(): renderMessageInterface[] {
-    return this.allMsgPast;
-  }
-
-  getGroupedMessages(): renderMessageInterface[] {
-    // Extrahiere alle Nachrichten aus den Gruppen und flache sie in ein einzelnes Array ab
-    const allGroupedMessages: renderMessageInterface[] = [];
-
-    // Iteriere über alle Gruppen (Die Werte der gruppierten Nachrichten)
-    Object.values(this.groupedMessages).forEach((group) => {
-      allGroupedMessages.push(...group); // Alle Nachrichten der aktuellen Gruppe hinzufügen
-    });
-
-    return allGroupedMessages;
+  getMessages(): renderMessageInterface[] {
+    return this.allMessages;
   }
 
   // Methode, um festzustellen, ob der Benutzer nach oben gescrollt hat
