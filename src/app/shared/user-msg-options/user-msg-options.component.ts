@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 @Component({
   selector: 'app-user-msg-options',
   standalone: true,
-  imports: [CommonModule, MATERIAL_MODULES, NgIf],
+  imports: [CommonModule, MATERIAL_MODULES],
   templateUrl: './user-msg-options.component.html',
   styleUrl: './user-msg-options.component.scss'
 })
