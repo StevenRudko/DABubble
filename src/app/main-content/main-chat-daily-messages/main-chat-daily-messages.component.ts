@@ -26,11 +26,7 @@ import { ProfileOverviewComponent } from '../../shared/profile-overview/profile-
 @Component({
   selector: 'app-main-chat-daily-messages',
   standalone: true,
-  imports: [
-    MATERIAL_MODULES,
-    CommonModule,
-    UserMessageComponent
-  ],
+  imports: [MATERIAL_MODULES, CommonModule, UserMessageComponent],
   templateUrl: './main-chat-daily-messages.component.html',
   styleUrl: './main-chat-daily-messages.component.scss',
 })
@@ -85,14 +81,21 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   groupedMessages: { [date: string]: renderMessageInterface[] } = {};
   currentAuthUser: any;
   currentDirectUser: any;
+  currentChannel$: Observable<any>;
+  currentDirectUser$: Observable<any>;
+  isNewMessage$: Observable<boolean>;
 
   constructor(
     private userData: UserData,
     private cdr: ChangeDetectorRef,
-    private chatService: ChatService, // NEU: ChatService hinzufügen
+    public chatService: ChatService, // NEU: ChatService hinzufügen
     private authService: AuthService, // NEU
     private dialog: MatDialog // NEU
-  ) {}
+  ) {
+    this.currentChannel$ = this.chatService.currentChannel$;
+    this.currentDirectUser$ = this.chatService.currentDirectUser$;
+    this.isNewMessage$ = this.chatService.isNewMessage$;
+  }
 
   // abonniert die Daten aus der DB und ruft die init-Funtkion auf
   ngOnInit(): Promise<void> {
@@ -153,7 +156,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     this.getTimeToday();
     this.loadMessages();
     this.loadOldMessages();
-    console.log(this.emojiList['rocket']);
+    // console.log(this.emojiList['rocket']);
   }
 
   // ruft das heutige Datum ab und wandelt es ins entsprechende Format um
@@ -186,7 +189,6 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
       this.getUserName(msg);
       this.getAllMessagesPast(msg);
       this.getAllMessagesToday(msg);
-      this.changeMessageStyle(msg);
       // this.loadEmojis(msg);
     });
   }
@@ -237,6 +239,8 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
             author: this.userName,
             emojis: msg.emojis,
             message: msg.message,
+            isOwnMessage: (msg.isOwnMessage =
+              msg.authorId === this.currentAuthUser.uid),
             hours: this.msgTimeHours,
             minutes: this.msgTimeMins,
           });
@@ -260,6 +264,8 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
             author: this.userName,
             userMessageId: msg.userMessageId,
             message: msg.message,
+            isOwnMessage: (msg.isOwnMessage =
+              msg.authorId === this.currentAuthUser.uid),
             emojis: msg.emojis,
             hours: this.msgTimeHours,
             minutes: this.msgTimeMins,
@@ -271,14 +277,6 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
       // console.error('userName nicht vorhanden');
     }
     // console.log('Alle Nachrichten von Heute: ', this.allMsgToday);
-  }
-
-  changeMessageStyle(msg: UserMessageInterface) {
-    if (msg.authorId === this.currentUser) {
-      this.ownMessageStyle = true;
-    } else {
-      this.ownMessageStyle = false;
-    }
   }
 
   loadOldMessages() {
@@ -418,5 +416,27 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
       !this.currentDirectUser ||
       this.currentDirectUser.uid === this.currentAuthUser?.uid
     );
+  }
+
+  /**
+   * Gets the formatted creation time string for a channel
+   */
+  getChannelCreationTime(createdAt: string): string {
+    const creationDate = new Date(createdAt);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if (creationDate >= today) {
+      return 'heute';
+    } else if (creationDate >= yesterday) {
+      return 'gestern';
+    } else {
+      return `am ${creationDate.getDate()}. ${
+        this.months[creationDate.getMonth()]
+      } ${creationDate.getFullYear()}`;
+    }
   }
 }

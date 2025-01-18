@@ -12,6 +12,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { MatDialog } from '@angular/material/dialog';
 import { AddPeopleDialogSidebarComponent } from './add-people-dialog-sidebar/add-people-dialog-sidebar.component';
 import { Firestore, addDoc, collection } from '@angular/fire/firestore';
+import { Auth } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-create-create-channel-dialog',
@@ -33,7 +34,8 @@ export class ChannelDialogComponent {
   constructor(
     @Optional() public dialogRef: MatDialogRef<ChannelDialogComponent>,
     private dialog: MatDialog,
-    private firestore: Firestore
+    private firestore: Firestore,
+    private auth: Auth
   ) {}
 
   /**
@@ -62,15 +64,20 @@ export class ChannelDialogComponent {
   }
 
   /**
-   * Creates channel data object
+   * Creates channel data object including creator information
    */
   private createChannelData(): any {
+    const currentUser = this.auth.currentUser;
     return {
       name: this.channelName.trim(),
       description: this.channelDescription.trim(),
       type: 'public',
       createdAt: new Date().toISOString(),
-      members: {},
+      updatedAt: new Date().toISOString(),
+      createdBy: currentUser?.uid,
+      members: {
+        [currentUser?.uid || '']: true,
+      },
     };
   }
 

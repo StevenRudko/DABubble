@@ -1,7 +1,9 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
 import { MATERIAL_MODULES } from '../material-imports';
-import { InputOutput } from '../../service/input-output.service';
+import { EmojiPickerComponent } from '../emoji-picker/emoji-picker.component';
+import { MatDialog } from '@angular/material/dialog';
+import { MessagesEditOptionsComponent } from '../messages-edit-options/messages-edit-options.component';
 
 @Component({
   selector: 'app-user-message',
@@ -16,27 +18,37 @@ export class UserMessageComponent {
   @Input() showReactionEmojis: boolean = false;
   @Input() showAnswerDetails: boolean = true;
   @Input() showReactionIcons: boolean = true;
-  @Input() messagesToday: { timestamp: number; userMessageId: string; author: string, message: string; emojis: string[]; hours: number; minutes: number }[] = [];
-  @Input() messagesOld: { timestamp: number; userMessageId: string; author: string; message: string; emojis: string[]; hours: number; minutes: number }[] = [];
+  @Input() messagesToday: { timestamp: number; userMessageId: string; author: string, isOwnMessage: boolean; message: string; emojis: string[]; hours: number; minutes: number }[] = [];
+  @Input() messagesOld: { timestamp: number; userMessageId: string; author: string; isOwnMessage: boolean; message: string; emojis: string[]; hours: number; minutes: number }[] = [];
 
-  isHoveredActive: boolean = false;
-  isThreadContext: boolean = false;
+  hoverStateMap: { [userMessageId: string]: boolean } = {};
   @Output() openThreadEvent = new EventEmitter<void>();
 
-  constructor() {}
+  constructor(private dialog: MatDialog) {}
 
   openThread() {
     this.openThreadEvent.emit();
   }
 
-  onMouseEnter() {
-    this.isHoveredActive = true;
-    this.showReactionEmojis = true;
+  onMouseEnter(msgId: string) {
+    this.hoverStateMap[msgId] = true;
   }
 
-  onMouseLeave() {
-    this.isHoveredActive = false;
-    this.showReactionEmojis = false;
+  onMouseLeave(msgId: string) {
+    this.hoverStateMap[msgId] = false;
   }
 
+  openEmojiPicker(): void {
+    const dialogRef = this.dialog.open(EmojiPickerComponent, {});
+    dialogRef.afterClosed().subscribe((result) => {
+      // console.log('The dialog was closed');
+    });
+  }
+
+  openEditOptions(): void {
+    const dialogRef = this.dialog.open(MessagesEditOptionsComponent, {});
+    dialogRef.afterClosed().subscribe((result) => {
+      // console.log('The dialog was closed');
+    });
+  }
 }

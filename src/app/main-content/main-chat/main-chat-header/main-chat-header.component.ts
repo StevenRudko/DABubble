@@ -15,6 +15,7 @@ import {
 import { Observable } from 'rxjs';
 import { ProfileOverviewComponent } from '../../../shared/profile-overview/profile-overview.component';
 import { ChannelInfoDialogComponent } from './channel-info-dialog/channel-info-dialog.component';
+import { take, distinctUntilChanged, filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-main-chat-header',
@@ -30,10 +31,8 @@ export class MainChatHeaderComponent {
   currentChannel$: Observable<Channel | null>;
   currentDirectUser$: Observable<DirectUser | null>;
   channelMembers$: Observable<ChatMember[]>;
+  isNewMessage$: Observable<boolean>;
 
-  /**
-   * Initializes component and sets up observables
-   */
   constructor(
     private dialog: MatDialog,
     private chatService: ChatService,
@@ -43,12 +42,16 @@ export class MainChatHeaderComponent {
     this.currentChannel$ = this.chatService.currentChannel$;
     this.currentDirectUser$ = this.chatService.currentDirectUser$;
     this.channelMembers$ = new Observable<ChatMember[]>();
+    this.isNewMessage$ = this.chatService.isNewMessage$;
 
-    this.currentChannel$.subscribe((channel) => {
-      if (channel) {
-        this.channelMembers$ = this.chatService.getChannelMembers(channel.id);
-      }
-    });
+    this.currentChannel$
+      .pipe(
+        distinctUntilChanged((prev, curr) => prev?.id === curr?.id),
+        filter((channel) => !!channel)
+      )
+      .subscribe((channel) => {
+        this.channelMembers$ = this.chatService.getChannelMembers(channel!.id);
+      });
 
     this.currentDirectUser$.subscribe();
   }

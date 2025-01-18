@@ -1,0 +1,40 @@
+@use "./../../../styles.scss" as styles;
+@use "./../../../assets/styles/fonts.scss" as fonts;
+@use "./../../../assets/styles/theme-colors.scss" as colors;
+
+.edited-options-container {
+    @include styles.dFlex($d: flex, $fd: column, $jc: center, $ai: center, $g: 12px);
+    padding: 10px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    border-top-left-radius: 0;
+    width:300px;
+    box-sizing: border-box;
+}
+
+button {
+    @include styles.dFlex($d: flex, $fd: column, $jc: center, $ai: center, $g: 0);
+    padding: 16px 24px;
+    width:100%;
+    box-sizing: border-box;
+    cursor: pointer;
+    outline:none;
+    font-size:14px;
+    border:none;
+    background-color: white;
+
+    &:hover {
+        background-color: #eceefe;
+        border-radius:30px;
+        color: #797EF3;
+        font-weight: 700;
+    }
+}
+
+.cdk-overlay-backdrop-showing {
+    opacity: 0;
+}
+.cdk-overlay-dark-backdrop {
+    background: white;
+}

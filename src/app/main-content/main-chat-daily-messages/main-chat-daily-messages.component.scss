@@ -13,6 +13,19 @@ section {
   height: 360px;
   overflow-y: scroll;
   padding-top: 18px;
+
+  &::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
 }
 
 .message-wrapper {
@@ -63,6 +76,7 @@ section {
 .divider-text {
   font-size: 18px;
 }
+
 // kommentar
 
 .empty-chat-preview {
@@ -114,5 +128,32 @@ section {
     color: #535af1;
     cursor: pointer;
     text-decoration: none;
+  }
+
+  .channel-preview {
+    padding: 24px;
+    margin: 24px;
+    border-radius: 8px;
+
+    .preview-header {
+      margin-bottom: 16px;
+
+      .channel-name {
+        font-size: 24px;
+        font-weight: 600;
+        color: #1a1a1a;
+      }
+    }
+
+    .preview-content {
+      .preview-text {
+        font-size: 16px;
+        line-height: 1.5;
+        color: #666;
+        span {
+          color: #535af1;
+        }
+      }
+    }
   }
 }
