@@ -3,6 +3,7 @@ import { CommonModule, NgIf } from '@angular/common';
 import { MATERIAL_MODULES } from '../material-imports';
 import { EmojiPickerComponent } from '../emoji-picker/emoji-picker.component';
 import { MatDialog } from '@angular/material/dialog';
+import { MessagesEditOptionsComponent } from '../messages-edit-options/messages-edit-options.component';
 
 @Component({
   selector: 'app-user-message',
@@ -17,8 +18,8 @@ export class UserMessageComponent {
   @Input() showReactionEmojis: boolean = false;
   @Input() showAnswerDetails: boolean = true;
   @Input() showReactionIcons: boolean = true;
-  @Input() messagesToday: { timestamp: number; userMessageId: string; author: string, message: string; hours: number; minutes: number }[] = [];
-  @Input() messagesOld: { timestamp: number; userMessageId: string; author: string; message: string; hours: number; minutes: number }[] = [];
+  @Input() messagesToday: { timestamp: number; userMessageId: string; author: string, isOwnMessage: boolean; message: string; emojis: string[]; hours: number; minutes: number }[] = [];
+  @Input() messagesOld: { timestamp: number; userMessageId: string; author: string; isOwnMessage: boolean; message: string; emojis: string[]; hours: number; minutes: number }[] = [];
 
   hoverStateMap: { [userMessageId: string]: boolean } = {};
   @Output() openThreadEvent = new EventEmitter<void>();
@@ -38,7 +39,14 @@ export class UserMessageComponent {
   }
 
   openEmojiPicker(): void {
-    const dialogRef = this.dialog.open(EmojiPickerComponent, {});
+    const dialogRef = this.dialog.open(EmojiPickerComponent, {backdropClass: 'custom-backdrop'});
+    dialogRef.afterClosed().subscribe((result) => {
+      // console.log('The dialog was closed');
+    });
+  }
+
+  openEditOptions(): void {
+    const dialogRef = this.dialog.open(MessagesEditOptionsComponent, {});
     dialogRef.afterClosed().subscribe((result) => {
       // console.log('The dialog was closed');
     });
