@@ -1,212 +1,255 @@
-@use './../../../styles.scss' as styles;
-@use './../../../assets/styles/fonts.scss' as fonts;
-@use './../../../assets/styles/theme-colors.scss' as colors;
-
+@use "./../../../styles.scss" as styles;
+@use "./../../../assets/styles/fonts.scss" as fonts;
+@use "./../../../assets/styles/theme-colors.scss" as colors;
 
 section {
-    @include styles.dFlex($d: flex, $fd: column, $jc: flex-start, $ai: flex-start, $g: 24px);
-    cursor: pointer;
-    position: relative;
-    z-index: 2;
-    @include styles.padding($pl: 0px, $pr: 0px, $pt: 12px, $pb: 12px);
+  @include styles.dFlex(
+    $d: flex,
+    $fd: column,
+    $jc: flex-start,
+    $ai: flex-start,
+    $g: 24px
+  );
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+  @include styles.padding($pl: 0px, $pr: 0px, $pt: 12px, $pb: 12px);
 
-    &:hover {
-        background-color: #ECEEFE;
-    }
+  &:hover {
+    background-color: #eceefe;
+  }
+
+  &:hover .user-message-row-center {
+    background-color: white;
+  }
+
+  &:hover .last-comment-time {
+    color: #393939;
+  }
+
+  &:hover .add-reaction-btn {
+    background-color: white;
+  }
+
+  &.myMessageStyle {
+    align-items: flex-end;
+    cursor: unset;
 
     &:hover .user-message-row-center {
-        background-color: white;
+      background-color: #797ef3;
     }
-
-    &:hover .last-comment-time {
-        color: #393939;
-    }
-
-    &:hover .add-reaction-btn {
-        background-color: white;
-    }
-
-    &.myMessageStyle {
-        align-items: flex-end;
-        cursor: unset;
-
-        &:hover .user-message-row-center {
-            background-color: #797EF3;
-        }
-    }
+  }
 }
 
-
 .user-message-container {
-    @include styles.dFlex($d: flex, $fd: row, $jc: flex-start, $ai: flex-start, $g: 28px);
-    @include styles.padding($pl: 28px, $pr: 28px, $pt: 8px, $pb: 8px);
+  @include styles.dFlex(
+    $d: flex,
+    $fd: row,
+    $jc: flex-start,
+    $ai: flex-start,
+    $g: 28px
+  );
+  @include styles.padding($pl: 28px, $pr: 28px, $pt: 8px, $pb: 8px);
 
-    &.myMessageStyle {
-        flex-direction: row-reverse;
-    }
+  &.myMessageStyle {
+    flex-direction: row-reverse;
+  }
 }
 
 .user-message-img {
-    width: 70px;
-    height: 70px;
+  width: 70px;
+  height: 70px;
 }
 
 .user-message-box {
-    @include styles.dFlex($d: flex, $fd: column, $jc: flex-start, $ai: flex-start, $g: 12px);
+  @include styles.dFlex(
+    $d: flex,
+    $fd: column,
+    $jc: flex-start,
+    $ai: flex-start,
+    $g: 12px
+  );
 
-    &.myMessageStyle {
-        align-items: flex-end;
-    }
+  &.myMessageStyle {
+    align-items: flex-end;
+  }
 }
 
 .user-message-row-top {
-    @include styles.dFlex($d: flex, $fd: row, $jc: flex-start, $ai: center, $g: 24px);
+  @include styles.dFlex(
+    $d: flex,
+    $fd: row,
+    $jc: flex-start,
+    $ai: center,
+    $g: 24px
+  );
 
-    &.myMessageStyle {
-        flex-direction: row-reverse;
-    }
+  &.myMessageStyle {
+    flex-direction: row-reverse;
+  }
 }
 
 .user-message-name {
-    font-weight: 700;
-    font-size: 17px;
+  font-weight: 700;
+  font-size: 17px;
 
-    &:hover {
-        color: #535AF1;
-    }
+  &:hover {
+    color: #535af1;
+  }
 }
 
 .user-message-time,
 .last-comment-time {
-    font-weight: 400;
-    font-size: 14px;
-    color: grey;
+  font-weight: 400;
+  font-size: 14px;
+  color: grey;
 }
 
 .user-message-row-center {
-    background-color: white;
-    padding: 12px;
-    background-color: #ECEEFE;
-    border-radius: 30px;
-    border-top-left-radius: 0px;
+  background-color: white;
+  padding: 12px;
+  background-color: #eceefe;
+  border-radius: 30px;
+  border-top-left-radius: 0px;
 
-    &.myMessageStyle {
-        background-color: #797EF3;
-        color: white;
-        border-radius: 30px;
-        border-top-right-radius: 0px;
-    }
+  &.myMessageStyle {
+    background-color: #797ef3;
+    color: white;
+    border-radius: 30px;
+    border-top-right-radius: 0px;
+  }
 }
 
 .user-message-row-bottom {
-    @include styles.dFlex($d: flex, $fd: row, $jc: flex-start, $ai: center, $g: 24px);
+  @include styles.dFlex(
+    $d: flex,
+    $fd: row,
+    $jc: flex-start,
+    $ai: center,
+    $g: 24px
+  );
 }
 
 .comments-number {
-    color: #535AF1;
+  color: #535af1;
 
-    &:hover {
-        font-weight: 700;
-        font-size: 16px;
-    }
+  &:hover {
+    font-weight: 700;
+    font-size: 16px;
+  }
 }
 
 .reaction-icons-row-bottom {
-    @include styles.dFlex($d: flex, $fd: row, $jc: flex-end, $ai: center, $g: 12px);
-    margin-top: -6px;
+  @include styles.dFlex(
+    $d: flex,
+    $fd: row,
+    $jc: flex-end,
+    $ai: center,
+    $g: 12px
+  );
+  margin-top: -6px;
 }
 
 .check_circle {
-    color: #4BD37B;
+  color: #4bd37b;
 }
 
 .reaction-btn-div {
-    @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
-    padding: 2px 6px;
-    background-color: white;
-    border: 1px solid #ADB0D9;
-    cursor: pointer;
+  @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
+  padding: 2px 6px;
+  background-color: white;
+  border: 1px solid #adb0d9;
+  cursor: pointer;
 }
 
 .reaction-btn-style {
-    @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
-    background-color: white;
-    border: unset;
-    cursor: pointer;
+  @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
+  background-color: white;
+  border: unset;
+  cursor: pointer;
 }
 
 .reaction-btn {
-    width: var(--mdc-icon-button-state-layer-size, 30px);
-    height: var(--mdc-icon-button-state-layer-size, 30px);
-    padding: calc(calc(var(--mdc-icon-button-state-layer-size, 30px) - var(--mdc-icon-button-icon-size, 24px)) / 2);
+  width: var(--mdc-icon-button-state-layer-size, 30px);
+  height: var(--mdc-icon-button-state-layer-size, 30px);
+  padding: calc(
+    calc(
+        var(--mdc-icon-button-state-layer-size, 30px) -
+          var(--mdc-icon-button-icon-size, 24px)
+      ) / 2
+  );
 
-    &:hover {
-        color: #797EF3;
-        font-weight: 700;
-    }
+  &:hover {
+    color: #797ef3;
+    font-weight: 700;
+  }
 
-    &:hover .reaction-btn-icon {
-        font-size: 24px;
-    }
+  &:hover .reaction-btn-icon {
+    font-size: 24px;
+  }
 }
 
 button {
-    mat-icon {
-        font-size: 22px;
-    }
+  mat-icon {
+    font-size: 22px;
+  }
 
-    &:hover {
-        color: #797EF3;
-        font-weight: 700;
-    }
+  &:hover {
+    color: #797ef3;
+    font-weight: 700;
+  }
 
-    &:hover mat-icon {
-        font-size: 24px;
-    }
+  &:hover mat-icon {
+    font-size: 24px;
+  }
 }
 
 .reaction-btn-icon {
-    font-size: 23px;
+  font-size: 23px;
 }
 
 .emoji-card-container {
-    @include styles.dFlex($d: flex, $fd: row, $jc: flex-end, $ai: flex-end, $g: 0);
-    position: absolute;
-    width: 100%;
-    z-index: 4;
-    box-sizing: border-box;
-    padding: 0;
-    padding-right: 32px;
-    top: -20px;
+  @include styles.dFlex(
+    $d: flex,
+    $fd: row,
+    $jc: flex-end,
+    $ai: flex-end,
+    $g: 0
+  );
+  position: absolute;
+  width: 100%;
+  z-index: 4;
+  box-sizing: border-box;
+  padding: 0;
+  padding-right: 32px;
+  top: -20px;
 
-    &.myMessageStyle {
-        justify-content: flex-start;
-        align-items: flex-start;
-        padding: 0;
-        padding-left: 24px;
-    }
+  &.myMessageStyle {
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 0;
+    padding-left: 24px;
+  }
 }
 
 .emoji-card {
-    @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
-    border-bottom-right-radius: 0px;
-    width: auto;
+  @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
+  border-bottom-right-radius: 0px;
+  width: auto;
 }
 
 .emoji-content {
-    @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
-    height: 15px;
+  @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
+  height: 15px;
 }
 
 .check_circle {
-    color: #4BD37B;
+  color: #4bd37b;
 }
 
 .user-message-container,
 .user-message-box,
 .user-message-row-top {
-    width: 100%;
-    box-sizing: border-box;
+  width: 100%;
+  box-sizing: border-box;
 }
-
-// kommentar

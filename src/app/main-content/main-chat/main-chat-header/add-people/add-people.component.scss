@@ -102,15 +102,15 @@
 }
 
 .search-dropdown {
-  position: fixed; // Ändern von absolute zu fixed
-  top: auto; // Auto statt 100%
-  width: 388px; // Gleiche Breite wie das Input-Feld (420px - 2*16px padding)
+  position: fixed;
+  top: auto;
+  width: 388px;
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   max-height: 300px;
   overflow-y: auto;
-  z-index: 1001; // Höher als overlay-content
+  z-index: 1001;
   border: 1px solid #adb0d9;
   margin-top: 4px;
 }

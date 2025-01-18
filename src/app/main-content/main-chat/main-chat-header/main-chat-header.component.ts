@@ -76,7 +76,6 @@ export class MainChatHeaderComponent {
   channelMembers$: Observable<ChatMember[]>;
   isNewMessage$: Observable<boolean>;
 
-  // Search related properties
   searchInput = '';
   private searchTerm = new BehaviorSubject<string>('');
   searchResults: SearchResult[] = [];
@@ -135,19 +134,16 @@ export class MainChatHeaderComponent {
       if (term.startsWith('#')) {
         return await this.searchChannels(term.substring(1));
       } else if (term.startsWith('@')) {
-        // Search both username and email when using @
         const usernameResults = await this.searchUsers(
           term.substring(1),
           'username'
         );
         const emailResults = await this.searchUsers(term.substring(1), 'email');
-        // Combine results and remove duplicates
         return [...usernameResults, ...emailResults].filter(
           (result, index, self) =>
             index === self.findIndex((r) => r.id === result.id)
         );
       } else {
-        // If no special character, search both email and username
         const emailResults = await this.searchUsers(term, 'email');
         const usernameResults = await this.searchUsers(term, 'username');
         return [...emailResults, ...usernameResults].filter(
@@ -220,7 +216,6 @@ export class MainChatHeaderComponent {
    * @param event Input event from search field
    */
   onSearchInput(event: Event): void {
-    // If there's already a selected result, don't search
     if (this.selectedResult) {
       event.preventDefault();
       return;
@@ -262,7 +257,6 @@ export class MainChatHeaderComponent {
     this.chatService.setSelectedSearchResult(null);
     this.resetSearch();
 
-    // Focus the input after removing the selection
     setTimeout(() => {
       this.searchInputEl?.nativeElement?.focus();
     });

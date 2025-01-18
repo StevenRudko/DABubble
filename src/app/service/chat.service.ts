@@ -52,11 +52,9 @@ export class ChatService {
     new BehaviorSubject<SearchResult | null>(null);
   selectedSearchResult$ = this.selectedSearchResultSubject.asObservable();
 
-  // Current user state
   private currentUser: any = null;
 
   constructor(private firestore: Firestore, private authService: AuthService) {
-    // Initialize current user
     this.authService.user$.subscribe((user) => {
       this.currentUser = user;
     });
