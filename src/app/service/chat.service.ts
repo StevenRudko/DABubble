@@ -1,4 +1,3 @@
-// service/chat.service.ts
 import { Injectable } from '@angular/core';
 import {
   Firestore,
@@ -18,6 +17,18 @@ import {
   DirectUser,
   UserMessage,
 } from '../models/chat.interfaces';
+import { distinctUntilChanged } from 'rxjs/operators';
+import { AuthService } from './auth.service';
+
+export interface SearchResult {
+  id: string;
+  type: 'channel' | 'user';
+  name: string;
+  email?: string;
+  photoURL?: string;
+  description?: string;
+  online?: boolean;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -37,8 +48,17 @@ export class ChatService {
   currentChannelMembers$ = this.currentChannelMembersSubject.asObservable();
   private isNewMessageSubject = new BehaviorSubject<boolean>(false);
   isNewMessage$ = this.isNewMessageSubject.asObservable();
+  private selectedSearchResultSubject =
+    new BehaviorSubject<SearchResult | null>(null);
+  selectedSearchResult$ = this.selectedSearchResultSubject.asObservable();
 
-  constructor(private firestore: Firestore) {}
+  private currentUser: any = null;
+
+  constructor(private firestore: Firestore, private authService: AuthService) {
+    this.authService.user$.subscribe((user) => {
+      this.currentUser = user;
+    });
+  }
 
   toggleNewMessage(): void {
     const newValue = !this.isNewMessageSubject.value;
@@ -47,6 +67,10 @@ export class ChatService {
       this.currentDirectUserSubject.next(null);
     }
     this.isNewMessageSubject.next(newValue);
+  }
+
+  setSelectedSearchResult(result: SearchResult | null): void {
+    this.selectedSearchResultSubject.next(result);
   }
 
   async selectChannel(channelId: string): Promise<void> {
@@ -68,17 +92,22 @@ export class ChatService {
           messagesCollection,
           where('channelId', '==', channelId)
         );
-        collectionData(q).subscribe((messages) => {
-          const sortedMessages = this.sortMessagesByDate(
-            messages as UserMessage[]
-          );
-          this.messagesSubject.next(sortedMessages);
-        });
+
+        collectionData(q, { idField: 'id' })
+          .pipe(
+            distinctUntilChanged(
+              (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)
+            )
+          )
+          .subscribe((messages) => {
+            const sortedMessages = this.sortMessagesByDate(
+              messages as UserMessage[]
+            );
+            this.messagesSubject.next(sortedMessages);
+          });
       }
-      return;
     } catch (error) {
       console.error('Error loading channel:', error);
-      return;
     }
   }
 
@@ -100,24 +129,34 @@ export class ChatService {
         const messagesCollection = collection(this.firestore, 'userMessages');
         const q = query(
           messagesCollection,
-          where('directUserId', '==', userId)
+          where('directUserId', 'in', [userId, this.currentUser?.uid])
         );
-        collectionData(q).subscribe((messages) => {
-          const sortedMessages = this.sortMessagesByDate(
-            messages as UserMessage[]
-          );
-          this.messagesSubject.next(sortedMessages);
-        });
+
+        collectionData(q, { idField: 'id' })
+          .pipe(
+            distinctUntilChanged(
+              (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)
+            )
+          )
+          .subscribe((messages) => {
+            const filteredMessages = (messages as UserMessage[]).filter(
+              (msg) =>
+                (msg.authorId === userId &&
+                  msg.directUserId === this.currentUser?.uid) ||
+                (msg.authorId === this.currentUser?.uid &&
+                  msg.directUserId === userId)
+            );
+            const sortedMessages = this.sortMessagesByDate(filteredMessages);
+            this.messagesSubject.next(sortedMessages);
+          });
       }
-      return;
     } catch (error) {
       console.error('Error loading direct messages:', error);
-      return;
     }
   }
 
   private sortMessagesByDate(messages: UserMessage[]): UserMessage[] {
-    return messages.sort((a, b) => {
+    return [...messages].sort((a, b) => {
       const timeA = a.time?.seconds || 0;
       const timeB = b.time?.seconds || 0;
       return timeA - timeB;
@@ -205,10 +244,7 @@ export class ChatService {
 
   async updateChannel(
     channelId: string,
-    updates: {
-      name?: string;
-      description?: string;
-    }
+    updates: { name?: string; description?: string }
   ): Promise<void> {
     try {
       const channelRef = doc(this.firestore, `channels/${channelId}`);

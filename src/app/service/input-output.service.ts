@@ -1,4 +1,3 @@
-// input-output.service.ts
 import { Injectable } from '@angular/core';
 
 interface EmojiConfig {
@@ -10,8 +9,5 @@ interface EmojiConfig {
   providedIn: 'root',
 })
 export class InputOutput {
-
   constructor() {}
-
- 
 }

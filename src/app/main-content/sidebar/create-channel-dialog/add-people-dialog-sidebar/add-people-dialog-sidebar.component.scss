@@ -16,7 +16,6 @@
   border-radius: 20px;
   padding: 32px;
   width: 500px;
-  // min-height: 300px;
   height: auto;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   display: flex;
@@ -25,7 +24,7 @@
   position: relative;
   transition: all 0.3s ease-in-out;
   overflow: visible;
-  padding-bottom: 80px; // Platz für den Button
+  padding-bottom: 80px;
 
   &.expanded {
     min-height: 300px;
@@ -86,19 +85,19 @@
 
 .input-wrapper {
   height: 0;
-  max-height: 0; // Hinzugefügt
-  opacity: 0; // Hinzugefügt
-  overflow: hidden; // Zurück zu hidden
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
   transition: all 0.3s ease-in-out;
-  margin-bottom: 0; // Standardabstand 0
+  margin-bottom: 0;
 
   &.show {
     height: auto;
-    max-height: 1000px; // Großer Wert für Animation
+    max-height: 1000px;
     opacity: 1;
     min-height: 45px;
     overflow: visible;
-    margin-bottom: 1rem; // Abstand wenn sichtbar
+    margin-bottom: 1rem;
   }
 }
 
@@ -217,8 +216,8 @@
 
 .create-btn {
   position: absolute;
-  bottom: 32px; // Angepasst an padding
-  right: 32px; // Angepasst an padding
+  bottom: 32px;
+  right: 32px;
   background: #444df2;
   color: white;
   border: none;
