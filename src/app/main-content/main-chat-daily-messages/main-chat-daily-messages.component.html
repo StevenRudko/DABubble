@@ -1,7 +1,7 @@
 <section #chatContainer (scroll)="onScroll()">
   <!-- Wenn keine neuen Nachrichten vorhanden sind -->
   <ng-container *ngIf="!(chatService.isNewMessage$ | async)">
-    
+
     <!-- Leerer Chat-Bereich -->
     <div class="empty-chat-preview" *ngIf="!allMessages.length">
       <!-- Profil-Preview für Direktnachrichten -->
@@ -39,22 +39,24 @@
       </div>
     </div>
 
-    <!-- Anzeige der Nachrichten, wenn welche vorhanden sind -->
+    <!-- Anzeige der Nachrichten -->
     <div class="message-wrapper" *ngIf="allMessages.length">
-      <!-- Nachrichten nach Datum gruppiert anzeigen -->
-      <div class="messages-by-date-container" *ngFor="let entry of groupedMessages | keyvalue">
-        <div class="divider-line" *ngIf="entry.key !== 'HEUTE'">
-          <div class="divider-text-box bg-frame-v1">
-            <p class="divider-text">{{ entry.key | date : "dd.MM.yyyy" }}</p>
+      <!-- Ältere Nachrichten nach Datum gruppiert -->
+      <ng-container *ngFor="let entry of groupedMessages | keyvalue">
+        <div class="messages-by-date-container" *ngIf="entry.key !== 'HEUTE'">
+          <div class="divider-line">
+            <div class="divider-text-box bg-frame-v1">
+              <p class="divider-text">{{ entry.key | date : "dd.MM.yyyy" }}</p>
+            </div>
           </div>
+          <app-user-message *ngFor="let msg of entry.value" [allMessages]="[msg]" [threadMessage]="false"
+            [ownMessage]="msg.isOwnMessage" [showAnswerDetails]="true" [showReactionIcons]="false"
+            (openThreadEvent)="openThread()" class="width-100">
+          </app-user-message>
         </div>
-        <app-user-message *ngFor="let msg of entry.value" [allMessages]="[msg]" [threadMessage]="false"
-          [ownMessage]="ownMessageStyle" [showAnswerDetails]="true" [showReactionIcons]="true"
-          (openThreadEvent)="openThread()" class="width-100">
-        </app-user-message>
-      </div>
-      
-      <!-- Anzeige der "Heute"-Nachrichten -->
+      </ng-container>
+
+      <!-- Heutige Nachrichten -->
       <div class="messages-by-date-container" *ngIf="groupedMessages['HEUTE']">
         <div class="divider-line">
           <div class="divider-text-box bg-frame-v1">
@@ -62,13 +64,13 @@
           </div>
         </div>
         <app-user-message *ngFor="let msg of groupedMessages['HEUTE']" [allMessages]="[msg]" [threadMessage]="false"
-          [ownMessage]="ownMessageStyle" [showAnswerDetails]="true" [showReactionIcons]="true" class="width-100">
+          [ownMessage]="msg.isOwnMessage" [showAnswerDetails]="false" [showReactionIcons]="true"
+          (openThreadEvent)="openThread()" class="width-100">
         </app-user-message>
       </div>
     </div>
   </ng-container>
 
-  <!-- Wenn es eine neue Nachricht gibt -->
   <ng-container *ngIf="chatService.isNewMessage$ | async">
     <div class="new-message-content">
       <!-- Inhalt für neue Nachrichten -->
