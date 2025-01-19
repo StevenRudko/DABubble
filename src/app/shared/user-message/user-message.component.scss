@@ -253,3 +253,9 @@ button {
   width: 100%;
   box-sizing: border-box;
 }
+
+.custom-backdrop {
+opacity:0;
+position:fixed;
+left:0;
+}

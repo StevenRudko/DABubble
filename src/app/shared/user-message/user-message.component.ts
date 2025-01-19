@@ -39,7 +39,7 @@ export class UserMessageComponent {
   }
 
   openEmojiPicker(): void {
-    const dialogRef = this.dialog.open(EmojiPickerComponent, {});
+    const dialogRef = this.dialog.open(EmojiPickerComponent, {backdropClass: 'custom-backdrop'});
     dialogRef.afterClosed().subscribe((result) => {
       // console.log('The dialog was closed');
     });
