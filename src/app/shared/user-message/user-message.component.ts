@@ -21,7 +21,8 @@ export class UserMessageComponent {
   @Input() showReactionIcons: boolean = true;
   @Input() allMessages: { timestamp: number; userMessageId: string; author: string, isOwnMessage: boolean; message: string; emojis: string[]; hours: number; minutes: number }[] = [];
 
-  hoverStateMap: boolean = false;
+  hoverComponent: boolean = false;
+  hoverFaceTag: boolean = false;
   @Output() openThreadEvent = new EventEmitter<void>();
 
   constructor(private dialog: MatDialog) {}
@@ -31,11 +32,12 @@ export class UserMessageComponent {
   }
 
   onMouseEnter(msgId: string) {
-    this.hoverStateMap = true;
+    this.hoverComponent = true;
+    this.hoverFaceTag = true;
   }
 
   onMouseLeave(msgId: string) {
-    this.hoverStateMap = false;
+    this.hoverComponent = false;
   }
 
   openEmojiPicker(): void {

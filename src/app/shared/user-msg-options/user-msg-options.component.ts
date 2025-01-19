@@ -15,15 +15,12 @@ import { MatDialog } from '@angular/material/dialog';
 
 
 export class UserMsgOptionsComponent {
-  hoverStateMap: boolean = false;
+  hoverFaceTag: boolean = false;
 
   constructor() {}
 
   onMouseEnter() {
-    this.hoverStateMap = true;
+    this.hoverFaceTag = true;
   }
 
-  onMouseLeave() {
-    this.hoverStateMap = false;
-  }
 }
