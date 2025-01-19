@@ -262,3 +262,22 @@
     }
   }
 }
+
+.name-part {
+  position: relative;
+  transition: all 0.3s ease-in-out;
+
+  &.editing {
+    .section-content {
+      .input-container {
+        opacity: 0;
+        animation: fadeIn 0.3s ease-in-out forwards;
+      }
+    }
+  }
+}
+
+.section-box:has(.name-part.editing) {
+  border-color: transparent;
+  transition: border-color 0.3s ease-in-out;
+}

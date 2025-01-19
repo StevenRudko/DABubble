@@ -74,7 +74,7 @@
     <div class="collapsible-content direct-messages" [class.collapsed]="!isDirectMessageSectionExpanded">
 
       <div class="user-list">
-
+        <!-- Current User (always online) -->
         <ng-container *ngFor="let user of allUsers$ | async">
           <div class="user-item" *ngIf="(currentUser$ | async)?.uid === user.uid"
             (click)="selectDirectMessage(user.uid)">
@@ -84,7 +84,7 @@
           </div>
         </ng-container>
 
-
+        <!-- Other Users with dynamic status -->
         <ng-container *ngFor="let user of allUsers$ | async">
           <div class="user-item" *ngIf="(currentUser$ | async)?.uid !== user.uid"
             (click)="selectDirectMessage(user.uid)">

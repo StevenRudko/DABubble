@@ -111,21 +111,18 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
         this.currentAuthUser = currentAuthUser;
         this.currentDirectUser = directUser;
 
+        // Der Rest der Logik bleibt gleich
         if (currentChannel) {
-          // Channel Nachrichten
           this.userMessages = messages.filter(
             (msg) =>
               msg.channelId && msg.channelId.toString() === currentChannel.id
           );
         } else if (directUser && currentAuthUser) {
-          // Direkt Nachrichten
           this.userMessages = messages.filter((msg) => {
-            const isDirectMessage = !!msg.directUserId; // Prüfen ob directUserId existiert
+            const isDirectMessage = !!msg.directUserId;
             const isMessageBetweenUsers =
-              // Ich sende an den anderen
               (msg.authorId === currentAuthUser.uid &&
                 msg.directUserId === directUser.uid) ||
-              // Der andere sendet an mich
               (msg.authorId === directUser.uid &&
                 msg.directUserId === currentAuthUser.uid);
             return isDirectMessage && isMessageBetweenUsers;
@@ -134,9 +131,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
           this.userMessages = [];
         }
 
-        // Array leeren vor dem Neuladen
         this.allMessages = [];
-        // this.allMsgPast = [];
         this.initChat();
       }
     );
@@ -206,21 +201,21 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     return unit < 10 ? `0${unit}` : `${unit}`;
   }
 
-    // vearbeitet die msg time in verschiedene Formate um
+  // vearbeitet die msg time in verschiedene Formate um
   getMsgTime(msg: UserMessageInterface) {
     const timestamp: any = msg.time;
     const msgTimeStampSeconds = timestamp.seconds;
     const msgTimeStampNano = timestamp.nanoseconds;
     this.msgTime = msgTimeStampSeconds * 1000 + msgTimeStampNano / 1000000;
-  
+
     this.msgDateTime = new Date(this.msgTime);
     this.msgDateTime.setHours(0, 0, 0, 0); // Uhrzeit auf Mitternacht setzen, da nur der Tag für uns relevant ist
-  
+
     this.todayDateTime = new Date(this.timeDateToday);
     this.todayDateTime.setHours(0, 0, 0, 0);
-  
+
     const exactTime = new Date(this.msgTime);
-    this.msgTimeHours = this.formatTimeUnit(exactTime.getHours());  // Formatieren der Stunden
+    this.msgTimeHours = this.formatTimeUnit(exactTime.getHours()); // Formatieren der Stunden
     this.msgTimeMins = this.formatTimeUnit(exactTime.getMinutes()); // Formatieren der Minuten
   }
 
@@ -264,7 +259,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   // Funktion zum Gruppieren der Nachrichten nach Datum
   groupMessagesByDate() {
     const today = new Date().setHours(0, 0, 0, 0); // Setzt heute auf Mitternacht (00:00)
-    
+
     this.allMessages.forEach((msg) => {
       const msgDate = new Date(msg.timestamp).setHours(0, 0, 0, 0); // Setzt die Nachricht auf Mitternacht
 

@@ -13,7 +13,7 @@
       <h3 class="user-name">{{ data.name }}</h3>
       <div class="status">
         <div class="status-dot" [ngClass]="data.status"></div>
-        <span>{{ getStatusText(data.status) }}</span>
+        <span [ngClass]="data.status">{{ getStatusText(data.status) }}</span>
       </div>
     </div>
 

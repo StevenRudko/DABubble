@@ -83,22 +83,45 @@
     }
 
     .status {
-        display: flex;
-        align-items: center;
-        gap: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
 
-        .status-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 100%;
-            background-color: #92C83E;
+      .status-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        transition: background-color 0.3s ease;
+
+        &.active {
+          background-color: #22c55e;
         }
 
-        span {
-            color: #6b7280;
-            font-size: 1rem;
-            color: #92C83E;
+        &.away {
+          background-color: #fbbf24;
         }
+
+        &.offline {
+          background-color: #9ca3af;
+        }
+      }
+
+      span {
+        font-size: 16px;
+        transition: color 0.3s ease;
+
+        &.active {
+          color: #22c55e;
+        }
+
+        &.away {
+          color: #fbbf24;
+        }
+
+        &.offline {
+          color: #9ca3af;
+        }
+      }
     }
 }
 

@@ -68,6 +68,7 @@
       width: 12px;
       height: 12px;
       border-radius: 50%;
+      transition: background-color 0.3s ease;
 
       &.active {
         background-color: #22c55e;
@@ -83,9 +84,20 @@
     }
 
     span {
-      color: #6b7280;
       font-size: 16px;
-      color: #22c55e;
+      transition: color 0.3s ease;
+
+      &.active {
+        color: #22c55e;
+      }
+
+      &.away {
+        color: #fbbf24;
+      }
+
+      &.offline {
+        color: #9ca3af;
+      }
     }
   }
 }

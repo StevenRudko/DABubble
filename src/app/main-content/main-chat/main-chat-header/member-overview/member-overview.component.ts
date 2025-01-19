@@ -1,12 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { ProfileOverviewComponent } from '../../../../shared/profile-overview/profile-overview.component';
 import { ChatService } from '../../../../service/chat.service';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { Firestore, doc, getDoc, collection } from '@angular/fire/firestore';
+import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { AddPeopleComponent } from '../add-people/add-people.component';
+import { PresenceService } from '../../../../service/presence.service';
+import { Subscription } from 'rxjs';
 
 interface MemberData {
   uid: string;
@@ -24,6 +26,13 @@ interface ChannelData {
   members: { [key: string]: boolean };
 }
 
+interface UserDocData {
+  [key: string]: any;
+  email?: string;
+  username?: string;
+  photoURL?: string;
+}
+
 @Component({
   selector: 'app-member-overview',
   standalone: true,
@@ -31,31 +40,77 @@ interface ChannelData {
   templateUrl: './member-overview.component.html',
   styleUrl: './member-overview.component.scss',
 })
-export class MemberOverviewComponent implements OnInit {
+export class MemberOverviewComponent implements OnInit, OnDestroy {
   members: MemberData[] = [];
   currentChannelId: string = '';
   isLoading: boolean = true;
   memberCache = new Map<string, MemberData>();
+  private presenceSubscription: Subscription | null = null;
+  private onlineUsers: Set<string> = new Set();
 
-  /**
-   * Initializes member overview component
-   */
   constructor(
     private dialogRef: MatDialogRef<MemberOverviewComponent>,
     private dialog: MatDialog,
     private chatService: ChatService,
-    private firestore: Firestore
+    private firestore: Firestore,
+    private presenceService: PresenceService
   ) {}
 
   /**
-   * Subscribes to channel changes and loads members
+   * Initializes component by setting up channel and presence subscriptions
+   * @returns {void}
    */
-  ngOnInit() {
+  ngOnInit(): void {
     this.subscribeToChannel();
+    this.setupPresenceSubscription();
   }
 
   /**
-   * Sets up channel subscription
+   * Cleans up subscriptions on component destruction
+   * @returns {void}
+   */
+  ngOnDestroy(): void {
+    if (this.presenceSubscription) {
+      this.presenceSubscription.unsubscribe();
+    }
+  }
+
+  /**
+   * Sets up subscription to online users
+   * @returns {void}
+   */
+  private setupPresenceSubscription(): void {
+    this.presenceSubscription = this.presenceService
+      .getOnlineUsers()
+      .subscribe((onlineUserIds: string[]) => {
+        this.onlineUsers = new Set(onlineUserIds);
+        this.updateMembersOnlineStatus();
+      });
+  }
+
+  /**
+   * Checks if a specific user is online
+   * @param {string} userId - The ID of the user to check
+   * @returns {boolean} Whether the user is online
+   */
+  private isUserOnline(userId: string): boolean {
+    return this.onlineUsers.has(userId);
+  }
+
+  /**
+   * Updates online status for all members
+   * @returns {void}
+   */
+  private updateMembersOnlineStatus(): void {
+    this.members = this.members.map((member) => ({
+      ...member,
+      online: this.isUserOnline(member.uid),
+    }));
+  }
+
+  /**
+   * Subscribes to the current channel and loads its members
+   * @returns {void}
    */
   private subscribeToChannel(): void {
     this.chatService.currentChannel$.subscribe(async (channel) => {
@@ -69,7 +124,9 @@ export class MemberOverviewComponent implements OnInit {
   }
 
   /**
-   * Gets member IDs from channel data
+   * Retrieves member IDs for a specific channel
+   * @param {string} channelId - The ID of the channel
+   * @returns {Promise<string[]>} Array of member IDs
    */
   private async getMemberIds(channelId: string): Promise<string[]> {
     const channelDoc = await getDoc(doc(this.firestore, 'channels', channelId));
@@ -82,45 +139,58 @@ export class MemberOverviewComponent implements OnInit {
   }
 
   /**
-   * Creates member data object
-   */
-  private createMemberData(memberId: string, userData: any): MemberData {
-    return {
-      uid: memberId,
-      email: userData.email || '',
-      username: userData.username || '',
-      photoURL: userData.photoURL || 'img-placeholder/default-avatar.svg',
-      online: userData.online || false,
-    };
-  }
-
-  /**
-   * Loads single member data
+   * Loads data for a specific member
+   * @param {string} memberId - The ID of the member
+   * @returns {Promise<MemberData | null>} Member data or null
    */
   private async loadMemberData(memberId: string): Promise<MemberData | null> {
-    if (this.memberCache.has(memberId)) {
-      return this.memberCache.get(memberId)!;
-    }
+    const cachedMember = this.memberCache.get(memberId);
+    if (cachedMember) return cachedMember;
 
     const userDoc = await getDoc(doc(this.firestore, 'users', memberId));
     if (!userDoc.exists()) return null;
 
-    const memberData = this.createMemberData(memberId, userDoc.data());
+    return this.createMemberData(memberId, userDoc.data() as UserDocData);
+  }
+
+  /**
+   * Creates member data object
+   * @param {string} memberId - The ID of the member
+   * @param {UserDocData} userData - User data from Firestore
+   * @returns {MemberData} Processed member data
+   */
+  private createMemberData(
+    memberId: string,
+    userData: UserDocData
+  ): MemberData {
+    const memberData = {
+      uid: memberId,
+      email: userData['email'] || '',
+      username: userData['username'] || '',
+      photoURL: userData['photoURL'] || 'img-placeholder/default-avatar.svg',
+      online: this.isUserOnline(memberId),
+    };
+
     this.memberCache.set(memberId, memberData);
     return memberData;
   }
 
   /**
-   * Loads all members for a channel
+   * Loads members for a specific channel
+   * @param {string} channelId - The ID of the channel
+   * @returns {Promise<void>}
    */
   async loadMembers(channelId: string): Promise<void> {
     try {
       const memberIds = await this.getMemberIds(channelId);
       const memberPromises = memberIds.map((id) => this.loadMemberData(id));
+
       const members = (await Promise.all(memberPromises)).filter(
         (member): member is MemberData => member !== null
       );
+
       this.members = members;
+      this.updateMembersOnlineStatus();
     } catch (error) {
       console.error('Error loading members:', error);
     }
@@ -128,20 +198,23 @@ export class MemberOverviewComponent implements OnInit {
 
   /**
    * Closes the dialog
+   * @returns {void}
    */
   close(): void {
     this.dialogRef.close();
   }
 
   /**
-   * Opens profile dialog for member
+   * Opens profile dialog for a specific member
+   * @param {MemberData} member - The member whose profile to open
+   * @returns {void}
    */
   openProfileDialog(member: MemberData): void {
     const userData = {
       name: member.username,
       email: member.email,
       avatar: member.photoURL,
-      status: member.online ? 'active' : 'offline',
+      status: this.isUserOnline(member.uid) ? 'active' : 'offline',
       uid: member.uid,
     };
 
@@ -152,11 +225,11 @@ export class MemberOverviewComponent implements OnInit {
   }
 
   /**
-   * Opens add people dialog
+   * Opens dialog to add people to the channel
+   * @returns {void}
    */
   openAddPeopleDialog(): void {
     this.dialogRef.close();
-
     this.dialog.open(AddPeopleComponent, {
       position: { top: '160px' },
       hasBackdrop: true,

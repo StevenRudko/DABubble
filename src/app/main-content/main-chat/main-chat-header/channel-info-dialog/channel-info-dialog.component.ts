@@ -222,7 +222,7 @@ export class ChannelInfoDialogComponent implements AfterViewInit, OnInit {
   }
 
   /**
-   * Removes current user from the channel
+   * Removes current user from the channel and redirects to self-chat
    */
   async leaveChannel(): Promise<void> {
     try {
@@ -230,6 +230,9 @@ export class ChannelInfoDialogComponent implements AfterViewInit, OnInit {
         this.data.channelId,
         this.data.userId
       );
+
+      await this.chatService.openSelfChat();
+
       this.dialogRef.close('channelLeft');
     } catch (error) {
       console.error('Error leaving channel:', error);

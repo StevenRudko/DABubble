@@ -61,29 +61,69 @@ export class ChatService {
   constructor(private firestore: Firestore, private authService: AuthService) {
     this.authService.user$.subscribe((user) => {
       this.currentUser = user;
+      if (user) {
+        // Wenn ein User eingeloggt ist, öffnen wir automatisch seinen eigenen Chat
+        this.openSelfChat();
+      }
     });
   }
 
+  async openSelfChat(): Promise<void> {
+    if (this.currentUser) {
+      // Setze den aktuellen User als Direct Message Partner
+      const selfUserData = {
+        uid: this.currentUser.uid,
+        email: this.currentUser.email,
+        photoURL: this.currentUser.photoURL,
+        displayName: this.currentUser.displayName,
+        username: this.currentUser.username,
+        online: true,
+      };
+
+      // Reset channel und setze Direct Message
+      this.currentChannelSubject.next(null);
+      this.isNewMessageSubject.next(false);
+      this.currentDirectUserSubject.next(selfUserData);
+
+      // Lade die Nachrichten für den Self-Chat
+      const messagesCollection = collection(this.firestore, 'userMessages');
+      const q = query(
+        messagesCollection,
+        where('authorId', '==', this.currentUser.uid),
+        where('directUserId', '==', this.currentUser.uid)
+      );
+
+      collectionData(q, { idField: 'id' })
+        .pipe(
+          distinctUntilChanged(
+            (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)
+          )
+        )
+        .subscribe((messages) => {
+          const sortedMessages = this.sortMessagesByDate(
+            messages as UserMessage[]
+          );
+          this.messagesSubject.next(sortedMessages);
+        });
+    }
+  }
+
   /**
-   * Called when a message was successfully sent
-   * Resets the new message UI state
+   * Deactivates new message mode after message is sent
    */
   messageWasSent(): void {
-    // Reset new message mode
     this.isNewMessageSubject.next(false);
-    // Clear selected recipient
     this.selectedSearchResultSubject.next(null);
-    // Trigger message sent event
     this.messageSentSubject.next(true);
   }
 
+  /**
+   * Activates new message mode and resets current selections
+   */
   toggleNewMessage(): void {
-    const newValue = !this.isNewMessageSubject.value;
-    if (newValue) {
-      this.currentChannelSubject.next(null);
-      this.currentDirectUserSubject.next(null);
-    }
-    this.isNewMessageSubject.next(newValue);
+    this.isNewMessageSubject.next(true);
+    this.currentChannelSubject.next(null);
+    this.currentDirectUserSubject.next(null);
   }
 
   setSelectedSearchResult(result: SearchResult | null): void {
@@ -294,6 +334,8 @@ export class ChatService {
           members,
           updatedAt: serverTimestamp(),
         });
+
+        this.currentChannelSubject.next(null);
       }
     } catch (error) {
       console.error('Error removing user from channel:', error);

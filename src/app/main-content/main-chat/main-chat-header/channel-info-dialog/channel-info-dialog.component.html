@@ -7,7 +7,7 @@
   </div>
 
   <div class="content-wrapper">
-    <div class="section-box" [class.editing]="isEditingName">
+    <div class="section-box name-part" [class.editing]="isEditingName">
       <div class="section-header">
         <span>Channel-Name</span>
         <button mat-button color="primary" class="edit-button" *ngIf="!isEditingName" (click)="toggleEditName()">
