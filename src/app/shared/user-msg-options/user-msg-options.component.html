@@ -7,16 +7,17 @@
         <button mat-icon-button>
           <mat-icon>🙌</mat-icon>
         </button>
-        <button mat-icon-button (mouseenter)="onMouseEnter()"  (mouseleave)="onMouseLeave()">
+        <button mat-icon-button (mouseenter)="onMouseEnter('tag_face')"  (mouseleave)="onMouseLeave('tag_face')">
           <mat-icon>tag_faces</mat-icon>
         </button>
         <button mat-icon-button >
           <mat-icon>insert_comment</mat-icon>
         </button>
-        <button mat-icon-button>
+        <button mat-icon-button (mouseenter)="onMouseEnter('edit')"  (mouseleave)="onMouseLeave('edit')">
           <mat-icon>more_vert</mat-icon>
         </button>
       </mat-card-content>
     </mat-card>
 
   <app-emoji-picker *ngIf="hoverFaceTag"></app-emoji-picker>
+  <app-messages-edit-options *ngIf="hoverEdit"></app-messages-edit-options>

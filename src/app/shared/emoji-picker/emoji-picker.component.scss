@@ -7,7 +7,6 @@ mat-card {
   width:290px;
 }
 
-
 mat-card-content {
   @include styles.dFlex($d: flex,
   $fd: row,
