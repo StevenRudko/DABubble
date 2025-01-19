@@ -43,6 +43,18 @@ export class UserMessageComponent {
       // Hier kannst du etwas tun, wenn der Dialog geschlossen wird
       // console.log('Der Dialog wurde geschlossen');
     });
+  
+  }
+
+  openEditOptions(msgId: string): void {
+    const dialogRef = this.dialog.open(MessagesEditOptionsComponent, {
+      data: { userMessageId: msgId }  // Hier kannst du beliebige Daten übergeben
+    });
+  
+    dialogRef.afterClosed().subscribe((result) => {
+      // Hier kannst du etwas tun, wenn der Dialog geschlossen wird
+      // console.log('Der Dialog wurde geschlossen');
+    });
   }
 
   onMouseLeave(msgId: string) {
@@ -56,10 +68,4 @@ export class UserMessageComponent {
     });
   }
 
-  openEditOptions(): void {
-    const dialogRef = this.dialog.open(MessagesEditOptionsComponent, {});
-    dialogRef.afterClosed().subscribe((result) => {
-      // console.log('The dialog was closed');
-    });
-  }
 }

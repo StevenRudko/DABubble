@@ -13,11 +13,6 @@
         <p>{{ msg.message }}</p>
       </div>
 
-      <div class="user-message-row-bottom" *ngIf="showAnswerDetails" (click)="openThread()">
-        <p class="comments-number">2 Antworten</p>
-        <p class="last-comment-time">Letzte Antwort 14:56</p>
-      </div>
-
       <div class="reaction-icons-row-bottom" *ngIf="showReactionIcons">
         <div class="reaction-btn-div bg-frame-v1">
 
@@ -37,6 +32,11 @@
             <mat-icon>tag_faces</mat-icon>
           </button>
         </div>
+      </div>
+
+      <div class="user-message-row-bottom" *ngIf="showAnswerDetails" (click)="openThread()">
+        <p class="comments-number">2 Antworten</p>
+        <p class="last-comment-time">Letzte Antwort 14:56</p>
       </div>
     </div>
   </div>
