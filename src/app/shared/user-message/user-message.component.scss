@@ -3,13 +3,11 @@
 @use "./../../../assets/styles/theme-colors.scss" as colors;
 
 section {
-  @include styles.dFlex(
-    $d: flex,
+  @include styles.dFlex($d: flex,
     $fd: column,
     $jc: flex-start,
     $ai: flex-start,
-    $g: 24px
-  );
+    $g: 24px);
   cursor: pointer;
   position: relative;
   z-index: 2;
@@ -42,13 +40,11 @@ section {
 }
 
 .user-message-container {
-  @include styles.dFlex(
-    $d: flex,
+  @include styles.dFlex($d: flex,
     $fd: row,
     $jc: flex-start,
     $ai: flex-start,
-    $g: 28px
-  );
+    $g: 28px);
   @include styles.padding($pl: 28px, $pr: 28px, $pt: 8px, $pb: 8px);
 
   &.myMessageStyle {
@@ -62,13 +58,11 @@ section {
 }
 
 .user-message-box {
-  @include styles.dFlex(
-    $d: flex,
+  @include styles.dFlex($d: flex,
     $fd: column,
     $jc: flex-start,
     $ai: flex-start,
-    $g: 12px
-  );
+    $g: 12px);
 
   &.myMessageStyle {
     align-items: flex-end;
@@ -76,13 +70,11 @@ section {
 }
 
 .user-message-row-top {
-  @include styles.dFlex(
-    $d: flex,
+  @include styles.dFlex($d: flex,
     $fd: row,
     $jc: flex-start,
     $ai: center,
-    $g: 24px
-  );
+    $g: 24px);
 
   &.myMessageStyle {
     flex-direction: row-reverse;
@@ -121,13 +113,11 @@ section {
 }
 
 .user-message-row-bottom {
-  @include styles.dFlex(
-    $d: flex,
+  @include styles.dFlex($d: flex,
     $fd: row,
     $jc: flex-start,
     $ai: center,
-    $g: 24px
-  );
+    $g: 24px);
 }
 
 .comments-number {
@@ -140,13 +130,11 @@ section {
 }
 
 .reaction-icons-row-bottom {
-  @include styles.dFlex(
-    $d: flex,
+  @include styles.dFlex($d: flex,
     $fd: row,
     $jc: flex-end,
     $ai: center,
-    $g: 12px
-  );
+    $g: 12px);
   margin-top: -6px;
 }
 
@@ -172,12 +160,7 @@ section {
 .reaction-btn {
   width: var(--mdc-icon-button-state-layer-size, 30px);
   height: var(--mdc-icon-button-state-layer-size, 30px);
-  padding: calc(
-    calc(
-        var(--mdc-icon-button-state-layer-size, 30px) -
-          var(--mdc-icon-button-icon-size, 24px)
-      ) / 2
-  );
+  padding: calc(calc(var(--mdc-icon-button-state-layer-size, 30px) - var(--mdc-icon-button-icon-size, 24px)) / 2);
 
   &:hover {
     color: #797ef3;
@@ -208,45 +191,6 @@ button {
   font-size: 23px;
 }
 
-.emoji-card-container {
-  @include styles.dFlex(
-    $d: flex,
-    $fd: row,
-    $jc: flex-end,
-    $ai: flex-end,
-    $g: 0
-  );
-  position: absolute;
-  width: 100%;
-  z-index: 4;
-  box-sizing: border-box;
-  padding: 0;
-  padding-right: 32px;
-  top: -20px;
-
-  &.myMessageStyle {
-    justify-content: flex-start;
-    align-items: flex-start;
-    padding: 0;
-    padding-left: 24px;
-  }
-}
-
-.emoji-card {
-  @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
-  border-bottom-right-radius: 0px;
-  width: auto;
-}
-
-.emoji-content {
-  @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
-  height: 15px;
-}
-
-.check_circle {
-  color: #4bd37b;
-}
-
 .user-message-container,
 .user-message-box,
 .user-message-row-top {
@@ -255,7 +199,8 @@ button {
 }
 
 .custom-backdrop {
-opacity:0;
-position:fixed;
-left:0;
+  opacity: 0;
+  position: relative;
+  top: 0;
+  left: -200px;
 }
