@@ -23,8 +23,8 @@
           </ng-container>
 
           <input #searchInputEl type="text" [value]="searchInput" (input)="onSearchInput($event)"
-            [disabled]="selectedResult !== null" placeholder="To: #channel, @someone or email" class="search-input"
-            [class.disabled]="selectedResult !== null">
+            [disabled]="selectedResult !== null" placeholder="An: #channel, oder @jemand oder E-Mail Adresse"
+            class="search-input" [class.disabled]="selectedResult !== null">
         </div>
 
         <div class="search-dropdown" *ngIf="showSearchDropdown && searchResults.length">
