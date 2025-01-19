@@ -1,5 +1,5 @@
-<section *ngFor="let msg of allMessages" (mouseleave)="onMouseLeave(msg.userMessageId)" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
-
+<section *ngFor="let msg of allMessages" (mouseenter)="onMouseEnter(msg.userMessageId)" (mouseleave)="onMouseLeave(msg.userMessageId)" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
+  <app-user-msg-options *ngIf="hoverComponent"></app-user-msg-options>
   <div class="user-message-container" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
     <div>
       <img class="user-message-img" src="img-placeholder/noah.svg" alt="" />
@@ -11,11 +11,6 @@
       </div>
       <div class="user-message-row-center" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
         <p>{{ msg.message }}</p>
-      </div>
-
-      <div class="user-message-row-bottom" *ngIf="showAnswerDetails" (click)="openThread()">
-        <p class="comments-number">2 Antworten</p>
-        <p class="last-comment-time">Letzte Antwort 14:56</p>
       </div>
 
       <div class="reaction-icons-row-bottom" *ngIf="showReactionIcons">
@@ -37,6 +32,11 @@
             <mat-icon>tag_faces</mat-icon>
           </button>
         </div>
+      </div>
+
+      <div class="user-message-row-bottom" *ngIf="showAnswerDetails" (click)="openThread()">
+        <p class="comments-number">2 Antworten</p>
+        <p class="last-comment-time">Letzte Antwort 14:56</p>
       </div>
     </div>
   </div>

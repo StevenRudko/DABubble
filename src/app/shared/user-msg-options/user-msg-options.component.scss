@@ -2,39 +2,32 @@
 @use "./../../../assets/styles/fonts.scss" as fonts;
 @use "./../../../assets/styles/theme-colors.scss" as colors;
 
-.emoji-card-container {
-    // @include styles.dFlex(
-    //   $d: flex,
-    //   $fd: row,
-    //   $jc: flex-end,
-    //   $ai: flex-end,
-    //   $g: 0
-    // );
 
-    // z-index: 4;
-    // box-sizing: border-box;
-    border:2px solid grey;
-  
+mat-card-content {
+  @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
+  height: 24px;
+}
 
-    &.myMessageStyle {
-    //   justify-content: flex-start;
-    //   align-items: flex-start;
-    //   padding: 0;
-    //   padding-left: 24px;
-    }
-  }
-  
-  .emoji-card {
-    @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
-    border-bottom-right-radius: 0px;
-    width: auto;
-  }
-  
-  .emoji-content {
-    @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
-    height: 15px;
-  }
+mat-card {
+  border-bottom-right-radius: 0px !important;
+}
 
-  .check_circle {
-    color: #4bd37b;
-  }
+.check_circle {
+  color: #4bd37b;
+}
+
+app-emoji-picker {
+  position:relative;
+  z-index:4;
+  left:150px;
+  top:-30px;
+  width:240px;
+}
+
+app-messages-edit-options {
+  position:relative;
+  z-index:4;
+  right:-230px;
+  top:-30px;
+  width:240px;
+}

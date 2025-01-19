@@ -1,43 +1,23 @@
-<!-- <div class="emoji-card-container" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
-    <mat-card *ngIf="hoverStateMap[msg.userMessageId]" class="emoji-card bg-frame-v1">
-      <mat-card-content class="emoji-content">
-        <button mat-icon-button *ngIf="!threadMessage">
-          <mat-icon class="check_circle">check_circle</mat-icon>
-        </button>
-        <button mat-icon-button *ngIf="!threadMessage">
-          <mat-icon>🙌</mat-icon>
-        </button>
-        <button mat-icon-button (click)="openEmojiPicker()">
-          <mat-icon>tag_faces</mat-icon>
-        </button>
-        <button mat-icon-button *ngIf="!threadMessage">
-          <mat-icon>insert_comment</mat-icon>
-        </button>
-        <button mat-icon-button *ngIf="msg.isOwnMessage" (click)="openEditOptions()">
-          <mat-icon>more_vert</mat-icon>
-        </button>
-      </mat-card-content>
-    </mat-card>
-  </div> -->
 
-  <div class="emoji-card-container">
-    <mat-card class="emoji-card bg-frame-v1">
-      <mat-card-content class="emoji-content">
+    <mat-card class="bg-frame-v1">
+      <mat-card-content>
         <button mat-icon-button>
           <mat-icon class="check_circle">check_circle</mat-icon>
         </button>
         <button mat-icon-button>
           <mat-icon>🙌</mat-icon>
         </button>
-        <button mat-icon-button (click)="openEmojiPicker()">
+        <button mat-icon-button (mouseenter)="onMouseEnter('tag_face')"  (mouseleave)="onMouseLeave('tag_face')">
           <mat-icon>tag_faces</mat-icon>
         </button>
         <button mat-icon-button >
           <mat-icon>insert_comment</mat-icon>
         </button>
-        <button mat-icon-button>
+        <button mat-icon-button (mouseenter)="onMouseEnter('edit')"  (mouseleave)="onMouseLeave('edit')">
           <mat-icon>more_vert</mat-icon>
         </button>
       </mat-card-content>
     </mat-card>
-  </div>
+
+  <app-emoji-picker *ngIf="hoverFaceTag"></app-emoji-picker>
+  <app-messages-edit-options *ngIf="hoverEdit"></app-messages-edit-options>

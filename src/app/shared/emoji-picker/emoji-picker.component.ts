@@ -1,10 +1,11 @@
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { MATERIAL_MODULES } from '../material-imports';
 
 @Component({
   selector: 'app-emoji-picker',
   standalone: true,
-  imports: [CommonModule, NgFor],
+  imports: [CommonModule, MATERIAL_MODULES, NgFor],
   templateUrl: './emoji-picker.component.html',
   styleUrls: ['./emoji-picker.component.scss'],
 })
