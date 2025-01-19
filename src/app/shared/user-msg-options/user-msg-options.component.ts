@@ -23,4 +23,7 @@ export class UserMsgOptionsComponent {
     this.hoverFaceTag = true;
   }
 
+  onMouseLeave() {
+    this.hoverFaceTag = false;
+  }
 }
