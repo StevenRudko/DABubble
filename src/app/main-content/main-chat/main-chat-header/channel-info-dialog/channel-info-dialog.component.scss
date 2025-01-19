@@ -1,6 +1,7 @@
 .dialog-container {
   background-color: white;
   width: 800px;
+  min-height: 600px;
 }
 
 .dialog-header {
@@ -237,6 +238,8 @@
     border-radius: 25px;
     border: none !important;
     transition: all 0.3s ease-in-out;
+    position: absolute;
+    bottom: 2rem;
 
     &:hover {
       background-color: #797ef3 !important;
