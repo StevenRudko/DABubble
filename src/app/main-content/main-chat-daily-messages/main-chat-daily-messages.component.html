@@ -49,7 +49,7 @@
           </div>
         </div>
         <app-user-message *ngFor="let msg of entry.value" [allMessages]="[msg]" [threadMessage]="false"
-          [ownMessage]="ownMessageStyle" [showAnswerDetails]="true" [showReactionIcons]="false"
+          [ownMessage]="ownMessageStyle" [showAnswerDetails]="true" [showReactionIcons]="true"
           (openThreadEvent)="openThread()" class="width-100">
         </app-user-message>
       </div>
@@ -62,7 +62,7 @@
           </div>
         </div>
         <app-user-message *ngFor="let msg of groupedMessages['HEUTE']" [allMessages]="[msg]" [threadMessage]="false"
-          [ownMessage]="ownMessageStyle" [showAnswerDetails]="false" [showReactionIcons]="true" class="width-100">
+          [ownMessage]="ownMessageStyle" [showAnswerDetails]="true" [showReactionIcons]="true" class="width-100">
         </app-user-message>
       </div>
     </div>
