@@ -204,7 +204,8 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
             this.newMessageRecipient.id
           );
         }
-        // Der selectedSearchResult bleibt erhalten
+        // Signalisiere, dass die Nachricht gesendet wurde
+        this.chatService.messageWasSent();
       }
 
       // Force refresh der Nachrichten

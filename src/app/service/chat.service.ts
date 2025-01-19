@@ -51,6 +51,10 @@ export class ChatService {
   private selectedSearchResultSubject =
     new BehaviorSubject<SearchResult | null>(null);
   selectedSearchResult$ = this.selectedSearchResultSubject.asObservable();
+  /** Subject to handle message sent events */
+  private messageSentSubject = new BehaviorSubject<boolean>(false);
+  /** Observable for message sent events */
+  messageSent$ = this.messageSentSubject.asObservable();
 
   private currentUser: any = null;
 
@@ -58,6 +62,19 @@ export class ChatService {
     this.authService.user$.subscribe((user) => {
       this.currentUser = user;
     });
+  }
+
+  /**
+   * Called when a message was successfully sent
+   * Resets the new message UI state
+   */
+  messageWasSent(): void {
+    // Reset new message mode
+    this.isNewMessageSubject.next(false);
+    // Clear selected recipient
+    this.selectedSearchResultSubject.next(null);
+    // Trigger message sent event
+    this.messageSentSubject.next(true);
   }
 
   toggleNewMessage(): void {

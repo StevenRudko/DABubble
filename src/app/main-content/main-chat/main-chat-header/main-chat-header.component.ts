@@ -94,6 +94,12 @@ export class MainChatHeaderComponent {
     this.channelMembers$ = new Observable<ChatMember[]>();
     this.isNewMessage$ = this.chatService.isNewMessage$;
 
+    // Listen for message sent events
+    this.chatService.messageSent$.subscribe(() => {
+      this.selectedResult = null;
+      this.resetSearch();
+    });
+
     this.setupInitialSubscriptions();
     this.setupSearchSubscription();
   }
