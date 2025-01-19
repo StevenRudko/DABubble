@@ -2,27 +2,15 @@
 @use "./../../../assets/styles/fonts.scss" as fonts;
 @use "./../../../assets/styles/theme-colors.scss" as colors;
 
-.emoji-card-container {
-    // @include styles.dFlex(
-    //   $d: flex,
-    //   $fd: row,
-    //   $jc: flex-end,
-    //   $ai: flex-end,
-    //   $g: 0
-    // );
+// .emoji-card-container {
 
-    // z-index: 4;
-    // box-sizing: border-box;
-    border:2px solid grey;
-  
-
-    &.myMessageStyle {
-    //   justify-content: flex-start;
-    //   align-items: flex-start;
-    //   padding: 0;
-    //   padding-left: 24px;
-    }
-  }
+//     &.myMessageStyle {
+//       justify-content: flex-start;
+//       align-items: flex-start;
+//       padding: 0;
+//       padding-left: 24px;
+//     }
+//   }
   
   .emoji-card {
     @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
@@ -37,4 +25,24 @@
 
   .check_circle {
     color: #4bd37b;
+  }
+
+  app-emoji-picker {
+    @include styles.dFlex(
+      $d: flex,
+      $fd: row,
+      $jc: flex-start,
+      $ai: flex-start,
+      $g: 12px
+    );
+    width: 300px;
+    height:50px;
+    background-color: white;
+    padding: 20px;
+    flex-wrap: wrap; 
+
+    // position:absolute;
+    // z-index:4;
+    // left:20px;
+    // top:-20px;
   }

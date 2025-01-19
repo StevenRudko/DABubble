@@ -29,7 +29,7 @@
         <button mat-icon-button>
           <mat-icon>🙌</mat-icon>
         </button>
-        <button mat-icon-button (click)="openEmojiPicker()">
+        <button mat-icon-button (mouseenter)="onMouseEnter()"  (mouseleave)="onMouseLeave()">
           <mat-icon>tag_faces</mat-icon>
         </button>
         <button mat-icon-button >
@@ -41,3 +41,5 @@
       </mat-card-content>
     </mat-card>
   </div>
+
+  <app-emoji-picker *ngIf="hoverStateMap"></app-emoji-picker>

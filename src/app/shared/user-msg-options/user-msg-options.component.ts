@@ -7,19 +7,23 @@ import { MatDialog } from '@angular/material/dialog';
 @Component({
   selector: 'app-user-msg-options',
   standalone: true,
-  imports: [CommonModule, MATERIAL_MODULES],
+  imports: [CommonModule, MATERIAL_MODULES, EmojiPickerComponent],
   templateUrl: './user-msg-options.component.html',
   styleUrl: './user-msg-options.component.scss'
 })
 
+
+
 export class UserMsgOptionsComponent {
+  hoverStateMap: boolean = false;
 
-  constructor(private dialog: MatDialog) {}
+  constructor() {}
 
-  openEmojiPicker(): void {
-    const dialogRef = this.dialog.open(EmojiPickerComponent, {backdropClass: 'custom-backdrop'});
-    dialogRef.afterClosed().subscribe((result) => {
-      // console.log('The dialog was closed');
-    });
+  onMouseEnter() {
+    this.hoverStateMap = true;
+  }
+
+  onMouseLeave() {
+    this.hoverStateMap = false;
   }
 }

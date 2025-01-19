@@ -9,7 +9,7 @@ import { UserMsgOptionsComponent } from '../user-msg-options/user-msg-options.co
 @Component({
   selector: 'app-user-message',
   standalone: true,
-  imports: [CommonModule, MATERIAL_MODULES, NgIf],
+  imports: [CommonModule, MATERIAL_MODULES, NgIf, UserMsgOptionsComponent],
   templateUrl: './user-message.component.html',
   styleUrl: './user-message.component.scss',
 })
@@ -21,7 +21,7 @@ export class UserMessageComponent {
   @Input() showReactionIcons: boolean = true;
   @Input() allMessages: { timestamp: number; userMessageId: string; author: string, isOwnMessage: boolean; message: string; emojis: string[]; hours: number; minutes: number }[] = [];
 
-  hoverStateMap: { [userMessageId: string]: boolean } = {};
+  hoverStateMap: boolean = false;
   @Output() openThreadEvent = new EventEmitter<void>();
 
   constructor(private dialog: MatDialog) {}
@@ -31,34 +31,11 @@ export class UserMessageComponent {
   }
 
   onMouseEnter(msgId: string) {
-    this.hoverStateMap[msgId] = true;
-  
-    // Öffne den Dialog zur Anzeige der Optionen
-    const dialogRef = this.dialog.open(UserMsgOptionsComponent, {
-      backdropClass: 'custom-backdrop',  // Dies kann je nach deinem Design geändert werden
-      data: { userMessageId: msgId }    // Hier kannst du beliebige Daten übergeben, z.B. die Message-ID
-    });
-  
-    dialogRef.afterClosed().subscribe((result) => {
-      // Hier kannst du etwas tun, wenn der Dialog geschlossen wird
-      // console.log('Der Dialog wurde geschlossen');
-    });
-  
-  }
-
-  openEditOptions(msgId: string): void {
-    const dialogRef = this.dialog.open(MessagesEditOptionsComponent, {
-      data: { userMessageId: msgId }  // Hier kannst du beliebige Daten übergeben
-    });
-  
-    dialogRef.afterClosed().subscribe((result) => {
-      // Hier kannst du etwas tun, wenn der Dialog geschlossen wird
-      // console.log('Der Dialog wurde geschlossen');
-    });
+    this.hoverStateMap = true;
   }
 
   onMouseLeave(msgId: string) {
-    this.hoverStateMap[msgId] = false;
+    this.hoverStateMap = false;
   }
 
   openEmojiPicker(): void {

@@ -1,6 +1,8 @@
   <!-- Anzeige der verfügbaren Emojis -->
-  <div class="emoji-picker">
-    <div class="emoji-row" *ngFor="let emoji of emojiList" (click)="onEmojiSelect(emoji)">
-      <span>{{ emoji.emoji }}</span>
-    </div>
+  <div class="">
+    <mat-card class="bg-frame-v1">
+      <mat-card-content class="">
+        <span *ngFor="let emoji of emojiList" (click)="onEmojiSelect(emoji)">{{ emoji.emoji }}</span>
+      </mat-card-content>
+    </mat-card>
   </div>
