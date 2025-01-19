@@ -202,22 +202,26 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     this.groupMessagesByDate();
   }
 
-  // vearbeitet die msg time in verschiedene Formate um
+  formatTimeUnit(unit: number): string {
+    return unit < 10 ? `0${unit}` : `${unit}`;
+  }
+
+    // vearbeitet die msg time in verschiedene Formate um
   getMsgTime(msg: UserMessageInterface) {
     const timestamp: any = msg.time;
     const msgTimeStampSeconds = timestamp.seconds;
     const msgTimeStampNano = timestamp.nanoseconds;
     this.msgTime = msgTimeStampSeconds * 1000 + msgTimeStampNano / 1000000;
-
+  
     this.msgDateTime = new Date(this.msgTime);
     this.msgDateTime.setHours(0, 0, 0, 0); // Uhrzeit auf Mitternacht setzen, da nur der Tag für uns relevant ist
-
+  
     this.todayDateTime = new Date(this.timeDateToday);
     this.todayDateTime.setHours(0, 0, 0, 0);
-
+  
     const exactTime = new Date(this.msgTime);
-    this.msgTimeHours = exactTime.getHours();
-    this.msgTimeMins = exactTime.getMinutes();
+    this.msgTimeHours = this.formatTimeUnit(exactTime.getHours());  // Formatieren der Stunden
+    this.msgTimeMins = this.formatTimeUnit(exactTime.getMinutes()); // Formatieren der Minuten
   }
 
   // holt sich den usernamen aus der anderen Sammlung entsprechend der authorId
@@ -254,7 +258,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   }
 
   sortMessagesByTime() {
-    this.allMessages.sort((a, b) => b.timestamp - a.timestamp);
+    this.allMessages.sort((a, b) => a.timestamp - b.timestamp); // Sortierung in aufsteigender Reihenfolge
   }
 
   // Funktion zum Gruppieren der Nachrichten nach Datum
