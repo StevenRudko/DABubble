@@ -8,6 +8,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { AddPeopleComponent } from '../add-people/add-people.component';
 import { PresenceService } from '../../../../service/presence.service';
+import { Auth } from '@angular/fire/auth';
 import { Subscription } from 'rxjs';
 
 interface MemberData {
@@ -53,7 +54,8 @@ export class MemberOverviewComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private chatService: ChatService,
     private firestore: Firestore,
-    private presenceService: PresenceService
+    private presenceService: PresenceService,
+    private auth: Auth
   ) {}
 
   /**
@@ -94,6 +96,10 @@ export class MemberOverviewComponent implements OnInit, OnDestroy {
    * @returns {boolean} Whether the user is online
    */
   private isUserOnline(userId: string): boolean {
+    // If the user is the current logged-in user, always show as online
+    if (userId === this.auth.currentUser?.uid) {
+      return true;
+    }
     return this.onlineUsers.has(userId);
   }
 

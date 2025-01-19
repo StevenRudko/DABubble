@@ -10,6 +10,7 @@ import {
 import { ChatService } from '../../service/chat.service';
 import { PresenceService } from '../../service/presence.service';
 import { Subscription } from 'rxjs';
+import { Auth } from '@angular/fire/auth';
 
 /**
  * Interface for user data in profile overview
@@ -49,20 +50,42 @@ export class ProfileOverviewComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data: UserData,
     private chatService: ChatService,
     private presenceService: PresenceService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private auth: Auth
   ) {}
 
   /**
-   * Sets up presence subscription
+   * Sets up presence subscription to update user status
    */
   ngOnInit(): void {
     this.presenceSubscription = this.presenceService
       .getOnlineUsers()
       .subscribe((onlineUsers) => {
-        this.data.status = onlineUsers.includes(this.data.uid)
-          ? 'active'
-          : 'offline';
+        this.data.status =
+          this.data.uid === this.auth.currentUser?.uid
+            ? 'active'
+            : onlineUsers.includes(this.data.uid)
+            ? 'active'
+            : 'offline';
       });
+  }
+
+  /**
+   * Updates user status based on online users list
+   * @param {string[]} onlineUsers - List of online user IDs
+   */
+  private updateUserStatus(onlineUsers: string[]): void {
+    // Update status, with special handling for the current user
+    this.data.status = this.isUserOnline(onlineUsers) ? 'active' : 'offline';
+  }
+
+  /**
+   * Checks if the user is online
+   * @param {string[]} onlineUsers - List of online user IDs
+   * @returns {boolean} Whether the user is online
+   */
+  private isUserOnline(onlineUsers: string[]): boolean {
+    return onlineUsers.includes(this.data.uid);
   }
 
   /**
@@ -82,7 +105,9 @@ export class ProfileOverviewComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Gets localized status text and updates color
+   * Gets localized status text
+   * @param {string} status - Current user status
+   * @returns {string} Localized status text
    */
   getStatusText(status: string): string {
     return this.statusMap[status] || this.statusMap['offline'];
