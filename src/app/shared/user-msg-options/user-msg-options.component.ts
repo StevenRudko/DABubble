@@ -26,11 +26,7 @@ export class UserMsgOptionsComponent {
   hoverFaceTag: boolean = false;
   hoverEdit: boolean = false;
 
-  constructor() {
-    // setTimeout(()=> {
-    //   console.log('userMsgID: ', this.userMessageId);
-    // }, 500);
-  }
+  constructor() {}
 
   /**
    * Handles mouseenter events for different interactive elements

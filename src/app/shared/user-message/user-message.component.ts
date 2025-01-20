@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MessagesEditOptionsComponent } from '../messages-edit-options/messages-edit-options.component';
 import { UserMsgOptionsComponent } from '../user-msg-options/user-msg-options.component';
 import { UserData } from '../../service/user-data.service';
+import { EditMessageComponent } from '../edit-message/edit-message.component';
 
 @Component({
   selector: 'app-user-message',
@@ -68,6 +69,28 @@ export class UserMessageComponent {
     })
     .catch((error) => {
       console.error('Fehler beim Löschen der Nachricht:', error);
+    });
+
+  }
+
+   // Event-Handler, der beim Bearbeiten einer Nachricht aufgerufen wird
+  editMessage(message: { userMessageId: string, message: string }) {
+    const dialogRef = this.dialog.open(EditMessageComponent, {
+      data: { message: message.message },
+      backdropClass: 'custom-backdrop',
+    });
+
+    dialogRef.afterClosed().subscribe((editedMessage: string) => {
+      if (editedMessage !== null && editedMessage !== message.message) {
+        // Update die Nachricht, wenn sie bearbeitet wurde
+        this.userData.updateMessage(message.userMessageId, { message: editedMessage })
+          .then(() => {
+            console.log('Nachricht erfolgreich aktualisiert');
+          })
+          .catch((error) => {
+            console.error('Fehler beim Aktualisieren der Nachricht:', error);
+          });
+      }
     });
   }
 }

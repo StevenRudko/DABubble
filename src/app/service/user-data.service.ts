@@ -1,6 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Firestore } from '@angular/fire/firestore';
-import { collection, deleteDoc, doc, getDocs, onSnapshot } from 'firebase/firestore';
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  onSnapshot,
+  updateDoc,
+} from 'firebase/firestore';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { UserMessageInterface } from '../models/user-message';
 import { UserInterface } from '../models/user-interface';
@@ -93,6 +100,30 @@ export class UserData {
     });
   }
 
+  // Neue Methode zum Aktualisieren einer Nachricht
+  async updateMessage(
+    messageId: string,
+    updatedMessage: Partial<UserMessageInterface>
+  ): Promise<void> {
+    try {
+      // Die Nachricht in der Firestore-Datenbank aktualisieren
+      const messageDocRef = doc(this.firestore, 'userMessages', messageId);
+      await updateDoc(messageDocRef, updatedMessage);
+
+      // Lokale Liste der Nachrichten aktualisieren
+      const updatedMessages = this.userMessagesSubject.value.map((message) =>
+        message.userMessageId === messageId
+          ? { ...message, ...updatedMessage } // Nur die geänderten Felder aktualisieren
+          : message
+      );
+      this.userMessagesSubject.next(updatedMessages);
+
+      // console.log(`Nachricht mit ID ${messageId} erfolgreich aktualisiert.`);
+    } catch (error) {
+      console.error('Fehler beim Aktualisieren der Nachricht:', error);
+    }
+  }
+
   // Neue Funktion zum Löschen einer Nachricht
   async deleteMessage(messageId: string): Promise<void> {
     try {
@@ -106,7 +137,7 @@ export class UserData {
       );
       this.userMessagesSubject.next(updatedMessages);
 
-      console.log(`Nachricht mit ID ${messageId} erfolgreich gelöscht.`);
+      // console.log(`Nachricht mit ID ${messageId} erfolgreich gelöscht.`);
     } catch (error) {
       console.error('Fehler beim Löschen der Nachricht:', error);
     }

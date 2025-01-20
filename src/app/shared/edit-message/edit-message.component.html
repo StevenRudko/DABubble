@@ -1,0 +1,6 @@
+<h2>Nachricht bearbeiten</h2>
+<textarea *ngIf="editedMessage" rows="4" cols="50"></textarea>
+<div>
+  <button mat-button (click)="onCancel()">Abbrechen</button>
+  <button mat-button (click)="onSave()">Speichern</button>
+</div>
