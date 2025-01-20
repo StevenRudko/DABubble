@@ -4,19 +4,22 @@
 
 mat-card {
   border-top-left-radius: 0px !important;
-  width:290px;
+  width: 290px;
+  position: absolute;
 }
 
 mat-card-content {
-  @include styles.dFlex($d: flex,
-  $fd: row,
-  $jc: flex-start,
-  $ai: flex-start,
-  $g: 12px);
+  @include styles.dFlex(
+    $d: flex,
+    $fd: row,
+    $jc: flex-start,
+    $ai: flex-start,
+    $g: 12px
+  );
   flex-wrap: wrap;
 }
 
 .emoji-icons {
-  cursor:pointer;
-  font-size:24px;
+  cursor: pointer;
+  font-size: 24px;
 }

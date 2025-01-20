@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { MATERIAL_MODULES } from '../material-imports';
 import { CommonModule, NgIf } from '@angular/common';
 import { EmojiPickerComponent } from '../emoji-picker/emoji-picker.component';
@@ -8,19 +8,31 @@ import { MessagesEditOptionsComponent } from '../messages-edit-options/messages-
 @Component({
   selector: 'app-user-msg-options',
   standalone: true,
-  imports: [CommonModule, MATERIAL_MODULES, EmojiPickerComponent, MessagesEditOptionsComponent],
+  imports: [
+    CommonModule,
+    MATERIAL_MODULES,
+    EmojiPickerComponent,
+    MessagesEditOptionsComponent,
+  ],
   templateUrl: './user-msg-options.component.html',
-  styleUrl: './user-msg-options.component.scss'
+  styleUrl: './user-msg-options.component.scss',
 })
-
 export class UserMsgOptionsComponent {
+  @Output() editMessageEvent = new EventEmitter<void>();
+  @Output() deleteMessageEvent = new EventEmitter<void>();
+
   hoverFaceTag: boolean = false;
   hoverEdit: boolean = false;
 
-  constructor() {}
-
+  /**
+   * Handles mouseenter events for different interactive elements
+   * @param {string} obj - Identifier of the hovered element
+   */
   onMouseEnter(obj: string) {
-    if(obj === 'tag_face') {
+    this.hoverFaceTag = false;
+    this.hoverEdit = false;
+
+    if (obj === 'tag_face') {
       this.hoverFaceTag = true;
     } else if (obj === 'edit') {
       this.hoverEdit = true;
@@ -28,10 +40,40 @@ export class UserMsgOptionsComponent {
   }
 
   onMouseLeave(obj: string) {
-    if(obj === 'tag_face') {
+    if (obj === 'tag_face' && !this.hoverFaceTag) {
       this.hoverFaceTag = false;
-    } else if (obj === 'edit') {
+    } else if (obj === 'edit' && !this.hoverEdit) {
       this.hoverEdit = false;
     }
+  }
+
+  onEmojiPickerMouseState(isOver: boolean) {
+    this.hoverFaceTag = isOver;
+    if (isOver) {
+      this.hoverEdit = false;
+    }
+  }
+
+  onEditOptionsMouseState(isOver: boolean) {
+    this.hoverEdit = isOver;
+    if (isOver) {
+      this.hoverFaceTag = false;
+    }
+  }
+
+  /**
+   * Handle edit message request from edit options menu
+   */
+  onEditMessage(): void {
+    this.editMessageEvent.emit();
+    this.hoverEdit = false;
+  }
+
+  /**
+   * Handle delete message request from edit options menu
+   */
+  onDeleteMessage(): void {
+    this.deleteMessageEvent.emit();
+    this.hoverEdit = false;
   }
 }

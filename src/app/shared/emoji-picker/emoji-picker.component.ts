@@ -1,5 +1,5 @@
 import { CommonModule, NgFor, NgIf } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { MATERIAL_MODULES } from '../material-imports';
 
 @Component({
@@ -36,6 +36,8 @@ export class EmojiPickerComponent implements OnInit {
 
   selectedEmojis: string[] = [];
 
+  @Output() mouseStateChange = new EventEmitter<boolean>();
+
   constructor() {}
 
   ngOnInit(): void {}
@@ -44,5 +46,23 @@ export class EmojiPickerComponent implements OnInit {
   onEmojiSelect(emoji: any): void {
     this.selectedEmojis.push(emoji.emoji);
     console.log('Ausgewähltes Emoji:', emoji.emoji);
+  }
+
+  /**
+   * Handles the mouseenter event on the emoji picker
+   * Used to maintain visibility when hovering over the picker itself
+   * @returns {void}
+   */
+  onMouseEnter(): void {
+    this.mouseStateChange.emit(true);
+  }
+
+  /**
+   * Handles the mouseleave event on the emoji picker
+   * Used to hide the picker when mouse leaves the component area
+   * @returns {void}
+   */
+  onMouseLeave(): void {
+    this.mouseStateChange.emit(false);
   }
 }

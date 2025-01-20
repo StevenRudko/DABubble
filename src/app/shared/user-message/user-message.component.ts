@@ -19,7 +19,16 @@ export class UserMessageComponent {
   @Input() showReactionEmojis: boolean = false;
   @Input() showAnswerDetails: boolean = true;
   @Input() showReactionIcons: boolean = true;
-  @Input() allMessages: { timestamp: number; userMessageId: string; author: string, isOwnMessage: boolean; message: string; emojis: string[]; hours: number; minutes: number }[] = [];
+  @Input() allMessages: {
+    timestamp: number;
+    userMessageId: string;
+    author: string;
+    isOwnMessage: boolean;
+    message: string;
+    emojis: string[];
+    hours: number;
+    minutes: number;
+  }[] = [];
 
   hoverComponent: boolean = false;
   hoverFaceTag: boolean = false;
@@ -41,10 +50,11 @@ export class UserMessageComponent {
   }
 
   openEmojiPicker(): void {
-    const dialogRef = this.dialog.open(EmojiPickerComponent, {backdropClass: 'custom-backdrop'});
+    const dialogRef = this.dialog.open(EmojiPickerComponent, {
+      backdropClass: 'custom-backdrop',
+    });
     dialogRef.afterClosed().subscribe((result) => {
       // console.log('The dialog was closed');
     });
   }
-
 }

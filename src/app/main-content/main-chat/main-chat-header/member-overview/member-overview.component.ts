@@ -20,7 +20,7 @@ interface MemberData {
 }
 
 interface ChannelData {
-  name: string;
+  username: string;
   type: string;
   createdAt: string;
   updatedAt: string;
@@ -217,9 +217,9 @@ export class MemberOverviewComponent implements OnInit, OnDestroy {
    */
   openProfileDialog(member: MemberData): void {
     const userData = {
-      name: member.username,
+      username: member.username,
       email: member.email,
-      avatar: member.photoURL,
+      photoURL: member.photoURL,
       status: this.isUserOnline(member.uid) ? 'active' : 'offline',
       uid: member.uid,
     };

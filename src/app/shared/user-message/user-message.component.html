@@ -1,4 +1,5 @@
-<section *ngFor="let msg of allMessages" (mouseenter)="onMouseEnter(msg.userMessageId)" (mouseleave)="onMouseLeave(msg.userMessageId)" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
+<section *ngFor="let msg of allMessages" (mouseenter)="onMouseEnter(msg.userMessageId)"
+  (mouseleave)="onMouseLeave(msg.userMessageId)" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
   <app-user-msg-options *ngIf="hoverComponent"></app-user-msg-options>
   <div class="user-message-container" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
     <div>
