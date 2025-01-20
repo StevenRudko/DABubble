@@ -11,6 +11,7 @@ import { MessagesEditOptionsComponent } from '../messages-edit-options/messages-
   imports: [
     CommonModule,
     MATERIAL_MODULES,
+    NgIf,
     EmojiPickerComponent,
     MessagesEditOptionsComponent,
   ],
@@ -23,7 +24,8 @@ export class UserMsgOptionsComponent {
   @Output() messageDeleted = new EventEmitter<string>(); // EventEmitter für die Elternkomponente
   @Output() messageEdited = new EventEmitter<string>(); // EventEmitter für die Elternkomponente
   @Input() userMessageId: string | undefined;  
-
+  @Input() showAllOptions: boolean = false;  
+  
   hoverFaceTag: boolean = false;
   hoverEdit: boolean = false;
 

@@ -12,7 +12,7 @@
     <button mat-icon-button>
       <mat-icon>insert_comment</mat-icon>
     </button>
-    <button mat-icon-button (mouseenter)="onMouseEnter('edit')" (mouseleave)="onMouseLeave('edit')">
+    <button *ngIf="showAllOptions" mat-icon-button (mouseenter)="onMouseEnter('edit')" (mouseleave)="onMouseLeave('edit')">
       <mat-icon>more_vert</mat-icon>
     </button>
   </mat-card-content>

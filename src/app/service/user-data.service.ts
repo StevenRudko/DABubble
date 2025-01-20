@@ -120,7 +120,7 @@ export class UserData {
 
       // console.log(`Nachricht mit ID ${messageId} erfolgreich aktualisiert.`);
     } catch (error) {
-      console.error('Fehler beim Aktualisieren der Nachricht:', error);
+      // console.error('Fehler beim Aktualisieren der Nachricht:', error);
     }
   }
 
@@ -139,7 +139,7 @@ export class UserData {
 
       // console.log(`Nachricht mit ID ${messageId} erfolgreich gelöscht.`);
     } catch (error) {
-      console.error('Fehler beim Löschen der Nachricht:', error);
+      // console.error('Fehler beim Löschen der Nachricht:', error);
     }
   }
 }

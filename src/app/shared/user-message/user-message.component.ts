@@ -65,10 +65,10 @@ export class UserMessageComponent {
 
     this.userData.deleteMessage(messageId)
     .then(() => {
-      console.log('Nachricht erfolgreich gelöscht');
+      // console.log('Nachricht erfolgreich gelöscht');
     })
     .catch((error) => {
-      console.error('Fehler beim Löschen der Nachricht:', error);
+      // console.error('Fehler beim Löschen der Nachricht:', error);
     });
 
   }
@@ -78,7 +78,7 @@ export class UserMessageComponent {
     const messageToEdit = this.allMessages.find(msg => msg.userMessageId === userMessageId);
   
     if (!messageToEdit) {
-      console.error('Nachricht nicht gefunden');
+      // console.error('Nachricht nicht gefunden');
       return;
     }
   
@@ -91,14 +91,13 @@ export class UserMessageComponent {
     // Wenn der Dialog geschlossen wird (nach dem Speichern oder Abbrechen)
     dialogRef.afterClosed().subscribe((editedMessage: string) => {
       if (editedMessage !== null && editedMessage !== messageToEdit.message) {
-        console.log(editedMessage);
         // Wenn die Nachricht geändert wurde, rufe die Update-Funktion auf
         this.userData.updateMessage(userMessageId, { message: editedMessage })
           .then(() => {
-            console.log('Nachricht erfolgreich aktualisiert');
+            // console.log('Nachricht erfolgreich aktualisiert');
           })
           .catch((error) => {
-            console.error('Fehler beim Aktualisieren der Nachricht:', error);
+            // console.error('Fehler beim Aktualisieren der Nachricht:', error);
           });
       }
     });
