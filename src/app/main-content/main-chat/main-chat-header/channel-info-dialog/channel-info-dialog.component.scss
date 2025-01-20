@@ -1,6 +1,7 @@
 .dialog-container {
   background-color: white;
   width: 800px;
+  min-height: 600px;
 }
 
 .dialog-header {
@@ -237,6 +238,8 @@
     border-radius: 25px;
     border: none !important;
     transition: all 0.3s ease-in-out;
+    position: absolute;
+    bottom: 2rem;
 
     &:hover {
       background-color: #797ef3 !important;
@@ -261,4 +264,23 @@
       display: none !important;
     }
   }
+}
+
+.name-part {
+  position: relative;
+  transition: all 0.3s ease-in-out;
+
+  &.editing {
+    .section-content {
+      .input-container {
+        opacity: 0;
+        animation: fadeIn 0.3s ease-in-out forwards;
+      }
+    }
+  }
+}
+
+.section-box:has(.name-part.editing) {
+  border-color: transparent;
+  transition: border-color 0.3s ease-in-out;
 }

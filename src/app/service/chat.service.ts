@@ -1,4 +1,3 @@
-// service/chat.service.ts
 import { Injectable } from '@angular/core';
 import {
   Firestore,
@@ -18,6 +17,18 @@ import {
   DirectUser,
   UserMessage,
 } from '../models/chat.interfaces';
+import { distinctUntilChanged } from 'rxjs/operators';
+import { AuthService } from './auth.service';
+
+export interface SearchResult {
+  id: string;
+  type: 'channel' | 'user';
+  name: string;
+  email?: string;
+  photoURL?: string;
+  description?: string;
+  online?: boolean;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -37,16 +48,86 @@ export class ChatService {
   currentChannelMembers$ = this.currentChannelMembersSubject.asObservable();
   private isNewMessageSubject = new BehaviorSubject<boolean>(false);
   isNewMessage$ = this.isNewMessageSubject.asObservable();
+  private selectedSearchResultSubject =
+    new BehaviorSubject<SearchResult | null>(null);
+  selectedSearchResult$ = this.selectedSearchResultSubject.asObservable();
+  /** Subject to handle message sent events */
+  private messageSentSubject = new BehaviorSubject<boolean>(false);
+  /** Observable for message sent events */
+  messageSent$ = this.messageSentSubject.asObservable();
 
-  constructor(private firestore: Firestore) {}
+  private currentUser: any = null;
 
-  toggleNewMessage(): void {
-    const newValue = !this.isNewMessageSubject.value;
-    if (newValue) {
+  constructor(private firestore: Firestore, private authService: AuthService) {
+    this.authService.user$.subscribe((user) => {
+      this.currentUser = user;
+      if (user) {
+        // Wenn ein User eingeloggt ist, öffnen wir automatisch seinen eigenen Chat
+        this.openSelfChat();
+      }
+    });
+  }
+
+  async openSelfChat(): Promise<void> {
+    if (this.currentUser) {
+      // Setze den aktuellen User als Direct Message Partner
+      const selfUserData = {
+        uid: this.currentUser.uid,
+        email: this.currentUser.email,
+        photoURL: this.currentUser.photoURL,
+        displayName: this.currentUser.displayName,
+        username: this.currentUser.username,
+        online: true,
+      };
+
+      // Reset channel und setze Direct Message
       this.currentChannelSubject.next(null);
-      this.currentDirectUserSubject.next(null);
+      this.isNewMessageSubject.next(false);
+      this.currentDirectUserSubject.next(selfUserData);
+
+      // Lade die Nachrichten für den Self-Chat
+      const messagesCollection = collection(this.firestore, 'userMessages');
+      const q = query(
+        messagesCollection,
+        where('authorId', '==', this.currentUser.uid),
+        where('directUserId', '==', this.currentUser.uid)
+      );
+
+      collectionData(q, { idField: 'id' })
+        .pipe(
+          distinctUntilChanged(
+            (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)
+          )
+        )
+        .subscribe((messages) => {
+          const sortedMessages = this.sortMessagesByDate(
+            messages as UserMessage[]
+          );
+          this.messagesSubject.next(sortedMessages);
+        });
     }
-    this.isNewMessageSubject.next(newValue);
+  }
+
+  /**
+   * Deactivates new message mode after message is sent
+   */
+  messageWasSent(): void {
+    this.isNewMessageSubject.next(false);
+    this.selectedSearchResultSubject.next(null);
+    this.messageSentSubject.next(true);
+  }
+
+  /**
+   * Activates new message mode and resets current selections
+   */
+  toggleNewMessage(): void {
+    this.isNewMessageSubject.next(true);
+    this.currentChannelSubject.next(null);
+    this.currentDirectUserSubject.next(null);
+  }
+
+  setSelectedSearchResult(result: SearchResult | null): void {
+    this.selectedSearchResultSubject.next(result);
   }
 
   async selectChannel(channelId: string): Promise<void> {
@@ -68,17 +149,22 @@ export class ChatService {
           messagesCollection,
           where('channelId', '==', channelId)
         );
-        collectionData(q).subscribe((messages) => {
-          const sortedMessages = this.sortMessagesByDate(
-            messages as UserMessage[]
-          );
-          this.messagesSubject.next(sortedMessages);
-        });
+
+        collectionData(q, { idField: 'id' })
+          .pipe(
+            distinctUntilChanged(
+              (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)
+            )
+          )
+          .subscribe((messages) => {
+            const sortedMessages = this.sortMessagesByDate(
+              messages as UserMessage[]
+            );
+            this.messagesSubject.next(sortedMessages);
+          });
       }
-      return;
     } catch (error) {
       console.error('Error loading channel:', error);
-      return;
     }
   }
 
@@ -100,24 +186,34 @@ export class ChatService {
         const messagesCollection = collection(this.firestore, 'userMessages');
         const q = query(
           messagesCollection,
-          where('directUserId', '==', userId)
+          where('directUserId', 'in', [userId, this.currentUser?.uid])
         );
-        collectionData(q).subscribe((messages) => {
-          const sortedMessages = this.sortMessagesByDate(
-            messages as UserMessage[]
-          );
-          this.messagesSubject.next(sortedMessages);
-        });
+
+        collectionData(q, { idField: 'id' })
+          .pipe(
+            distinctUntilChanged(
+              (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)
+            )
+          )
+          .subscribe((messages) => {
+            const filteredMessages = (messages as UserMessage[]).filter(
+              (msg) =>
+                (msg.authorId === userId &&
+                  msg.directUserId === this.currentUser?.uid) ||
+                (msg.authorId === this.currentUser?.uid &&
+                  msg.directUserId === userId)
+            );
+            const sortedMessages = this.sortMessagesByDate(filteredMessages);
+            this.messagesSubject.next(sortedMessages);
+          });
       }
-      return;
     } catch (error) {
       console.error('Error loading direct messages:', error);
-      return;
     }
   }
 
   private sortMessagesByDate(messages: UserMessage[]): UserMessage[] {
-    return messages.sort((a, b) => {
+    return [...messages].sort((a, b) => {
       const timeA = a.time?.seconds || 0;
       const timeB = b.time?.seconds || 0;
       return timeA - timeB;
@@ -205,10 +301,7 @@ export class ChatService {
 
   async updateChannel(
     channelId: string,
-    updates: {
-      name?: string;
-      description?: string;
-    }
+    updates: { name?: string; description?: string }
   ): Promise<void> {
     try {
       const channelRef = doc(this.firestore, `channels/${channelId}`);
@@ -241,6 +334,8 @@ export class ChatService {
           members,
           updatedAt: serverTimestamp(),
         });
+
+        this.currentChannelSubject.next(null);
       }
     } catch (error) {
       console.error('Error removing user from channel:', error);

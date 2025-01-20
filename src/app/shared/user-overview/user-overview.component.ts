@@ -17,15 +17,21 @@ import { UserInfosService } from '../../service/user-infos.service';
  */
 @Component({
   selector: 'app-user-overview',
-  imports: [CommonModule, MatIconModule, MatDialogModule, ReactiveFormsModule, FormsModule],
+  imports: [
+    CommonModule,
+    MatIconModule,
+    MatDialogModule,
+    ReactiveFormsModule,
+    FormsModule,
+  ],
   templateUrl: './user-overview.component.html',
-  styleUrl: './user-overview.component.scss'
+  styleUrl: './user-overview.component.scss',
 })
 export class UserOverviewComponent {
   /**
-  * Reference to the Material Dialog used to display this component.
-  * @type {MatDialogRef<UserOverviewComponent>}
-  */
+   * Reference to the Material Dialog used to display this component.
+   * @type {MatDialogRef<UserOverviewComponent>}
+   */
   readonly dialogRef = inject(MatDialogRef<UserOverviewComponent>);
 
   /**
@@ -70,13 +76,21 @@ export class UserOverviewComponent {
    * - Updates the user's display name in Firebase Authentication.
    * - Updates the display name in Firestore.
    * - Closes the dialog upon successful update.
-   * 
+   *
    * @returns {void}
    */
   onSubmit(): void {
-    this.authService.updateUserProfile(this.userInfoService.currentUser, this.form.controls.username.value, this.userInfoService.photoURL)
+    this.authService
+      .updateUserProfile(
+        this.userInfoService.currentUser,
+        this.form.controls.username.value,
+        this.userInfoService.photoURL
+      )
       .then(() => {
-        this.authService.updateUserNameInFirestore(this.userInfoService.uId, this.form.controls.username.value)
+        this.authService.updateUserNameInFirestore(
+          this.userInfoService.uId,
+          this.form.controls.username.value
+        );
         this.dialogRef.close();
       })
       .catch((error) => {

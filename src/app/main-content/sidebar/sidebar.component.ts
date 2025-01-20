@@ -4,19 +4,27 @@ import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { ChannelDialogComponent } from './create-channel-dialog/create-channel-dialog.component';
 import { Firestore, collection, collectionData } from '@angular/fire/firestore';
-import { Observable, map } from 'rxjs';
+import { Observable, combineLatest } from 'rxjs';
+import { map, take } from 'rxjs/operators';
 import { AuthService } from '../../service/auth.service';
 import { User } from 'firebase/auth';
 import { ChatService } from '../../service/chat.service';
-import { take } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms';
+import { PresenceService } from '../../service/presence.service';
 
+/**
+ * Interface for channel data structure
+ */
 interface Channel {
   id: string;
   name: string;
   description: string;
+  members?: { [key: string]: boolean };
 }
 
+/**
+ * Interface for user profile data structure
+ */
 interface UserProfile {
   uid: string;
   email: string;
@@ -26,6 +34,9 @@ interface UserProfile {
   username?: string;
 }
 
+/**
+ * Component managing sidebar navigation and user/channel selection
+ */
 @Component({
   selector: 'app-sidebar',
   standalone: true,
@@ -37,89 +48,129 @@ export class SidebarComponent implements OnInit {
   channels$!: Observable<Channel[]>;
   currentUser$!: Observable<User | null>;
   allUsers$!: Observable<UserProfile[]>;
-  isChannelSectionExpanded: boolean = true;
-  isDirectMessageSectionExpanded: boolean = true;
-  showNewMessage: boolean = false;
-  newMessageInput: string = '';
-  isNewMessage$: Observable<boolean>;
+  isChannelSectionExpanded = true;
+  isDirectMessageSectionExpanded = true;
+  showNewMessage = false;
+  newMessageInput = '';
+  isNewMessage$: Observable<boolean> = new Observable<boolean>();
 
   /**
-   * Initializes the sidebar component
+   * Initializes the sidebar component and its data streams
    */
   constructor(
     private dialog: MatDialog,
     private firestore: Firestore,
     private authService: AuthService,
+    private presenceService: PresenceService,
     public chatService: ChatService
   ) {
-    const channelsCollection = collection(this.firestore, 'channels');
-    this.channels$ = collectionData(channelsCollection, {
-      idField: 'id',
-    }) as Observable<Channel[]>;
-
-    this.currentUser$ = this.authService.user$;
-    this.isNewMessage$ = this.chatService.isNewMessage$;
-
-    this.currentUser$ = this.authService.user$;
-
-    const usersCollection = collection(this.firestore, 'users');
-    this.allUsers$ = collectionData(usersCollection, {
-      idField: 'uid',
-    }) as Observable<UserProfile[]>;
+    this.initializeUserStreams();
+    this.initializeChannelStream();
+    this.initializeUserList();
   }
 
   /**
-   * Lifecycle hook for initialization
+   * Initializes user list data stream
    */
+  private initializeUserList(): void {
+    const usersCollection = collection(this.firestore, 'users');
+    this.allUsers$ = combineLatest([
+      collectionData(usersCollection, { idField: 'uid' }) as Observable<
+        UserProfile[]
+      >,
+      this.presenceService.getOnlineUsers(),
+    ]).pipe(
+      map(([users, onlineUserIds]) => {
+        return users.map((user) => ({
+          ...user,
+          online: onlineUserIds.includes(user.uid),
+        }));
+      })
+    );
+  }
+
+  /**
+   * Initializes user-related streams
+   */
+  private initializeUserStreams(): void {
+    this.currentUser$ = this.authService.user$;
+    this.isNewMessage$ = this.chatService.isNewMessage$;
+  }
+
+  /**
+   * Initializes channel data stream with member filtering
+   */
+  private initializeChannelStream(): void {
+    const channelsCollection = collection(this.firestore, 'channels');
+    this.channels$ = combineLatest([
+      collectionData(channelsCollection, { idField: 'id' }) as Observable<
+        Channel[]
+      >,
+      this.currentUser$,
+    ]).pipe(map(([channels, user]) => this.filterUserChannels(channels, user)));
+  }
+
+  /**
+   * Filters channels to show only those where user is a member
+   */
+  private filterUserChannels(
+    channels: Channel[],
+    user: User | null
+  ): Channel[] {
+    if (!user) return [];
+    return channels.filter((channel) => {
+      const members = channel.members || {};
+      return members[user.uid] === true;
+    });
+  }
+
   ngOnInit(): void {}
 
   /**
-   * Opens the channel creation dialog
+   * Opens channel creation dialog
    */
   openChannelDialog(): void {
     this.dialog.open(ChannelDialogComponent);
   }
 
   /**
-   * Toggles the channel section visibility
+   * Toggles channel section visibility
    */
   toggleChannelSection(): void {
     this.isChannelSectionExpanded = !this.isChannelSectionExpanded;
   }
 
   /**
-   * Toggles the direct message section visibility
+   * Toggles direct message section visibility
    */
   toggleDirectMessageSection(): void {
     this.isDirectMessageSectionExpanded = !this.isDirectMessageSectionExpanded;
   }
 
   /**
-   * Checks if given ID matches current user
+   * Checks if provided userId matches current user
    */
   isCurrentUser(userId: string): Observable<boolean> {
     return this.currentUser$.pipe(map((user) => user?.uid === userId));
   }
 
   /**
-   * Gets the photo URL for a user
+   * Gets user's photo URL or default avatar
    */
-  getPhotoURL(user: User | UserProfile): string {
+  getPhotoURL(user: UserProfile | User): string {
     return user.photoURL || 'img-placeholder/default-avatar.svg';
   }
 
   /**
-   * Gets the display name for a user
+   * Gets user's display name or default text
    */
-  getDisplayName(user: User | UserProfile): string {
-    if ('username' in user && user.username) {
-      return user.username;
-    }
-    return user.displayName || 'Unbenannter Benutzer';
+  getDisplayName(user: UserProfile | User): string {
+    if ('username' in user && user.username) return user.username;
+    return user.displayName || 'Unnamed User';
   }
 
   /**
-   * Selects a channel only if it's different from the current one
+   * Selects a channel if different from current
    */
   selectChannel(channelId: string): void {
     this.chatService.currentChannel$
@@ -132,16 +183,9 @@ export class SidebarComponent implements OnInit {
   }
 
   /**
-   * Selects a user for direct messaging
+   * Initiates direct messaging with selected user
    */
   selectDirectMessage(userId: string): void {
     this.chatService.selectDirectMessage(userId);
-  }
-
-  /**
-   * Toggles the new message input visibility
-   */
-  onEditSquareClick() {
-    this.chatService.toggleNewMessage();
   }
 }

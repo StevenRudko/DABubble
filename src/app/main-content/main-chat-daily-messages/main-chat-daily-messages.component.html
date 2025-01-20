@@ -1,6 +1,10 @@
 <section #chatContainer (scroll)="onScroll()">
+  <!-- Wenn keine neuen Nachrichten vorhanden sind -->
   <ng-container *ngIf="!(chatService.isNewMessage$ | async)">
-    <div class="empty-chat-preview" *ngIf="!allMsgPast.length && !allMsgToday.length">
+
+    <!-- Leerer Chat-Bereich -->
+    <div class="empty-chat-preview" *ngIf="!allMessages.length">
+      <!-- Profil-Preview für Direktnachrichten -->
       <div class="profile-preview" *ngIf="currentDirectUser$ | async">
         <div class="preview-header">
           <div class="clickable-area" (click)="openProfileDialog()">
@@ -11,8 +15,7 @@
         <div class="preview-content">
           <p class="preview-text" *ngIf="isOwnProfile()">
             <span style="font-weight: bold;">Dieser Raum ist nur für dich da.</span> Mache dir Notizen, liste deine
-            To-dos
-            auf oder bewahre Links und Dateien griffbereit auf. Du kannst hier auch gerne Dinge mit dir selbst
+            To-dos auf oder bewahre Links und Dateien griffbereit auf. Du kannst hier auch gerne Dinge mit dir selbst
             besprechen.
           </p>
           <p class="preview-text" *ngIf="!isOwnProfile()">
@@ -22,6 +25,7 @@
         </div>
       </div>
 
+      <!-- Channel-Preview für Channels -->
       <div class="channel-preview" *ngIf="currentChannel$ | async as channel">
         <div class="preview-header">
           <span class="channel-name"># {{ channel.name }}</span>
@@ -35,35 +39,41 @@
       </div>
     </div>
 
-    <div class="message-wrapper" *ngIf="allMsgPast.length">
-      <div class="messages-by-date-container" *ngFor="let entry of groupedMessages | keyvalue">
-        <div class="divider-line">
-          <div class="divider-text-box bg-frame-v1">
-            <p class="divider-text">{{ entry.key | date : "dd.MM.yyyy" }}</p>
+    <!-- Anzeige der Nachrichten -->
+    <div class="message-wrapper" *ngIf="allMessages.length">
+      <!-- Ältere Nachrichten nach Datum gruppiert -->
+      <ng-container *ngFor="let entry of groupedMessages | keyvalue">
+        <div class="messages-by-date-container" *ngIf="entry.key !== 'HEUTE'">
+          <div class="divider-line">
+            <div class="divider-text-box bg-frame-v1">
+              <p class="divider-text">{{ entry.key | date : "dd.MM.yyyy" }}</p>
+            </div>
           </div>
+          <app-user-message *ngFor="let msg of entry.value" [allMessages]="[msg]" [threadMessage]="false"
+            [ownMessage]="msg.isOwnMessage" [showAnswerDetails]="true" [showReactionIcons]="true"
+            (openThreadEvent)="openThread()" class="width-100"> 
+          </app-user-message>
         </div>
-        <app-user-message *ngFor="let msg of entry.value" [messagesOld]="[msg]" [threadMessage]="false"
-          [ownMessage]="ownMessageStyle" [showAnswerDetails]="true" [showReactionIcons]="false"
-          (openThreadEvent)="openThread()" class="width-100">
-        </app-user-message>
-      </div>
-    </div>
+      </ng-container>
 
-    <div class="message-wrapper" *ngIf="allMsgPast.length">
-      <div class="messages-by-date-container">
+      <!-- Heutige Nachrichten -->
+      <div class="messages-by-date-container" *ngIf="groupedMessages['HEUTE']">
         <div class="divider-line">
           <div class="divider-text-box bg-frame-v1">
             <p class="divider-text">Heute</p>
           </div>
         </div>
-        <app-user-message [messagesToday]="getMessagesToday()" [threadMessage]="false" [ownMessage]="ownMessageStyle"
-          [showAnswerDetails]="false" [showReactionIcons]="true" class="width-100">
+        <app-user-message *ngFor="let msg of groupedMessages['HEUTE']" [allMessages]="[msg]" [threadMessage]="false"
+          [ownMessage]="msg.isOwnMessage" [showAnswerDetails]="true" [showReactionIcons]="true"
+          (openThreadEvent)="openThread()" class="width-100">
         </app-user-message>
       </div>
     </div>
   </ng-container>
 
   <ng-container *ngIf="chatService.isNewMessage$ | async">
-    <div class="new-message-content"></div>
+    <div class="new-message-content">
+      <!-- Inhalt für neue Nachrichten -->
+    </div>
   </ng-container>
 </section>

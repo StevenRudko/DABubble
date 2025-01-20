@@ -19,6 +19,16 @@ interface User {
   photoURL?: string | null;
 }
 
+interface SearchResult {
+  id: string;
+  type: 'channel' | 'user';
+  name: string;
+  email?: string;
+  photoURL?: string;
+  description?: string;
+  online?: boolean;
+}
+
 @Component({
   selector: 'app-message-input-box',
   standalone: true,
@@ -32,7 +42,9 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
   private currentChannel: any;
   private currentUser: any;
   private currentDirectUser: any;
+  private newMessageRecipient: SearchResult | null = null;
   private subscriptions: Subscription = new Subscription();
+  private isNewMessage: boolean = false;
 
   /**
    * Initializes message input component
@@ -50,6 +62,7 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
     this.setupChannelSubscription();
     this.setupDirectMessageSubscription();
     this.setupUserSubscription();
+    this.setupNewMessageSubscription();
   }
 
   /**
@@ -59,7 +72,7 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.chatService.currentChannel$.subscribe((channel) => {
         this.currentChannel = channel;
-        if (channel) {
+        if (channel && !this.isNewMessage) {
           this.placeholder = `Nachricht an #${channel.name}`;
         }
       })
@@ -73,7 +86,7 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.chatService.currentDirectUser$.subscribe((user) => {
         this.currentDirectUser = user;
-        if (user) {
+        if (user && !this.isNewMessage) {
           this.placeholder = `Nachricht an ${this.getDisplayName(user)}`;
         }
       })
@@ -87,6 +100,40 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.authService.user$.subscribe((user) => {
         this.currentUser = user;
+      })
+    );
+  }
+
+  /**
+   * Sets up new message subscription
+   */
+  private setupNewMessageSubscription(): void {
+    this.subscriptions.add(
+      this.chatService.isNewMessage$.subscribe((isNew) => {
+        this.isNewMessage = isNew;
+        if (isNew) {
+          this.setupNewMessageRecipientSubscription();
+        } else {
+          this.newMessageRecipient = null;
+        }
+      })
+    );
+  }
+
+  /**
+   * Sets up subscription for new message recipient
+   */
+  private setupNewMessageRecipientSubscription(): void {
+    this.subscriptions.add(
+      this.chatService.selectedSearchResult$.subscribe((recipient) => {
+        this.newMessageRecipient = recipient;
+        if (recipient) {
+          this.placeholder = `Nachricht an ${
+            recipient.type === 'channel' ? '#' : ''
+          }${recipient.name}`;
+        } else {
+          this.placeholder = 'Wähle einen Empfänger aus...';
+        }
       })
     );
   }
@@ -106,16 +153,33 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
    * Creates message data object
    */
   private createMessageData(): any {
-    const isDirectMessage = !!this.currentDirectUser;
-    return {
+    const baseMessage = {
       authorId: this.currentUser.uid,
-      channelId: isDirectMessage ? null : this.currentChannel?.id || null,
-      directUserId: isDirectMessage ? this.currentDirectUser.uid : null,
       message: this.messageText.trim(),
       time: serverTimestamp(),
-      comments: { 0: 1 },
-      emojis: { 0: 'hands' },
-      userMessageId: Date.now(),
+      comments: {},
+      emojis: {},
+      // userMessageId: Date.now(),
+    };
+
+    if (this.isNewMessage && this.newMessageRecipient) {
+      return {
+        ...baseMessage,
+        channelId:
+          this.newMessageRecipient.type === 'channel'
+            ? this.newMessageRecipient.id
+            : null,
+        directUserId:
+          this.newMessageRecipient.type === 'user'
+            ? this.newMessageRecipient.id
+            : null,
+      };
+    }
+
+    return {
+      ...baseMessage,
+      channelId: this.currentChannel?.id || null,
+      directUserId: this.currentDirectUser?.uid || null,
     };
   }
 
@@ -124,12 +188,32 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
    */
   async sendMessage(): Promise<void> {
     if (!this.messageText.trim() || !this.currentUser) return;
+    if (this.isNewMessage && !this.newMessageRecipient) return;
 
     try {
       const messageData = this.createMessageData();
       const messagesRef = collection(this.firestore, 'userMessages');
       await addDoc(messagesRef, messageData);
       this.messageText = '';
+
+      if (this.isNewMessage && this.newMessageRecipient) {
+        if (this.newMessageRecipient.type === 'channel') {
+          await this.chatService.selectChannel(this.newMessageRecipient.id);
+        } else {
+          await this.chatService.selectDirectMessage(
+            this.newMessageRecipient.id
+          );
+        }
+        // Signalisiere, dass die Nachricht gesendet wurde
+        this.chatService.messageWasSent();
+      }
+
+      // Force refresh der Nachrichten
+      if (this.currentChannel) {
+        await this.chatService.selectChannel(this.currentChannel.id);
+      } else if (this.currentDirectUser) {
+        await this.chatService.selectDirectMessage(this.currentDirectUser.uid);
+      }
     } catch (error) {
       console.error('Error sending message:', error);
     }

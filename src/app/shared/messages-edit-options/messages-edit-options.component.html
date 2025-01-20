@@ -1,8 +1,11 @@
-<div class="edited-options-container bg-frame-v1">
-  <button>
-   <span>Nachricht bearbeiten</span> 
-  </button>
-  <button>
-    <span>Nachricht löschen</span> 
-  </button>
-</div>
+
+<mat-card class="bg-frame-v1">
+  <mat-card-content>
+    <button (click)="editUserMessage()">
+      <span>Nachricht bearbeiten</span> 
+     </button>
+     <button (click)="deleteUserMessage()">
+      <span>Nachricht löschen</span> 
+     </button>
+  </mat-card-content>
+</mat-card>

@@ -206,9 +206,14 @@
       left: 3rem;
       width: 0.5rem;
       height: 0.5rem;
-      background-color: #22c55e;
+      background-color: #9ca3af;
       border-radius: 50%;
       border: 2px solid #f8f9fe;
+      transition: background-color 0.3s ease;
+
+      &.online {
+        background-color: #22c55e;
+      }
     }
   }
 }
