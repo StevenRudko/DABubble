@@ -2,22 +2,25 @@
  * Represents a message sent by a user in the chat system
  */
 export interface UserMessageInterface {
-  /** Unique identifier for the user message */
-  userMessageId: string;
-  /** ID of the channel where the message was sent */
-  channelId: number;
+  type: string;
   /** ID of the message author */
   authorId: string;
-  /** Timestamp of when the message was sent */
-  time: number;
-  /** Content of the message */
-  message: string;
+  username: string;
+  photoURL: string;
+  /** ID of the channel where the message was sent */
+  channelId: number;
+  directUserId?: string; // NEU: für Direktnachrichten
   /** Array of comment IDs associated with this message */
   comments: number[];
   /** Array of emoji reactions to this message */
   emojis: string[];
+  /** Content of the message */
+  message: string;
+  /** Timestamp of when the message was sent */
+  time: number;
+  /** Unique identifier for the user message */
+  userMessageId: string;
   isOwnMessage: boolean;
-  directUserId?: string; // NEU: für Direktnachrichten
 }
 
 /**

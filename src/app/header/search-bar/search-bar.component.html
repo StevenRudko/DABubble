@@ -1,17 +1,41 @@
-@for (result of searchResults; track $index) {
-    @if (result.type == 'message') {
-        @if (result.channelID) {
-            <!-- Channel Nachricht -->
-            <div>{{result.content}}</div>
-        } @else {
-            <!-- Direkt nachricht -->
-            <div>{{result.content}}</div>
+@if (showResult) {
+    <section>
+        @for (result of searchResults; track $index) {
+            @if (result.type == 'message') {
+                <div class="result-container" (click)="logSomething()">
+                        <img src="{{result.photoURL}}" alt="">
+                        <span>{{result.username}}</span>
+                        <p>{{result.message}}</p>
+                        <div>{{result.type}}</div>
+                </div>
+            }
+            @if (result.type == 'directMessage') {
+                <div class="result-container" (click)="logSomething()">
+                        <img src="{{result.photoURL}}" alt="">
+                        <span>{{result.username}}</span>
+                        <p>{{result.message}}</p>
+                        <div>{{result.type}}</div>
+                </div>
+            }
+            @if (result.type == 'thread') {
+                <div class="result-container" (click)="logSomething()">
+                        <img src="{{result.photoURL}}" alt="">
+                        <span>{{result.username}}</span>
+                        <p>{{result.message}}</p>
+                        <div>{{result.type}}</div>
+                </div>
+            }
+            @if (result.type == 'user') {
+                <div class="result-container" (click)="showProfile(result)">
+                        <img src="{{result.photoURL}}" alt="">
+                        <div>
+                            <span>
+                                {{result.username}}
+                            </span>
+                            <p>Aktiv</p>
+                        </div>
+                    </div>
+            }
         }
-}
-    @if (result.type == 'user') {
-        <div>
-            <img src="{{result.photoURL}}" alt="">
-            {{result.content}}
-        </div>
-    }
+    </section>
 }

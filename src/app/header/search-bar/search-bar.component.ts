@@ -1,8 +1,11 @@
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { UserData } from '../../service/user-data.service';
 import { ChannelService } from '../../service/channel.service';
 import { UserMessageInterface } from '../../models/user-message';
 import { UserInterface } from '../../models/user-interface';
+import { SearchResult } from '../../models/search-result';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { ProfileOverviewComponent } from '../../shared/profile-overview/profile-overview.component';
 
 @Component({
   selector: 'app-search-bar',
@@ -12,7 +15,9 @@ import { UserInterface } from '../../models/user-interface';
 })
 export class SearchBarComponent implements OnInit {
   @Input() searchQuery: string = '';
-  searchResults: any;
+  @Input() showResult: boolean = false;
+  @Output() borderTrigger = new EventEmitter<boolean>();
+  searchResults:  SearchResult[] = [];
 
   private userMessages: UserMessageInterface[] = [];
   private users: UserInterface[] = [];
@@ -20,21 +25,18 @@ export class SearchBarComponent implements OnInit {
   constructor(
     private userData: UserData,
     // private channelData: ChannelService
+    // public dialogRef: MatDialogRef<ProfileOverviewComponent>,
+    private dialog: MatDialog,
   ) { }
 
   ngOnInit(): void {
-    // Beobachten der Benutzernachrichten
     this.userData.userMessages$.subscribe((messages) => {
       this.userMessages = messages;
     });
 
-    // Beobachten der Benutzer
     this.userData.users$.subscribe((users) => {
       this.users = users;
     });
-    setTimeout(() => {
-      console.log(this.users, this.userMessages);
-    }, 3000)
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -45,44 +47,81 @@ export class SearchBarComponent implements OnInit {
 
   private filterResults() {
     const query = this.searchQuery.toLowerCase();
-
-    // Filtere Nachrichten basierend auf relevanten Feldern
+    
     const filteredMessages = this.userMessages
       .filter((msg) =>
-        msg.message?.toLowerCase().includes(query) ||  // Nach Inhalt der Nachricht suchen
-        msg.authorId?.toLowerCase().includes(query) // || // Nach Author-ID suchen
-        // msg.directUserId?.toLowerCase().includes(query) // Nach Direktnachrichten-Benutzer suchen
-      )
-      .map((msg) => ({
-        type: 'message',
-        content: msg.message,
-        channelId: msg.channelId,
-        authorId: msg.authorId,
-        directUserId: msg.directUserId
-      }));
+        msg.message?.toLowerCase().includes(query)
+      ).map((msg) => {
+        if (msg.channelId) {
+          return this.filterMessage(msg, 'message');
+        } else if (msg.directUserId) {
+          return this.filterMessage(msg, 'directMessage');
+        } else if (msg.comments) {
+          return this.filterMessage(msg, 'thread');
+        } else { return }
+      }).filter((msg): msg is SearchResult => msg !== undefined);
 
-    // Filtere Benutzer basierend auf relevanten Feldern
-    const filteredUsers = this.users
+    const filteredUsers = this.filterUser(query);
+
+    if (this.searchQuery) {
+      this.searchResults = [...filteredMessages, ...filteredUsers];
+    } else {
+      this.searchResults = [];
+    }
+    this.updateBorderTrigger();
+  }
+
+  filterMessage(msg: UserMessageInterface, type: string) {
+    const author = this.users.find(user => user.localID === msg.authorId);
+    return {
+      type: type || '',
+      authorId: msg.authorId || '',
+      username: author!.username || 'Gelöscht',
+      photoURL: author!.photoURL || 'img-placeholder/default-avatar.svg',
+      channelId: msg.channelId || 0,
+      directUserId: msg.directUserId || '',
+      comments: msg.comments || [],
+      emojis: msg.emojis || [],
+      message: msg.message || '',
+      time: msg.time || 0,
+      userMessageId: msg.userMessageId || ''
+    };
+  }
+
+  filterUser(query: string) {
+    return this.users
       .filter((user) =>
         user.username?.toLowerCase().includes(query) ||
         user.email?.toLowerCase().includes(query)
       )
       .map((user) => ({
         type: 'user',
-        content: user.username,
-        uID: user.localID,
+        username: user.username,
+        localID: user.localID,
         photoURL: user.photoURL,
         email: user.email
-      }));
-
-    // Kombiniere die Ergebnisse
-    // if (this.searchQuery) {
-      this.searchResults = [...filteredMessages, ...filteredUsers];
-    // } else {
-      // this.searchResults = ''
-    // }
-    
-    console.log(this.searchResults);
+      }))
+      .filter((msg): msg is SearchResult => msg !== undefined);
   }
 
+  private updateBorderTrigger(): void {
+    const isEmpty = this.searchResults.length !== 0; // Beispiel-Logik
+    this.borderTrigger.emit(isEmpty); // Emit den neuen Wert direkt
+  }
+
+  logSomething() {
+    console.log('works');
+  }
+
+  showProfile(result: SearchResult) {
+        const dialogConfig = {
+      data: result,
+      panelClass: false
+        ? ['profile-dialog', 'right-aligned']
+        : ['profile-dialog', 'center-aligned'],
+      width: '400px',
+    };
+
+    this.dialog.open(ProfileOverviewComponent, dialogConfig);
+  }
 }

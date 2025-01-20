@@ -1,15 +1,14 @@
-<section>
+<section class="custom-scrollbar">
   <app-logo-component></app-logo-component>
-  <mat-card>
+  <div class="searchbar-container" [ngClass]="{ 'border-stretch': borderTrigger }">
     <!-- <div> -->
       <!-- <mat-card-content> -->
-        <input type="text" placeholder="Devspace durchsuchen" [(ngModel)]="searchQuery"
-        (input)="onSearch()">
+        <input type="text" placeholder="Devspace durchsuchen" [(ngModel)]="searchQuery" (focus)="showResult = true">
       <!-- </mat-card-content> -->
     <!-- </div> -->
     <div><mat-icon>search</mat-icon></div>
-    <app-search-bar [searchQuery]="searchQuery"></app-search-bar>
-  </mat-card>
+    <app-search-bar [searchQuery]="searchQuery" (borderTrigger)="onBorderTriggerChange($event)" [showResult]="showResult">></app-search-bar>
+  </div>
 
   <div class="profile-container" (click)="openDialog()">
     <ng-container *ngIf="currentUser$ | async as user">

@@ -5,11 +5,11 @@
 section {
     @include styles.padding($pl: 2rem, $pr: 2rem, $pt: 1rem, $pb: 0);
     @include styles.dFlex($d: flex, $fd: row, $jc: space-between, $ai: center, $g: 0);
-    height:100px;
+    height: 100px;
     box-sizing: border-box;
 }
 
-mat-card {
+.searchbar-container {
     @include styles.padding($pl: 12px, $pr: 24px, $pt: 0, $pb: 0);
     @include styles.dFlex($d: flex, $fd: row, $jc: space-between, $ai: center, $g: 0);
     background-color: white;
@@ -17,7 +17,7 @@ mat-card {
     height: 50px;
     box-shadow: unset;
     box-sizing: border-box;
-    border-radius: 50px;
+    border-radius: 25px;
     position: relative;
 
     input {
@@ -26,6 +26,10 @@ mat-card {
         outline: unset;
         width: 100%;
     }
+}
+
+.border-stretch {
+    border-radius: 25px 25px 0px 0px !important;
 }
 
 mat-card-content {
@@ -42,20 +46,22 @@ app-search-bar {
     top: 50px;
     left: 0px;
     width: 100%;
-    background-color: rgb(228, 133, 133);
+    max-height: 550px;
+    background-color: white;
     z-index: 2;
 }
 
 mat-icon {
-    height:20px;
-    width:20px;
+    height: 20px;
+    width: 20px;
 }
 
 .profile-container {
     @include styles.dFlex($d: flex, $fd: row, $jc: space-between, $ai: center, $g: 0);
-    cursor:pointer;
+    cursor: pointer;
+
     &:hover {
-        color:#797EF3;
+        color: #797EF3;
     }
 }
 
@@ -78,9 +84,9 @@ mat-icon {
 }
 
 .status-circle-outline {
-    position:relative;
-    top:19px;
-    right:12px;
+    position: relative;
+    top: 19px;
+    right: 12px;
     height: 15px;
     width: 15px;
     background-color: #ECEEFE;
