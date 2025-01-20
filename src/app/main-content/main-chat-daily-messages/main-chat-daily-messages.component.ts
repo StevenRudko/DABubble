@@ -22,7 +22,7 @@ import { ChatService } from '../../service/chat.service';
 import { AuthService } from '../../service/auth.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ProfileOverviewComponent } from '../../shared/profile-overview/profile-overview.component';
-
+import { UserOverviewComponent } from '../../shared/user-overview/user-overview.component';
 @Component({
   selector: 'app-main-chat-daily-messages',
   standalone: true,
@@ -363,28 +363,37 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     return this.currentAuthUser?.email || '';
   }
 
+  /**
+   * Opens the profile dialog for a user
+   * Shows UserOverviewComponent for own profile or ProfileOverviewComponent for other users
+   */
   openProfileDialog() {
-    const userData = {
-      name: this.getCurrentUserName(),
-      email: this.getCurrentUserEmail(),
-      avatar: this.getCurrentUserPhotoURL(),
-      status: this.currentDirectUser?.online ? 'active' : 'offline',
-      uid: this.currentDirectUser?.uid || this.currentAuthUser?.uid,
-    };
-
     const isOwnProfile =
       !this.currentDirectUser ||
       this.currentDirectUser.uid === this.currentAuthUser?.uid;
 
-    const dialogConfig = {
-      data: userData,
-      panelClass: isOwnProfile
-        ? ['profile-dialog', 'right-aligned']
-        : ['profile-dialog', 'center-aligned'],
-      width: '400px',
+    if (isOwnProfile) {
+      this.dialog.open(UserOverviewComponent, {
+        panelClass: ['profile-dialog', 'right-aligned'],
+        width: '400px',
+      });
+      return;
+    }
+
+    // Direkt die Daten aus currentDirectUser verwenden
+    const userData = {
+      username: this.currentDirectUser.username,
+      email: this.currentDirectUser.email,
+      photoURL:
+        this.currentDirectUser.photoURL || 'img-placeholder/default-avatar.svg',
+      uid: this.currentDirectUser.uid,
     };
 
-    this.dialog.open(ProfileOverviewComponent, dialogConfig);
+    this.dialog.open(ProfileOverviewComponent, {
+      data: userData,
+      panelClass: ['profile-dialog', 'center-aligned'],
+      width: '400px',
+    });
   }
 
   isOwnProfile(): boolean {

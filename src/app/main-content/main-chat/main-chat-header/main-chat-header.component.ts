@@ -411,9 +411,9 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
    */
   openProfileDialog(user: DirectUser): void {
     const userData = {
-      name: this.getDisplayName(user),
+      username: this.getDisplayName(user),
       email: user.email || '',
-      avatar: this.getPhotoURL(user),
+      photoURL: this.getPhotoURL(user),
       status: this.onlineUsers.includes(user.uid) ? 'active' : 'offline',
       uid: user.uid,
     };

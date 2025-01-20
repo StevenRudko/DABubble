@@ -6,11 +6,11 @@
 
   <div class="profile-content">
     <div class="avatar-container">
-      <img [src]="data.avatar" [alt]="data.name" class="profile-avatar">
+      <img [src]="data.photoURL" [alt]="data.username" class="profile-avatar">
     </div>
 
     <div class="user-info">
-      <h3 class="user-name">{{ data.name }}</h3>
+      <h3 class="user-name">{{ data.username }}</h3>
       <div class="status">
         <div class="status-dot" [ngClass]="data.status"></div>
         <span [ngClass]="data.status">{{ getStatusText(data.status) }}</span>

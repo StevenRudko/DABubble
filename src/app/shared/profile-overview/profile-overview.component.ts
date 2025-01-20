@@ -12,20 +12,14 @@ import { PresenceService } from '../../service/presence.service';
 import { Subscription } from 'rxjs';
 import { Auth } from '@angular/fire/auth';
 
-/**
- * Interface for user data in profile overview
- */
 interface UserData {
-  name: string;
+  username: string;
   email: string;
-  avatar: string;
-  status: 'active' | 'away' | 'offline';
+  photoURL: string;
+  status: 'active' | 'offline';
   uid: string;
 }
 
-/**
- * Component for displaying user profile information
- */
 @Component({
   selector: 'app-profile-overview',
   standalone: true,
@@ -38,7 +32,6 @@ export class ProfileOverviewComponent implements OnInit, OnDestroy {
 
   private readonly statusMap: Record<string, string> = {
     active: 'Online',
-    away: 'Abwesend',
     offline: 'Offline',
   };
 
@@ -68,24 +61,6 @@ export class ProfileOverviewComponent implements OnInit, OnDestroy {
             ? 'active'
             : 'offline';
       });
-  }
-
-  /**
-   * Updates user status based on online users list
-   * @param {string[]} onlineUsers - List of online user IDs
-   */
-  private updateUserStatus(onlineUsers: string[]): void {
-    // Update status, with special handling for the current user
-    this.data.status = this.isUserOnline(onlineUsers) ? 'active' : 'offline';
-  }
-
-  /**
-   * Checks if the user is online
-   * @param {string[]} onlineUsers - List of online user IDs
-   * @returns {boolean} Whether the user is online
-   */
-  private isUserOnline(onlineUsers: string[]): boolean {
-    return onlineUsers.includes(this.data.uid);
   }
 
   /**
