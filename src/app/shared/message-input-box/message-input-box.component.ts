@@ -159,7 +159,7 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
       time: serverTimestamp(),
       comments: {},
       emojis: {},
-      userMessageId: Date.now(),
+      // userMessageId: Date.now(),
     };
 
     if (this.isNewMessage && this.newMessageRecipient) {

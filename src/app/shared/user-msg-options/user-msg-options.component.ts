@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, Input } from '@angular/core';
 import { MATERIAL_MODULES } from '../material-imports';
 import { CommonModule, NgIf } from '@angular/common';
 import { EmojiPickerComponent } from '../emoji-picker/emoji-picker.component';
@@ -20,9 +20,17 @@ import { MessagesEditOptionsComponent } from '../messages-edit-options/messages-
 export class UserMsgOptionsComponent {
   @Output() editMessageEvent = new EventEmitter<void>();
   @Output() deleteMessageEvent = new EventEmitter<void>();
+  @Output() messageDeleted = new EventEmitter<string>(); // EventEmitter für die Elternkomponente
+  @Input() userMessageId: string | undefined;  
 
   hoverFaceTag: boolean = false;
   hoverEdit: boolean = false;
+
+  constructor() {
+    // setTimeout(()=> {
+    //   console.log('userMsgID: ', this.userMessageId);
+    // }, 500);
+  }
 
   /**
    * Handles mouseenter events for different interactive elements
@@ -66,6 +74,7 @@ export class UserMsgOptionsComponent {
    */
   onEditMessage(): void {
     this.editMessageEvent.emit();
+    console.log('edit');
     this.hoverEdit = false;
   }
 
@@ -74,6 +83,12 @@ export class UserMsgOptionsComponent {
    */
   onDeleteMessage(): void {
     this.deleteMessageEvent.emit();
+    console.log('edit');
     this.hoverEdit = false;
+  }
+
+  // Methode, um das Event an die Elternkomponente weiterzuleiten
+  forwardDeleteMessage(messageId: string) {
+    this.messageDeleted.emit(messageId);
   }
 }

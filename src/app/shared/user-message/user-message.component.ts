@@ -57,4 +57,12 @@ export class UserMessageComponent {
       // console.log('The dialog was closed');
     });
   }
+
+    // Event-Handler, der beim Löschen einer Nachricht aufgerufen wird
+    deleteMessage(messageId: string) {
+      // Filtere die Nachricht anhand der ID und lösche sie
+      this.allMessages = this.allMessages.filter(msg => msg.userMessageId !== messageId);
+    }
+  
+    
 }

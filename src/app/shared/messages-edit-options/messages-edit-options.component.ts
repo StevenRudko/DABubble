@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, Input } from '@angular/core';
 import { MATERIAL_MODULES } from '../material-imports';
 import { CommonModule } from '@angular/common';
 
@@ -13,7 +13,8 @@ export class MessagesEditOptionsComponent {
   @Output() mouseStateChange = new EventEmitter<boolean>();
   @Output() editMessage = new EventEmitter<void>();
   @Output() deleteMessage = new EventEmitter<void>();
-
+  @Output() messageDeleted = new EventEmitter<string>(); 
+  @Input() userMsgId: string | undefined;  
   /**
    * Handles the mouseenter event on the edit options menu
    * Used to maintain visibility when hovering over the menu itself
@@ -30,5 +31,14 @@ export class MessagesEditOptionsComponent {
    */
   onMouseLeave(): void {
     this.mouseStateChange.emit(false);
+  }
+
+  editUserMessage() {
+    console.log('edit');
+  }
+
+  deleteUserMessage() {
+    const messageId = this.userMsgId;
+    this.messageDeleted.emit(messageId); 
   }
 }
