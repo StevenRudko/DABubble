@@ -1,7 +1,7 @@
 <section *ngFor="let msg of allMessages" (mouseenter)="onMouseEnter(msg.userMessageId)"
   (mouseleave)="onMouseLeave(msg.userMessageId)" [ngClass]="{ myMessageStyle: msg.isOwnMessage }"
   >
-  <app-user-msg-options [userMessageId]="msg.userMessageId" (messageDeleted)="deleteMessage($event)" *ngIf="hoverComponent"></app-user-msg-options>
+  <app-user-msg-options [userMessageId]="msg.userMessageId" (messageEdited)="editMessage($event)" (messageDeleted)="deleteMessage($event)" *ngIf="hoverComponent"></app-user-msg-options>
   <div class="user-message-container" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
     <div>
       <img class="user-message-img" src="img-placeholder/noah.svg" alt="" />

@@ -14,6 +14,7 @@ export class MessagesEditOptionsComponent {
   @Output() editMessage = new EventEmitter<void>();
   @Output() deleteMessage = new EventEmitter<void>();
   @Output() messageDeleted = new EventEmitter<string>(); 
+  @Output() messageEdited = new EventEmitter<string>(); 
   @Input() userMsgId: string | undefined;  
   /**
    * Handles the mouseenter event on the edit options menu
@@ -34,11 +35,13 @@ export class MessagesEditOptionsComponent {
   }
 
   editUserMessage() {
-    console.log('edit');
+    const messageId = this.userMsgId;
+    this.messageEdited.emit(messageId); 
   }
 
   deleteUserMessage() {
     const messageId = this.userMsgId;
     this.messageDeleted.emit(messageId); 
   }
+
 }

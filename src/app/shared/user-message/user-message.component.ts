@@ -73,17 +73,27 @@ export class UserMessageComponent {
 
   }
 
-   // Event-Handler, der beim Bearbeiten einer Nachricht aufgerufen wird
-  editMessage(message: { userMessageId: string, message: string }) {
+  editMessage(userMessageId: string) {
+    // Finde die Nachricht basierend auf der userMessageId aus allMessages (oder einer anderen Quelle)
+    const messageToEdit = this.allMessages.find(msg => msg.userMessageId === userMessageId);
+  
+    if (!messageToEdit) {
+      console.error('Nachricht nicht gefunden');
+      return;
+    }
+  
+    // Öffnen des Dialogs und Übergeben der Nachricht zur Bearbeitung
     const dialogRef = this.dialog.open(EditMessageComponent, {
-      data: { message: message.message },
+      data: { message: messageToEdit.message },  // Übergebe den Text der Nachricht
       backdropClass: 'custom-backdrop',
     });
-
+  
+    // Wenn der Dialog geschlossen wird (nach dem Speichern oder Abbrechen)
     dialogRef.afterClosed().subscribe((editedMessage: string) => {
-      if (editedMessage !== null && editedMessage !== message.message) {
-        // Update die Nachricht, wenn sie bearbeitet wurde
-        this.userData.updateMessage(message.userMessageId, { message: editedMessage })
+      if (editedMessage !== null && editedMessage !== messageToEdit.message) {
+        console.log(editedMessage);
+        // Wenn die Nachricht geändert wurde, rufe die Update-Funktion auf
+        this.userData.updateMessage(userMessageId, { message: editedMessage })
           .then(() => {
             console.log('Nachricht erfolgreich aktualisiert');
           })
@@ -92,5 +102,6 @@ export class UserMessageComponent {
           });
       }
     });
-  }
+}
+
 }

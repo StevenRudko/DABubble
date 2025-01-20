@@ -21,6 +21,7 @@ export class UserMsgOptionsComponent {
   @Output() editMessageEvent = new EventEmitter<void>();
   @Output() deleteMessageEvent = new EventEmitter<void>();
   @Output() messageDeleted = new EventEmitter<string>(); // EventEmitter für die Elternkomponente
+  @Output() messageEdited = new EventEmitter<string>(); // EventEmitter für die Elternkomponente
   @Input() userMessageId: string | undefined;  
 
   hoverFaceTag: boolean = false;
@@ -88,5 +89,9 @@ export class UserMsgOptionsComponent {
     this.messageDeleted.emit(messageId);
   }
 
+    // Methode, um das Event an die Elternkomponente weiterzuleiten
+    forwardEditMessage(messageId: string) {
+      this.messageEdited.emit(messageId);
+    }
   
 }
