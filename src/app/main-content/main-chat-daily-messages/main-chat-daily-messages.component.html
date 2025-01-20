@@ -51,7 +51,7 @@
           </div>
           <app-user-message *ngFor="let msg of entry.value" [allMessages]="[msg]" [threadMessage]="false"
             [ownMessage]="msg.isOwnMessage" [showAnswerDetails]="true" [showReactionIcons]="true"
-            (openThreadEvent)="openThread()" class="width-100">
+            (openThreadEvent)="openThread()" class="width-100"> 
           </app-user-message>
         </div>
       </ng-container>

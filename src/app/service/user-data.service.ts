@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Firestore } from '@angular/fire/firestore';
-import { collection, getDocs, onSnapshot } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocs, onSnapshot } from 'firebase/firestore';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { UserMessageInterface } from '../models/user-message';
 import { UserInterface } from '../models/user-interface';
@@ -24,7 +24,7 @@ export class UserData {
   getUserMessages() {
     try {
       const userCollection = collection(this.firestore, 'userMessages');
-      
+
       // Live-Updates mit onSnapshot
       onSnapshot(userCollection, (querySnapshot) => {
         const messages = querySnapshot.docs.map((doc) => {
@@ -53,7 +53,7 @@ export class UserData {
   getUsers() {
     try {
       const userCollection = collection(this.firestore, 'users');
-      
+
       // Live-Updates mit onSnapshot
       onSnapshot(userCollection, (querySnapshot) => {
         const users = querySnapshot.docs.map((doc) => {
@@ -77,7 +77,7 @@ export class UserData {
       this.usersSubject.next([]); // Leeres Array im Fehlerfall
     }
   }
-  
+
   // Optional: Methode zum Abrufen der aktuellen Nachrichten
   getCurrentMessages(): UserMessageInterface[] {
     return this.userMessagesSubject.value;
@@ -93,9 +93,22 @@ export class UserData {
     });
   }
 
-  // // Optional: Methode zum Hinzufügen einer neuen Nachricht
-  // addMessage(message: UserMessageInterface) {
-  //   const currentMessages = this.userMessagesSubject.value;
-  //   this.userMessagesSubject.next([...currentMessages, message]);
-  // }
+  // Neue Funktion zum Löschen einer Nachricht
+  async deleteMessage(messageId: string): Promise<void> {
+    try {
+      // Zuerst das Dokument aus der Firestore-Datenbank löschen
+      const messageDocRef = doc(this.firestore, 'userMessages', messageId);
+      await deleteDoc(messageDocRef);
+
+      // Lokale Nachrichtensammlung nach dem Löschen der Nachricht aktualisieren
+      const updatedMessages = this.userMessagesSubject.value.filter(
+        (message) => message.userMessageId !== messageId
+      );
+      this.userMessagesSubject.next(updatedMessages);
+
+      console.log(`Nachricht mit ID ${messageId} erfolgreich gelöscht.`);
+    } catch (error) {
+      console.error('Fehler beim Löschen der Nachricht:', error);
+    }
+  }
 }

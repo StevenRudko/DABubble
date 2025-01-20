@@ -91,4 +91,6 @@ export class UserMsgOptionsComponent {
   forwardDeleteMessage(messageId: string) {
     this.messageDeleted.emit(messageId);
   }
+
+  
 }

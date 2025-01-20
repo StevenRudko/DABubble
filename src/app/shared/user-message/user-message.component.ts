@@ -5,6 +5,7 @@ import { EmojiPickerComponent } from '../emoji-picker/emoji-picker.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MessagesEditOptionsComponent } from '../messages-edit-options/messages-edit-options.component';
 import { UserMsgOptionsComponent } from '../user-msg-options/user-msg-options.component';
+import { UserData } from '../../service/user-data.service';
 
 @Component({
   selector: 'app-user-message',
@@ -34,7 +35,7 @@ export class UserMessageComponent {
   hoverFaceTag: boolean = false;
   @Output() openThreadEvent = new EventEmitter<void>();
 
-  constructor(private dialog: MatDialog) {}
+  constructor(private dialog: MatDialog, private userData: UserData) {}
 
   openThread() {
     this.openThreadEvent.emit();
@@ -58,11 +59,15 @@ export class UserMessageComponent {
     });
   }
 
-    // Event-Handler, der beim Löschen einer Nachricht aufgerufen wird
-    deleteMessage(messageId: string) {
-      // Filtere die Nachricht anhand der ID und lösche sie
-      this.allMessages = this.allMessages.filter(msg => msg.userMessageId !== messageId);
-    }
-  
-    
+  // Event-Handler, der beim Löschen einer Nachricht aufgerufen wird
+  deleteMessage(messageId: string) {
+
+    this.userData.deleteMessage(messageId)
+    .then(() => {
+      console.log('Nachricht erfolgreich gelöscht');
+    })
+    .catch((error) => {
+      console.error('Fehler beim Löschen der Nachricht:', error);
+    });
+  }
 }
