@@ -12,14 +12,17 @@
     <button mat-icon-button>
       <mat-icon>insert_comment</mat-icon>
     </button>
-    <button *ngIf="showAllOptions" mat-icon-button (mouseenter)="onMouseEnter('edit')" (mouseleave)="onMouseLeave('edit')">
+    <button *ngIf="showAllOptions" mat-icon-button (mouseenter)="onMouseEnter('edit')"
+      (mouseleave)="onMouseLeave('edit')">
       <mat-icon>more_vert</mat-icon>
     </button>
   </mat-card-content>
 </mat-card>
 
-<app-emoji-picker *ngIf="hoverFaceTag" (mouseStateChange)="onEmojiPickerMouseState($event)">
+<app-emoji-picker *ngIf="activePopup === 'emoji'" (mouseStateChange)="onEmojiPickerMouseState($event)">
 </app-emoji-picker>
 
-<app-messages-edit-options [userMsgId]="userMessageId" *ngIf="hoverEdit" (mouseStateChange)="onEditOptionsMouseState($event)" (messageDeleted)="forwardDeleteMessage($event)" (messageEdited)="forwardEditMessage($event)">
+<app-messages-edit-options [userMsgId]="userMessageId" *ngIf="activePopup === 'edit'"
+  (mouseStateChange)="onEditOptionsMouseState($event)" (messageDeleted)="forwardDeleteMessage($event)"
+  (messageEdited)="forwardEditMessage($event)">
 </app-messages-edit-options>

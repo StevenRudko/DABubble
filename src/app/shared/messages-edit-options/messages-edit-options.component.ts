@@ -11,14 +11,12 @@ import { CommonModule } from '@angular/common';
 })
 export class MessagesEditOptionsComponent {
   @Output() mouseStateChange = new EventEmitter<boolean>();
-  @Output() editMessage = new EventEmitter<void>();
-  @Output() deleteMessage = new EventEmitter<void>();
-  @Output() messageDeleted = new EventEmitter<string>(); 
-  @Output() messageEdited = new EventEmitter<string>(); 
-  @Input() userMsgId: string | undefined;  
+  @Output() messageDeleted = new EventEmitter<string>();
+  @Output() messageEdited = new EventEmitter<string>();
+  @Input() userMsgId: string | undefined;
+
   /**
    * Handles the mouseenter event on the edit options menu
-   * Used to maintain visibility when hovering over the menu itself
    * @returns {void}
    */
   onMouseEnter(): void {
@@ -27,21 +25,29 @@ export class MessagesEditOptionsComponent {
 
   /**
    * Handles the mouseleave event on the edit options menu
-   * Used to hide the menu when mouse leaves the component area
    * @returns {void}
    */
   onMouseLeave(): void {
     this.mouseStateChange.emit(false);
   }
 
-  editUserMessage() {
-    const messageId = this.userMsgId;
-    this.messageEdited.emit(messageId); 
+  /**
+   * Emits edit message event with message ID
+   * @returns {void}
+   */
+  editUserMessage(): void {
+    if (this.userMsgId) {
+      this.messageEdited.emit(this.userMsgId);
+    }
   }
 
-  deleteUserMessage() {
-    const messageId = this.userMsgId;
-    this.messageDeleted.emit(messageId); 
+  /**
+   * Emits delete message event with message ID
+   * @returns {void}
+   */
+  deleteUserMessage(): void {
+    if (this.userMsgId) {
+      this.messageDeleted.emit(this.userMsgId);
+    }
   }
-
 }

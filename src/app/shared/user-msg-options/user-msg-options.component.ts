@@ -2,7 +2,6 @@ import { Component, Output, EventEmitter, Input } from '@angular/core';
 import { MATERIAL_MODULES } from '../material-imports';
 import { CommonModule, NgIf } from '@angular/common';
 import { EmojiPickerComponent } from '../emoji-picker/emoji-picker.component';
-import { MatDialog } from '@angular/material/dialog';
 import { MessagesEditOptionsComponent } from '../messages-edit-options/messages-edit-options.component';
 
 @Component({
@@ -21,79 +20,100 @@ import { MessagesEditOptionsComponent } from '../messages-edit-options/messages-
 export class UserMsgOptionsComponent {
   @Output() editMessageEvent = new EventEmitter<void>();
   @Output() deleteMessageEvent = new EventEmitter<void>();
-  @Output() messageDeleted = new EventEmitter<string>(); // EventEmitter für die Elternkomponente
-  @Output() messageEdited = new EventEmitter<string>(); // EventEmitter für die Elternkomponente
-  @Input() userMessageId: string | undefined;  
-  @Input() showAllOptions: boolean = false;  
-  
-  hoverFaceTag: boolean = false;
-  hoverEdit: boolean = false;
+  @Output() messageDeleted = new EventEmitter<string>();
+  @Output() messageEdited = new EventEmitter<string>();
+  @Input() userMessageId: string | undefined;
+  @Input() showAllOptions: boolean = false;
 
-  constructor() {}
+  activePopup: 'none' | 'emoji' | 'edit' = 'none';
+  isMouseOverButton: boolean = false;
+  isMouseOverPopup: boolean = false;
 
   /**
-   * Handles mouseenter events for different interactive elements
-   * @param {string} obj - Identifier of the hovered element
+   * Handles mouseenter events for buttons
+   * @param {string} type - Type of popup to show
    */
-  onMouseEnter(obj: string) {
-    this.hoverFaceTag = false;
-    this.hoverEdit = false;
-
-    if (obj === 'tag_face') {
-      this.hoverFaceTag = true;
-    } else if (obj === 'edit') {
-      this.hoverEdit = true;
-    }
+  onMouseEnter(type: string): void {
+    this.isMouseOverButton = true;
+    this.activePopup =
+      type === 'tag_face' ? 'emoji' : type === 'edit' ? 'edit' : 'none';
   }
 
-  onMouseLeave(obj: string) {
-    if (obj === 'tag_face' && !this.hoverFaceTag) {
-      this.hoverFaceTag = false;
-    } else if (obj === 'edit' && !this.hoverEdit) {
-      this.hoverEdit = false;
-    }
+  /**
+   * Handles mouseleave events for buttons
+   * @param {string} type - Type of popup being left
+   */
+  onMouseLeave(type: string): void {
+    this.isMouseOverButton = false;
+    // Verzögerung um zu prüfen, ob die Maus über dem Popup ist
+    setTimeout(() => {
+      if (!this.isMouseOverPopup && !this.isMouseOverButton) {
+        this.activePopup = 'none';
+      }
+    }, 100);
   }
 
-  onEmojiPickerMouseState(isOver: boolean) {
-    this.hoverFaceTag = isOver;
-    if (isOver) {
-      this.hoverEdit = false;
-    }
-  }
-
-  onEditOptionsMouseState(isOver: boolean) {
-    this.hoverEdit = isOver;
-    if (isOver) {
-      this.hoverFaceTag = false;
+  /**
+   * Handles mouse state changes from emoji picker
+   * @param {boolean} isOver - Whether mouse is over the picker
+   */
+  onEmojiPickerMouseState(isOver: boolean): void {
+    this.isMouseOverPopup = isOver;
+    if (!isOver && !this.isMouseOverButton) {
+      setTimeout(() => {
+        if (!this.isMouseOverButton) {
+          this.activePopup = 'none';
+        }
+      }, 100);
     }
   }
 
   /**
-   * Handle edit message request from edit options menu
+   * Handles mouse state changes from edit options
+   * @param {boolean} isOver - Whether mouse is over the options
+   */
+  onEditOptionsMouseState(isOver: boolean): void {
+    this.isMouseOverPopup = isOver;
+    if (!isOver && !this.isMouseOverButton) {
+      setTimeout(() => {
+        if (!this.isMouseOverButton) {
+          this.activePopup = 'none';
+        }
+      }, 100);
+    }
+  }
+
+  /**
+   * Handles edit message request
    */
   onEditMessage(): void {
     this.editMessageEvent.emit();
-    console.log('edit');
-    this.hoverEdit = false;
+    this.activePopup = 'none';
   }
 
   /**
-   * Handle delete message request from edit options menu
+   * Handles delete message request
    */
   onDeleteMessage(): void {
     this.deleteMessageEvent.emit();
-    console.log('edit');
-    this.hoverEdit = false;
+    this.activePopup = 'none';
   }
 
-  // Methode, um das Event an die Elternkomponente weiterzuleiten
-  forwardDeleteMessage(messageId: string) {
+  /**
+   * Forwards delete message event to parent
+   * @param {string} messageId - ID of message to delete
+   */
+  forwardDeleteMessage(messageId: string): void {
     this.messageDeleted.emit(messageId);
+    this.activePopup = 'none';
   }
 
-    // Methode, um das Event an die Elternkomponente weiterzuleiten
-    forwardEditMessage(messageId: string) {
-      this.messageEdited.emit(messageId);
-    }
-  
+  /**
+   * Forwards edit message event to parent
+   * @param {string} messageId - ID of message to edit
+   */
+  forwardEditMessage(messageId: string): void {
+    this.messageEdited.emit(messageId);
+    this.activePopup = 'none';
+  }
 }

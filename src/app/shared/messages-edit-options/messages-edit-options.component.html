@@ -1,11 +1,10 @@
-
-<mat-card class="bg-frame-v1">
+<mat-card class="bg-frame-v1" (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()">
   <mat-card-content>
     <button (click)="editUserMessage()">
-      <span>Nachricht bearbeiten</span> 
-     </button>
-     <button (click)="deleteUserMessage()">
-      <span>Nachricht löschen</span> 
-     </button>
+      <span>Nachricht bearbeiten</span>
+    </button>
+    <button (click)="deleteUserMessage()">
+      <span>Nachricht löschen</span>
+    </button>
   </mat-card-content>
 </mat-card>
