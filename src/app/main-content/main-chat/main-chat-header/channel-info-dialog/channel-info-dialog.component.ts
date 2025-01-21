@@ -17,7 +17,15 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ChatService } from '../../../../service/chat.service';
-import { Firestore, doc, getDoc } from '@angular/fire/firestore';
+import {
+  Firestore,
+  doc,
+  getDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+} from '@angular/fire/firestore';
 import { firstValueFrom } from 'rxjs';
 
 /**
@@ -55,6 +63,7 @@ export class ChannelInfoDialogComponent implements AfterViewInit, OnInit {
   channelName: string;
   channelDescription: string;
   createdBy: string = 'Wird geladen...';
+  nameExists = false;
 
   /**
    * Initializes the component with channel data
@@ -84,6 +93,27 @@ export class ChannelInfoDialogComponent implements AfterViewInit, OnInit {
       this.adjustAllTextareas();
       this.setupTextareaListeners();
     });
+  }
+
+  /**
+   * Checks if channel name already exists
+   */
+  private async checkChannelNameExists(name: string): Promise<boolean> {
+    if (name.trim() === this.data.name) return false;
+
+    const channelsRef = collection(this.firestore, 'channels');
+    const q = query(channelsRef, where('name', '==', name.trim()));
+    const querySnapshot = await getDocs(q);
+    return !querySnapshot.empty;
+  }
+
+  /**
+   * Validates new channel name
+   */
+  async validateChannelName(name: string): Promise<void> {
+    if (name.trim().length >= 3) {
+      this.nameExists = await this.checkChannelNameExists(name);
+    }
   }
 
   /**
@@ -167,7 +197,10 @@ export class ChannelInfoDialogComponent implements AfterViewInit, OnInit {
    */
   toggleEditName(): void {
     this.isEditingName = !this.isEditingName;
-    if (!this.isEditingName) this.channelName = this.data.name;
+    if (!this.isEditingName) {
+      this.channelName = this.data.name;
+      this.nameExists = false;
+    }
   }
 
   /**
@@ -184,9 +217,21 @@ export class ChannelInfoDialogComponent implements AfterViewInit, OnInit {
   }
 
   /**
+   * Checks if current changes can be saved
+   */
+  get canSave(): boolean {
+    if (this.isEditingName) {
+      return this.channelName.trim().length >= 3 && !this.nameExists;
+    }
+    return true;
+  }
+
+  /**
    * Saves changes to channel name and/or description
    */
   async saveChanges(): Promise<void> {
+    if (!this.canSave) return;
+
     try {
       const updates = this.getUpdates();
       await this.chatService.updateChannel(this.data.channelId, updates);
@@ -201,9 +246,10 @@ export class ChannelInfoDialogComponent implements AfterViewInit, OnInit {
    */
   private getUpdates(): Partial<ChannelDialogData> {
     const updates: Partial<ChannelDialogData> = {};
-    if (this.isEditingName) updates.name = this.channelName;
-    if (this.isEditingDescription)
-      updates.description = this.channelDescription;
+    if (this.isEditingName) updates.name = this.channelName.trim();
+    if (this.isEditingDescription) {
+      updates.description = this.channelDescription.trim();
+    }
     return updates;
   }
 

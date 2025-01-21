@@ -77,6 +77,12 @@
       &:hover {
         background: #eceefe !important;
       }
+
+      &[disabled] {
+        color: #9ca3af !important;
+        background-color: #f3f4f6 !important;
+        cursor: not-allowed;
+      }
     }
 
     .save-button {
@@ -98,6 +104,9 @@
       padding: 8px 16px;
       height: 60px;
       box-sizing: border-box;
+      input.invalid {
+        border-color: #dc3545;
+      }
 
       .hash {
         color: black;
@@ -283,4 +292,11 @@
 .section-box:has(.name-part.editing) {
   border-color: transparent;
   transition: border-color 0.3s ease-in-out;
+}
+
+.validation-message {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 8px;
+  margin-left: 24px;
 }

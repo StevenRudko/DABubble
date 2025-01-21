@@ -13,7 +13,8 @@
         <button mat-button color="primary" class="edit-button" *ngIf="!isEditingName" (click)="toggleEditName()">
           Bearbeiten
         </button>
-        <button mat-button color="primary" class="save-button" *ngIf="isEditingName" (click)="saveChanges()">
+        <button mat-button color="primary" class="save-button" *ngIf="isEditingName" [disabled]="!canSave"
+          (click)="saveChanges()">
           Speichern
         </button>
       </div>
@@ -27,7 +28,11 @@
         <ng-container *ngIf="isEditingName">
           <div class="input-container">
             <span class="hash">#</span>
-            <input [(ngModel)]="channelName" placeholder="Channel-Name">
+            <input [(ngModel)]="channelName" (ngModelChange)="validateChannelName($event)" placeholder="Channel-Name"
+              [class.invalid]="nameExists">
+          </div>
+          <div class="validation-message" *ngIf="nameExists">
+            Ein Channel mit diesem Namen existiert bereits. Bitte wähle einen anderen Namen.
           </div>
         </ng-container>
       </div>
@@ -50,8 +55,8 @@
             <p>{{ channelDescription || 'Keine Beschreibung vorhanden' }}</p>
           </ng-container>
           <ng-container *ngIf="isEditingDescription">
-            <textarea #autosize [(ngModel)]="channelDescription" placeholder="Beschreibung hinzufügen"
-              rows="1"></textarea>
+            <textarea #autosize [(ngModel)]="channelDescription" placeholder="Beschreibung hinzufügen" rows="1">
+            </textarea>
           </ng-container>
         </div>
       </div>

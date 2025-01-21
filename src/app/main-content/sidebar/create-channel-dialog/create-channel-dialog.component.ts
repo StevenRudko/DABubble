@@ -11,7 +11,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatDialog } from '@angular/material/dialog';
 import { AddPeopleDialogSidebarComponent } from './add-people-dialog-sidebar/add-people-dialog-sidebar.component';
-import { Firestore, addDoc, collection } from '@angular/fire/firestore';
+import {
+  Firestore,
+  addDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+} from '@angular/fire/firestore';
 import { Auth } from '@angular/fire/auth';
 
 @Component({
@@ -25,6 +32,7 @@ export class ChannelDialogComponent {
   channelName: string = '';
   channelDescription: string = '';
   minNameLength = 3;
+  nameExists = false;
   @Input() isOpen = false;
   @Output() closeDialog = new EventEmitter<void>();
 
@@ -39,10 +47,31 @@ export class ChannelDialogComponent {
   ) {}
 
   /**
+   * Checks if channel name already exists
+   */
+  private async checkChannelNameExists(name: string): Promise<boolean> {
+    const channelsRef = collection(this.firestore, 'channels');
+    const q = query(channelsRef, where('name', '==', name.trim()));
+    const querySnapshot = await getDocs(q);
+    return !querySnapshot.empty;
+  }
+
+  /**
+   * Validates channel name including duplicate check
+   */
+  async validateChannelName(name: string): Promise<void> {
+    if (name.trim().length >= this.minNameLength) {
+      this.nameExists = await this.checkChannelNameExists(name);
+    }
+  }
+
+  /**
    * Validates if channel name meets minimum length requirement
    */
   get isChannelNameValid(): boolean {
-    return this.channelName.trim().length >= this.minNameLength;
+    return (
+      this.channelName.trim().length >= this.minNameLength && !this.nameExists
+    );
   }
 
   /**
@@ -94,7 +123,7 @@ export class ChannelDialogComponent {
    * Creates new channel and opens people dialog
    */
   async openAddPeopleDialog(): Promise<void> {
-    if (!this.isChannelNameValid || !this.dialogRef) return;
+    if (!this.isChannelNameValid || this.nameExists || !this.dialogRef) return;
 
     try {
       const channelRef = collection(this.firestore, 'channels');

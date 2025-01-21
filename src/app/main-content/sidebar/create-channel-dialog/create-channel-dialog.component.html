@@ -11,10 +11,16 @@
     <div class="input-group">
       <label>Channel-Name</label>
       <mat-icon class="tag">#</mat-icon>
-      <input type="text" [(ngModel)]="channelName" placeholder="z.B. Kooperationsprojekte"
-        [class.invalid]="channelName.length > 0 && !isChannelNameValid">
-      <div class="validation-message" *ngIf="channelName.length > 0 && !isChannelNameValid">
-        Der Channel-Name muss mindestens {{ minNameLength }} Zeichen lang sein.
+      <input type="text" [(ngModel)]="channelName" (ngModelChange)="validateChannelName($event)"
+        placeholder="z.B. Kooperationsprojekte"
+        [class.invalid]="channelName.length > 0 && (!isChannelNameValid || nameExists)">
+      <div class="validation-message">
+        <div *ngIf="channelName.length > 0 && !isChannelNameValid && channelName.length < minNameLength">
+          Der Channel-Name muss mindestens {{ minNameLength }} Zeichen lang sein.
+        </div>
+        <div *ngIf="nameExists">
+          Ein Channel mit diesem Namen existiert bereits. Bitte wähle einen anderen Namen.
+        </div>
       </div>
     </div>
 
@@ -23,8 +29,8 @@
       <input type="text" [(ngModel)]="channelDescription" placeholder="Dein Text hier">
     </div>
 
-    <button class="create-btn" [disabled]="!isChannelNameValid" [class.disabled]="!isChannelNameValid"
-      (click)="openAddPeopleDialog()">
+    <button class="create-btn" [disabled]="!isChannelNameValid || nameExists"
+      [class.disabled]="!isChannelNameValid || nameExists" (click)="openAddPeopleDialog()">
       Erstellen
     </button>
   </div>

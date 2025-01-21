@@ -121,8 +121,7 @@ p {
 
 .input-group {
   position: relative;
-  margin-bottom: 20px;
-
+  margin-bottom: 32px;
   input {
     &.invalid {
       border-color: #dc3545;
@@ -136,4 +135,10 @@ p {
     margin-left: 24px;
     position: absolute;
   }
+}
+
+.error-message {
+  color: #f44336;
+  font-size: 12px;
+  margin-top: 4px;
 }
