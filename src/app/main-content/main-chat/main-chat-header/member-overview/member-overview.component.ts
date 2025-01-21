@@ -232,15 +232,35 @@ export class MemberOverviewComponent implements OnInit, OnDestroy {
 
   /**
    * Opens dialog to add people to the channel
-   * @returns {void}
    */
   openAddPeopleDialog(): void {
-    this.dialogRef.close();
-    this.dialog.open(AddPeopleComponent, {
+    const dialogRef = this.getAddPeopleDialogConfig();
+    this.handleAddPeopleDialogClose(dialogRef);
+  }
+
+  /**
+   * Creates dialog configuration
+   */
+  private getAddPeopleDialogConfig(): MatDialogRef<AddPeopleComponent> {
+    return this.dialog.open(AddPeopleComponent, {
       position: { top: '160px' },
       hasBackdrop: true,
       backdropClass: 'dialog-backdrop',
       panelClass: 'member-dialog',
+    });
+  }
+
+  /**
+   * Handles dialog close event
+   */
+  private handleAddPeopleDialogClose(
+    dialogRef: MatDialogRef<AddPeopleComponent>
+  ): void {
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result?.updated) {
+        this.chatService.refreshChannelMembers(this.currentChannelId);
+      }
+      this.dialogRef.close();
     });
   }
 }

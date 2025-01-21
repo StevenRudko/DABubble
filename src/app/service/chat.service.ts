@@ -10,7 +10,7 @@ import {
   updateDoc,
   serverTimestamp,
 } from '@angular/fire/firestore';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import {
   Channel,
   ChatMember,
@@ -55,6 +55,9 @@ export class ChatService {
   private messageSentSubject = new BehaviorSubject<boolean>(false);
   /** Observable for message sent events */
   messageSent$ = this.messageSentSubject.asObservable();
+
+  private channelMembersUpdatedSource = new Subject<string>();
+  channelMembersUpdated$ = this.channelMembersUpdatedSource.asObservable();
 
   private currentUser: any = null;
 
@@ -280,10 +283,7 @@ export class ChatService {
           const userSnap = await getDoc(userRef);
           if (userSnap.exists()) {
             const userData = userSnap.data();
-            return {
-              ...userData,
-              uid: memberId,
-            } as ChatMember;
+            return { ...userData, uid: memberId } as ChatMember;
           }
           return null;
         });
@@ -293,6 +293,7 @@ export class ChatService {
         );
 
         this.channelMembersSubject.next(members);
+        this.channelMembersUpdatedSource.next(channelId);
       }
     } catch (error) {
       console.error('Error refreshing channel members:', error);

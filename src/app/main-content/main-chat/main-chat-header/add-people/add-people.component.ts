@@ -251,9 +251,10 @@ export class AddPeopleComponent implements OnInit {
     if (!this.selectedUsers.length) return;
     try {
       await this.updateChannelMembers();
-      this.dialogRef.close();
+      this.dialogRef.close({ updated: true });
     } catch (error) {
       console.error('Error adding users to channel:', error);
+      this.dialogRef.close({ updated: false });
     }
   }
 

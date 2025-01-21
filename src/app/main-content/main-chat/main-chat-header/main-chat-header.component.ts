@@ -6,7 +6,7 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { MATERIAL_MODULES } from '../../../shared/material-imports';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Auth } from '@angular/fire/auth';
 import { MemberOverviewComponent } from './member-overview/member-overview.component';
@@ -138,10 +138,18 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Sets up initial channel and direct user subscriptions
-   * @returns {void}
+   * Sets up channel subscriptions
    */
   private setupInitialSubscriptions(): void {
+    this.setupChannelSubscription();
+    this.setupMemberUpdates();
+    this.currentDirectUser$.subscribe();
+  }
+
+  /**
+   * Handles channel subscription
+   */
+  private setupChannelSubscription(): void {
     this.currentChannel$
       .pipe(
         distinctUntilChanged((prev, curr) => prev?.id === curr?.id),
@@ -150,8 +158,19 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
       .subscribe((channel) => {
         this.channelMembers$ = this.chatService.getChannelMembers(channel!.id);
       });
+  }
 
-    this.currentDirectUser$.subscribe();
+  /**
+   * Handles member update subscription
+   */
+  private setupMemberUpdates(): void {
+    this.chatService.channelMembersUpdated$.subscribe((channelId) => {
+      this.currentChannel$.pipe(take(1)).subscribe((channel) => {
+        if (channel && channel.id === channelId) {
+          this.channelMembers$ = this.chatService.getChannelMembers(channelId);
+        }
+      });
+    });
   }
 
   /**
@@ -388,19 +407,49 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Opens add people dialog
-   * @returns {void}
+   * Opens add people dialog with positioning
    */
   openAddPeopleDialog(): void {
     const btnRect = this.addPeopleBtn.nativeElement.getBoundingClientRect();
-    this.dialog.open(AddPeopleComponent, {
-      position: {
-        top: '160px',
-        left: `${btnRect.right - 420}px`,
-      },
+    const dialogRef = this.getAddPeopleDialogConfig(btnRect);
+    this.handleAddPeopleDialogClose(dialogRef);
+  }
+
+  /**
+   * Creates dialog configuration
+   */
+  private getAddPeopleDialogConfig(
+    btnRect: DOMRect
+  ): MatDialogRef<AddPeopleComponent> {
+    return this.dialog.open(AddPeopleComponent, {
+      position: { top: '160px', left: `${btnRect.right - 420}px` },
       hasBackdrop: true,
       backdropClass: 'dialog-backdrop',
       panelClass: 'member-dialog',
+    });
+  }
+
+  /**
+   * Handles dialog close event
+   */
+  private handleAddPeopleDialogClose(
+    dialogRef: MatDialogRef<AddPeopleComponent>
+  ): void {
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result?.updated) {
+        this.refreshMembers();
+      }
+    });
+  }
+
+  /**
+   * Refreshes member list
+   */
+  private refreshMembers(): void {
+    this.currentChannel$.pipe(take(1)).subscribe((channel) => {
+      if (channel) {
+        this.channelMembers$ = this.chatService.getChannelMembers(channel.id);
+      }
     });
   }
 
