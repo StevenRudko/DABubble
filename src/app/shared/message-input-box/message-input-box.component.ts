@@ -1,4 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MATERIAL_MODULES } from '../material-imports';
 import {
@@ -37,6 +43,7 @@ interface SearchResult {
   styleUrl: './message-input-box.component.scss',
 })
 export class MessageInputBoxComponent implements OnInit, OnDestroy {
+  @ViewChild('messageInput') messageInput!: ElementRef;
   messageText: string = '';
   placeholder: string = 'Nachricht schreiben...';
   private currentChannel: any;
@@ -74,6 +81,7 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
         this.currentChannel = channel;
         if (channel && !this.isNewMessage) {
           this.placeholder = `Nachricht an #${channel.name}`;
+          this.focusInput();
         }
       })
     );
@@ -88,9 +96,31 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
         this.currentDirectUser = user;
         if (user && !this.isNewMessage) {
           this.placeholder = `Nachricht an ${this.getDisplayName(user)}`;
+          this.focusInput();
         }
       })
     );
+  }
+
+  /**
+   * Focuses input field
+   */
+  private focusInput(): void {
+    setTimeout(() => {
+      if (this.messageInput?.nativeElement) {
+        this.messageInput.nativeElement.focus();
+      }
+    });
+  }
+
+  /**
+   * Handles keydown events for textarea
+   */
+  onKeyDown(event: KeyboardEvent): void {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      this.sendMessage();
+    }
   }
 
   /**

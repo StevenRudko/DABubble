@@ -1,6 +1,6 @@
 <div class="message-input-container">
   <label for="new-message"></label>
-  <textarea [(ngModel)]="messageText" [placeholder]="placeholder">
+  <textarea #messageInput [(ngModel)]="messageText" [placeholder]="placeholder" (keydown)="onKeyDown($event)">
   </textarea>
 
   <div class="bottom-wrapper-icons">
