@@ -54,6 +54,50 @@ section {
     }
 }
 
-.flex-container {
-    @include styles.dFlex($d: flex, $fd: row, $jc: flex-start, $ai: flex-start, $g: 10px);
+.status-base {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    div {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+    }
+
+    span {
+        font-size: 1rem;
+
+        &.active {
+            color: #22c55e;
+        }
+
+        &.offline {
+            color: #9ca3af;
+        }
+    }
+}
+
+.status-online {
+    @extend .status-base;
+
+    div {
+        background-color: #22c55e;
+    }
+
+    span {
+        color: #22c55e;
+    }
+}
+
+.status-offline {
+    @extend .status-base;
+
+    div {
+        background-color: #9ca3af;
+    }
+
+    span {
+        color: #9ca3af;
+    }
 }

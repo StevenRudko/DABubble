@@ -32,7 +32,17 @@
                             <span>
                                 {{result.username}}
                             </span>
-                            <p>Aktiv</p>
+                            @if (getPresenceStatus(result.localID)) {
+                                <div class="status-online">
+                                  <div></div>
+                                  <span>Online</span>
+                                </div>
+                            } @else {
+                                <div class="status-offline">
+                                    <div></div>
+                                    <span>Online</span>
+                                </div>
+                            }
                         </div>
                     </div>
             }

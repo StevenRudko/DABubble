@@ -9,6 +9,7 @@ import { User } from 'firebase/auth';
 import { UserMenuComponent } from './user-menu/user-menu.component';
 import { SearchBarComponent } from "./search-bar/search-bar.component";
 import { FormsModule } from '@angular/forms';
+import { UserInfosService } from '../service/user-infos.service';
 
 @Component({
   selector: 'app-header',
@@ -26,7 +27,8 @@ export class HeaderComponent {
   constructor(
     private dialog: MatDialog,
     private authService: AuthService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    public userInfo: UserInfosService
   ) {
     this.currentUser$ = this.authService.user$;
   }

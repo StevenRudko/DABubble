@@ -6,6 +6,8 @@ import { UserInterface } from '../../models/user-interface';
 import { SearchResult } from '../../models/search-result';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ProfileOverviewComponent } from '../../shared/profile-overview/profile-overview.component';
+import { PresenceService } from '../../service/presence.service';
+import { map, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-search-bar',
@@ -17,7 +19,7 @@ export class SearchBarComponent implements OnInit {
   @Input() searchQuery: string = '';
   @Input() showResult: boolean = false;
   @Output() borderTrigger = new EventEmitter<boolean>();
-  searchResults:  SearchResult[] = [];
+  searchResults: SearchResult[] = [];
 
   private userMessages: UserMessageInterface[] = [];
   private users: UserInterface[] = [];
@@ -25,8 +27,8 @@ export class SearchBarComponent implements OnInit {
   constructor(
     private userData: UserData,
     // private channelData: ChannelService
-    // public dialogRef: MatDialogRef<ProfileOverviewComponent>,
     private dialog: MatDialog,
+    private presenceService: PresenceService,
   ) { }
 
   ngOnInit(): void {
@@ -47,7 +49,7 @@ export class SearchBarComponent implements OnInit {
 
   private filterResults() {
     const query = this.searchQuery.toLowerCase();
-    
+
     const filteredMessages = this.userMessages
       .filter((msg) =>
         msg.message?.toLowerCase().includes(query)
@@ -99,7 +101,7 @@ export class SearchBarComponent implements OnInit {
         username: user.username,
         localID: user.localID,
         photoURL: user.photoURL,
-        email: user.email
+        email: user.email,
       }))
       .filter((msg): msg is SearchResult => msg !== undefined);
   }
@@ -114,7 +116,7 @@ export class SearchBarComponent implements OnInit {
   }
 
   showProfile(result: SearchResult) {
-        const dialogConfig = {
+    const dialogConfig = {
       data: result,
       panelClass: false
         ? ['profile-dialog', 'right-aligned']
@@ -123,5 +125,14 @@ export class SearchBarComponent implements OnInit {
     };
 
     this.dialog.open(ProfileOverviewComponent, dialogConfig);
+  }
+
+  getPresenceStatus(id: string): boolean {
+    let isOnline = false;
+    this.presenceService.onlineUsers$.subscribe((onlineUsers) => {
+      isOnline = onlineUsers[id] === 'online';
+    }).unsubscribe();
+
+    return isOnline;
   }
 }

@@ -3,8 +3,8 @@
 .profile-modal {
   background: white;
   border-radius: 30px;
-  width: 420px;
-  padding: 40px;
+  width: 340px;
+  padding: 24px;
   position: fixed;
   top: 100px;
   right: 13px;
@@ -14,7 +14,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 
   h2 {
     font-size: 1.5rem;
@@ -53,13 +53,13 @@
     $g: 8px
   );
   width: 100%;
-  border-radius: 100%;
   overflow: hidden;
 
   .profile-avatar {
-    width: 200px;
-    height: 200px;
+    width: 120px;
+    height: 120px;
     object-fit: cover;
+    border-radius: 100%;
   }
 }
 
@@ -83,13 +83,16 @@
       $fd: row,
       $jc: space-between,
       $ai: center,
-      $g: 40px
+      $g: 10px
     );
+      margin: 0 0 8px 0;
 
     h3 {
-      font-size: 2rem;
+      font-size: 1.75rem;
       font-weight: 700;
-      margin: 0 0 8px 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     p {
@@ -135,6 +138,7 @@
     $g: 18px
   );
   width: 100%;
+  padding-bottom: 5px;
 
   .info-row {
     @include styles.dFlex(
@@ -155,13 +159,13 @@
 .email {
   color: #1381ff;
   text-decoration: none;
-  font-size: 1.125rem;
+  font-size: 1rem;
   margin-left: 37px;
   cursor: pointer;
 }
 
 .mail-header {
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 700;
 }
 
@@ -182,7 +186,7 @@
     $fd: column,
     $jc: center,
     $ai: flex-start,
-    $g: 7px
+    $g: 12px
   );
   width: 100%;
 }
@@ -197,7 +201,7 @@
   );
 
   p {
-    font-size: 1.25rem;
+    font-size: 1.125rem;
     font-weight: 700;
   }
 }
