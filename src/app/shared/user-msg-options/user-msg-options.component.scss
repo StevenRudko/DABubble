@@ -2,7 +2,6 @@
 @use "./../../../assets/styles/fonts.scss" as fonts;
 @use "./../../../assets/styles/theme-colors.scss" as colors;
 
-
 mat-card-content {
   @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
   height: 24px;
@@ -17,17 +16,17 @@ mat-card {
 }
 
 app-emoji-picker {
-  position:relative;
-  z-index:4;
-  left:150px;
-  top:-30px;
-  width:240px;
+  position: relative;
+  z-index: 4;
+  left: 150px;
+  top: -30px;
+  width: 240px;
 }
 
 app-messages-edit-options {
-  position:relative;
-  z-index:4;
-  right:-230px;
-  top:-30px;
-  width:240px;
+  position: relative;
+  z-index: 4;
+  right: -230px;
+  top: -30px;
+  width: 240px;
 }

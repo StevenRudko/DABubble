@@ -1,4 +1,11 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  HostListener,
+  ElementRef,
+} from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
 import { MATERIAL_MODULES } from '../material-imports';
 import { EmojiPickerComponent } from '../emoji-picker/emoji-picker.component';
@@ -11,7 +18,13 @@ import { EditMessageComponent } from '../edit-message/edit-message.component';
 @Component({
   selector: 'app-user-message',
   standalone: true,
-  imports: [CommonModule, MATERIAL_MODULES, NgIf, UserMsgOptionsComponent],
+  imports: [
+    CommonModule,
+    MATERIAL_MODULES,
+    NgIf,
+    UserMsgOptionsComponent,
+    EmojiPickerComponent,
+  ],
   templateUrl: './user-message.component.html',
   styleUrl: './user-message.component.scss',
 })
@@ -25,30 +38,68 @@ export class UserMessageComponent {
     timestamp: number;
     userMessageId: string;
     author: string;
+    authorPhoto: any;
     isOwnMessage: boolean;
     message: string;
     emojis: string[];
     hours: number;
     minutes: number;
   }[] = [];
+  @Input() CurrentUserURL: any;
 
   hoverComponent: boolean = false;
-  hoverFaceTag: boolean = false;
+  activeEmojiPicker: string | null = null;
   @Output() openThreadEvent = new EventEmitter<void>();
 
-  constructor(private dialog: MatDialog, private userData: UserData) {}
+  constructor(
+    private dialog: MatDialog,
+    private userData: UserData,
+    private elementRef: ElementRef
+  ) {}
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    if (!this.elementRef.nativeElement.contains(event.target)) {
+      this.activeEmojiPicker = null;
+    }
+  }
 
   openThread() {
     this.openThreadEvent.emit();
   }
 
   onMouseEnter(msgId: string) {
-    this.hoverComponent = true;
-    this.hoverFaceTag = true;
+    // Nur hover-Optionen anzeigen wenn kein Emoji-Picker aktiv ist
+    if (!this.activeEmojiPicker) {
+      this.hoverComponent = true;
+    }
   }
 
   onMouseLeave(msgId: string) {
     this.hoverComponent = false;
+  }
+
+  toggleEmojiPicker(messageId: string, event: MouseEvent): void {
+    event.stopPropagation();
+    // Direkte Zuweisung: Entweder null oder die neue messageId
+    this.activeEmojiPicker =
+      this.activeEmojiPicker === messageId ? null : messageId;
+
+    // Hover-Optionen ausblenden wenn ein Picker aktiv ist
+    this.hoverComponent = !this.activeEmojiPicker;
+  }
+
+  handleEmojiSelected(emoji: any, messageId: string): void {
+    const messageIndex = this.allMessages.findIndex(
+      (msg) => msg.userMessageId === messageId
+    );
+    if (messageIndex !== -1) {
+      if (!this.allMessages[messageIndex].emojis) {
+        this.allMessages[messageIndex].emojis = [];
+      }
+      this.allMessages[messageIndex].emojis.push(emoji.emoji);
+      this.activeEmojiPicker = null;
+    }
   }
 
   openEmojiPicker(): void {
@@ -60,39 +111,36 @@ export class UserMessageComponent {
     });
   }
 
-  // Event-Handler, der beim Löschen einer Nachricht aufgerufen wird
   deleteMessage(messageId: string) {
-
-    this.userData.deleteMessage(messageId)
-    .then(() => {
-      // console.log('Nachricht erfolgreich gelöscht');
-    })
-    .catch((error) => {
-      // console.error('Fehler beim Löschen der Nachricht:', error);
-    });
-
+    this.userData
+      .deleteMessage(messageId)
+      .then(() => {
+        // console.log('Nachricht erfolgreich gelöscht');
+      })
+      .catch((error) => {
+        // console.error('Fehler beim Löschen der Nachricht:', error);
+      });
   }
 
   editMessage(userMessageId: string) {
-    // Finde die Nachricht basierend auf der userMessageId aus allMessages (oder einer anderen Quelle)
-    const messageToEdit = this.allMessages.find(msg => msg.userMessageId === userMessageId);
-  
+    const messageToEdit = this.allMessages.find(
+      (msg) => msg.userMessageId === userMessageId
+    );
+
     if (!messageToEdit) {
       // console.error('Nachricht nicht gefunden');
       return;
     }
-  
-    // Öffnen des Dialogs und Übergeben der Nachricht zur Bearbeitung
+
     const dialogRef = this.dialog.open(EditMessageComponent, {
-      data: { message: messageToEdit.message },  // Übergebe den Text der Nachricht
+      data: { message: messageToEdit.message },
       backdropClass: 'custom-backdrop',
     });
-  
-    // Wenn der Dialog geschlossen wird (nach dem Speichern oder Abbrechen)
+
     dialogRef.afterClosed().subscribe((editedMessage: string) => {
       if (editedMessage !== null && editedMessage !== messageToEdit.message) {
-        // Wenn die Nachricht geändert wurde, rufe die Update-Funktion auf
-        this.userData.updateMessage(userMessageId, { message: editedMessage })
+        this.userData
+          .updateMessage(userMessageId, { message: editedMessage })
           .then(() => {
             // console.log('Nachricht erfolgreich aktualisiert');
           })
@@ -101,6 +149,6 @@ export class UserMessageComponent {
           });
       }
     });
-}
+  }
 
 }

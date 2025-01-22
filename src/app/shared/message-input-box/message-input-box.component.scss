@@ -85,3 +85,19 @@ textarea {
     }
   }
 }
+
+.emoji-picker-container {
+  position: relative;
+}
+
+.emoji-picker-popup {
+  position: absolute;
+  bottom: 240px;
+  left: 20px;
+  z-index: 1000;
+}
+
+.input-emoji-picker ::ng-deep mat-card {
+  border-radius: 20px !important;
+  border-bottom-left-radius: 0 !important;
+}

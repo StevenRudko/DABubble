@@ -5,8 +5,12 @@
 
   <div class="bottom-wrapper-icons">
     <div class="interactive-icons">
-      <div class="circle-outline">
-        <mat-icon>sentiment_satisfied_alt</mat-icon>
+      <div class="circle-outline emoji-picker-container">
+        <mat-icon (click)="toggleEmojiPicker($event)">sentiment_satisfied_alt</mat-icon>
+
+        <app-emoji-picker *ngIf="showEmojiPicker" (emojiSelect)="handleEmojiSelected($event)"
+          class="emoji-picker-popup input-emoji-picker">
+        </app-emoji-picker>
       </div>
       <div class="circle-outline">
         <mat-icon>alternate_email</mat-icon>

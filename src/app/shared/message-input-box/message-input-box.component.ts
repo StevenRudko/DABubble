@@ -4,6 +4,7 @@ import {
   OnInit,
   ViewChild,
   ElementRef,
+  HostListener,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MATERIAL_MODULES } from '../material-imports';
@@ -16,6 +17,8 @@ import {
 import { ChatService } from '../../service/chat.service';
 import { AuthService } from '../../service/auth.service';
 import { Subscription } from 'rxjs';
+import { EmojiPickerComponent } from '../emoji-picker/emoji-picker.component';
+import { CommonModule } from '@angular/common';
 
 interface User {
   uid: string;
@@ -38,7 +41,7 @@ interface SearchResult {
 @Component({
   selector: 'app-message-input-box',
   standalone: true,
-  imports: [FormsModule, MATERIAL_MODULES],
+  imports: [FormsModule, MATERIAL_MODULES, EmojiPickerComponent, CommonModule],
   templateUrl: './message-input-box.component.html',
   styleUrl: './message-input-box.component.scss',
 })
@@ -52,6 +55,7 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
   private newMessageRecipient: SearchResult | null = null;
   private subscriptions: Subscription = new Subscription();
   private isNewMessage: boolean = false;
+  showEmojiPicker: boolean = false;
 
   /**
    * Initializes message input component
@@ -59,8 +63,42 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
   constructor(
     private firestore: Firestore,
     private chatService: ChatService,
-    private authService: AuthService
+    private authService: AuthService,
+    private elementRef: ElementRef
   ) {}
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    if (!this.elementRef.nativeElement.contains(event.target)) {
+      this.showEmojiPicker = false;
+    }
+  }
+
+  toggleEmojiPicker(event: MouseEvent): void {
+    event.stopPropagation();
+    this.showEmojiPicker = !this.showEmojiPicker;
+  }
+
+  handleEmojiSelected(emoji: any): void {
+    // Insert emoji at cursor position or at end
+    const textarea = this.messageInput.nativeElement;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+
+    this.messageText =
+      this.messageText.substring(0, start) +
+      emoji.emoji +
+      this.messageText.substring(end);
+
+    // Set cursor position after emoji
+    setTimeout(() => {
+      textarea.selectionStart = start + emoji.emoji.length;
+      textarea.selectionEnd = start + emoji.emoji.length;
+      textarea.focus();
+    });
+
+    this.showEmojiPicker = false;
+  }
 
   /**
    * Sets up subscriptions on init

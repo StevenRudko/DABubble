@@ -1,5 +1,5 @@
 import { CommonModule, NgFor, NgIf } from '@angular/common';
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { MATERIAL_MODULES } from '../material-imports';
 
 @Component({
@@ -35,6 +35,7 @@ export class EmojiPickerComponent implements OnInit {
   ];
 
   selectedEmojis: string[] = [];
+  @Input() isOwnMessage: boolean = false;
 
   @Output() mouseStateChange = new EventEmitter<boolean>();
 

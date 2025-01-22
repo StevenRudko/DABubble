@@ -6,6 +6,7 @@ export interface UserMessageInterface {
   /** ID of the message author */
   authorId: string;
   username: string;
+  authorPhoto: any;
   photoURL: string;
   /** ID of the channel where the message was sent */
   channelId: string;
@@ -31,6 +32,8 @@ export interface renderMessageInterface {
   timestamp: number;
   /** Author information */
   author: any;
+  /** Author Photo URL */
+  authorPhoto: any;
   /** Unique message identifier */
   userMessageId: string;
   /** Message content */
