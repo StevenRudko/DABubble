@@ -50,18 +50,18 @@ export class UserMessageComponent {
   @Input() showReactionEmojis: boolean = false;
   @Input() showAnswerDetails: boolean = true;
   @Input() showReactionIcons: boolean = true;
-  // @Input() allMessages: DisplayMessageInterface[] = [];
-  @Input() allMessages: {
-    timestamp: number;
-    userMessageId: string;
-    author: string;
-    authorPhoto: any;
-    isOwnMessage: boolean;
-    message: string;
-    emojis: string[];
-    hours: number;
-    minutes: number;
-  }[] = [];
+  @Input() allMessages: DisplayMessageInterface[] = [];
+  // @Input() allMessages: {
+  //   timestamp: number;
+  //   userMessageId: string;
+  //   author: string;
+  //   authorPhoto: any;
+  //   isOwnMessage: boolean;
+  //   message: string;
+  //   emojis: string[];
+  //   hours: number;
+  //   minutes: number;
+  // }[] = [];
   @Input() CurrentUserURL: any;
 
   hoverComponent: boolean = false;
