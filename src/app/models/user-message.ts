@@ -1,4 +1,14 @@
 /**
+ * Represents an emoji reaction to a message
+ */
+export interface EmojiReaction {
+  /** Name/Identifier of the emoji (e.g. "rocket", "heart") */
+  name: string;
+  /** ID of the user who reacted */
+  user: string;
+}
+
+/**
  * Represents a message sent by a user in the chat system
  */
 export interface UserMessageInterface {
@@ -9,11 +19,11 @@ export interface UserMessageInterface {
   photoURL: string;
   /** ID of the channel where the message was sent */
   channelId: number;
-  directUserId?: string; // NEU: für Direktnachrichten
+  directUserId?: string;
   /** Array of comment IDs associated with this message */
   comments: number[];
   /** Array of emoji reactions to this message */
-  emojis: string[];
+  emojis: EmojiReaction[] | string[]; // Unterstützt beide Formate
   /** Content of the message */
   message: string;
   /** Timestamp of when the message was sent */
@@ -35,10 +45,20 @@ export interface renderMessageInterface {
   userMessageId: string;
   /** Message content */
   message: string;
-  emojis: string[];
+  emojis: EmojiReaction[] | string[]; // Unterstützt beide Formate
   /** Hour component of the message time */
   hours: number;
   isOwnMessage: boolean;
   /** Minute component of the message time */
   minutes: number;
+}
+
+/**
+ * Type guard to check if emoji array is of type EmojiReaction[]
+ */
+export function isEmojiReactionArray(emojis: any[]): emojis is EmojiReaction[] {
+  return (
+    emojis.length === 0 ||
+    (emojis[0] && 'name' in emojis[0] && 'user' in emojis[0])
+  );
 }

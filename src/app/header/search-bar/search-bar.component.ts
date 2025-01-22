@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { UserData } from '../../service/user-data.service';
 import { ChannelService } from '../../service/channel.service';
 import { UserMessageInterface } from '../../models/user-message';
@@ -13,7 +20,7 @@ import { map, Observable } from 'rxjs';
   selector: 'app-search-bar',
   imports: [],
   templateUrl: './search-bar.component.html',
-  styleUrl: './search-bar.component.scss'
+  styleUrl: './search-bar.component.scss',
 })
 export class SearchBarComponent implements OnInit {
   @Input() searchQuery: string = '';
@@ -28,8 +35,8 @@ export class SearchBarComponent implements OnInit {
     private userData: UserData,
     // private channelData: ChannelService
     private dialog: MatDialog,
-    private presenceService: PresenceService,
-  ) { }
+    private presenceService: PresenceService
+  ) {}
 
   ngOnInit(): void {
     this.userData.userMessages$.subscribe((messages) => {
@@ -51,17 +58,19 @@ export class SearchBarComponent implements OnInit {
     const query = this.searchQuery.toLowerCase();
 
     const filteredMessages = this.userMessages
-      .filter((msg) =>
-        msg.message?.toLowerCase().includes(query)
-      ).map((msg) => {
+      .filter((msg) => msg.message?.toLowerCase().includes(query))
+      .map((msg) => {
         if (msg.channelId) {
           return this.filterMessage(msg, 'message');
         } else if (msg.directUserId) {
           return this.filterMessage(msg, 'directMessage');
         } else if (msg.comments) {
           return this.filterMessage(msg, 'thread');
-        } else { return }
-      }).filter((msg): msg is SearchResult => msg !== undefined);
+        } else {
+          return;
+        }
+      })
+      .filter((msg): msg is SearchResult => msg !== undefined);
 
     const filteredUsers = this.filterUser(query);
 
@@ -74,7 +83,7 @@ export class SearchBarComponent implements OnInit {
   }
 
   filterMessage(msg: UserMessageInterface, type: string) {
-    const author = this.users.find(user => user.localID === msg.authorId);
+    const author = this.users.find((user) => user.localID === msg.authorId);
     return {
       type: type || '',
       authorId: msg.authorId || '',
@@ -86,15 +95,16 @@ export class SearchBarComponent implements OnInit {
       emojis: msg.emojis || [],
       message: msg.message || '',
       time: msg.time || 0,
-      userMessageId: msg.userMessageId || ''
+      userMessageId: msg.userMessageId || '',
     };
   }
 
   filterUser(query: string) {
     return this.users
-      .filter((user) =>
-        user.username?.toLowerCase().includes(query) ||
-        user.email?.toLowerCase().includes(query)
+      .filter(
+        (user) =>
+          user.username?.toLowerCase().includes(query) ||
+          user.email?.toLowerCase().includes(query)
       )
       .map((user) => ({
         type: 'user',
@@ -129,9 +139,11 @@ export class SearchBarComponent implements OnInit {
 
   getPresenceStatus(id: string): boolean {
     let isOnline = false;
-    this.presenceService.onlineUsers$.subscribe((onlineUsers) => {
-      isOnline = onlineUsers[id] === 'online';
-    }).unsubscribe();
+    this.presenceService.onlineUsers$
+      .subscribe((onlineUsers) => {
+        isOnline = onlineUsers[id] === 'online';
+      })
+      .unsubscribe();
 
     return isOnline;
   }

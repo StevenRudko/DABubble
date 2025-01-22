@@ -1,5 +1,5 @@
-import { CommonModule, NgFor, NgIf } from '@angular/common';
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { CommonModule, NgFor } from '@angular/common';
+import { Component, Output, EventEmitter, Input } from '@angular/core';
 import { MATERIAL_MODULES } from '../material-imports';
 
 @Component({
@@ -9,7 +9,7 @@ import { MATERIAL_MODULES } from '../material-imports';
   templateUrl: './emoji-picker.component.html',
   styleUrls: ['./emoji-picker.component.scss'],
 })
-export class EmojiPickerComponent implements OnInit {
+export class EmojiPickerComponent {
   emojiList: any[] = [
     { name: 'smile', emoji: '😊' },
     { name: 'thumbs_up', emoji: '👍' },
@@ -34,36 +34,25 @@ export class EmojiPickerComponent implements OnInit {
     { name: 'check', emoji: '✅' },
   ];
 
-  selectedEmojis: string[] = [];
   @Input() isOwnMessage: boolean = false;
-
+  @Output() emojiSelect = new EventEmitter<any>();
   @Output() mouseStateChange = new EventEmitter<boolean>();
+  @Output() emojiListChange = new EventEmitter<any[]>();
 
-  constructor() {}
-
-  ngOnInit(): void {}
-
-  // Callback, das aufgerufen wird, wenn ein Emoji ausgewählt wird
   onEmojiSelect(emoji: any): void {
-    this.selectedEmojis.push(emoji.emoji);
-    console.log('Ausgewähltes Emoji:', emoji.emoji);
+    console.log('EmojiPicker - emoji selected:', emoji);
+    this.emojiSelect.emit(emoji);
+    this.emojiListChange.emit(this.emojiList);
   }
 
-  /**
-   * Handles the mouseenter event on the emoji picker
-   * Used to maintain visibility when hovering over the picker itself
-   * @returns {void}
-   */
   onMouseEnter(): void {
+    console.log('Mouse entered emoji picker');
     this.mouseStateChange.emit(true);
+    this.emojiListChange.emit(this.emojiList);
   }
 
-  /**
-   * Handles the mouseleave event on the emoji picker
-   * Used to hide the picker when mouse leaves the component area
-   * @returns {void}
-   */
   onMouseLeave(): void {
+    console.log('Mouse left emoji picker');
     this.mouseStateChange.emit(false);
   }
 }
