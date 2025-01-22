@@ -8,8 +8,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { ProfileOverviewComponent } from '../../shared/profile-overview/profile-overview.component';
 import { PresenceService } from '../../service/presence.service';
 import { ChatService } from '../../service/chat.service';
-import { Subject, take } from 'rxjs';
+import { take } from 'rxjs';
 import { ShowHiddeResultsService } from '../../service/show-hidde-results.service';
+import { UserInfosService } from '../../service/user-infos.service';
+import { ChannelInterface } from '../../models/channel-interface';
 
 @Component({
   selector: 'app-search-bar',
@@ -25,25 +27,24 @@ export class SearchBarComponent implements OnInit {
 
   private userMessages: UserMessageInterface[] = [];
   private users: UserInterface[] = [];
-  private destroy$ = new Subject<void>();
+  private channels: ChannelInterface[] = []
 
   constructor(
     private userData: UserData,
-    // private channelData: ChannelService
+    private channelData: ChannelService,
     private dialog: MatDialog,
     private presenceService: PresenceService,
     private chatService: ChatService,
     public showHiddeService: ShowHiddeResultsService,
-  ) { }
+    public userInfo: UserInfosService,
+  ) {}
 
   ngOnInit(): void {
-    this.userData.userMessages$.subscribe((messages) => {
-      this.userMessages = messages;
-    });
+    this.userData.userMessages$.subscribe((messages) => this.userMessages = messages);
 
-    this.userData.users$.subscribe((users) => {
-      this.users = users;
-    });
+    this.userData.users$.subscribe((users) => this.users = users);
+
+    this.channelData.channels$.subscribe((channel) => this.channels = channel)
 
     this.showHiddeService.showResult$.subscribe(value => this.showResult = value);
     this.showHiddeService.borderTrigger$.subscribe(value => this.borderTrigger = value);
@@ -61,7 +62,10 @@ export class SearchBarComponent implements OnInit {
     const filteredMessages = this.userMessages
       .filter((msg) =>
         // if  msg.message?.toLowerCase().includes(query) == true _> map || if this.isAuthorMatching(msg, query) == true -> map
-        msg.message?.toLowerCase().includes(query) || this.isAuthorMatching(msg, query)
+        msg.message?.toLowerCase().includes(query) &&
+        this.canCurrentUserSeeMessage(msg) || 
+        this.isAuthorMatching(msg, query) &&
+        this.canCurrentUserSeeMessage(msg)
       ).map((msg) => {
         if (msg.channelId) {
           return this.filterMessage(msg, 'message');
@@ -118,6 +122,24 @@ export class SearchBarComponent implements OnInit {
   private isAuthorMatching(msg: UserMessageInterface, query: string): boolean {
     const author = this.users.find(user => user.localID === msg.authorId);
     return author ? author.username.toLowerCase().includes(query) : false;
+  }
+
+  private canCurrentUserSeeMessage(msg: UserMessageInterface): boolean {
+    // Prüfe, ob die Nachricht an den angemeldeten Benutzer direkt gerichtet ist
+    if (msg.directUserId === this.userInfo.uId) {
+      return true;
+    }
+    if (msg.authorId === this.userInfo.uId) {
+      return true;
+    }
+  
+    // Prüfe, ob der Benutzer Teil des Channels ist (falls `channelId` verwendet wird)
+    // if (msg.channelId && this.isUserInChannel(msg.channelId)) {
+    //   return true;
+    // }
+  
+    // Weitere Regeln hinzufügen, falls nötig
+    return false;
   }
 
   private updateBorderTrigger(): void {

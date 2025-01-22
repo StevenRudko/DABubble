@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
-import { Auth, onAuthStateChanged, User } from '@angular/fire/auth';
-import { UserInterface } from '../models/user-interface';
-import { Observable } from 'rxjs';
+import { User } from '@angular/fire/auth';
 
 @Injectable({
   providedIn: 'root'

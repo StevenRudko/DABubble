@@ -3,9 +3,6 @@ import { CommonModule } from '@angular/common';
 import { LogoComponentComponent } from '../shared/logo-component/logo-component.component';
 import { MATERIAL_MODULES } from '../shared/material-imports';
 import { MatDialog } from '@angular/material/dialog';
-import { AuthService } from '../service/auth.service';
-import { Observable } from 'rxjs';
-import { User } from 'firebase/auth';
 import { UserMenuComponent } from './user-menu/user-menu.component';
 import { SearchBarComponent } from "./search-bar/search-bar.component";
 import { FormsModule } from '@angular/forms';
@@ -20,21 +17,16 @@ import { ShowHiddeResultsService } from '../service/show-hidde-results.service';
   styleUrl: './header.component.scss',
 })
 export class HeaderComponent implements OnInit {
-  currentUser$: Observable<User | null>;
   borderTrigger: boolean = false;
   searchQuery: string = '';
-
   showResult: boolean = false;
 
   constructor(
     private dialog: MatDialog,
-    private authService: AuthService,
     public userInfo: UserInfosService,
     public showHiddeService: ShowHiddeResultsService,
     private cdr: ChangeDetectorRef
-  ) {
-    this.currentUser$ = this.authService.user$;
-  }
+  ) {}
 
   ngOnInit(): void {
     this.showHiddeService.showResult$.subscribe(value => {
