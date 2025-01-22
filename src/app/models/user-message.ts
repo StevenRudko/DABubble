@@ -8,7 +8,7 @@ export interface UserMessageInterface {
   username: string;
   photoURL: string;
   /** ID of the channel where the message was sent */
-  channelId: number;
+  channelId: string;
   directUserId?: string; // NEU: für Direktnachrichten
   /** Array of comment IDs associated with this message */
   comments: number[];

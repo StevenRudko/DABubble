@@ -1,13 +1,15 @@
-import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { UserData } from '../../service/user-data.service';
 import { ChannelService } from '../../service/channel.service';
 import { UserMessageInterface } from '../../models/user-message';
 import { UserInterface } from '../../models/user-interface';
 import { SearchResult } from '../../models/search-result';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { ProfileOverviewComponent } from '../../shared/profile-overview/profile-overview.component';
 import { PresenceService } from '../../service/presence.service';
-import { map, Observable } from 'rxjs';
+import { ChatService } from '../../service/chat.service';
+import { Subject, take } from 'rxjs';
+import { ShowHiddeResultsService } from '../../service/show-hidde-results.service';
 
 @Component({
   selector: 'app-search-bar',
@@ -17,18 +19,21 @@ import { map, Observable } from 'rxjs';
 })
 export class SearchBarComponent implements OnInit {
   @Input() searchQuery: string = '';
-  @Input() showResult: boolean = false;
-  @Output() borderTrigger = new EventEmitter<boolean>();
+  showResult: boolean = false;
+  borderTrigger: boolean = false;
   searchResults: SearchResult[] = [];
 
   private userMessages: UserMessageInterface[] = [];
   private users: UserInterface[] = [];
+  private destroy$ = new Subject<void>();
 
   constructor(
     private userData: UserData,
     // private channelData: ChannelService
     private dialog: MatDialog,
     private presenceService: PresenceService,
+    private chatService: ChatService,
+    public showHiddeService: ShowHiddeResultsService,
   ) { }
 
   ngOnInit(): void {
@@ -39,6 +44,9 @@ export class SearchBarComponent implements OnInit {
     this.userData.users$.subscribe((users) => {
       this.users = users;
     });
+
+    this.showHiddeService.showResult$.subscribe(value => this.showResult = value);
+    this.showHiddeService.borderTrigger$.subscribe(value => this.borderTrigger = value);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -52,7 +60,8 @@ export class SearchBarComponent implements OnInit {
 
     const filteredMessages = this.userMessages
       .filter((msg) =>
-        msg.message?.toLowerCase().includes(query)
+        // if  msg.message?.toLowerCase().includes(query) == true _> map || if this.isAuthorMatching(msg, query) == true -> map
+        msg.message?.toLowerCase().includes(query) || this.isAuthorMatching(msg, query)
       ).map((msg) => {
         if (msg.channelId) {
           return this.filterMessage(msg, 'message');
@@ -106,13 +115,32 @@ export class SearchBarComponent implements OnInit {
       .filter((msg): msg is SearchResult => msg !== undefined);
   }
 
-  private updateBorderTrigger(): void {
-    const isEmpty = this.searchResults.length !== 0; // Beispiel-Logik
-    this.borderTrigger.emit(isEmpty); // Emit den neuen Wert direkt
+  private isAuthorMatching(msg: UserMessageInterface, query: string): boolean {
+    const author = this.users.find(user => user.localID === msg.authorId);
+    return author ? author.username.toLowerCase().includes(query) : false;
   }
 
-  logSomething() {
-    console.log('works');
+  private updateBorderTrigger(): void {
+    const isEmpty = this.searchResults.length !== 0;
+    if (this.showHiddeService.getBorderTrigger() !== isEmpty) {
+      this.showHiddeService.setBorderTrigger(isEmpty);
+    }
+  }
+
+  showChannelMessage(channelId: string) {
+    this.chatService.currentChannel$
+      .pipe(take(1))
+      .subscribe((currentChannel) => {
+        if (!currentChannel || currentChannel.id !== channelId) {
+          this.chatService.selectChannel(channelId);
+        }
+      });
+    this.showHiddeService.setShowResult(false);
+  }
+
+  showDirectMessage(userId: string) {
+    this.chatService.selectDirectMessage(userId);
+    this.showHiddeService.setShowResult(false);
   }
 
   showProfile(result: SearchResult) {
@@ -125,6 +153,7 @@ export class SearchBarComponent implements OnInit {
     };
 
     this.dialog.open(ProfileOverviewComponent, dialogConfig);
+    this.showHiddeService.setShowResult(false);
   }
 
   getPresenceStatus(id: string): boolean {

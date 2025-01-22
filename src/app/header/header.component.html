@@ -1,25 +1,25 @@
 <section class="custom-scrollbar">
   <app-logo-component></app-logo-component>
-  <div class="searchbar-container" [ngClass]="{ 'border-stretch': borderTrigger }">
-    <!-- <div> -->
-      <!-- <mat-card-content> -->
-        <input type="text" placeholder="Devspace durchsuchen" [(ngModel)]="searchQuery" (focus)="showResult = true">
-      <!-- </mat-card-content> -->
-    <!-- </div> -->
+  <div class="searchbar-container" [ngClass]="{ 'border-stretch': borderTrigger &&  showResult }">
+
+    <input type="text" #searchInput placeholder="Devspace durchsuchen" [(ngModel)]="searchQuery"
+      (focus)="this.showHiddeService.setShowResult(true)">
+      
     <div><mat-icon>search</mat-icon></div>
-    <app-search-bar [searchQuery]="searchQuery" (borderTrigger)="onBorderTriggerChange($event)" [showResult]="showResult">></app-search-bar>
+    <app-search-bar [searchQuery]="searchQuery">
+    </app-search-bar>
   </div>
 
   <div class="profile-container" (click)="openDialog()">
-      <div class="profile-div">
-        <p class="profile-name">{{this.userInfo.displayName}}</p>
-        <div class="img-placeholder-div">
-          <img [src]="this.userInfo.photoURL || 'img-placeholder/default-avatar.svg'"/>
-          <div class="status-circle-outline">
-            <div class="status-circle-inline"></div>
-          </div>
+    <div class="profile-div">
+      <p class="profile-name">{{this.userInfo.displayName}}</p>
+      <div class="img-placeholder-div">
+        <img [src]="this.userInfo.photoURL || 'img-placeholder/default-avatar.svg'" />
+        <div class="status-circle-outline">
+          <div class="status-circle-inline"></div>
         </div>
       </div>
+    </div>
     <mat-icon>keyboard_arrow_down</mat-icon>
   </div>
 </section>

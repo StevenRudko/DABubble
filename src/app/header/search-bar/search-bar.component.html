@@ -1,30 +1,6 @@
 @if (showResult) {
     <section>
         @for (result of searchResults; track $index) {
-            @if (result.type == 'message') {
-                <div class="result-container" (click)="logSomething()">
-                        <img src="{{result.photoURL}}" alt="">
-                        <span>{{result.username}}</span>
-                        <p>{{result.message}}</p>
-                        <div>{{result.type}}</div>
-                </div>
-            }
-            @if (result.type == 'directMessage') {
-                <div class="result-container" (click)="logSomething()">
-                        <img src="{{result.photoURL}}" alt="">
-                        <span>{{result.username}}</span>
-                        <p>{{result.message}}</p>
-                        <div>{{result.type}}</div>
-                </div>
-            }
-            @if (result.type == 'thread') {
-                <div class="result-container" (click)="logSomething()">
-                        <img src="{{result.photoURL}}" alt="">
-                        <span>{{result.username}}</span>
-                        <p>{{result.message}}</p>
-                        <div>{{result.type}}</div>
-                </div>
-            }
             @if (result.type == 'user') {
                 <div class="result-container" (click)="showProfile(result)">
                         <img src="{{result.photoURL}}" alt="">
@@ -40,12 +16,38 @@
                             } @else {
                                 <div class="status-offline">
                                     <div></div>
-                                    <span>Online</span>
+                                    <span>Offline</span>
                                 </div>
                             }
                         </div>
                     </div>
             }
+        }
+
+        @for (result of searchResults; track $index) {
+            @if (result.type == 'message') {
+                <div class="result-container" (click)="showChannelMessage(result.channelId)">
+                        <img src="{{result.photoURL}}" alt="">
+                        <span>{{result.username}}</span>
+                        <p>{{result.message}}</p>
+                        <div>{{result.type}}</div>
+                </div>
+            } @else if (result.type == 'directMessage') {
+                <div class="result-container" (click)="showDirectMessage(result.directUserId)">
+                        <img src="{{result.photoURL}}" alt="">
+                        <span>{{result.username}}</span>
+                        <p>{{result.message}}</p>
+                        <div>{{result.type}}</div>
+                </div>
+            }
+            <!-- @else if (result.type == 'thread') {
+                <div class="result-container" (click)="logSomething()">
+                        <img src="{{result.photoURL}}" alt="">
+                        <span>{{result.username}}</span>
+                        <p>{{result.message}}</p>
+                        <div>{{result.type}}</div>
+                </div>
+            } -->
         }
     </section>
 }

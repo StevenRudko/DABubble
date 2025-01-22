@@ -91,7 +91,7 @@ export class UserData {
   }
 
   // Optional: Methode zum Filtern nach Channel
-  getMessagesByChannel(channelId: number): Observable<UserMessageInterface[]> {
+  getMessagesByChannel(channelId: string): Observable<UserMessageInterface[]> {
     return new Observable((observer) => {
       this.userMessages$.subscribe((messages) => {
         const filtered = messages.filter((msg) => msg.channelId === channelId);
