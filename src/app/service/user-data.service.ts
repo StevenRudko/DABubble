@@ -7,6 +7,7 @@ import {
   getDocs,
   onSnapshot,
   updateDoc,
+  getDoc,
 } from 'firebase/firestore';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { UserMessageInterface } from '../models/user-message';
@@ -140,6 +141,81 @@ export class UserData {
       // console.log(`Nachricht mit ID ${messageId} erfolgreich gelöscht.`);
     } catch (error) {
       // console.error('Fehler beim Löschen der Nachricht:', error);
+    }
+  }
+
+  async addEmojiReaction(
+    messageId: string,
+    emojiName: string,
+    userId: string
+  ): Promise<void> {
+    try {
+      console.log('Adding emoji reaction:', { messageId, emojiName, userId });
+      const messageRef = doc(this.firestore, 'userMessages', messageId);
+      const messageSnap = await getDoc(messageRef);
+
+      if (messageSnap.exists()) {
+        const messageData = messageSnap.data();
+        let currentEmojis = messageData['emojis'] || [];
+
+        // Stellen Sie sicher, dass currentEmojis ein Array ist
+        if (!Array.isArray(currentEmojis)) {
+          currentEmojis = [];
+        }
+
+        console.log('Current emojis before update:', currentEmojis);
+
+        // Prüfen ob der User bereits mit diesem Emoji reagiert hat
+        const existingReaction = currentEmojis.find(
+          (reaction: any) =>
+            reaction.user === userId && reaction.name === emojiName
+        );
+
+        let updatedEmojis;
+        if (!existingReaction) {
+          // Neue Reaktion hinzufügen
+          updatedEmojis = [
+            ...currentEmojis,
+            {
+              name: emojiName,
+              user: userId,
+            },
+          ];
+          console.log('Adding new reaction:', updatedEmojis);
+        } else {
+          // Reaktion entfernen
+          updatedEmojis = currentEmojis.filter(
+            (reaction: any) =>
+              !(reaction.user === userId && reaction.name === emojiName)
+          );
+          console.log('Removing existing reaction:', updatedEmojis);
+        }
+
+        // Aktualisiere das Dokument
+        await updateDoc(messageRef, {
+          emojis: updatedEmojis,
+        });
+
+        console.log('Document updated successfully');
+
+        // Aktualisiere den lokalen State
+        const updatedMessages = this.userMessagesSubject.value.map(
+          (message) => {
+            if (message.userMessageId === messageId) {
+              return {
+                ...message,
+                emojis: updatedEmojis,
+              };
+            }
+            return message;
+          }
+        );
+
+        this.userMessagesSubject.next(updatedMessages);
+      }
+    } catch (error) {
+      console.error('Fehler beim Aktualisieren der Emoji-Reaktion:', error);
+      throw error;
     }
   }
 }

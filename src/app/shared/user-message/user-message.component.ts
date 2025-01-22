@@ -14,6 +14,21 @@ import { MessagesEditOptionsComponent } from '../messages-edit-options/messages-
 import { UserMsgOptionsComponent } from '../user-msg-options/user-msg-options.component';
 import { UserData } from '../../service/user-data.service';
 import { EditMessageComponent } from '../edit-message/edit-message.component';
+import { AuthService } from '../../service/auth.service';
+import { firstValueFrom } from 'rxjs';
+import { UserMessageInterface, EmojiReaction } from '../../models/user-message';
+import { UniquePipe } from '../pipes/unique.pipe';
+
+interface DisplayMessageInterface {
+  timestamp: number;
+  userMessageId: string;
+  author: string;
+  isOwnMessage: boolean;
+  message: string;
+  emojis: EmojiReaction[] | string[];
+  hours: number;
+  minutes: number;
+}
 
 @Component({
   selector: 'app-user-message',
@@ -24,6 +39,7 @@ import { EditMessageComponent } from '../edit-message/edit-message.component';
     NgIf,
     UserMsgOptionsComponent,
     EmojiPickerComponent,
+    UniquePipe,
   ],
   templateUrl: './user-message.component.html',
   styleUrl: './user-message.component.scss',
@@ -34,6 +50,7 @@ export class UserMessageComponent {
   @Input() showReactionEmojis: boolean = false;
   @Input() showAnswerDetails: boolean = true;
   @Input() showReactionIcons: boolean = true;
+  // @Input() allMessages: DisplayMessageInterface[] = [];
   @Input() allMessages: {
     timestamp: number;
     userMessageId: string;
@@ -51,11 +68,42 @@ export class UserMessageComponent {
   activeEmojiPicker: string | null = null;
   @Output() openThreadEvent = new EventEmitter<void>();
 
+  private currentUser: any = null;
+
+  emojiList: any[] = [
+    { name: 'smile', emoji: '😊' },
+    { name: 'thumbs_up', emoji: '👍' },
+    { name: 'heart', emoji: '❤️' },
+    { name: 'rocket', emoji: '🚀' },
+    { name: 'laughing', emoji: '😂' },
+    { name: 'clap', emoji: '👏' },
+    { name: 'fire', emoji: '🔥' },
+    { name: 'star', emoji: '⭐' },
+    { name: 'sunglasses', emoji: '😎' },
+    { name: 'thinking', emoji: '🤔' },
+    { name: 'wink', emoji: '😉' },
+    { name: 'crying', emoji: '😭' },
+    { name: 'kiss', emoji: '😘' },
+    { name: 'celebrate', emoji: '🎉' },
+    { name: 'party', emoji: '🥳' },
+    { name: 'confetti', emoji: '🎊' },
+    { name: 'thumbs_down', emoji: '👎' },
+    { name: 'ok_hand', emoji: '👌' },
+    { name: 'prayer', emoji: '🙏' },
+    { name: 'praise', emoji: '🙌' },
+    { name: 'check', emoji: '✅' },
+  ];
+
   constructor(
     private dialog: MatDialog,
     private userData: UserData,
-    private elementRef: ElementRef
-  ) {}
+    private elementRef: ElementRef,
+    private authService: AuthService
+  ) {
+    this.authService.user$.subscribe((user) => {
+      this.currentUser = user;
+    });
+  }
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
@@ -69,7 +117,6 @@ export class UserMessageComponent {
   }
 
   onMouseEnter(msgId: string) {
-    // Nur hover-Optionen anzeigen wenn kein Emoji-Picker aktiv ist
     if (!this.activeEmojiPicker) {
       this.hoverComponent = true;
     }
@@ -81,44 +128,72 @@ export class UserMessageComponent {
 
   toggleEmojiPicker(messageId: string, event: MouseEvent): void {
     event.stopPropagation();
-    // Direkte Zuweisung: Entweder null oder die neue messageId
     this.activeEmojiPicker =
       this.activeEmojiPicker === messageId ? null : messageId;
-
-    // Hover-Optionen ausblenden wenn ein Picker aktiv ist
     this.hoverComponent = !this.activeEmojiPicker;
   }
 
-  handleEmojiSelected(emoji: any, messageId: string): void {
-    const messageIndex = this.allMessages.findIndex(
-      (msg) => msg.userMessageId === messageId
-    );
-    if (messageIndex !== -1) {
-      if (!this.allMessages[messageIndex].emojis) {
-        this.allMessages[messageIndex].emojis = [];
+  async handleEmojiSelected(emoji: any, messageId: string): Promise<void> {
+    try {
+      console.log('Handling emoji selection:', { emoji, messageId });
+      const currentUser = await firstValueFrom(this.authService.user$);
+      console.log('Current user:', currentUser);
+
+      if (currentUser) {
+        await this.userData.addEmojiReaction(
+          messageId,
+          emoji.name,
+          currentUser.uid
+        );
+        console.log('Emoji reaction successfully handled');
+        this.activeEmojiPicker = null;
       }
-      this.allMessages[messageIndex].emojis.push(emoji.emoji);
-      this.activeEmojiPicker = null;
+    } catch (error) {
+      console.error('Fehler beim Hinzufügen der Emoji-Reaktion:', error);
     }
+  }
+
+  private isEmojiReaction(
+    emoji: string | EmojiReaction
+  ): emoji is EmojiReaction {
+    return typeof emoji === 'object' && emoji !== null && 'name' in emoji;
+  }
+
+  getEmojiCount(message: DisplayMessageInterface, emojiName: string): number {
+    return (message.emojis || []).filter((reaction) => {
+      if (this.isEmojiReaction(reaction)) {
+        return reaction.name === emojiName;
+      }
+      return reaction === emojiName;
+    }).length;
+  }
+
+  hasUserReacted(message: DisplayMessageInterface, emojiName: string): boolean {
+    if (!this.currentUser) return false;
+
+    return (message.emojis || []).some((reaction) => {
+      if (this.isEmojiReaction(reaction)) {
+        return (
+          reaction.user === this.currentUser?.uid && reaction.name === emojiName
+        );
+      }
+      return false;
+    });
   }
 
   openEmojiPicker(): void {
     const dialogRef = this.dialog.open(EmojiPickerComponent, {
       backdropClass: 'custom-backdrop',
     });
-    dialogRef.afterClosed().subscribe((result) => {
-      // console.log('The dialog was closed');
-    });
+    dialogRef.afterClosed().subscribe(() => {});
   }
 
   deleteMessage(messageId: string) {
     this.userData
       .deleteMessage(messageId)
-      .then(() => {
-        // console.log('Nachricht erfolgreich gelöscht');
-      })
+      .then(() => {})
       .catch((error) => {
-        // console.error('Fehler beim Löschen der Nachricht:', error);
+        console.error('Fehler beim Löschen der Nachricht:', error);
       });
   }
 
@@ -127,10 +202,7 @@ export class UserMessageComponent {
       (msg) => msg.userMessageId === userMessageId
     );
 
-    if (!messageToEdit) {
-      // console.error('Nachricht nicht gefunden');
-      return;
-    }
+    if (!messageToEdit) return;
 
     const dialogRef = this.dialog.open(EditMessageComponent, {
       data: { message: messageToEdit.message },
@@ -141,14 +213,18 @@ export class UserMessageComponent {
       if (editedMessage !== null && editedMessage !== messageToEdit.message) {
         this.userData
           .updateMessage(userMessageId, { message: editedMessage })
-          .then(() => {
-            // console.log('Nachricht erfolgreich aktualisiert');
-          })
+          .then(() => {})
           .catch((error) => {
-            // console.error('Fehler beim Aktualisieren der Nachricht:', error);
+            console.error('Fehler beim Aktualisieren der Nachricht:', error);
           });
       }
     });
   }
 
+  getEmojiSymbol(emojiData: string | EmojiReaction): string {
+    const emojiName = this.isEmojiReaction(emojiData)
+      ? emojiData.name
+      : emojiData;
+    return this.emojiList.find((e) => e.name === emojiName)?.emoji || '';
+  }
 }
