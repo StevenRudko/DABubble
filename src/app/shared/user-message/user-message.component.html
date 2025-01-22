@@ -5,7 +5,7 @@
     *ngIf="hoverComponent"></app-user-msg-options>
   <div class="user-message-container" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
     <div>
-      <img class="user-message-img" src="img-placeholder/noah.svg" alt="" />
+      <img class="user-message-img" [src]="CurrentUserURL" alt="" />
     </div>
     <div class="user-message-box" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
       <div class="user-message-row-top" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">

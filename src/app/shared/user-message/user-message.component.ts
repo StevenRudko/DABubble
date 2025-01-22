@@ -38,12 +38,14 @@ export class UserMessageComponent {
     timestamp: number;
     userMessageId: string;
     author: string;
+    authorPhoto: any;
     isOwnMessage: boolean;
     message: string;
     emojis: string[];
     hours: number;
     minutes: number;
   }[] = [];
+  @Input() CurrentUserURL: any;
 
   hoverComponent: boolean = false;
   activeEmojiPicker: string | null = null;
@@ -148,4 +150,5 @@ export class UserMessageComponent {
       }
     });
   }
+
 }

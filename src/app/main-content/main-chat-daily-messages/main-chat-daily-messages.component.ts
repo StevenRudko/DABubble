@@ -84,6 +84,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   currentChannel$: Observable<any>;
   currentDirectUser$: Observable<any>;
   isNewMessage$: Observable<boolean>;
+  authorPhotoURl: any;
 
   constructor(
     private userData: UserData,
@@ -186,7 +187,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
 
     this.userMessages.forEach((msg: UserMessageInterface) => {
       this.getMsgTime(msg);
-      this.getUserName(msg);
+      this.getUserNameAndPhoto(msg);
       this.getAllMessages(msg);
     });
 
@@ -220,7 +221,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   }
 
   // holt sich den usernamen aus der anderen Sammlung entsprechend der authorId
-  getUserName(msg: UserMessageInterface) {
+  getUserNameAndPhoto(msg: UserMessageInterface) {
     // console.log('dies sind die user: ', this.user);
     const userFound = this.user.find(
       (user: UserInterface) => user.localID === msg.authorId
@@ -229,9 +230,11 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
       // console.log('authorId: ', msg.authorId);
       // console.log('loaclId ', userFound.localID);
       this.userName = userFound.username;
-      // console.log('UserName: ', this.userName);
-    } else {
-      // return console.error('leider konnte der User nicht gefunden werden');
+      if (userFound.photoURL) {
+        this.authorPhotoURl = userFound.photoURL;
+      } else {
+        this.authorPhotoURl = 'img-placeholder/default-avatar.svg';
+      }
     }
   }
 
@@ -242,9 +245,11 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
         timestamp: this.msgTime,
         userMessageId: msg.userMessageId,
         author: this.userName,
+        authorPhoto: this.authorPhotoURl,
         emojis: msg.emojis,
         message: msg.message,
-        isOwnMessage: (msg.isOwnMessage = msg.authorId === this.currentAuthUser.uid),
+        isOwnMessage: (msg.isOwnMessage =
+          msg.authorId === this.currentAuthUser.uid),
         hours: this.msgTimeHours,
         minutes: this.msgTimeMins,
       });
