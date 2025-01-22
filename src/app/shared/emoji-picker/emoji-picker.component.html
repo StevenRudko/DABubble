@@ -1,4 +1,5 @@
-<mat-card class="bg-frame-v1" (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()">
+<mat-card [ngClass]="{'bg-frame-v1': true, 'own-message': isOwnMessage}" (mouseenter)="onMouseEnter()"
+  (mouseleave)="onMouseLeave()">
   <mat-card-content>
     <span class="emoji-icons" *ngFor="let emoji of emojiList" (click)="onEmojiSelect(emoji)">
       {{ emoji.emoji }}
