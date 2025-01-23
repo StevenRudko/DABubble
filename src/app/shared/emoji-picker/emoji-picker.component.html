@@ -1,8 +1,8 @@
 <mat-card [ngClass]="{'bg-frame-v1': true, 'own-message': isOwnMessage}" (mouseenter)="onMouseEnter()"
   (mouseleave)="onMouseLeave()">
   <mat-card-content>
-    <span class="emoji-icons" *ngFor="let emoji of emojiList" (click)="onEmojiSelect(emoji)">
+    <div class="emoji-icons" *ngFor="let emoji of emojiList" (click)="onEmojiSelect(emoji); $event.stopPropagation()">
       {{ emoji.emoji }}
-    </span>
+    </div>
   </mat-card-content>
 </mat-card>

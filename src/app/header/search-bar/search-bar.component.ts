@@ -17,7 +17,7 @@ import { ChannelInterface } from '../../models/channel-interface';
   selector: 'app-search-bar',
   imports: [],
   templateUrl: './search-bar.component.html',
-  styleUrl: './search-bar.component.scss'
+  styleUrl: './search-bar.component.scss',
 })
 export class SearchBarComponent implements OnInit {
   @Input() searchQuery: string = '';
@@ -73,8 +73,11 @@ export class SearchBarComponent implements OnInit {
           return this.filterMessage(msg, 'directMessage');
         } else if (msg.comments) {
           return this.filterMessage(msg, 'thread');
-        } else { return }
-      }).filter((msg): msg is SearchResult => msg !== undefined);
+        } else {
+          return;
+        }
+      })
+      .filter((msg): msg is SearchResult => msg !== undefined);
 
     const filteredUsers = this.filterUser(query);
 
@@ -87,7 +90,7 @@ export class SearchBarComponent implements OnInit {
   }
 
   filterMessage(msg: UserMessageInterface, type: string) {
-    const author = this.users.find(user => user.localID === msg.authorId);
+    const author = this.users.find((user) => user.localID === msg.authorId);
     return {
       type: type || '',
       authorId: msg.authorId || '',
@@ -99,15 +102,16 @@ export class SearchBarComponent implements OnInit {
       emojis: msg.emojis || [],
       message: msg.message || '',
       time: msg.time || 0,
-      userMessageId: msg.userMessageId || ''
+      userMessageId: msg.userMessageId || '',
     };
   }
 
   filterUser(query: string) {
     return this.users
-      .filter((user) =>
-        user.username?.toLowerCase().includes(query) ||
-        user.email?.toLowerCase().includes(query)
+      .filter(
+        (user) =>
+          user.username?.toLowerCase().includes(query) ||
+          user.email?.toLowerCase().includes(query)
       )
       .map((user) => ({
         type: 'user',
@@ -180,9 +184,11 @@ export class SearchBarComponent implements OnInit {
 
   getPresenceStatus(id: string): boolean {
     let isOnline = false;
-    this.presenceService.onlineUsers$.subscribe((onlineUsers) => {
-      isOnline = onlineUsers[id] === 'online';
-    }).unsubscribe();
+    this.presenceService.onlineUsers$
+      .subscribe((onlineUsers) => {
+        isOnline = onlineUsers[id] === 'online';
+      })
+      .unsubscribe();
 
     return isOnline;
   }
