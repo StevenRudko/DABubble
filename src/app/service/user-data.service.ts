@@ -8,6 +8,7 @@ import {
   onSnapshot,
   updateDoc,
   getDoc,
+  setDoc,
 } from 'firebase/firestore';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { UserMessageInterface } from '../models/user-message';
@@ -22,6 +23,11 @@ export class UserData {
 
   private usersSubject = new BehaviorSubject<UserInterface[]>([]);
   users$ = this.usersSubject.asObservable();
+
+  private recentEmojisSubject = new BehaviorSubject<{ [key: string]: any[] }>(
+    {}
+  );
+  recentEmojis$ = this.recentEmojisSubject.asObservable();
 
   constructor(private firestore: Firestore) {
     this.getUserMessages();
@@ -217,5 +223,31 @@ export class UserData {
       console.error('Fehler beim Aktualisieren der Emoji-Reaktion:', error);
       throw error;
     }
+  }
+
+  async getRecentEmojis(userId: string): Promise<any[]> {
+    const docRef = doc(this.firestore, 'users', userId, 'recentEmojis', 'data');
+    const docSnap = await getDoc(docRef);
+    const emojis = docSnap.exists() ? docSnap.data()?.['emojis'] || [] : [];
+    this.recentEmojisSubject.next({
+      ...this.recentEmojisSubject.value,
+      [userId]: emojis,
+    });
+    return emojis;
+  }
+
+  async updateRecentEmojis(userId: string, newEmoji: any): Promise<void> {
+    const recentEmojis = await this.getRecentEmojis(userId);
+    const updatedEmojis = [
+      newEmoji,
+      ...recentEmojis.filter((e) => e.name !== newEmoji.name),
+    ].slice(0, 2);
+
+    const docRef = doc(this.firestore, 'users', userId, 'recentEmojis', 'data');
+    await setDoc(docRef, { emojis: updatedEmojis }, { merge: true });
+    this.recentEmojisSubject.next({
+      ...this.recentEmojisSubject.value,
+      [userId]: updatedEmojis,
+    });
   }
 }

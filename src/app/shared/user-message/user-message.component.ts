@@ -19,6 +19,8 @@ import { firstValueFrom } from 'rxjs';
 import { UserMessageInterface, EmojiReaction } from '../../models/user-message';
 import { UniquePipe } from '../pipes/unique.pipe';
 import { EmojiService } from '../../service/emoji.service';
+import { RecentEmojisService } from '../../service/recent-emojis.service';
+
 interface DisplayMessageInterface {
   timestamp: number;
   userMessageId: string;
@@ -76,7 +78,8 @@ export class UserMessageComponent {
     private userData: UserData,
     private elementRef: ElementRef,
     private authService: AuthService,
-    private emojiService: EmojiService
+    private emojiService: EmojiService,
+    private recentEmojisService: RecentEmojisService
   ) {
     this.emojiList = this.emojiService.emojiList;
 
@@ -115,17 +118,15 @@ export class UserMessageComponent {
 
   async handleEmojiSelected(emoji: any, messageId: string): Promise<void> {
     try {
-      console.log('Handling emoji selection:', { emoji, messageId });
       const currentUser = await firstValueFrom(this.authService.user$);
-      console.log('Current user:', currentUser);
-
       if (currentUser) {
         await this.userData.addEmojiReaction(
           messageId,
           emoji.name,
           currentUser.uid
         );
-        console.log('Emoji reaction successfully handled');
+        // Aktualisiere die Recent Emojis
+        await this.recentEmojisService.updateRecentEmoji(emoji);
         this.activeEmojiPicker = null;
       }
     } catch (error) {

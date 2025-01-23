@@ -30,3 +30,14 @@ app-messages-edit-options {
   top: -30px;
   width: 240px;
 }
+
+mat-card-content {
+  .emoji-recent mat-icon {
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 40px;
+    width: 40px;
+  }
+}
