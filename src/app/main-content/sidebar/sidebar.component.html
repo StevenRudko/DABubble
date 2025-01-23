@@ -39,8 +39,8 @@
     </div>
 
     <div class="collapsible-content channel-list" [class.collapsed]="!isChannelSectionExpanded">
-      <div class="channel-item" *ngFor="let channel of channels$ | async" (click)="selectChannel(channel.id)">
-        <mat-icon>tag</mat-icon>
+      <div class="channel-item" *ngFor="let channel of channels$ | async" (click)="selectChannel(channel.id)"
+        [class.active]="(chatService.currentChannel$ | async)?.id === channel.id"> <mat-icon>tag</mat-icon>
         <span class="channel-name">{{ channel.name }}</span>
       </div>
 
@@ -77,7 +77,8 @@
         <!-- Current User (always online) -->
         <ng-container *ngFor="let user of allUsers$ | async">
           <div class="user-item" *ngIf="(currentUser$ | async)?.uid === user.uid"
-            (click)="selectDirectMessage(user.uid)">
+            (click)="selectDirectMessage(user.uid)"
+            [class.active]="(chatService.currentDirectUser$ | async)?.uid === user.uid">
             <img [src]="getPhotoURL(user)" class="user-avatar" [alt]="getDisplayName(user)">
             <span>{{ getDisplayName(user) }} (Du)</span>
             <div class="status-dot online"></div>
@@ -87,7 +88,8 @@
         <!-- Other Users with dynamic status -->
         <ng-container *ngFor="let user of allUsers$ | async">
           <div class="user-item" *ngIf="(currentUser$ | async)?.uid !== user.uid"
-            (click)="selectDirectMessage(user.uid)">
+            (click)="selectDirectMessage(user.uid)"
+            [class.active]="(chatService.currentDirectUser$ | async)?.uid === user.uid">
             <img [src]="getPhotoURL(user)" class="user-avatar" [alt]="getDisplayName(user)">
             <span>{{ getDisplayName(user) }}</span>
             <div class="status-dot" [class.online]="user.online"></div>

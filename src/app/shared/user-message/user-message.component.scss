@@ -59,7 +59,7 @@ section {
 .user-message-img {
   width: 70px;
   height: 70px;
-  border-radius:100%;
+  border-radius: 100%;
 }
 
 .user-message-box {
@@ -273,4 +273,10 @@ app-user-msg-options {
   &.own-message {
     animation: fadeInOwn 0.2s ease-in-out;
   }
+}
+
+.emoji-reactions {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
 }
