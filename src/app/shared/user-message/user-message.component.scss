@@ -161,6 +161,32 @@ section {
   background-color: white;
   border: 1px solid #adb0d9;
   cursor: pointer;
+
+  .reaction-btn-style {
+    background-color: inherit;
+  }
+
+  &.active {
+    background-color: #eceefe;
+    border-color: #535af1;
+
+    .reaction-btn-style {
+      background-color: inherit;
+    }
+
+    p {
+      color: #535af1;
+    }
+  }
+
+  &:hover {
+    background-color: #f5f5f5;
+    border-color: #535af1;
+
+    .reaction-btn-style {
+      background-color: inherit;
+    }
+  }
 }
 
 .reaction-btn-style {
