@@ -33,8 +33,9 @@
                         <p>{{result.message}}</p>
                         <div>{{result.type}}</div>
                 </div>
-            } @else if (result.type == 'directMessage') {
-                <div class="result-container" (click)="showDirectMessage(result.directUserId)">
+            } 
+            @else if (result.type == 'directMessage') {
+                <div class="result-container" (click)="showDirectMessage(result)">
                         <img src="{{result.photoURL}}" alt="">
                         <span>{{result.username}}</span>
                         <p>{{result.message}}</p>

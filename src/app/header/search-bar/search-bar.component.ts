@@ -174,8 +174,12 @@ export class SearchBarComponent implements OnInit {
     this.showHiddeService.setShowResult(false);
   }
 
-  showDirectMessage(userId: string) {
-    this.chatService.selectDirectMessage(userId);
+  showDirectMessage(result: any) {
+    if (this.userInfo.uId === result.directUserId) {
+      this.chatService.selectDirectMessage(result.authorId);
+    } else {
+      this.chatService.selectDirectMessage(result.directUserId);
+    }
     this.showHiddeService.setShowResult(false);
   }
 

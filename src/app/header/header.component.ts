@@ -40,6 +40,7 @@ export class HeaderComponent implements OnInit {
   }
 
   @HostListener('document:click', ['$event'])
+  // @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
     if (!target.closest('.searchbar-container')) {
