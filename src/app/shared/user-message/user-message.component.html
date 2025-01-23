@@ -2,7 +2,8 @@
   (mouseleave)="onMouseLeave(msg.userMessageId)" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
   <app-user-msg-options [showAllOptions]="msg.isOwnMessage" [userMessageId]="msg.userMessageId"
     (messageEdited)="editMessage($event)" (messageDeleted)="deleteMessage($event)"
-    *ngIf="hoverComponent"></app-user-msg-options>
+    (emojiSelected)="handleEmojiSelected($event.emoji, $event.messageId)" *ngIf="hoverComponent">
+  </app-user-msg-options>
   <div class="user-message-container" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
     <div>
       <img class="user-message-img" [src]="CurrentUserURL" alt="" />

@@ -18,7 +18,7 @@ import { AuthService } from '../../service/auth.service';
 import { firstValueFrom } from 'rxjs';
 import { UserMessageInterface, EmojiReaction } from '../../models/user-message';
 import { UniquePipe } from '../pipes/unique.pipe';
-
+import { EmojiService } from '../../service/emoji.service';
 interface DisplayMessageInterface {
   timestamp: number;
   userMessageId: string;
@@ -69,37 +69,17 @@ export class UserMessageComponent {
   @Output() openThreadEvent = new EventEmitter<void>();
 
   private currentUser: any = null;
-
-  emojiList: any[] = [
-    { name: 'smile', emoji: '😊' },
-    { name: 'thumbs_up', emoji: '👍' },
-    { name: 'heart', emoji: '❤️' },
-    { name: 'rocket', emoji: '🚀' },
-    { name: 'laughing', emoji: '😂' },
-    { name: 'clap', emoji: '👏' },
-    { name: 'fire', emoji: '🔥' },
-    { name: 'star', emoji: '⭐' },
-    { name: 'sunglasses', emoji: '😎' },
-    { name: 'thinking', emoji: '🤔' },
-    { name: 'wink', emoji: '😉' },
-    { name: 'crying', emoji: '😭' },
-    { name: 'kiss', emoji: '😘' },
-    { name: 'celebrate', emoji: '🎉' },
-    { name: 'party', emoji: '🥳' },
-    { name: 'confetti', emoji: '🎊' },
-    { name: 'thumbs_down', emoji: '👎' },
-    { name: 'ok_hand', emoji: '👌' },
-    { name: 'prayer', emoji: '🙏' },
-    { name: 'praise', emoji: '🙌' },
-    { name: 'check', emoji: '✅' },
-  ];
+  emojiList: any[] = [];
 
   constructor(
     private dialog: MatDialog,
     private userData: UserData,
     private elementRef: ElementRef,
-    private authService: AuthService
+    private authService: AuthService,
+    private emojiService: EmojiService
   ) {
+    this.emojiList = this.emojiService.emojiList;
+
     this.authService.user$.subscribe((user) => {
       this.currentUser = user;
     });

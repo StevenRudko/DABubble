@@ -19,7 +19,8 @@
   </mat-card-content>
 </mat-card>
 
-<app-emoji-picker *ngIf="activePopup === 'emoji'" (mouseStateChange)="onEmojiPickerMouseState($event)">
+<app-emoji-picker *ngIf="activePopup === 'emoji'" (mouseStateChange)="onEmojiPickerMouseState($event)"
+  (emojiSelect)="onEmojiSelect($event)">
 </app-emoji-picker>
 
 <app-messages-edit-options [userMsgId]="userMessageId" *ngIf="activePopup === 'edit'"

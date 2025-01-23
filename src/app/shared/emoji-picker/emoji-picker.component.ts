@@ -1,6 +1,7 @@
 import { CommonModule, NgFor } from '@angular/common';
 import { Component, Output, EventEmitter, Input } from '@angular/core';
 import { MATERIAL_MODULES } from '../material-imports';
+import { EmojiService } from '../../service/emoji.service';
 
 @Component({
   selector: 'app-emoji-picker',
@@ -10,34 +11,16 @@ import { MATERIAL_MODULES } from '../material-imports';
   styleUrls: ['./emoji-picker.component.scss'],
 })
 export class EmojiPickerComponent {
-  emojiList: any[] = [
-    { name: 'smile', emoji: '😊' },
-    { name: 'thumbs_up', emoji: '👍' },
-    { name: 'heart', emoji: '❤️' },
-    { name: 'rocket', emoji: '🚀' },
-    { name: 'laughing', emoji: '😂' },
-    { name: 'clap', emoji: '👏' },
-    { name: 'fire', emoji: '🔥' },
-    { name: 'star', emoji: '⭐' },
-    { name: 'sunglasses', emoji: '😎' },
-    { name: 'thinking', emoji: '🤔' },
-    { name: 'wink', emoji: '😉' },
-    { name: 'crying', emoji: '😭' },
-    { name: 'kiss', emoji: '😘' },
-    { name: 'celebrate', emoji: '🎉' },
-    { name: 'party', emoji: '🥳' },
-    { name: 'confetti', emoji: '🎊' },
-    { name: 'thumbs_down', emoji: '👎' },
-    { name: 'ok_hand', emoji: '👌' },
-    { name: 'prayer', emoji: '🙏' },
-    { name: 'praise', emoji: '🙌' },
-    { name: 'check', emoji: '✅' },
-  ];
-
   @Input() isOwnMessage: boolean = false;
   @Output() emojiSelect = new EventEmitter<any>();
   @Output() mouseStateChange = new EventEmitter<boolean>();
   @Output() emojiListChange = new EventEmitter<any[]>();
+
+  emojiList: any[] = [];
+
+  constructor(private emojiService: EmojiService) {
+    this.emojiList = this.emojiService.emojiList;
+  }
 
   onEmojiSelect(emoji: any): void {
     console.log('EmojiPicker - emoji selected:', emoji);

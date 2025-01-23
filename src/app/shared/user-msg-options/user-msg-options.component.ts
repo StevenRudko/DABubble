@@ -22,6 +22,8 @@ export class UserMsgOptionsComponent {
   @Output() deleteMessageEvent = new EventEmitter<void>();
   @Output() messageDeleted = new EventEmitter<string>();
   @Output() messageEdited = new EventEmitter<string>();
+  @Output() emojiSelected = new EventEmitter<any>();
+
   @Input() userMessageId: string | undefined;
   @Input() showAllOptions: boolean = false;
 
@@ -114,6 +116,13 @@ export class UserMsgOptionsComponent {
    */
   forwardEditMessage(messageId: string): void {
     this.messageEdited.emit(messageId);
+    this.activePopup = 'none';
+  }
+
+  onEmojiSelect(emoji: any): void {
+    if (this.userMessageId) {
+      this.emojiSelected.emit({ emoji, messageId: this.userMessageId });
+    }
     this.activePopup = 'none';
   }
 }
