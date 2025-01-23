@@ -2,7 +2,7 @@ export interface ChannelInterface {
     createdAt: string;
     createdBy: string;
     description: string;
-    members: string[];
+    members: { [key: string]: boolean };
     name:string;
     type:string;
     updatedAt: number;

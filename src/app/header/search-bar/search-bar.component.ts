@@ -37,7 +37,7 @@ export class SearchBarComponent implements OnInit {
     private chatService: ChatService,
     public showHiddeService: ShowHiddeResultsService,
     public userInfo: UserInfosService,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.userData.userMessages$.subscribe((messages) => this.userMessages = messages);
@@ -62,10 +62,10 @@ export class SearchBarComponent implements OnInit {
     const filteredMessages = this.userMessages
       .filter((msg) =>
         // if  msg.message?.toLowerCase().includes(query) == true _> map || if this.isAuthorMatching(msg, query) == true -> map
-        msg.message?.toLowerCase().includes(query) &&
-        this.canCurrentUserSeeMessage(msg) || 
-        this.isAuthorMatching(msg, query) &&
-        this.canCurrentUserSeeMessage(msg)
+        msg.message?.toLowerCase().includes(query) && this.canCurrentUserSeeMessage(msg) ||
+        // zum filter der nachrichten wenn nach einem user gesucht wird
+        // mit der bedingung das nur nachrichten angezeigt werden die in verbindung stehen mit currentUser
+        this.isAuthorMatching(msg, query) && this.canCurrentUserSeeMessage(msg)
       ).map((msg) => {
         if (msg.channelId) {
           return this.filterMessage(msg, 'message');
@@ -136,13 +136,23 @@ export class SearchBarComponent implements OnInit {
     if (msg.authorId === this.userInfo.uId) {
       return true;
     }
-  
+
     // Prüfe, ob der Benutzer Teil des Channels ist (falls `channelId` verwendet wird)
-    // if (msg.channelId && this.isUserInChannel(msg.channelId)) {
-    //   return true;
-    // }
-  
+    if (msg.channelId) {
+      console.log(msg.channelId, msg.message);
+
+      return this.isUserInChannel(msg.channelId);
+    }
+
     // Weitere Regeln hinzufügen, falls nötig
+    return false;
+  }
+
+  isUserInChannel(channelId: any) {
+    const channel = this.channels.find((ch) => ch.channelId === channelId);
+    if (channel && channel.members && typeof channel.members === 'object') {
+      return channel.members[this.userInfo.uId] === true;
+    }
     return false;
   }
 
