@@ -1,7 +1,7 @@
 <section *ngFor="let msg of allMessages" (mouseenter)="onMouseEnter(msg.userMessageId)"
   (mouseleave)="onMouseLeave(msg.userMessageId)" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
-  <app-user-msg-options (changeEditMessageState)="getEditMessageStatus($event)" [showAllOptions]="msg.isOwnMessage" [userMessageId]="msg.userMessageId"
-    (messageEdited)="editMessage($event)" (messageDeleted)="deleteMessage($event)"
+  <app-user-msg-options   (changeEditMessageState)="getEditMessageStatus($event, msg.userMessageId)"  [showAllOptions]="msg.isOwnMessage" [userMessageId]="msg.userMessageId"
+    (messageDeleted)="deleteMessage($event)"
     (emojiSelected)="handleEmojiSelected($event.emoji, $event.messageId)" *ngIf="hoverComponent">
   </app-user-msg-options>
   <div class="user-message-container" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
