@@ -34,12 +34,18 @@ export class UserMsgOptionsComponent implements OnInit {
   isMouseOverPopup: boolean = false;
   recentEmojis: any[] = [];
 
+  @Output() changeEditMessageState = new EventEmitter<boolean>();
+
   constructor(private recentEmojisService: RecentEmojisService) {}
 
   ngOnInit() {
     this.recentEmojisService.recentEmojis$.subscribe((emojis) => {
       this.recentEmojis = emojis;
     });
+  }
+
+  onHoverStateChange(status: boolean) {
+    this.changeEditMessageState.emit(status);
   }
 
   onMouseEnter(type: string): void {

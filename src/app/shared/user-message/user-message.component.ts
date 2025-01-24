@@ -5,11 +5,16 @@ import {
   EventEmitter,
   HostListener,
   ElementRef,
+  Inject,
 } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
 import { MATERIAL_MODULES } from '../material-imports';
 import { EmojiPickerComponent } from '../emoji-picker/emoji-picker.component';
-import { MatDialog } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { MessagesEditOptionsComponent } from '../messages-edit-options/messages-edit-options.component';
 import { UserMsgOptionsComponent } from '../user-msg-options/user-msg-options.component';
 import { UserData } from '../../service/user-data.service';
@@ -20,6 +25,7 @@ import { UserMessageInterface, EmojiReaction } from '../../models/user-message';
 import { UniquePipe } from '../pipes/unique.pipe';
 import { EmojiService } from '../../service/emoji.service';
 import { RecentEmojisService } from '../../service/recent-emojis.service';
+import { FormsModule } from '@angular/forms';
 
 interface DisplayMessageInterface {
   timestamp: number;
@@ -42,6 +48,7 @@ interface DisplayMessageInterface {
     UserMsgOptionsComponent,
     EmojiPickerComponent,
     UniquePipe,
+    FormsModule,
   ],
   templateUrl: './user-message.component.html',
   styleUrl: './user-message.component.scss',
@@ -73,6 +80,8 @@ export class UserMessageComponent {
   private currentUser: any = null;
   emojiList: any[] = [];
 
+  editStatusMessage : boolean = false;
+
   constructor(
     private dialog: MatDialog,
     private userData: UserData,
@@ -93,6 +102,18 @@ export class UserMessageComponent {
     if (!this.elementRef.nativeElement.contains(event.target)) {
       this.activeEmojiPicker = null;
     }
+  }
+
+  getEditMessageStatus(status: boolean) {
+    this.editStatusMessage = status;
+  }
+
+  onCancel(): void {
+    this.editStatusMessage = false;
+  }
+
+  onSave(): void {
+    console.log('wird gespeichert');
   }
 
   openThread() {

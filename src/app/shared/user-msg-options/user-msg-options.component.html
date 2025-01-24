@@ -22,7 +22,7 @@
   (emojiSelect)="onEmojiSelect($event)">
 </app-emoji-picker>
 
-<app-messages-edit-options [userMsgId]="userMessageId" *ngIf="activePopup === 'edit'"
+<app-messages-edit-options (changeEditMessageState)="onHoverStateChange($event)" [userMsgId]="userMessageId" *ngIf="activePopup === 'edit'"
   (mouseStateChange)="onEditOptionsMouseState($event)" (messageDeleted)="forwardDeleteMessage($event)"
   (messageEdited)="forwardEditMessage($event)">
 </app-messages-edit-options>

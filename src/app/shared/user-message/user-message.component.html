@@ -1,6 +1,6 @@
 <section *ngFor="let msg of allMessages" (mouseenter)="onMouseEnter(msg.userMessageId)"
   (mouseleave)="onMouseLeave(msg.userMessageId)" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
-  <app-user-msg-options [showAllOptions]="msg.isOwnMessage" [userMessageId]="msg.userMessageId"
+  <app-user-msg-options (changeEditMessageState)="getEditMessageStatus($event)" [showAllOptions]="msg.isOwnMessage" [userMessageId]="msg.userMessageId"
     (messageEdited)="editMessage($event)" (messageDeleted)="deleteMessage($event)"
     (emojiSelected)="handleEmojiSelected($event.emoji, $event.messageId)" *ngIf="hoverComponent">
   </app-user-msg-options>
@@ -9,15 +9,18 @@
       <img class="user-message-img" [src]="CurrentUserURL" alt="" />
     </div>
     <div class="user-message-box" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
-      <div class="user-message-row-top" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
+      <div *ngIf="!editStatusMessage" class="user-message-row-top" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
         <p class="user-message-name">{{ msg.author }}</p>
         <p class="user-message-time">{{ msg.hours }}:{{ msg.minutes }} Uhr</p>
       </div>
-      <div class="user-message-row-center" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
+      <div *ngIf="!editStatusMessage" class="user-message-row-center" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
         <p>{{ msg.message }}</p>
       </div>
 
+      <textarea *ngIf="editStatusMessage" [(ngModel)]="msg.message" rows="4" cols="50"></textarea>
+
       <div class="reaction-icons-row-bottom" *ngIf="showReactionIcons">
+
         <div class="emoji-reactions">
           <div *ngFor="let emoji of msg.emojis | unique:'name'" class="reaction-btn-div bg-frame-v1"
             [class.active]="hasUserReacted(msg, emoji?.name || emoji)"
@@ -41,10 +44,18 @@
           </app-emoji-picker>
         </div>
 
+       @if(!editStatusMessage){
         <div class="user-message-row-bottom" *ngIf="showAnswerDetails" (click)="openThread()">
           <p class="comments-number">2 Antworten</p>
           <p class="last-comment-time">Letzte Antwort 14:56</p>
         </div>
+      }
+
+      <div *ngIf="editStatusMessage" class="edit-msg-save-btns">
+          <button mat-button (click)="onCancel()">Abbrechen</button>
+          <button mat-button (click)="onSave()">Speichern</button>
+      </div>
+
       </div>
     </div>
   </div>

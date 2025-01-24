@@ -14,6 +14,13 @@ export class MessagesEditOptionsComponent {
   @Output() messageDeleted = new EventEmitter<string>();
   @Output() messageEdited = new EventEmitter<string>();
   @Input() userMsgId: string | undefined;
+  
+  @Output() changeEditMessageState = new EventEmitter<boolean>();
+  
+  // Diese Methode wird aufgerufen, wenn der Button für das Bearbeiten geklickt wird.
+  onEditedMessageStatusChanged() {
+    this.changeEditMessageState.emit(true); // Setzt den Status auf true
+  }
 
   /**
    * Handles the mouseenter event on the edit options menu
@@ -36,6 +43,16 @@ export class MessagesEditOptionsComponent {
    * @returns {void}
    */
   editUserMessage(): void {
+    if (this.userMsgId) {
+      this.messageEdited.emit(this.userMsgId);
+    }
+  }
+
+  /**
+   * Emits edit message event with message ID
+   * @returns {void}
+   */
+  oldEditUserMessage(): void {
     if (this.userMsgId) {
       this.messageEdited.emit(this.userMsgId);
     }
