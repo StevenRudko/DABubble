@@ -1,5 +1,5 @@
 <section *ngFor="let msg of allMessages" (mouseenter)="onMouseEnter(msg.userMessageId)"
-  (mouseleave)="onMouseLeave(msg.userMessageId)" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
+  (mouseleave)="onMouseLeave(msg.userMessageId)" [ngClass]="{ myMessageStyle: msg.isOwnMessage, editMessageActive: editStatusMessage }">
   <app-user-msg-options   (changeEditMessageState)="getEditMessageStatus($event, msg.userMessageId)"  [showAllOptions]="msg.isOwnMessage" [userMessageId]="msg.userMessageId"
     (messageDeleted)="deleteMessage($event)"
     (emojiSelected)="handleEmojiSelected($event.emoji, $event.messageId)" *ngIf="hoverComponent">
@@ -19,7 +19,7 @@
 
       <textarea *ngIf="editStatusMessage" [(ngModel)]="msg.message" rows="4" cols="50"></textarea>
 
-      <div class="reaction-icons-row-bottom" *ngIf="showReactionIcons">
+      <div class="reaction-icons-row-bottom" *ngIf="showReactionIcons" [ngClass]="{ editMessageActive: editStatusMessage }">
 
         <div class="emoji-reactions">
           <div *ngFor="let emoji of msg.emojis | unique:'name'" class="reaction-btn-div bg-frame-v1"
@@ -51,7 +51,7 @@
         </div>
       }
 
-      <div *ngIf="editStatusMessage" class="edit-msg-save-btns">
+      <div class="edit-msg-save-btns" *ngIf="editStatusMessage">
           <button mat-button (click)="onCancel()">Abbrechen</button>
           <button mat-button (click)="onSave()">Speichern</button>
       </div>

@@ -10,17 +10,12 @@ import {
 import { CommonModule, NgIf } from '@angular/common';
 import { MATERIAL_MODULES } from '../material-imports';
 import { EmojiPickerComponent } from '../emoji-picker/emoji-picker.component';
-import {
-  MAT_DIALOG_DATA,
-  MatDialog,
-  MatDialogRef,
-} from '@angular/material/dialog';
-import { MessagesEditOptionsComponent } from '../messages-edit-options/messages-edit-options.component';
+import { MatDialog } from '@angular/material/dialog';
 import { UserMsgOptionsComponent } from '../user-msg-options/user-msg-options.component';
 import { UserData } from '../../service/user-data.service';
 import { AuthService } from '../../service/auth.service';
 import { firstValueFrom } from 'rxjs';
-import { UserMessageInterface, EmojiReaction } from '../../models/user-message';
+import { EmojiReaction } from '../../models/user-message';
 import { UniquePipe } from '../pipes/unique.pipe';
 import { EmojiService } from '../../service/emoji.service';
 import { RecentEmojisService } from '../../service/recent-emojis.service';
