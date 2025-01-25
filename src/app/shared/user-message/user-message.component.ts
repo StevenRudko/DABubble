@@ -6,6 +6,7 @@ import {
   HostListener,
   ElementRef,
   Inject,
+  ViewChild,
 } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
 import { MATERIAL_MODULES } from '../material-imports';
@@ -48,6 +49,8 @@ interface DisplayMessageInterface {
   styleUrl: './user-message.component.scss',
 })
 export class UserMessageComponent {
+  @ViewChild('messageTextarea') messageTextarea!: ElementRef;
+
   @Input() threadMessage: boolean = false;
   @Input() ownMessage: boolean = false;
   @Input() showReactionEmojis: boolean = false;
@@ -62,9 +65,8 @@ export class UserMessageComponent {
   emojiList: any[] = [];
   editStatusMessage: boolean = false;
 
-  currentEditingMessageId: string | null = null;  // Speichert die ID der bearbeiteten Nachricht
-  originalMessageContent: string = '';  // Speichert den ursprünglichen Text der bearbeiteten Nachricht
-  
+  currentEditingMessageId: string | null = null; // Speichert die ID der bearbeiteten Nachricht
+  originalMessageContent: string = ''; // Speichert den ursprünglichen Text der bearbeiteten Nachricht
 
   constructor(
     private dialog: MatDialog,
@@ -88,24 +90,29 @@ export class UserMessageComponent {
     }
   }
 
-getEditMessageStatus(status: boolean, userMessageId: string) {
-  if (status) {
-    const messageToEdit = this.allMessages.find(msg => msg.userMessageId === userMessageId);
-    if (messageToEdit) {
-      this.currentEditingMessageId = userMessageId;
-      this.originalMessageContent = messageToEdit.message;  // Ursprünglichen Text speichern
+  getEditMessageStatus(status: boolean, userMessageId: string) {
+    if (status) {
+      const messageToEdit = this.allMessages.find(
+        (msg) => msg.userMessageId === userMessageId
+      );
+      if (messageToEdit) {
+        this.currentEditingMessageId = userMessageId;
+        this.originalMessageContent = messageToEdit.message; // Ursprünglichen Text speichern
+      }
+    } else {
+      this.currentEditingMessageId = null;
+      this.originalMessageContent = '';
     }
-  } else {
-    this.currentEditingMessageId = null;
-    this.originalMessageContent = '';
+    this.editStatusMessage = status;
   }
-  this.editStatusMessage = status;
-}
 
   // onSave wird nun die editMessage Methode aufrufen und den Text aus der textarea übergeben
   onSave(): void {
     if (this.currentEditingMessageId) {
-      this.editMessage(this.currentEditingMessageId, this.allMessages[0]?.message);
+      this.editMessage(
+        this.currentEditingMessageId,
+        this.allMessages[0]?.message
+      );
     }
   }
 
@@ -130,7 +137,35 @@ getEditMessageStatus(status: boolean, userMessageId: string) {
     this.hoverComponent = !this.activeEmojiPicker;
   }
 
-  async handleEmojiSelected(emoji: any, messageId: string): Promise<void> {
+  handleEmojiSelected(emoji: any, messageId: string): void {
+    if (this.editStatusMessage) {
+      const textarea = this.messageTextarea.nativeElement;
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const message = this.allMessages.find(
+        (msg) => msg.userMessageId === messageId
+      );
+
+      if (message) {
+        message.message =
+          message.message.substring(0, start) +
+          emoji.emoji +
+          message.message.substring(end);
+
+        setTimeout(() => {
+          textarea.selectionStart = start + emoji.emoji.length;
+          textarea.selectionEnd = start + emoji.emoji.length;
+          textarea.focus();
+        });
+      }
+      this.activeEmojiPicker = null; // Picker schließen nach Auswahl
+    } else {
+      this.handleEmojiReaction(emoji, messageId);
+      this.activeEmojiPicker = null; // Picker schließen nach Reaktion
+    }
+  }
+
+  async handleEmojiReaction(emoji: any, messageId: string): Promise<void> {
     try {
       const currentUser = await firstValueFrom(this.authService.user$);
       if (currentUser) {
@@ -139,7 +174,6 @@ getEditMessageStatus(status: boolean, userMessageId: string) {
           emoji.name,
           currentUser.uid
         );
-        // Aktualisiere die Recent Emojis
         await this.recentEmojisService.updateRecentEmoji(emoji);
         this.activeEmojiPicker = null;
       }
@@ -197,10 +231,10 @@ getEditMessageStatus(status: boolean, userMessageId: string) {
       (msg) => msg.userMessageId === userMessageId
     );
     if (!messageToEdit) return;
-    this.originalMessageContent = messageToEdit.message;     // Ursprünglichen Text speichern
+    this.originalMessageContent = messageToEdit.message; // Ursprünglichen Text speichern
     const newMessage = updatedMessage || messageToEdit.message; // Wenn ein aktualisierter Text übergeben wurde (z. B. aus der textarea), verwenden wir diesen
 
-    this.userData     // Aktualisieren der Nachricht mit dem neuen Text (wird erst bei „Speichern“ durchgeführt)
+    this.userData // Aktualisieren der Nachricht mit dem neuen Text (wird erst bei „Speichern“ durchgeführt)
       .updateMessage(userMessageId, { message: newMessage })
       .then(() => {
         console.log('Nachricht erfolgreich aktualisiert');
@@ -213,11 +247,13 @@ getEditMessageStatus(status: boolean, userMessageId: string) {
 
   onCancel(): void {
     this.editStatusMessage = false;
-  
+
     if (this.currentEditingMessageId) {
-      const message = this.allMessages.find(msg => msg.userMessageId === this.currentEditingMessageId);
+      const message = this.allMessages.find(
+        (msg) => msg.userMessageId === this.currentEditingMessageId
+      );
       if (message) {
-        message.message = this.originalMessageContent;  // Zurücksetzen der Nachricht auf den ursprünglichen Text
+        message.message = this.originalMessageContent; // Zurücksetzen der Nachricht auf den ursprünglichen Text
       }
     }
   }
