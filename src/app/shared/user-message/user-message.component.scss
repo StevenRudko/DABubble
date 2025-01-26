@@ -10,7 +10,7 @@ section {
     $ai: flex-start,
     $g: 24px
   );
-  cursor: pointer;
+  // cursor: pointer;
   position: relative;
   z-index: 2;
   @include styles.padding($pl: 0px, $pr: 0px, $pt: 12px, $pb: 12px);
@@ -64,6 +64,7 @@ section {
   width: 70px;
   height: 70px;
   border-radius: 100%;
+  cursor: pointer;
 }
 
 .user-message-box {
@@ -97,6 +98,7 @@ section {
 .user-message-name {
   font-weight: 700;
   font-size: 17px;
+  cursor: pointer;
 
   &:hover {
     color: #535af1;
@@ -278,9 +280,15 @@ button {
 app-user-msg-options {
   position: absolute;
   z-index: 4;
-  left: 20px;
   top: -30px;
   width: 240px;
+  right: 200px;
+  left: auto;
+
+  .myMessageStyle & {
+    left: 20px;
+    right: auto;
+  }
 }
 
 .emoji-picker-container {
