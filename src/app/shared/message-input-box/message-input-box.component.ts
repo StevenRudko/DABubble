@@ -293,4 +293,21 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
+
+  insertAtSymbol(): void {
+    const textarea = this.messageInput.nativeElement;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+
+    this.messageText =
+      this.messageText.substring(0, start) +
+      '@' +
+      this.messageText.substring(end);
+
+    setTimeout(() => {
+      textarea.selectionStart = start + 1;
+      textarea.selectionEnd = start + 1;
+      textarea.focus();
+    });
+  }
 }

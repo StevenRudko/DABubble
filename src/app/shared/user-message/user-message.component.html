@@ -9,11 +9,13 @@
 
   <div class="user-message-container" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
     <div>
-      <img class="user-message-img" [src]="CurrentUserURL" alt="" />
+      <img class="user-message-img" [src]="CurrentUserURL" alt="" (click)="openUserProfile(msg)"
+        style="cursor: pointer" />
     </div>
     <div class="user-message-box" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
       <!-- Normal Message View -->
-      <div *ngIf="!editStatusMessage" class="user-message-row-top" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
+      <div *ngIf="!editStatusMessage" class="user-message-row-top" [ngClass]="{ myMessageStyle: msg.isOwnMessage }"
+        (click)="openUserProfile(msg)">
         <p class="user-message-name">{{ msg.author }}</p>
         <p class="user-message-time">{{ msg.hours }}:{{ msg.minutes }} Uhr</p>
       </div>

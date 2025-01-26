@@ -1,5 +1,17 @@
 import { Injectable } from '@angular/core';
-import { Auth, user, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, signInWithPopup, GoogleAuthProvider, sendPasswordResetEmail, User, browserSessionPersistence, } from '@angular/fire/auth';
+import {
+  Auth,
+  user,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  updateProfile,
+  signInWithPopup,
+  GoogleAuthProvider,
+  sendPasswordResetEmail,
+  User,
+  browserSessionPersistence,
+} from '@angular/fire/auth';
 import { setPersistence } from 'firebase/auth';
 import { from, Observable } from 'rxjs';
 import { PresenceService } from './presence.service';
@@ -189,13 +201,16 @@ export class AuthService {
    * Updates the username of a user in Firestore.
    * - Fetches the user's document in the `users` collection using the provided user ID.
    * - Updates the `username` field with the new username.
-   * 
+   *
    * @param {string} userId - The unique identifier (UID) of the user whose username should be updated.
    * @param {string} newUsername - The new username to set for the user.
    * @returns {Promise<void>} - A promise that resolves when the username is successfully updated.
    * @throws {Error} - Throws an error if the update operation fails.
    */
-  async updateUserNameInFirestore(userId: string, newUsername: string): Promise<void> {
+  async updateUserNameInFirestore(
+    userId: string,
+    newUsername: string
+  ): Promise<void> {
     try {
       const userRef = doc(this.firestore, `users/${userId}`);
       await updateDoc(userRef, {
@@ -204,7 +219,10 @@ export class AuthService {
 
       console.log('Benutzername erfolgreich in Firestore aktualisiert');
     } catch (error) {
-      console.error('Fehler beim Aktualisieren des Benutzernamens in Firestore:', error);
+      console.error(
+        'Fehler beim Aktualisieren des Benutzernamens in Firestore:',
+        error
+      );
       throw error;
     }
   }

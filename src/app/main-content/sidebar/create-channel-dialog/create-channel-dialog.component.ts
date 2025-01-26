@@ -115,7 +115,10 @@ export class ChannelDialogComponent {
    */
   private openPeopleDialog(channelId: string): void {
     this.dialog.open(AddPeopleDialogSidebarComponent, {
-      data: { channelId },
+      data: {
+        channelId,
+        creatorId: this.auth.currentUser?.uid,
+      },
     });
   }
 

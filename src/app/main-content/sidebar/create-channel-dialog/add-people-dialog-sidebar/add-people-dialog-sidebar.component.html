@@ -27,7 +27,8 @@
             <div class="selected-user-tag" *ngFor="let user of selectedUsers">
               <img [src]="getPhotoURL(user)" [alt]="user.username">
               <span>{{ user.username }}</span>
-              <mat-icon class="remove-user" (click)="removeUser(user, $event)">close</mat-icon>
+              <mat-icon class="remove-user" *ngIf="user.uid !== data.creatorId"
+                (click)="removeUser(user, $event)">close</mat-icon>
             </div>
             <input type="text" [(ngModel)]="searchInput" (input)="onSearchInput($event)" placeholder="Namen eingeben"
               #searchInputEl>

@@ -21,6 +21,8 @@ import { UniquePipe } from '../pipes/unique.pipe';
 import { EmojiService } from '../../service/emoji.service';
 import { RecentEmojisService } from '../../service/recent-emojis.service';
 import { FormsModule } from '@angular/forms';
+import { ProfileOverviewComponent } from '../profile-overview/profile-overview.component';
+import { UserOverviewComponent } from '../../shared/user-overview/user-overview.component';
 
 interface DisplayMessageInterface {
   timestamp: number;
@@ -31,6 +33,14 @@ interface DisplayMessageInterface {
   emojis: EmojiReaction[] | string[];
   hours: number;
   minutes: number;
+}
+
+interface UserProfileData {
+  username: string;
+  email: string;
+  photoURL: string;
+  status: 'active' | 'offline';
+  uid: string;
 }
 
 @Component({
@@ -60,6 +70,7 @@ export class UserMessageComponent {
   @Input() CurrentUserURL: any;
   hoverComponent: boolean = false;
   activeEmojiPicker: string | null = null;
+  @Input() user: any[] = [];
   @Output() openThreadEvent = new EventEmitter<void>();
   private currentUser: any = null;
   emojiList: any[] = [];
@@ -263,5 +274,34 @@ export class UserMessageComponent {
       ? emojiData.name
       : emojiData;
     return this.emojiList.find((e) => e.name === emojiName)?.emoji || '';
+  }
+
+  openUserProfile(msg: DisplayMessageInterface) {
+    if (msg.isOwnMessage) {
+      this.dialog.open(UserOverviewComponent, {
+        panelClass: ['profile-dialog', 'right-aligned'],
+        width: '400px',
+      });
+      return;
+    }
+
+    // User-Daten aus dem user-Array holen
+    const userData = this.user.find((u) => u.username === msg.author);
+
+    if (userData) {
+      const profileData: UserProfileData = {
+        username: userData.username,
+        email: userData.email,
+        photoURL: userData.photoURL || 'img-placeholder/default-avatar.svg',
+        status: 'offline', // Status wird vom PresenceService aktualisiert
+        uid: userData.localID,
+      };
+
+      this.dialog.open(ProfileOverviewComponent, {
+        data: profileData,
+        panelClass: ['profile-dialog', 'center-aligned'],
+        width: '400px',
+      });
+    }
   }
 }

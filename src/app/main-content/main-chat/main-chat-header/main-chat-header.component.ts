@@ -31,6 +31,7 @@ import {
   getDocs,
   DocumentData,
 } from '@angular/fire/firestore';
+import { UserOverviewComponent } from '../../../shared/user-overview/user-overview.component';
 
 interface ChannelDocument extends DocumentData {
   name: string;
@@ -459,6 +460,16 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
    * @returns {void}
    */
   openProfileDialog(user: DirectUser): void {
+    const isOwnProfile = user.uid === this.auth.currentUser?.uid;
+
+    if (isOwnProfile) {
+      this.dialog.open(UserOverviewComponent, {
+        panelClass: ['profile-dialog', 'right-aligned'],
+        width: '400px',
+      });
+      return;
+    }
+
     const userData = {
       username: this.getDisplayName(user),
       email: user.email || '',
@@ -469,9 +480,7 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
 
     this.dialog.open(ProfileOverviewComponent, {
       data: userData,
-      position: {
-        top: '160px',
-      },
+      position: { top: '160px' },
       hasBackdrop: true,
       backdropClass: 'dialog-backdrop',
       panelClass: 'profile-dialog',

@@ -50,8 +50,8 @@
             </div>
           </div>
           <app-user-message *ngFor="let msg of entry.value" [allMessages]="[msg]" [threadMessage]="false"
-            [ownMessage]="msg.isOwnMessage" [CurrentUserURL]="msg.authorPhoto" [showAnswerDetails]="true" [showReactionIcons]="true"
-            (openThreadEvent)="openThread()" class="width-100"> 
+            [ownMessage]="msg.isOwnMessage" [CurrentUserURL]="msg.authorPhoto" [showAnswerDetails]="true"
+            [showReactionIcons]="true" [user]="user" (openThreadEvent)="openThread()" class="width-100">
           </app-user-message>
         </div>
       </ng-container>
@@ -64,8 +64,8 @@
           </div>
         </div>
         <app-user-message *ngFor="let msg of groupedMessages['HEUTE']" [allMessages]="[msg]" [threadMessage]="false"
-          [ownMessage]="msg.isOwnMessage" [CurrentUserURL]="msg.authorPhoto" [showAnswerDetails]="true" [showReactionIcons]="true"
-          (openThreadEvent)="openThread()" class="width-100">
+          [ownMessage]="msg.isOwnMessage" [CurrentUserURL]="msg.authorPhoto" [showAnswerDetails]="true" [user]="user"
+          [showReactionIcons]="true" (openThreadEvent)="openThread()" class="width-100">
         </app-user-message>
       </div>
     </div>
