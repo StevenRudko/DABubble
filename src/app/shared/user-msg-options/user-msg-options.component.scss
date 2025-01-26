@@ -9,6 +9,8 @@ mat-card-content {
 
 mat-card {
   border-bottom-right-radius: 0px !important;
+  width: fit-content !important;
+  margin-left: auto;
 }
 
 .check_circle {

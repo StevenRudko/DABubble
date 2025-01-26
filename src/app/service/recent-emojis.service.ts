@@ -18,8 +18,16 @@ export class RecentEmojisService {
     });
   }
 
+  private defaultEmojis = [
+    { name: 'thumbs_up', emoji: '👍' },
+    { name: 'smile', emoji: '😊' },
+  ];
+
   private async loadRecentEmojis(userId: string) {
-    const recentEmojis = await this.userData.getRecentEmojis(userId);
+    let recentEmojis = await this.userData.getRecentEmojis(userId);
+    if (!recentEmojis || recentEmojis.length === 0) {
+      recentEmojis = this.defaultEmojis;
+    }
     this.recentEmojisSubject.next(recentEmojis.slice(0, 2));
   }
 
