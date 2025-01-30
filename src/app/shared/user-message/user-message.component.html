@@ -1,6 +1,6 @@
 <section *ngFor="let msg of allMessages" (mouseenter)="onMouseEnter(msg.userMessageId)"
   (mouseleave)="onMouseLeave(msg.userMessageId)"
-  [ngClass]="{ myMessageStyle: msg.isOwnMessage, editMessageActive: editStatusMessage }">
+  [ngClass]="{ myMessageStyle: msg.isOwnMessage, editMessageActive: editStatusMessage }" [id]="msg.userMessageId">
   <app-user-msg-options *ngIf="hoverComponent && !editStatusMessage"
     (changeEditMessageState)="getEditMessageStatus($event, msg.userMessageId)" [showAllOptions]="msg.isOwnMessage"
     [userMessageId]="msg.userMessageId" (messageDeleted)="deleteMessage($event)"
