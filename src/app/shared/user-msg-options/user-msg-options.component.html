@@ -11,7 +11,7 @@
       <button mat-icon-button (mouseenter)="onMouseEnter('tag_face')" (mouseleave)="onMouseLeave('tag_face')">
         <mat-icon>tag_faces</mat-icon>
       </button>
-      <button mat-icon-button>
+      <button mat-icon-button (click)="onOpenThread()">
         <mat-icon>insert_comment</mat-icon>
       </button>
       <button *ngIf="showAllOptions" mat-icon-button (mouseenter)="onMouseEnter('edit')"

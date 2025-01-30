@@ -14,6 +14,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { UserMessageInterface } from '../models/user-message';
 import { UserInterface } from '../models/user-interface';
 
+
 @Injectable({
   providedIn: 'root',
 })
@@ -249,5 +250,33 @@ export class UserData {
       ...this.recentEmojisSubject.value,
       [userId]: updatedEmojis,
     });
+  }
+
+  async getMessage(messageId: string) {
+    const messageRef = doc(this.firestore, `userMessages/${messageId}`);
+    const messageSnap = await getDoc(messageRef);
+    return messageSnap.exists()
+      ? { ...messageSnap.data(), id: messageSnap.id }
+      : null;
+  }
+
+  async getThreadMessages(parentId: string) {
+    const messageRef = doc(this.firestore, `userMessages/${parentId}`);
+    const messageSnap = await getDoc(messageRef);
+
+    if (messageSnap.exists()) {
+      // Hier die Änderung von .comments zu ['comments']
+      const comments = messageSnap.data()?.[`comments`] || [];
+      const messagePromises = comments.map(async (commentId: string) => {
+        const commentRef = doc(this.firestore, `userMessages/${commentId}`);
+        const commentSnap = await getDoc(commentRef);
+        return commentSnap.exists()
+          ? { ...commentSnap.data(), id: commentSnap.id }
+          : null;
+      });
+
+      return (await Promise.all(messagePromises)).filter((msg) => msg !== null);
+    }
+    return [];
   }
 }

@@ -72,6 +72,8 @@ export class UserMessageComponent {
   activeEmojiPicker: string | null = null;
   @Input() user: any[] = [];
   @Output() openThreadEvent = new EventEmitter<void>();
+  @Output() openThreadWithMessage = new EventEmitter<string>();
+
   private currentUser: any = null;
   emojiList: any[] = [];
   editStatusMessage: boolean = false;
@@ -303,5 +305,10 @@ export class UserMessageComponent {
         width: '400px',
       });
     }
+  }
+
+  onOpenThread(messageId: string): void {
+    console.log('2. Thread-Event in UserMessage erhalten mit ID:', messageId);
+    this.openThreadWithMessage.emit(messageId);
   }
 }
