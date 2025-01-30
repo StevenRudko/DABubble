@@ -225,9 +225,8 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
       authorId: this.currentUser.uid,
       message: this.messageText.trim(),
       time: serverTimestamp(),
-      comments: {},
+      comments: [], // Änderung hier: Initialisierung als leeres Array statt {}
       emojis: {},
-      // userMessageId: Date.now(),
     };
 
     if (this.isNewMessage && this.newMessageRecipient) {
