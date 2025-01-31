@@ -22,6 +22,8 @@ import {
 } from '../../models/user-message';
 import { Subscription } from 'rxjs';
 
+import { ChatService } from '../../service/chat.service';
+
 // Direkte Firestore Datenstruktur
 interface FirestoreMessage {
   authorId: string;
@@ -62,10 +64,24 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
   private subscriptions: Subscription = new Subscription();
   private lastMessageCount = 0;
 
-  constructor(private userData: UserData, private authService: AuthService) {
+  constructor(
+    private userData: UserData,
+    private authService: AuthService,
+    private chatService: ChatService
+  ) {
+    // Initialize user subscription
     this.subscriptions.add(
       this.authService.user$.subscribe((user) => {
         this.currentUser = user;
+      })
+    );
+
+    // Subscribe to thread state changes
+    this.subscriptions.add(
+      this.chatService.threadOpen$.subscribe((isOpen) => {
+        if (!isOpen) {
+          this.closeThread();
+        }
       })
     );
   }

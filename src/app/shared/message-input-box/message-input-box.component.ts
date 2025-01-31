@@ -61,6 +61,7 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription = new Subscription();
   private isNewMessage: boolean = false;
   showEmojiPicker: boolean = false;
+  
 
   constructor(
     private firestore: Firestore,
@@ -107,11 +108,13 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
    * Sets up subscriptions on init
    */
   ngOnInit(): void {
-    // Wenn es eine Thread-Nachricht ist, behalten wir den übergebenen Placeholder bei
+    // Always set up user subscription for both thread and regular messages
+    this.setupUserSubscription();
+
+    // Set up other subscriptions only for non-thread messages
     if (!this.isThreadMessage) {
       this.setupChannelSubscription();
       this.setupDirectMessageSubscription();
-      this.setupUserSubscription();
       this.setupNewMessageSubscription();
     }
   }
@@ -262,6 +265,9 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
    * Sends message to firestore
    */
   async sendMessage(): Promise<void> {
+    console.log('Is Thread:', this.isThreadMessage);
+    console.log('Parent ID:', this.parentMessageId);
+    console.log('Current User:', this.currentUser);
     if (!this.messageText.trim() || !this.currentUser) return;
     if (this.isNewMessage && !this.newMessageRecipient && !this.isThreadMessage)
       return;
