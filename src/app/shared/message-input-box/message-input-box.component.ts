@@ -107,10 +107,13 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
    * Sets up subscriptions on init
    */
   ngOnInit(): void {
-    this.setupChannelSubscription();
-    this.setupDirectMessageSubscription();
-    this.setupUserSubscription();
-    this.setupNewMessageSubscription();
+    // Wenn es eine Thread-Nachricht ist, behalten wir den übergebenen Placeholder bei
+    if (!this.isThreadMessage) {
+      this.setupChannelSubscription();
+      this.setupDirectMessageSubscription();
+      this.setupUserSubscription();
+      this.setupNewMessageSubscription();
+    }
   }
 
   /**
@@ -120,7 +123,8 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.chatService.currentChannel$.subscribe((channel) => {
         this.currentChannel = channel;
-        if (channel && !this.isNewMessage) {
+        if (channel && !this.isNewMessage && !this.isThreadMessage) {
+          // Prüfung auf !this.isThreadMessage hinzugefügt
           this.placeholder = `Nachricht an #${channel.name}`;
           this.focusInput();
         }
@@ -135,7 +139,8 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.chatService.currentDirectUser$.subscribe((user) => {
         this.currentDirectUser = user;
-        if (user && !this.isNewMessage) {
+        if (user && !this.isNewMessage && !this.isThreadMessage) {
+          // Prüfung auf !this.isThreadMessage hinzugefügt
           this.placeholder = `Nachricht an ${this.getDisplayName(user)}`;
           this.focusInput();
         }

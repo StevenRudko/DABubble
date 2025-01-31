@@ -1,3 +1,4 @@
+<!-- In thread.component.html anpassen -->
 <section>
   <header>
     <div class="thread-header">
@@ -25,13 +26,14 @@
       <!-- Thread Messages -->
       <ng-container *ngFor="let message of threadMessages">
         <app-user-message [threadMessage]="true" [showAnswerDetails]="false" [showReactionIcons]="true"
-          [allMessages]="[message]" [CurrentUserURL]="message.authorPhoto" class="width-100">
+          [allMessages]="[message]" [CurrentUserURL]="message.authorPhoto" [parentMessageId]="messageId"
+          class="width-100">
         </app-user-message>
       </ng-container>
     </div>
 
     <app-message-input-box [isThreadMessage]="true" [parentMessageId]="messageId"
-      placeholder="Auf Nachricht antworten...">
+      [placeholder]="'Auf diese Nachricht antworten...'">
     </app-message-input-box>
   </div>
 </section>

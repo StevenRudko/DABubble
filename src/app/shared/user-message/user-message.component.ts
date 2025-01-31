@@ -43,6 +43,14 @@ interface UserProfileData {
   uid: string;
 }
 
+interface ThreadInfo {
+  replyCount: number;
+  lastReplyTime?: {
+    hours: number;
+    minutes: number;
+  };
+}
+
 @Component({
   selector: 'app-user-message',
   standalone: true,
@@ -71,6 +79,7 @@ export class UserMessageComponent {
   hoverComponent: boolean = false;
   activeEmojiPicker: string | null = null;
   @Input() user: any[] = [];
+  @Input() parentMessageId: string | null = null;
   @Output() openThreadEvent = new EventEmitter<void>();
   @Output() openThreadWithMessage = new EventEmitter<string>();
 
@@ -80,6 +89,7 @@ export class UserMessageComponent {
 
   currentEditingMessageId: string | null = null; // Speichert die ID der bearbeiteten Nachricht
   originalMessageContent: string = ''; // Speichert den ursprünglichen Text der bearbeiteten Nachricht
+  threadInfo: ThreadInfo | null = null;
 
   constructor(
     private dialog: MatDialog,
@@ -100,6 +110,56 @@ export class UserMessageComponent {
   onDocumentClick(event: MouseEvent) {
     if (!this.elementRef.nativeElement.contains(event.target)) {
       this.activeEmojiPicker = null;
+    }
+  }
+
+  ngOnInit() {
+    // Für jede Nachricht Thread-Informationen laden
+    this.loadThreadInfo();
+  }
+
+  private async loadThreadInfo() {
+    if (!this.allMessages || this.allMessages.length === 0) return;
+
+    const message = this.allMessages[0];
+    try {
+      // Lade die Kommentare für diese Nachricht
+      const comments = await this.userData.getThreadMessages(
+        message.userMessageId
+      );
+
+      if (comments && comments.length > 0) {
+        // Sortiere Kommentare nach Zeitstempel
+        const sortedComments = comments.sort((a, b) => {
+          const timeA = a.time.seconds * 1000 + a.time.nanoseconds / 1000000;
+          const timeB = b.time.seconds * 1000 + b.time.nanoseconds / 1000000;
+          return timeB - timeA; // Absteigend sortieren
+        });
+
+        // Hole den letzten Kommentar
+        const lastComment = sortedComments[0];
+        const lastCommentTime = new Date(
+          lastComment.time.seconds * 1000 +
+            lastComment.time.nanoseconds / 1000000
+        );
+
+        this.threadInfo = {
+          replyCount: comments.length,
+          lastReplyTime: {
+            hours: lastCommentTime.getHours(),
+            minutes: lastCommentTime.getMinutes(),
+          },
+        };
+      } else {
+        this.threadInfo = {
+          replyCount: 0,
+        };
+      }
+    } catch (error) {
+      console.error('Error loading thread info:', error);
+      this.threadInfo = {
+        replyCount: 0,
+      };
     }
   }
 
@@ -130,7 +190,14 @@ export class UserMessageComponent {
   }
 
   openThread() {
-    this.openThreadEvent.emit();
+    if (this.allMessages && this.allMessages.length > 0) {
+      const messageId = this.allMessages[0].userMessageId;
+      console.log(
+        'Thread wird über Antworten-Anzeige geöffnet mit ID:',
+        messageId
+      );
+      this.openThreadWithMessage.emit(messageId);
+    }
   }
 
   onMouseEnter(msgId: string) {

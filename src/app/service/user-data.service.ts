@@ -253,12 +253,13 @@ export class UserData {
     });
   }
 
-  async getMessage(messageId: string) {
+  async getMessage(messageId: string): Promise<any> {
     const messageRef = doc(this.firestore, `userMessages/${messageId}`);
     const messageSnap = await getDoc(messageRef);
-    return messageSnap.exists()
-      ? { ...messageSnap.data(), id: messageSnap.id }
-      : null;
+    if (messageSnap.exists()) {
+      return { ...messageSnap.data(), id: messageSnap.id };
+    }
+    return null;
   }
   async getThreadMessages(parentId: string) {
     const messageRef = doc(this.firestore, `userMessages/${parentId}`);

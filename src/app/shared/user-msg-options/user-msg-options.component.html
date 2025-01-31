@@ -11,7 +11,7 @@
       <button mat-icon-button (mouseenter)="onMouseEnter('tag_face')" (mouseleave)="onMouseLeave('tag_face')">
         <mat-icon>tag_faces</mat-icon>
       </button>
-      <button mat-icon-button (click)="onOpenThread()">
+      <button mat-icon-button (click)="onOpenThread()" *ngIf="!isThreadMessage">
         <mat-icon>insert_comment</mat-icon>
       </button>
       <button *ngIf="showAllOptions" mat-icon-button (mouseenter)="onMouseEnter('edit')"
@@ -26,7 +26,8 @@
   (emojiSelect)="onEmojiSelect($event)">
 </app-emoji-picker>
 
-<app-messages-edit-options (changeEditMessageState)="onHoverStateChange($event)" [userMsgId]="userMessageId"
-  *ngIf="activePopup === 'edit'" (mouseStateChange)="onEditOptionsMouseState($event)"
-  (messageDeleted)="forwardDeleteMessage($event)" (messageEdited)="forwardEditMessage($event)">
+<app-messages-edit-options *ngIf="activePopup === 'edit'" (changeEditMessageState)="onHoverStateChange($event)"
+  [userMsgId]="userMessageId" [isThreadMessage]="isThreadMessage" [parentMessageId]="parentMessageId"
+  (mouseStateChange)="onEditOptionsMouseState($event)" (messageDeleted)="forwardDeleteMessage($event)"
+  (messageEdited)="forwardEditMessage($event)">
 </app-messages-edit-options>

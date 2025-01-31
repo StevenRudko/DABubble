@@ -29,6 +29,8 @@ export class UserMsgOptionsComponent implements OnInit {
 
   @Input() userMessageId: string | undefined;
   @Input() showAllOptions: boolean = false;
+  @Input() isThreadMessage: boolean = false;
+  @Input() parentMessageId: string | null = null;
 
   activePopup: 'none' | 'emoji' | 'edit' = 'none';
   isMouseOverButton: boolean = false;

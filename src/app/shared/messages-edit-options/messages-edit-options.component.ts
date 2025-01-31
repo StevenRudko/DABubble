@@ -14,9 +14,11 @@ export class MessagesEditOptionsComponent {
   @Output() messageDeleted = new EventEmitter<string>();
   @Output() messageEdited = new EventEmitter<string>();
   @Input() userMsgId: string | undefined;
-  
+  @Input() isThreadMessage: boolean = false; // Neue Input-Property
+  @Input() parentMessageId: string | null = null; // Neue Input-Property
+
   @Output() changeEditMessageState = new EventEmitter<boolean>();
-  
+
   // Diese Methode wird aufgerufen, wenn der Button für das Bearbeiten geklickt wird.
   onEditedMessageStatusChanged() {
     this.changeEditMessageState.emit(true); // Setzt den Status auf true
