@@ -1,10 +1,10 @@
 <section *ngFor="let msg of allMessages" (mouseenter)="onMouseEnter(msg.userMessageId)"
   (mouseleave)="onMouseLeave(msg.userMessageId)"
   [ngClass]="{ myMessageStyle: msg.isOwnMessage, editMessageActive: editStatusMessage }" [id]="msg.userMessageId">
-  <app-user-msg-options *ngIf="hoverComponent && !editStatusMessage"
-    (changeEditMessageState)="getEditMessageStatus($event, msg.userMessageId)" [showAllOptions]="msg.isOwnMessage"
-    [userMessageId]="msg.userMessageId" (messageDeleted)="deleteMessage($event)"
-    (emojiSelected)="handleEmojiSelected($event.emoji, $event.messageId)">
+  <app-user-msg-options *ngIf="hoverComponent && !editStatusMessage" [isThreadMessage]="threadMessage"
+    [parentMessageId]="parentMessageId" (changeEditMessageState)="getEditMessageStatus($event, msg.userMessageId)"
+    [showAllOptions]="msg.isOwnMessage" [userMessageId]="msg.userMessageId" (messageDeleted)="deleteMessage($event)"
+    (emojiSelected)="handleEmojiSelected($event.emoji, $event.messageId)" (openThread)="onOpenThread($event)">
   </app-user-msg-options>
 
   <div class="user-message-container" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
@@ -74,9 +74,15 @@
             </app-emoji-picker>
           </div>
 
-          <div class="user-message-row-bottom" *ngIf="showAnswerDetails" (click)="openThread()">
-            <p class="comments-number">2 Antworten</p>
-            <p class="last-comment-time">Letzte Antwort 14:56</p>
+          <div class="user-message-row-bottom" *ngIf="showAnswerDetails && threadInfo && threadInfo.replyCount > 0"
+            (click)="openThread()">
+            <p class="comments-number">
+              {{ threadInfo.replyCount }} {{ threadInfo.replyCount === 1 ? "Antwort" : "Antworten" }}
+            </p>
+            <p class="last-comment-time" *ngIf="threadInfo.lastReplyTime">
+              Letzte Antwort {{ threadInfo.lastReplyTime.hours | number:'2.0-0' }}:{{ threadInfo.lastReplyTime.minutes |
+              number:'2.0-0' }} Uhr
+            </p>
           </div>
         </div>
       </div>

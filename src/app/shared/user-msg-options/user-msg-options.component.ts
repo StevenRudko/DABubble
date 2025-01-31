@@ -25,9 +25,12 @@ export class UserMsgOptionsComponent implements OnInit {
   @Output() messageDeleted = new EventEmitter<string>();
   @Output() messageEdited = new EventEmitter<string>();
   @Output() emojiSelected = new EventEmitter<any>();
+  @Output() openThread = new EventEmitter<string>();
 
   @Input() userMessageId: string | undefined;
   @Input() showAllOptions: boolean = false;
+  @Input() isThreadMessage: boolean = false;
+  @Input() parentMessageId: string | null = null;
 
   activePopup: 'none' | 'emoji' | 'edit' = 'none';
   isMouseOverButton: boolean = false;
@@ -115,5 +118,15 @@ export class UserMsgOptionsComponent implements OnInit {
 
   onRecentEmojiClick(emoji: any): void {
     this.onEmojiSelect(emoji);
+  }
+
+  onOpenThread(): void {
+    if (this.userMessageId) {
+      console.log(
+        '1. Thread wird in UserMsgOptions geöffnet mit ID:',
+        this.userMessageId
+      );
+      this.openThread.emit(this.userMessageId);
+    }
   }
 }

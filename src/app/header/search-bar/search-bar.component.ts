@@ -27,7 +27,7 @@ export class SearchBarComponent implements OnInit {
 
   private userMessages: UserMessageInterface[] = [];
   private users: UserInterface[] = [];
-  private channels: ChannelInterface[] = []
+  private channels: ChannelInterface[] = [];
 
   constructor(
     private userData: UserData,
@@ -36,18 +36,26 @@ export class SearchBarComponent implements OnInit {
     private presenceService: PresenceService,
     private chatService: ChatService,
     public showHiddeService: ShowHiddeResultsService,
-    public userInfo: UserInfosService,
+    public userInfo: UserInfosService
   ) {}
 
   ngOnInit(): void {
-    this.userData.userMessages$.subscribe((messages) => this.userMessages = messages);
+    this.userData.userMessages$.subscribe(
+      (messages) => (this.userMessages = messages)
+    );
 
-    this.userData.users$.subscribe((users) => this.users = users);
+    this.userData.users$.subscribe((users) => (this.users = users));
 
-    this.channelData.channels$.subscribe((channel) => this.channels = channel)
+    this.channelData.channels$.subscribe(
+      (channel) => (this.channels = channel)
+    );
 
-    this.showHiddeService.showResult$.subscribe(value => this.showResult = value);
-    this.showHiddeService.borderTrigger$.subscribe(value => this.borderTrigger = value);
+    this.showHiddeService.showResult$.subscribe(
+      (value) => (this.showResult = value)
+    );
+    this.showHiddeService.borderTrigger$.subscribe(
+      (value) => (this.borderTrigger = value)
+    );
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -60,13 +68,15 @@ export class SearchBarComponent implements OnInit {
     const query = this.searchQuery.toLowerCase();
 
     const filteredMessages = this.userMessages
-      .filter((msg) =>
-        // if  msg.message?.toLowerCase().includes(query) == true _> map || if this.isAuthorMatching(msg, query) == true -> map
-        msg.message?.toLowerCase().includes(query) &&
-        this.canCurrentUserSeeMessage(msg) || 
-        this.isAuthorMatching(msg, query) &&
-        this.canCurrentUserSeeMessage(msg)
-      ).map((msg) => {
+      .filter(
+        (msg) =>
+          // if  msg.message?.toLowerCase().includes(query) == true _> map || if this.isAuthorMatching(msg, query) == true -> map
+          (msg.message?.toLowerCase().includes(query) &&
+            this.canCurrentUserSeeMessage(msg)) ||
+          (this.isAuthorMatching(msg, query) &&
+            this.canCurrentUserSeeMessage(msg))
+      )
+      .map((msg) => {
         if (msg.channelId) {
           return this.filterMessage(msg, 'message');
         } else if (msg.directUserId) {
@@ -124,7 +134,7 @@ export class SearchBarComponent implements OnInit {
   }
 
   private isAuthorMatching(msg: UserMessageInterface, query: string): boolean {
-    const author = this.users.find(user => user.localID === msg.authorId);
+    const author = this.users.find((user) => user.localID === msg.authorId);
     return author ? author.username.toLowerCase().includes(query) : false;
   }
 
@@ -136,12 +146,12 @@ export class SearchBarComponent implements OnInit {
     if (msg.authorId === this.userInfo.uId) {
       return true;
     }
-  
+
     // Prüfe, ob der Benutzer Teil des Channels ist (falls `channelId` verwendet wird)
     // if (msg.channelId && this.isUserInChannel(msg.channelId)) {
     //   return true;
     // }
-  
+
     // Weitere Regeln hinzufügen, falls nötig
     return false;
   }

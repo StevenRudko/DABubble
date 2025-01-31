@@ -15,9 +15,10 @@ import { MainChatDailyMessagesComponent } from '../main-chat-daily-messages/main
   styleUrl: './main-chat.component.scss',
 })
 export class MainChatComponent {
-  @Output() openThreadEvent = new EventEmitter<void>();
+  @Output() openThreadEvent = new EventEmitter<string>();
 
-  onOpenThread() {
-    this.openThreadEvent.emit();
+  onOpenThread(messageId: string) {
+    console.log('4. Thread-Event in MainChat erhalten mit ID:', messageId);
+    this.openThreadEvent.emit(messageId); // Direkt die ID weiterleiten
   }
 }

@@ -31,7 +31,7 @@ import { UserOverviewComponent } from '../../shared/user-overview/user-overview.
   styleUrl: './main-chat-daily-messages.component.scss',
 })
 export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
-  @Output() openThreadEvent = new EventEmitter<void>();
+  @Output() openThreadEvent = new EventEmitter<string>();
   months = [
     'Januar',
     'Februar',
@@ -85,6 +85,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   currentDirectUser$: Observable<any>;
   isNewMessage$: Observable<boolean>;
   authorPhotoURl: any;
+  threadMessageId: string | null = null;
 
   constructor(
     private userData: UserData,
@@ -291,8 +292,8 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     }
   }
 
-  openThread() {
-    this.openThreadEvent.emit();
+  openThread(): void {
+    this.openThreadEvent.emit(); // Für den alten Weg
   }
 
   getMessages(): renderMessageInterface[] {
@@ -427,5 +428,10 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
         this.months[creationDate.getMonth()]
       } ${creationDate.getFullYear()}`;
     }
+  }
+  onOpenThreadMessage(messageId: string) {
+    console.log('3. Thread-Event in MainChatDaily erhalten mit ID:', messageId);
+    // Hier emittieren wir die ID
+    this.openThreadEvent.emit(messageId);
   }
 }

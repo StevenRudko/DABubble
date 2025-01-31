@@ -1,3 +1,4 @@
+<!-- In thread.component.html anpassen -->
 <section>
   <header>
     <div class="thread-header">
@@ -8,23 +9,31 @@
   </header>
 
   <div class="chat">
-    <div class="messages-container">
-      <app-user-message [threadMessage]="true" [showAnswerDetails]="false"
-        [showReactionIcons]="false"></app-user-message>
+    <div #messagesContainer class="messages-container">
+      <!-- Parent Message -->
+      <app-user-message *ngIf="parentMessage" [threadMessage]="true" [showAnswerDetails]="false"
+        [showReactionIcons]="true" [allMessages]="parentMessage" [CurrentUserURL]="parentMessage[0]?.authorPhoto">
+      </app-user-message>
+
+      <!-- Thread Divider -->
       <div class="thread-divider">
         <div class="divider-text">
           {{ replyCount }} {{ replyCount === 1 ? "Antwort" : "Antworten" }}
         </div>
         <div class="divider-line"></div>
       </div>
+
+      <!-- Thread Messages -->
+      <ng-container *ngFor="let message of threadMessages">
+        <app-user-message [threadMessage]="true" [showAnswerDetails]="false" [showReactionIcons]="true"
+          [allMessages]="[message]" [CurrentUserURL]="message.authorPhoto" [parentMessageId]="messageId"
+          class="width-100">
+        </app-user-message>
+      </ng-container>
     </div>
 
-    <app-user-message [threadMessage]="true" [showAnswerDetails]="false" [showReactionIcons]="true"
-      class="width-100"></app-user-message>
-
-    <app-user-message [threadMessage]="true" [showAnswerDetails]="false" [showReactionIcons]="true"
-      class="width-100"></app-user-message>
-
-    <app-message-input-box placeholder="Antworten..."></app-message-input-box>
+    <app-message-input-box [isThreadMessage]="true" [parentMessageId]="messageId"
+      [placeholder]="'Auf diese Nachricht antworten...'">
+    </app-message-input-box>
   </div>
 </section>

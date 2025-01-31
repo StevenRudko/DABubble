@@ -5,9 +5,11 @@ import {
   ViewChild,
   ElementRef,
   HostListener,
+  Input,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MATERIAL_MODULES } from '../material-imports';
+import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
 import {
   Firestore,
   collection,
@@ -18,7 +20,7 @@ import { ChatService } from '../../service/chat.service';
 import { AuthService } from '../../service/auth.service';
 import { Subscription } from 'rxjs';
 import { EmojiPickerComponent } from '../emoji-picker/emoji-picker.component';
-import { CommonModule } from '@angular/common';
+import { UserData } from '../../service/user-data.service';
 
 interface User {
   uid: string;
@@ -41,14 +43,17 @@ interface SearchResult {
 @Component({
   selector: 'app-message-input-box',
   standalone: true,
-  imports: [FormsModule, MATERIAL_MODULES, EmojiPickerComponent, CommonModule],
+  imports: [CommonModule, FormsModule, MatIconModule, EmojiPickerComponent],
   templateUrl: './message-input-box.component.html',
   styleUrl: './message-input-box.component.scss',
 })
 export class MessageInputBoxComponent implements OnInit, OnDestroy {
   @ViewChild('messageInput') messageInput!: ElementRef;
+  @Input() isThreadMessage: boolean = false;
+  @Input() parentMessageId: string | null = null;
+  @Input() placeholder: string = 'Nachricht schreiben...';
+
   messageText: string = '';
-  placeholder: string = 'Nachricht schreiben...';
   private currentChannel: any;
   private currentUser: any;
   private currentDirectUser: any;
@@ -56,15 +61,14 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription = new Subscription();
   private isNewMessage: boolean = false;
   showEmojiPicker: boolean = false;
+  
 
-  /**
-   * Initializes message input component
-   */
   constructor(
     private firestore: Firestore,
     private chatService: ChatService,
     private authService: AuthService,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private userData: UserData
   ) {}
 
   @HostListener('document:click', ['$event'])
@@ -104,10 +108,15 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
    * Sets up subscriptions on init
    */
   ngOnInit(): void {
-    this.setupChannelSubscription();
-    this.setupDirectMessageSubscription();
+    // Always set up user subscription for both thread and regular messages
     this.setupUserSubscription();
-    this.setupNewMessageSubscription();
+
+    // Set up other subscriptions only for non-thread messages
+    if (!this.isThreadMessage) {
+      this.setupChannelSubscription();
+      this.setupDirectMessageSubscription();
+      this.setupNewMessageSubscription();
+    }
   }
 
   /**
@@ -117,7 +126,8 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.chatService.currentChannel$.subscribe((channel) => {
         this.currentChannel = channel;
-        if (channel && !this.isNewMessage) {
+        if (channel && !this.isNewMessage && !this.isThreadMessage) {
+          // Prüfung auf !this.isThreadMessage hinzugefügt
           this.placeholder = `Nachricht an #${channel.name}`;
           this.focusInput();
         }
@@ -132,7 +142,8 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.chatService.currentDirectUser$.subscribe((user) => {
         this.currentDirectUser = user;
-        if (user && !this.isNewMessage) {
+        if (user && !this.isNewMessage && !this.isThreadMessage) {
+          // Prüfung auf !this.isThreadMessage hinzugefügt
           this.placeholder = `Nachricht an ${this.getDisplayName(user)}`;
           this.focusInput();
         }
@@ -225,9 +236,8 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
       authorId: this.currentUser.uid,
       message: this.messageText.trim(),
       time: serverTimestamp(),
-      comments: {},
+      comments: [], // Änderung hier: Initialisierung als leeres Array statt {}
       emojis: {},
-      // userMessageId: Date.now(),
     };
 
     if (this.isNewMessage && this.newMessageRecipient) {
@@ -255,16 +265,35 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
    * Sends message to firestore
    */
   async sendMessage(): Promise<void> {
+    console.log('Is Thread:', this.isThreadMessage);
+    console.log('Parent ID:', this.parentMessageId);
+    console.log('Current User:', this.currentUser);
     if (!this.messageText.trim() || !this.currentUser) return;
-    if (this.isNewMessage && !this.newMessageRecipient) return;
+    if (this.isNewMessage && !this.newMessageRecipient && !this.isThreadMessage)
+      return;
 
     try {
-      const messageData = this.createMessageData();
-      const messagesRef = collection(this.firestore, 'userMessages');
-      await addDoc(messagesRef, messageData);
+      if (this.isThreadMessage && this.parentMessageId) {
+        // Thread-Nachricht senden
+        await this.userData.addThreadMessage(
+          this.parentMessageId,
+          this.messageText.trim(),
+          this.currentUser.uid
+        );
+      } else {
+        // Normale Nachricht senden
+        const messageData = this.createMessageData();
+        const messagesRef = collection(this.firestore, 'userMessages');
+        await addDoc(messagesRef, messageData);
+      }
+
       this.messageText = '';
 
-      if (this.isNewMessage && this.newMessageRecipient) {
+      if (
+        this.isNewMessage &&
+        this.newMessageRecipient &&
+        !this.isThreadMessage
+      ) {
         if (this.newMessageRecipient.type === 'channel') {
           await this.chatService.selectChannel(this.newMessageRecipient.id);
         } else {
@@ -272,15 +301,7 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
             this.newMessageRecipient.id
           );
         }
-        // Signalisiere, dass die Nachricht gesendet wurde
         this.chatService.messageWasSent();
-      }
-
-      // Force refresh der Nachrichten
-      if (this.currentChannel) {
-        await this.chatService.selectChannel(this.currentChannel.id);
-      } else if (this.currentDirectUser) {
-        await this.chatService.selectDirectMessage(this.currentDirectUser.uid);
       }
     } catch (error) {
       console.error('Error sending message:', error);

@@ -58,8 +58,9 @@ header {
   padding-bottom: 12px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  // justify-content: space-between;
   height: 100%;
+  gap: 2rem;
 }
 
 .thread-divider {
@@ -80,4 +81,12 @@ header {
     font-size: 18px;
     color: #adb0d9;
   }
+}
+
+.messages-container {
+  height: 63%;
+  overflow: scroll;
+  scrollbar-width: none;
+  padding-top: 1rem;
+  margin-bottom: -1rem;
 }
