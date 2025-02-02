@@ -212,9 +212,11 @@ export class UserMessageComponent {
 
   toggleEmojiPicker(messageId: string, event: MouseEvent): void {
     event.stopPropagation();
-    this.activeEmojiPicker =
+    setTimeout(() => {
+      this.activeEmojiPicker =
       this.activeEmojiPicker === messageId ? null : messageId;
     this.hoverComponent = !this.activeEmojiPicker;
+    }, 100);
   }
 
   handleEmojiSelected(emoji: any, messageId: string): void {

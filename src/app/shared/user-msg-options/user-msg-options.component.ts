@@ -53,8 +53,10 @@ export class UserMsgOptionsComponent implements OnInit {
 
   onMouseEnter(type: string): void {
     this.isMouseOverButton = true;
-    this.activePopup =
+    setTimeout(() => {
+      this.activePopup =
       type === 'tag_face' ? 'emoji' : type === 'edit' ? 'edit' : 'none';
+    }, 100);
   }
 
   onMouseLeave(type: string): void {
