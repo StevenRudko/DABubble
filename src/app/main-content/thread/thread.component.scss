@@ -1,12 +1,10 @@
 @use "./../../../styles.scss" as styles;
 
 section {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 24px;
+  @include styles.dFlex($d: flex, $fd: column, $jc: flex-start, $ai: flex-start, $g: 12px);
   flex: 1;
   height: 100%;
+  box-sizing: border-box;
 }
 
 header {
@@ -15,26 +13,22 @@ header {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.05);
   @include styles.padding($pl: 48px, $pr: 48px, $pt: 0, $pb: 0);
   width: 100%;
-  @include styles.dFlex(
-    $d: flex,
+  @include styles.dFlex($d: flex,
     $fd: row,
     $jc: space-between,
     $ai: center,
-    $g: 0
-  );
+    $g: 0);
   box-sizing: border-box;
   border-top-right-radius: 20px;
   border-top-left-radius: 20px;
 }
 
 .thread-header {
-  @include styles.dFlex(
-    $d: flex,
+  @include styles.dFlex($d: flex,
     $fd: row,
     $jc: flex-start,
     $ai: center,
-    $g: 8px
-  );
+    $g: 8px);
   font-size: 24px;
   font-weight: 600;
 }
@@ -46,6 +40,7 @@ header {
 
 .close {
   cursor: pointer;
+
   &:hover {
     color: #535af1;
     background-color: #eceefe;
@@ -54,13 +49,16 @@ header {
   }
 }
 
+.messages-container {
+  overflow: scroll;
+  scrollbar-width: none;
+}
+
 .chat {
+  height: calc(100% - 92px);
+  box-sizing: border-box;
+  @include styles.dFlex($d: flex, $fd: column, $jc: space-between, $ai: space-between, $g: 10px);
   padding-bottom: 12px;
-  display: flex;
-  flex-direction: column;
-  // justify-content: space-between;
-  height: 100%;
-  gap: 2rem;
 }
 
 .thread-divider {
@@ -81,12 +79,4 @@ header {
     font-size: 18px;
     color: #adb0d9;
   }
-}
-
-.messages-container {
-  height: 63%;
-  overflow: scroll;
-  scrollbar-width: none;
-  padding-top: 1rem;
-  margin-bottom: -1rem;
 }

@@ -3,14 +3,13 @@
 @use "./../../../assets/styles/theme-colors.scss" as colors;
 
 section {
-  @include styles.dFlex(
-    $d: flex,
+  @include styles.dFlex($d: flex,
     $fd: column,
     $jc: flex-start,
     $ai: flex-start,
-    $g: 48px
-  );
-  height: 360px;
+    $g: 48px);
+  width: 100%;
+  height:100%;
   overflow-y: scroll;
   padding-top: 18px;
 
@@ -29,39 +28,33 @@ section {
 }
 
 .message-wrapper {
-  @include styles.dFlex(
-    $d: flex,
+  @include styles.dFlex($d: flex,
     $fd: column,
     $jc: flex-start,
     $ai: flex-start,
-    $g: 42px
-  );
+    $g: 42px);
   width: 100%;
   height: auto;
   box-sizing: border-box;
 }
 
 .messages-by-date-container {
-  @include styles.dFlex(
-    $d: flex,
+  @include styles.dFlex($d: flex,
     $fd: column,
     $jc: center,
     $ai: center,
-    $g: 42px
-  );
+    $g: 42px);
   width: 100%;
   box-sizing: border-box;
   height: auto;
 }
 
 .divider-line {
-  @include styles.dFlex(
-    $d: flex,
+  @include styles.dFlex($d: flex,
     $fd: column,
     $jc: center,
     $ai: center,
-    $g: 0px
-  );
+    $g: 0px);
   height: 1px;
   background-color: #adb0d9;
   width: 100%;
@@ -148,6 +141,7 @@ section {
         font-size: 16px;
         line-height: 1.5;
         color: #666;
+
         span {
           color: #535af1;
         }
