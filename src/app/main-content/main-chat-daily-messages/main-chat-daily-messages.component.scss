@@ -1,5 +1,6 @@
 @use "./../../../styles.scss" as styles;
 @use "./../../../assets/styles/fonts.scss" as fonts;
+@use "./../../../assets/styles/colors.scss" as main-colors;
 @use "./../../../assets/styles/theme-colors.scss" as colors;
 
 section {
@@ -9,7 +10,7 @@ section {
     $ai: flex-start,
     $g: 48px);
   width: 100%;
-  height:100%;
+  height: 100%;
   overflow-y: scroll;
   padding-top: 18px;
 
@@ -56,14 +57,14 @@ section {
     $ai: center,
     $g: 0px);
   height: 1px;
-  background-color: #adb0d9;
+  background-color: main-colors.$divider-line;
   width: 100%;
   box-sizing: border-box;
 }
 
 .divider-text-box {
   padding: 4px 16px;
-  border: 1px solid #adb0d9;
+  border: 1px solid main-colors.$divider-line;
 }
 
 .divider-text {
@@ -90,7 +91,7 @@ section {
 
         &:hover {
           .user-name {
-            color: #535af1;
+            color: main-colors.$hover-user-name;
           }
         }
 
@@ -108,7 +109,7 @@ section {
     }
 
     .preview-text {
-      color: #686868;
+      color: main-colors.$preview-text;
       line-height: 1.5;
       margin: 0;
       padding: 0 8px;
@@ -116,7 +117,7 @@ section {
   }
 
   .user-link {
-    color: #535af1;
+    color: main-colors.$preview-user-link;
     cursor: pointer;
     text-decoration: none;
   }
@@ -132,7 +133,7 @@ section {
       .channel-name {
         font-size: 24px;
         font-weight: 600;
-        color: #1a1a1a;
+        color: main-colors.$preview-channel-name;
       }
     }
 
@@ -140,10 +141,10 @@ section {
       .preview-text {
         font-size: 16px;
         line-height: 1.5;
-        color: #666;
+        color: main-colors.$preview-text;
 
         span {
-          color: #535af1;
+          color: main-colors.$preview-user-link;
         }
       }
     }

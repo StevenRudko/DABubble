@@ -1,4 +1,5 @@
 @use "./../../../styles.scss" as styles;
+@use "./../../../assets/styles/colors.scss" as main-colors;
 
 section {
   @include styles.dFlex($d: flex, $fd: column, $jc: flex-start, $ai: flex-start, $g: 12px);
@@ -71,7 +72,7 @@ header {
     flex-grow: 1;
     height: 1px;
     margin-right: 32px;
-    background-color: #adb0d9;
+    background-color: main-colors.$divider-line;
   }
 
   .divider-text {

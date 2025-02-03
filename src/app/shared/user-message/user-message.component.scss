@@ -1,58 +1,55 @@
 @use "./../../../styles.scss" as styles;
 @use "./../../../assets/styles/fonts.scss" as fonts;
+@use "./../../../assets/styles/colors.scss" as main-colors;
 @use "./../../../assets/styles/theme-colors.scss" as colors;
 
 section {
-  @include styles.dFlex(
-    $d: flex,
+  @include styles.dFlex($d: flex,
     $fd: column,
     $jc: flex-start,
     $ai: flex-start,
-    $g: 24px
-  );
+    $g: 24px);
   // cursor: pointer;
   position: relative;
   z-index: 2;
   @include styles.padding($pl: 0px, $pr: 0px, $pt: 12px, $pb: 12px);
 
-  &.editMessageActive {
-    background-color: #eceefe;
-  }
+  // &.editMessageActive {
+  //   background-color: #eceefe;
+  // }
 
   &:hover {
-    background-color: #eceefe;
+    background-color: main-colors.$user-msg-bg-hover;
   }
 
   &:hover .user-message-row-center {
-    background-color: white;
+    background-color: main-colors.$user-others-msg-text-bg;
   }
 
   &:hover .last-comment-time {
-    color: #393939;
+    color: main-colors.$user-msg-light-text;
   }
 
-  &:hover .add-reaction-btn {
-    background-color: white;
-  }
+  // &:hover .add-reaction-btn {
+  //   background-color: white;
+  // }
 
   &.myMessageStyle {
     align-items: flex-end;
     cursor: unset;
 
     &:hover .user-message-row-center {
-      background-color: #797ef3;
+      background-color: main-colors.$user-own-msg-text-bg-hover;
     }
   }
 }
 
 .user-message-container {
-  @include styles.dFlex(
-    $d: flex,
+  @include styles.dFlex($d: flex,
     $fd: row,
     $jc: flex-start,
     $ai: flex-start,
-    $g: 28px
-  );
+    $g: 28px);
   @include styles.padding($pl: 28px, $pr: 28px, $pt: 8px, $pb: 8px);
 
   &.myMessageStyle {
@@ -68,13 +65,11 @@ section {
 }
 
 .user-message-box {
-  @include styles.dFlex(
-    $d: flex,
+  @include styles.dFlex($d: flex,
     $fd: column,
     $jc: flex-start,
     $ai: flex-start,
-    $g: 12px
-  );
+    $g: 12px);
 
   &.myMessageStyle {
     align-items: flex-end;
@@ -82,13 +77,11 @@ section {
 }
 
 .user-message-row-top {
-  @include styles.dFlex(
-    $d: flex,
+  @include styles.dFlex($d: flex,
     $fd: row,
     $jc: flex-start,
     $ai: center,
-    $g: 24px
-  );
+    $g: 24px);
 
   &.myMessageStyle {
     flex-direction: row-reverse;
@@ -101,7 +94,7 @@ section {
   cursor: pointer;
 
   &:hover {
-    color: #535af1;
+    color: main-colors.$hover-user-name;
   }
 }
 
@@ -109,36 +102,33 @@ section {
 .last-comment-time {
   font-weight: 400;
   font-size: 14px;
-  color: grey;
+  color: main-colors.$user-msg-light-text;
 }
 
 .user-message-row-center {
-  background-color: white;
   padding: 12px;
-  background-color: #eceefe;
+  background-color: main-colors.$user-others-msg-text-bg-hover;
   border-radius: 30px;
   border-top-left-radius: 0px;
 
   &.myMessageStyle {
-    background-color: #797ef3;
-    color: white;
+    background-color: main-colors.$user-own-msg-text-bg;
+    color: main-colors.$user-own-msg-text;
     border-radius: 30px;
     border-top-right-radius: 0px;
   }
 }
 
 .user-message-row-bottom {
-  @include styles.dFlex(
-    $d: flex,
+  @include styles.dFlex($d: flex,
     $fd: row,
     $jc: flex-start,
     $ai: center,
-    $g: 24px
-  );
+    $g: 24px);
 }
 
 .comments-number {
-  color: #535af1;
+  color: main-colors.$user-msg-comments-number;
   cursor: pointer;
 
   &:hover {
@@ -148,24 +138,20 @@ section {
 }
 
 .reaction-icons-row-bottom {
-  @include styles.dFlex(
-    $d: flex,
+  @include styles.dFlex($d: flex,
     $fd: row,
     $jc: flex-end,
     $ai: center,
-    $g: 12px
-  );
+    $g: 12px);
   margin-top: -6px;
 
   &.editMessageActive {
     width: 100%;
-    @include styles.dFlex(
-      $d: flex,
+    @include styles.dFlex($d: flex,
       $fd: row,
       $jc: space-between,
       $ai: space-between,
-      $g: 0px
-    );
+      $g: 0px);
     box-sizing: border-box;
     position: absolute;
     top: 120px;
@@ -173,15 +159,15 @@ section {
   }
 }
 
-.check_circle {
-  color: #4bd37b;
-}
+// .check_circle {
+//   color: #4bd37b;
+// }
 
 .reaction-btn-div {
   @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
   padding: 2px 6px;
-  background-color: white;
-  border: 1px solid #adb0d9;
+  // background-color: white;
+  // border: 1px solid #adb0d9;
   cursor: pointer;
 
   .reaction-btn-style {
@@ -189,15 +175,15 @@ section {
   }
 
   &.active {
-    background-color: #eceefe;
-    border-color: #535af1;
+    background-color: main-colors.$user-msg-used-emoji-box-bg;
+    border-color: main-colors.$user-msg-used-emoji-box-border;
 
     .reaction-btn-style {
       background-color: inherit;
     }
 
     p {
-      color: #535af1;
+      color: main-colors.$user-msg-used-emoji-box-amount;
     }
   }
 
@@ -221,12 +207,7 @@ section {
 .reaction-btn {
   width: var(--mdc-icon-button-state-layer-size, 30px);
   height: var(--mdc-icon-button-state-layer-size, 30px);
-  padding: calc(
-    calc(
-        var(--mdc-icon-button-state-layer-size, 30px) -
-          var(--mdc-icon-button-icon-size, 24px)
-      ) / 2
-  );
+  padding: calc(calc(var(--mdc-icon-button-state-layer-size, 30px) - var(--mdc-icon-button-icon-size, 24px)) / 2);
 
   &:hover {
     color: #797ef3;
@@ -370,6 +351,7 @@ textarea {
   button {
     border: 1px solid #797ef3;
   }
+
   button:last-child {
     border: 1px solid #444df2;
     background-color: #444df2;
