@@ -78,7 +78,7 @@ export class UserMessageComponent {
   @Input() allMessages: DisplayMessageInterface[] = [];
   @Input() CurrentUserURL: any;
   hoverComponent: boolean = false;
-  hoverComponentEmojiOverview: boolean = false;
+  hoverComponentEmojiOverviewMap: { [key: string]: boolean } = {};
   activeEmojiPicker: string | null = null;
   @Input() user: any[] = [];
   @Input() parentMessageId: string | null = null;
@@ -274,12 +274,12 @@ export class UserMessageComponent {
     this.hoverComponent = false;
   }
 
-  onMouseEnterReactionIcon() {
-    this.hoverComponentEmojiOverview = true;
+  onMouseEnterReactionIcon(emojiId: string): void {
+    this.hoverComponentEmojiOverviewMap[emojiId] = true;
   }
-
-  onMouseLeaveReactionIcon() {
-    this.hoverComponentEmojiOverview = false;
+  
+  onMouseLeaveReactionIcon(emojiId: string): void {
+    this.hoverComponentEmojiOverviewMap[emojiId] = false;
   }
 
   toggleEmojiPicker(messageId: string, event: MouseEvent): void {
@@ -336,9 +336,7 @@ export class UserMessageComponent {
     }
   }
 
-  private isEmojiReaction(
-    emoji: string | EmojiReaction
-  ): emoji is EmojiReaction {
+  private isEmojiReaction(emoji: string | EmojiReaction): emoji is EmojiReaction {
     return typeof emoji === 'object' && emoji !== null && 'name' in emoji;
   }
 
@@ -412,13 +410,30 @@ export class UserMessageComponent {
     }
   }
 
-  getEmojiAuthorName(emojiData: string | EmojiReaction): string {
+  getEmojiAuthorName(msg: any, emojiData: string | EmojiReaction): string[] {
+    const emojiAuthors: string[] = [];
+    const emojiName = this.isEmojiReaction(emojiData) ? emojiData.name : emojiData;
+  
     if (this.isEmojiReaction(emojiData)) {
-      const userId = emojiData.user;
-      const user = this.user.find((u) => u.localID === userId);
-      return user ? user.username : 'Unbekannt';
+      // Durchlaufe alle Reaktionen, um die Autoren zu finden, die auf dieses Emoji reagiert haben
+      msg.emojis.forEach((reaction: EmojiReaction) => {
+        if (reaction.name === emojiName) {
+          const user = this.user.find((u) => u.localID === reaction.user);
+          if (user) {
+            emojiAuthors.push(user.username);
+          }
+        }
+      });
+    } else {
+      // Wenn es keine Emoji-Reaktion gibt, füge den ersten Benutzer hinzu, der das Emoji verwendet hat
+      const user = this.user.find((u) => u.localID === emojiData);
+      if (user) {
+        emojiAuthors.push(user.username);
+      }
     }
-    return '';
+  
+    // Rückgabe eines Arrays von Benutzernamen
+    return emojiAuthors;
   }
 
   getEmojiSymbol(emojiData: string | EmojiReaction): string {

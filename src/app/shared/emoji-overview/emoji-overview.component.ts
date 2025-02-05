@@ -19,8 +19,12 @@ import { EmojiReaction } from '../../models/user-message';
 
 export class EmojiOverviewComponent {
   @Input() usedEmoji: any;
-  @Input() emojiAuthor: string = '';
+  @Input() emojiAuthor: string[] = [];;
 
-  constructor() {}
+  constructor() {
+    // setTimeout(() => {
+    //   console.log('emojiAuthor ', this.emojiAuthor);
+    // }, 700);
+  }
 
 }
