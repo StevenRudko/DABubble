@@ -385,3 +385,18 @@ textarea {
   align-items: center;
   gap: 12px;
 }
+
+app-emoji-overview {
+  position: absolute;
+  z-index: 4;
+  top: -10px;
+  width: 150px;
+  box-sizing: border-box;
+  left: 160px;
+  right: auto;
+
+  .myMessageStyle & {
+    right: 20px;
+    left: auto;
+  }
+}

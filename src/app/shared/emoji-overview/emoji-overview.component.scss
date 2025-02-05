@@ -7,9 +7,6 @@ mat-card {
   border-radius:30px;
   border-bottom-left-radius: 0px;
   background-color: main-colors.$emoji-overview-bg;
-  position:absolute;
-  right:340px;
-  bottom:60px;
 }
 
 mat-card-content {
@@ -20,9 +17,13 @@ mat-card-content {
   $ai: center,
   $g: 12px
   );
+  width: 100%;
+  box-sizing: border-box;
+  padding:0 5%;
   color: main-colors.$emoji-overview-text;
-
+  font-size:clamp(0.25rem, 5vw, 1rem);
   p:first-child {
-    font-size:18px;
+    font-size:clamp(0.25rem, 5vw, 1.25rem);
+    text-align:center;
   }
 }
