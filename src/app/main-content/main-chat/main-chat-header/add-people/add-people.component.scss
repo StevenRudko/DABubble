@@ -1,6 +1,10 @@
-/* add-people.component.scss */
+@use "./../../../../../styles.scss" as styles;
+@use "./../../../../../assets/styles/fonts.scss" as fonts;
+@use "./../../../../../assets/styles/colors.scss" as main-colors;
+@use "./../../../../../assets/styles/theme-colors.scss" as colors;
+
 .overlay-content {
-  background: white;
+  background: main-colors.$overlay-bg;
   border-radius: 16px;
   width: 420px;
   padding: 16px;
@@ -22,7 +26,7 @@
   .close-icon {
     cursor: pointer;
     &:hover {
-      color: #535af1;
+      color: main-colors.$overlay-close-icon-hover;
     }
   }
 }
@@ -32,12 +36,11 @@
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 16px;
-  color: #535af1;
+  color:main-colors.$overlay-channel-name;
   font-weight: 500;
-
-  .hashtag {
-    color: #535af1;
-  }
+  // .hashtag {
+  //   color: #535af1;
+  // }
 }
 
 .search-container {
@@ -48,13 +51,12 @@
 
 .tag-input {
   padding: 8px 12px;
-  border: 1px solid #adb0d9;
+  border: 1px solid main-colors.$overlay-input-border;
   border-radius: 20px;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   align-items: center;
-  background-color: white;
 
   input {
     border: none;
@@ -66,7 +68,7 @@
     background: transparent;
 
     &::placeholder {
-      color: #999;
+      color: main-colors.$overlay-input-placeholder;
     }
   }
 }
@@ -76,7 +78,7 @@
   align-items: center;
   gap: 8px;
   padding: 4px 12px;
-  background-color: #eceefe;
+  background-color: main-colors.$overlay-selected-user-bg;
   border-radius: 20px;
   height: 32px;
 
@@ -87,16 +89,16 @@
   }
 
   span {
-    color: #374151;
+    color: main-colors.$overlay-selected-user-name;
     font-size: 14px;
   }
 
   .remove-user {
     cursor: pointer;
     font-size: 18px;
-    color: #666;
+    color:main-colors.$overlay-selected-user-close-icon;
     &:hover {
-      color: #535af1;
+      color:main-colors.$overlay-selected-user-close-icon-hover;
     }
   }
 }

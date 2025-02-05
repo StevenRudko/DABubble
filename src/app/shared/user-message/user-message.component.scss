@@ -14,9 +14,12 @@ section {
   z-index: 2;
   @include styles.padding($pl: 0px, $pr: 0px, $pt: 12px, $pb: 12px);
 
-  // &.editMessageActive {
-  //   background-color: #eceefe;
-  // }
+  &.editMessageActive {
+    background-color: main-colors.$user-msg-bg-hover;
+    &:hover {
+      background-color: main-colors.$user-msg-bg-hover;
+    }
+  }
 
   &:hover {
     background-color: main-colors.$user-msg-bg-hover;
@@ -349,13 +352,15 @@ textarea {
   @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 28px);
 
   button {
-    border: 1px solid #797ef3;
+    border: 1px solid main-colors.$edit-msg-cancel-btn-border;
+    background-color: main-colors.$edit-msg-cancel-btn-bg;
+    color: main-colors.$edit-msg-cancel-btn-text;
   }
 
   button:last-child {
-    border: 1px solid #444df2;
-    background-color: #444df2;
-    color: white;
+    border: 1px solid main-colors.$edit-msg-save-btn-border;
+    background-color: main-colors.$edit-msg-save-btn-border;
+    color: main-colors.$edit-msg-save-btn-text;
   }
 }
 
@@ -366,7 +371,7 @@ textarea {
 
   .edit-controls {
     position: absolute;
-    bottom: 12px;
+    bottom: 20px;
     left: 12px;
     right: 12px;
     display: flex;

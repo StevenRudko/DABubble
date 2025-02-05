@@ -101,7 +101,7 @@ app-thread {
     width: 60px;
     border-top-left-radius: 0px;
     border-bottom-left-radius: 0px;
-    box-shadow: 4px 4px 8px rgba(89, 89, 89, 0.3);
+    box-shadow: 4px 4px 8px main-colors.$toggle-sidebar-shadow;
     font-size: 18px;
     font-weight: 500px;
     line-height: 24px;
@@ -110,7 +110,7 @@ app-thread {
     bottom: 25%;
 
     &:hover {
-      color: #797ef3;
+      color: main-colors.$toggle-sidebar-text;
       font-weight: 700;
     }
   }
