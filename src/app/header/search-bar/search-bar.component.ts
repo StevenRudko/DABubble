@@ -29,6 +29,8 @@ export class SearchBarComponent implements OnInit {
   private users: UserInterface[] = [];
   private channels: ChannelInterface[] = []
 
+  // objectKeys = Object.keys;
+
   constructor(
     private userData: UserData,
     private channelData: ChannelService,
@@ -80,9 +82,9 @@ export class SearchBarComponent implements OnInit {
       .filter((msg): msg is SearchResult => msg !== undefined);
 
     const filteredUsers = this.filterUser(query);
-
+    const filteredChannel = this.filterChannel(query);
     if (this.searchQuery) {
-      this.searchResults = [...filteredMessages, ...filteredUsers];
+      this.searchResults = [...filteredMessages, ...filteredUsers, ...filteredChannel];
     } else {
       this.searchResults = [];
     }
@@ -205,5 +207,44 @@ export class SearchBarComponent implements OnInit {
       .unsubscribe();
 
     return isOnline;
+  }
+
+  filterChannel(query: string) {
+    return this.channels
+      .filter(
+        (channel) =>
+          channel.name?.toLowerCase().includes(query)
+      )
+      .map((channel) => {
+        return this.channelResultData(channel);
+      })
+      .filter((channel): channel is SearchResult => channel !== undefined);
+  }
+
+  channelResultData(channel: any) {
+    const members = Object.keys(channel.members).map((uid: string) => {
+      // const user = this.users.find(user => user.localID === channel.uId);
+      // console.log(uid, channel.members);
+
+      // const user = this.users.find(user => user.localID === uid);
+      const channelMember = this.users.find(user => user.localID === uid);
+      // const user = Object.keys(this.users).map((user) => {
+      //   user === uid
+      // });
+      // console.log(user);
+
+      return channelMember ? { uid: channelMember.localID, username: channelMember.username, photoURL: channelMember.photoURL } : { uid, username: 'Unknown', photoURL: '' };
+    });
+    return {
+      type: 'channel',
+      chnalleId: channel.channelId,
+      channelName: channel.name,
+      channelDescription: channel.description,
+      channelMembers: members,
+    }
+  }
+
+  logSomething(i: string) {
+    console.log('something', i);
   }
 }

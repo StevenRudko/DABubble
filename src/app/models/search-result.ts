@@ -31,4 +31,12 @@ authorPhoto: any;
      * @type {string}
      */
     localID: string;
+
+    chnalleId: string;
+
+    channelName: string;
+
+    channelDescription: string;
+
+    channelMembers: any;
 }
