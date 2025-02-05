@@ -29,6 +29,8 @@ export class SearchBarComponent implements OnInit {
   private users: UserInterface[] = [];
   private channels: ChannelInterface[] = [];
 
+  // objectKeys = Object.keys;
+
   constructor(
     private userData: UserData,
     private channelData: ChannelService,
@@ -36,8 +38,8 @@ export class SearchBarComponent implements OnInit {
     private presenceService: PresenceService,
     private chatService: ChatService,
     public showHiddeService: ShowHiddeResultsService,
-    public userInfo: UserInfosService
-  ) {}
+    public userInfo: UserInfosService,
+  ) { }
 
   ngOnInit(): void {
     this.userData.userMessages$.subscribe(
@@ -68,20 +70,18 @@ export class SearchBarComponent implements OnInit {
     const query = this.searchQuery.toLowerCase();
 
     const filteredMessages = this.userMessages
-      .filter(
-        (msg) =>
-          // if  msg.message?.toLowerCase().includes(query) == true _> map || if this.isAuthorMatching(msg, query) == true -> map
-          (msg.message?.toLowerCase().includes(query) &&
-            this.canCurrentUserSeeMessage(msg)) ||
-          (this.isAuthorMatching(msg, query) &&
-            this.canCurrentUserSeeMessage(msg))
-      )
-      .map((msg) => {
+      .filter((msg) =>
+        // if  msg.message?.toLowerCase().includes(query) == true _> map || if this.isAuthorMatching(msg, query) == true -> map
+        msg.message?.toLowerCase().includes(query) && this.canCurrentUserSeeMessage(msg) ||
+        // zum filter der nachrichten wenn nach einem user gesucht wird
+        // mit der bedingung das nur nachrichten angezeigt werden die in verbindung stehen mit currentUser
+        this.isAuthorMatching(msg, query) && this.canCurrentUserSeeMessage(msg)
+      ).map((msg) => {
         if (msg.channelId) {
           return this.filterMessage(msg, 'message');
         } else if (msg.directUserId) {
           return this.filterMessage(msg, 'directMessage');
-        } else if (msg.comments) {
+        } else if (!msg.channelId && !msg.directUserId) {          
           return this.filterMessage(msg, 'thread');
         } else {
           return;
@@ -90,9 +90,9 @@ export class SearchBarComponent implements OnInit {
       .filter((msg): msg is SearchResult => msg !== undefined);
 
     const filteredUsers = this.filterUser(query);
-
+    const filteredChannel = this.filterChannel(query);
     if (this.searchQuery) {
-      this.searchResults = [...filteredMessages, ...filteredUsers];
+      this.searchResults = [...filteredMessages, ...filteredUsers, ...filteredChannel];
     } else {
       this.searchResults = [];
     }
@@ -106,7 +106,7 @@ export class SearchBarComponent implements OnInit {
       authorId: msg.authorId || '',
       username: author!.username || 'Gelöscht',
       photoURL: author!.photoURL || 'img-placeholder/default-avatar.svg',
-      channelId: msg.channelId || 0,
+      channelId: msg.channelId || '',
       directUserId: msg.directUserId || '',
       comments: msg.comments || [],
       emojis: msg.emojis || [],
@@ -148,11 +148,18 @@ export class SearchBarComponent implements OnInit {
     }
 
     // Prüfe, ob der Benutzer Teil des Channels ist (falls `channelId` verwendet wird)
-    // if (msg.channelId && this.isUserInChannel(msg.channelId)) {
-    //   return true;
-    // }
-
+    if (msg.channelId) {
+      return this.isUserInChannel(msg.channelId);
+    }
     // Weitere Regeln hinzufügen, falls nötig
+    return false;
+  }
+
+  isUserInChannel(channelId: any) {
+    const channel = this.channels.find((ch) => ch.channelId === channelId);
+    if (channel && channel.members && typeof channel.members === 'object') {
+      return channel.members[this.userInfo.uId] === true;
+    }
     return false;
   }
 
@@ -161,6 +168,17 @@ export class SearchBarComponent implements OnInit {
     if (this.showHiddeService.getBorderTrigger() !== isEmpty) {
       this.showHiddeService.setBorderTrigger(isEmpty);
     }
+  }
+
+  showChannel(channelId: string) {
+    this.chatService.currentChannel$
+      .pipe(take(1))
+      .subscribe((currentChannel) => {
+        if (!currentChannel || currentChannel.id !== channelId) {
+          this.chatService.selectChannel(channelId);
+        }
+      });
+    this.showHiddeService.setShowResult(false);
   }
 
   showChannelMessage(channelId: string) {
@@ -174,8 +192,12 @@ export class SearchBarComponent implements OnInit {
     this.showHiddeService.setShowResult(false);
   }
 
-  showDirectMessage(userId: string) {
-    this.chatService.selectDirectMessage(userId);
+  showDirectMessage(result: any) {
+    if (this.userInfo.uId === result.directUserId) {
+      this.chatService.selectDirectMessage(result.authorId);
+    } else {
+      this.chatService.selectDirectMessage(result.directUserId);
+    }
     this.showHiddeService.setShowResult(false);
   }
 
@@ -201,5 +223,39 @@ export class SearchBarComponent implements OnInit {
       .unsubscribe();
 
     return isOnline;
+  }
+
+  filterChannel(query: string) {
+    return this.channels
+      .filter(
+        (channel) =>
+          channel.name?.toLowerCase().includes(query)
+      )
+      .map((channel) => {
+        return this.channelResultData(channel);
+      })
+      .filter((channel): channel is SearchResult => channel !== undefined);
+  }
+
+  channelResultData(channel: any) {
+    if (this.isUserInChannel(channel.channelId)) {
+      const members = Object.keys(channel.members).map((uid: string) => {
+        const channelMember = this.users.find(user => user.localID === uid);
+        return channelMember ? { uid: channelMember.localID, username: channelMember.username, photoURL: channelMember.photoURL } : { uid, username: 'Unknown', photoURL: '' };
+      });
+      return {
+        type: 'channel',
+        channelId: channel.channelId,
+        channelName: channel.name,
+        channelDescription: channel.description,
+        channelMembers: members,
+      }
+    } else {
+      return
+    }
+  }
+
+  logSomething(i: string) {
+    console.log('something', i);
   }
 }

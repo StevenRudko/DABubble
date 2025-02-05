@@ -23,12 +23,18 @@ export interface SearchResult {
    * - Must be a valid email format.
    * @type {string}
    */
-  email: string;
+    email: string;
+      
+    /**
+     * The unique local identifier (ID) assigned to the user.
+     * - Used to differentiate users within the system.
+     * @type {string}
+     */
+    localID: string;
 
-  /**
-   * The unique local identifier (ID) assigned to the user.
-   * - Used to differentiate users within the system.
-   * @type {string}
-   */
-  localID: string;
+    channelName: string;
+
+    channelDescription: string;
+
+    channelMembers: any;
 }

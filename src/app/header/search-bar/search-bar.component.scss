@@ -2,7 +2,7 @@
 
 section {
     @include styles.dFlex($d: flex, $fd: column, $jc: flex-start, $ai: center, $g: 5px);
-    max-height: 350px;
+    max-height: 1000px; //350px;
     overflow-x: hidden;
     overflow-y: auto;
 
@@ -25,17 +25,18 @@ section {
 }
 
 .result-container {
-    @include styles.dFlex($d: flex, $fd: row, $jc: flex-start, $ai: flex-start, $g: 10px);
+    @include styles.dFlex($d: flex, $fd: row, $jc: flex-start, $ai: center, $g: 15px);
     width: 100%;
     height: 50px;
     padding: 10px;
     cursor: pointer;
+    box-sizing: border-box;
 
     &:hover {
         background-color: #ECEEFE;
     }
 
-    img {
+    >img {
         height: 50px;
         border-radius: 100%;
     }
@@ -99,5 +100,21 @@ section {
 
     span {
         color: #9ca3af;
+    }
+}
+
+.memberImgList {
+    @include styles.dFlex($d: flex, $fd: row, $jc: flex-start, $ai: center, $g: 0px);
+    // box-sizing: border-box;
+
+    img {
+        height: 30px;
+        border: 2px solid white;
+        border-radius: 100%;
+        margin-right: -10px;
+    }
+
+    p {
+        padding-left: 15px;
     }
 }
