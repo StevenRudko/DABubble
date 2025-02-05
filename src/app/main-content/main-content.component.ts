@@ -49,16 +49,26 @@ export class MainContentComponent {
     });
   }
 
+  /**
+   * Initializes component and sets user's online status
+   */
   ngOnInit(): void {
     this.presenceService.setOnlineStatus();
   }
 
+  /**
+   * Toggles the sidebar visibility state
+   */
   toggleSidebar() {
     this.sidebarActive = !this.sidebarActive;
     this.drawer.toggle();
   }
+
+  /**
+   * Opens the thread view with the selected message
+   * @param messageId - ID of the message to show in thread
+   */
   onOpenThread(messageId: string) {
-    console.log('5. Thread-Event in MainContent erhalten mit ID:', messageId);
     this.threadVisible = true;
     this.currentThreadMessageId = messageId;
   }

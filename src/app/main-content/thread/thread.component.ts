@@ -21,10 +21,8 @@ import {
   EmojiReaction,
 } from '../../models/user-message';
 import { Subscription } from 'rxjs';
-
 import { ChatService } from '../../service/chat.service';
 
-// Direkte Firestore Datenstruktur
 interface FirestoreMessage {
   authorId: string;
   message: string;
@@ -69,51 +67,66 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
     private authService: AuthService,
     private chatService: ChatService
   ) {
-    // Initialize user subscription
+    this.initializeSubscriptions();
+  }
+
+  /**
+   * Initialize component subscriptions for user and thread state
+   */
+  private initializeSubscriptions(): void {
     this.subscriptions.add(
-      this.authService.user$.subscribe((user) => {
-        this.currentUser = user;
-      })
+      this.authService.user$.subscribe((user) => (this.currentUser = user))
     );
 
-    // Subscribe to thread state changes
     this.subscriptions.add(
       this.chatService.threadOpen$.subscribe((isOpen) => {
-        if (!isOpen) {
-          this.closeThread();
-        }
+        if (!isOpen) this.closeThread();
       })
     );
   }
 
-  ngOnInit() {
+  /**
+   * Initialize thread component and load messages
+   */
+  ngOnInit(): void {
     if (this.messageId) {
       this.loadParentMessage(this.messageId);
       this.loadThreadMessages(this.messageId);
-
-      // Echtzeit-Updates für Thread-Nachrichten
-      this.subscriptions.add(
-        this.userData.userMessages$.subscribe(() => {
-          if (this.messageId) {
-            this.loadThreadMessages(this.messageId);
-          }
-        })
-      );
+      this.setupMessageUpdates();
     }
   }
 
-  ngAfterViewChecked() {
-    // Nur scrollen wenn neue Nachrichten hinzugekommen sind
+  /**
+   * Subscribe to real-time message updates
+   */
+  private setupMessageUpdates(): void {
+    this.subscriptions.add(
+      this.userData.userMessages$.subscribe(() => {
+        if (this.messageId) this.loadThreadMessages(this.messageId);
+      })
+    );
+  }
+
+  /**
+   * Check and scroll to bottom when new messages arrive
+   */
+  ngAfterViewChecked(): void {
     if (this.threadMessages.length > this.lastMessageCount) {
       this.scrollToBottom();
       this.lastMessageCount = this.threadMessages.length;
     }
   }
 
-  ngOnDestroy() {
+  /**
+   * Clean up subscriptions on component destruction
+   */
+  ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
 
+  /**
+   * Handle scroll events in the message container
+   */
   onScroll(event: any): void {
     const element = this.messagesContainer.nativeElement;
     const atBottom =
@@ -123,6 +136,9 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.isUserScrolled = !atBottom;
   }
 
+  /**
+   * Scroll to bottom of message container if user hasn't scrolled up
+   */
   private scrollToBottom(): void {
     try {
       if (!this.isUserScrolled && this.messagesContainer) {
@@ -134,34 +150,85 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
   }
 
-  private async loadParentMessage(messageId: string) {
+  /**
+   * Get user data from Firestore
+   */
+  private async getUserData(authorId: string): Promise<UserInterface> {
+    return (await this.userData.getUserById(authorId)) as UserInterface;
+  }
+
+  /**
+   * Create message metadata with timestamp and date
+   */
+  private createMessageMetadata(time: {
+    seconds: number;
+    nanoseconds: number;
+  }) {
+    const timestamp = this.calculateTimestamp(time);
+    return {
+      timestamp,
+      date: new Date(timestamp),
+    };
+  }
+
+  /**
+   * Build message author information
+   */
+  private buildAuthorInfo(user: UserInterface) {
+    return {
+      author: user?.username || 'Unknown',
+      authorPhoto: user?.photoURL || 'img-placeholder/default-avatar.svg',
+    };
+  }
+
+  /**
+   * Convert raw Firestore message to formatted message interface
+   */
+  private async formatMessage(
+    messageData: FirestoreMessage,
+    messageId: string
+  ): Promise<renderMessageInterface | null> {
+    if (!messageData || !messageData.authorId) return null;
+
+    const user = await this.getUserData(messageData.authorId);
+    const { timestamp, date } = this.createMessageMetadata(messageData.time);
+    const { author, authorPhoto } = this.buildAuthorInfo(user);
+
+    return {
+      timestamp,
+      userMessageId: messageId,
+      author,
+      authorPhoto,
+      message: messageData.message,
+      isOwnMessage: messageData.authorId === this.currentUser?.uid,
+      emojis: messageData.emojis || [],
+      hours: date.getHours(),
+      minutes: date.getMinutes(),
+    };
+  }
+
+  /**
+   * Calculate timestamp from Firestore time object
+   */
+  private calculateTimestamp(time: {
+    seconds: number;
+    nanoseconds: number;
+  }): number {
+    return time.seconds * 1000 + time.nanoseconds / 1000000;
+  }
+
+  /**
+   * Load and format parent message
+   */
+  private async loadParentMessage(messageId: string): Promise<void> {
     try {
       const rawMessage = await this.userData.getMessage(messageId);
       if (!rawMessage) return;
 
       const messageData = { ...rawMessage, id: messageId } as FirestoreMessage;
+      const formattedMessage = await this.formatMessage(messageData, messageId);
 
-      if (messageData && messageData.authorId) {
-        const user = (await this.userData.getUserById(
-          messageData.authorId
-        )) as UserInterface;
-        const timestamp =
-          messageData.time.seconds * 1000 +
-          messageData.time.nanoseconds / 1000000;
-        const messageDate = new Date(timestamp);
-
-        const formattedMessage: renderMessageInterface = {
-          timestamp,
-          userMessageId: messageId,
-          author: user?.username || 'Unknown',
-          authorPhoto: user?.photoURL || 'img-placeholder/default-avatar.svg',
-          message: messageData.message,
-          isOwnMessage: messageData.authorId === this.currentUser?.uid,
-          emojis: messageData.emojis || [],
-          hours: messageDate.getHours(),
-          minutes: messageDate.getMinutes(),
-        };
-
+      if (formattedMessage) {
         this.parentMessage = [formattedMessage];
       }
     } catch (error) {
@@ -169,37 +236,16 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
   }
 
-  private async loadThreadMessages(parentId: string) {
+  /**
+   * Load and format thread messages
+   */
+  private async loadThreadMessages(parentId: string): Promise<void> {
     try {
       const rawComments = await this.userData.getThreadMessages(parentId);
       this.replyCount = rawComments.length;
 
-      const formattedMessages = await Promise.all(
-        rawComments.map(async (comment) => {
-          if (!comment || !comment.authorId) return null;
-
-          const user = (await this.userData.getUserById(
-            comment.authorId
-          )) as UserInterface;
-          const timestamp =
-            comment.time.seconds * 1000 + comment.time.nanoseconds / 1000000;
-          const commentDate = new Date(timestamp);
-
-          return {
-            timestamp,
-            userMessageId: comment.id || '',
-            author: user?.username || 'Unknown',
-            authorPhoto: user?.photoURL || 'img-placeholder/default-avatar.svg',
-            message: comment.message,
-            isOwnMessage: comment.authorId === this.currentUser?.uid,
-            emojis: comment.emojis || [],
-            hours: commentDate.getHours(),
-            minutes: commentDate.getMinutes(),
-          } as renderMessageInterface;
-        })
-      );
-
-      this.threadMessages = formattedMessages.filter(
+      const messages = await this.formatThreadMessages(rawComments);
+      this.threadMessages = messages.filter(
         (msg): msg is renderMessageInterface => msg !== null
       );
     } catch (error) {
@@ -207,7 +253,24 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
   }
 
-  closeThread() {
+  /**
+   * Format array of thread messages
+   */
+  private async formatThreadMessages(
+    comments: any[]
+  ): Promise<(renderMessageInterface | null)[]> {
+    return Promise.all(
+      comments.map(async (comment) => {
+        if (!comment || !comment.authorId) return null;
+        return this.formatMessage(comment, comment.id || '');
+      })
+    );
+  }
+
+  /**
+   * Close thread and emit event
+   */
+  closeThread(): void {
     this.closeThreadEvent.emit();
   }
 }
