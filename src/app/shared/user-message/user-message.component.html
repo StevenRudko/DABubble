@@ -48,13 +48,19 @@
         <div class="emoji-reactions">
           <div *ngFor="let emoji of msg.emojis | unique:'name'" class="reaction-btn-div bg-frame-v1"
             [class.active]="hasUserReacted(msg, emoji?.name || emoji)"
-            (click)="handleEmojiSelected({name: emoji?.name || emoji}, msg.userMessageId)">
+            (click)="handleEmojiSelected({name: emoji?.name || emoji}, msg.userMessageId)"
+            (mouseenter)="onMouseEnterReactionIcon()"
+            (mouseleave)="onMouseLeaveReactionIcon()"
+            >
             <button class="reaction-btn-style">
               {{ getEmojiSymbol(emoji) }}
             </button>
             <p>{{ getEmojiCount(msg, emoji?.name || emoji) }}</p>
+
+            <app-emoji-overview [emojiAuthor]="getEmojiAuthorName(emoji)" [usedEmoji]="getEmojiSymbol(emoji)" *ngIf="hoverComponentEmojiOverview"></app-emoji-overview>
           </div>
         </div>
+
 
         <div class="message-actions">
           <div class="emoji-picker-container">

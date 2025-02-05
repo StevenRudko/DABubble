@@ -22,6 +22,7 @@ import { FormsModule } from '@angular/forms';
 import { ProfileOverviewComponent } from '../profile-overview/profile-overview.component';
 import { UserOverviewComponent } from '../../shared/user-overview/user-overview.component';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { EmojiOverviewComponent } from '../emoji-overview/emoji-overview.component';
 
 interface DisplayMessageInterface {
   timestamp: number;
@@ -61,8 +62,7 @@ interface ThreadInfo {
     EmojiPickerComponent,
     UniquePipe,
     FormsModule,
-    ProfileOverviewComponent,
-    UserOverviewComponent,
+    EmojiOverviewComponent,
   ],
   templateUrl: './user-message.component.html',
   styleUrl: './user-message.component.scss',
@@ -78,6 +78,7 @@ export class UserMessageComponent {
   @Input() allMessages: DisplayMessageInterface[] = [];
   @Input() CurrentUserURL: any;
   hoverComponent: boolean = false;
+  hoverComponentEmojiOverview: boolean = false;
   activeEmojiPicker: string | null = null;
   @Input() user: any[] = [];
   @Input() parentMessageId: string | null = null;
@@ -273,12 +274,20 @@ export class UserMessageComponent {
     this.hoverComponent = false;
   }
 
+  onMouseEnterReactionIcon() {
+    this.hoverComponentEmojiOverview = true;
+  }
+
+  onMouseLeaveReactionIcon() {
+    this.hoverComponentEmojiOverview = false;
+  }
+
   toggleEmojiPicker(messageId: string, event: MouseEvent): void {
     event.stopPropagation();
     setTimeout(() => {
       this.activeEmojiPicker =
-      this.activeEmojiPicker === messageId ? null : messageId;
-    this.hoverComponent = !this.activeEmojiPicker;
+        this.activeEmojiPicker === messageId ? null : messageId;
+      this.hoverComponent = !this.activeEmojiPicker;
     }, 100);
   }
 
@@ -401,6 +410,15 @@ export class UserMessageComponent {
         message.message = this.originalMessageContent;
       }
     }
+  }
+
+  getEmojiAuthorName(emojiData: string | EmojiReaction): string {
+    if (this.isEmojiReaction(emojiData)) {
+      const userId = emojiData.user;
+      const user = this.user.find((u) => u.localID === userId);
+      return user ? user.username : 'Unbekannt';
+    }
+    return '';
   }
 
   getEmojiSymbol(emojiData: string | EmojiReaction): string {

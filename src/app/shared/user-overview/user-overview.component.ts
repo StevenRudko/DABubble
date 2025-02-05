@@ -17,6 +17,7 @@ import { UserInfosService } from '../../service/user-infos.service';
  */
 @Component({
   selector: 'app-user-overview',
+  standalone:true,
   imports: [
     CommonModule,
     MatIconModule,

@@ -1,0 +1,28 @@
+@use "./../../../styles.scss" as styles;
+@use "./../../../assets/styles/fonts.scss" as fonts;
+@use "./../../../assets/styles/colors.scss" as main-colors;
+@use "./../../../assets/styles/theme-colors.scss" as colors;
+
+mat-card {
+  border-radius:30px;
+  border-bottom-left-radius: 0px;
+  background-color: main-colors.$emoji-overview-bg;
+  position:absolute;
+  right:340px;
+  bottom:60px;
+}
+
+mat-card-content {
+  @include styles.dFlex(
+  $d: flex,
+  $fd: column,
+  $jc: center,
+  $ai: center,
+  $g: 12px
+  );
+  color: main-colors.$emoji-overview-text;
+
+  p:first-child {
+    font-size:18px;
+  }
+}
