@@ -9,20 +9,16 @@
 
   <div class="user-message-container" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
     <div>
-      <img class="user-message-img" [src]="CurrentUserURL" alt="" (click)="openUserProfile(msg)"
-        style="cursor: pointer" />
+      <img class="user-message-img" [src]="CurrentUserURL" alt="" (click)="openProfile($event)" />
     </div>
     <div class="user-message-box" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
-      <!-- Normal Message View -->
-      <div *ngIf="!editStatusMessage" class="user-message-row-top" [ngClass]="{ myMessageStyle: msg.isOwnMessage }"
-        (click)="openUserProfile(msg)">
-        <p class="user-message-name">{{ msg.author }}</p>
+      <div *ngIf="!editStatusMessage" class="user-message-row-top" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
+        <p class="user-message-name" (click)="openProfile($event)">{{ msg.author }}</p>
         <p class="user-message-time">{{ msg.hours }}:{{ msg.minutes }} Uhr</p>
       </div>
       <div *ngIf="!editStatusMessage" class="user-message-row-center" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
-        <p>{{ msg.message }}</p>
+        <p [innerHTML]="formatMessageWithMentions(msg.message)"></p>
       </div>
-
       <!-- Edit Message View -->
       <div class="message-edit-container" *ngIf="editStatusMessage">
         <textarea #messageTextarea [(ngModel)]="msg.message" rows="4" cols="50"></textarea>

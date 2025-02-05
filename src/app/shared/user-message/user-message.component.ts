@@ -3,9 +3,7 @@ import {
   Input,
   Output,
   EventEmitter,
-  HostListener,
   ElementRef,
-  Inject,
   ViewChild,
 } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
@@ -23,6 +21,7 @@ import { RecentEmojisService } from '../../service/recent-emojis.service';
 import { FormsModule } from '@angular/forms';
 import { ProfileOverviewComponent } from '../profile-overview/profile-overview.component';
 import { UserOverviewComponent } from '../../shared/user-overview/user-overview.component';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 interface DisplayMessageInterface {
   timestamp: number;
@@ -62,6 +61,8 @@ interface ThreadInfo {
     EmojiPickerComponent,
     UniquePipe,
     FormsModule,
+    ProfileOverviewComponent,
+    UserOverviewComponent,
   ],
   templateUrl: './user-message.component.html',
   styleUrl: './user-message.component.scss',
@@ -87,56 +88,123 @@ export class UserMessageComponent {
   emojiList: any[] = [];
   editStatusMessage: boolean = false;
 
-  currentEditingMessageId: string | null = null; // Speichert die ID der bearbeiteten Nachricht
-  originalMessageContent: string = ''; // Speichert den ursprünglichen Text der bearbeiteten Nachricht
+  currentEditingMessageId: string | null = null;
+  originalMessageContent: string = '';
   threadInfo: ThreadInfo | null = null;
 
+  private boundMentionClick = (event: Event) => {
+    if (event instanceof CustomEvent) {
+      this.openMentionedProfile(event.detail);
+    }
+  };
   constructor(
     private dialog: MatDialog,
     private userData: UserData,
     private elementRef: ElementRef,
     private authService: AuthService,
     private emojiService: EmojiService,
-    private recentEmojisService: RecentEmojisService
+    private recentEmojisService: RecentEmojisService,
+    private sanitizer: DomSanitizer
   ) {
     this.emojiList = this.emojiService.emojiList;
-
     this.authService.user$.subscribe((user) => {
       this.currentUser = user;
     });
   }
 
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent) {
-    if (!this.elementRef.nativeElement.contains(event.target)) {
-      this.activeEmojiPicker = null;
+  ngOnInit() {
+    this.loadThreadInfo();
+    document.addEventListener('mentionClick', this.boundMentionClick);
+    document.addEventListener('click', this.handleGlobalClick, true);
+
+    // Neuer Listener für Emoji-Picker
+    document.addEventListener('click', (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('mat-icon') && !target.closest('app-emoji-picker')) {
+        this.activeEmojiPicker = null;
+      }
+    });
+  }
+
+  openProfile(event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const msg = this.allMessages[0];
+    if (!msg) return;
+
+    if (this.dialog.openDialogs.length > 0) return; // Verhindert mehrfaches Öffnen
+
+    const config = {
+      width: '400px',
+      hasBackdrop: true,
+      panelClass: msg.isOwnMessage
+        ? ['profile-dialog', 'right-aligned']
+        : ['profile-dialog', 'center-aligned'],
+      autoFocus: false,
+      disableClose: false,
+    };
+
+    if (msg.isOwnMessage) {
+      this.dialog.open(UserOverviewComponent, config);
+    } else {
+      this.dialog.open(ProfileOverviewComponent, {
+        ...config,
+        data: this.createProfileData(msg),
+      });
     }
   }
 
-  ngOnInit() {
-    // Für jede Nachricht Thread-Informationen laden
-    this.loadThreadInfo();
+  private createProfileData(msg: DisplayMessageInterface): UserProfileData {
+    const userData = this.user.find((u) => u.username === msg.author);
+    return {
+      username: userData?.username || '',
+      email: userData?.email || '',
+      photoURL: userData?.photoURL || 'img-placeholder/default-avatar.svg',
+      status: 'offline',
+      uid: userData?.localID || '',
+    };
   }
+
+  ngOnDestroy() {
+    document.removeEventListener('click', this.handleGlobalClick);
+    document.removeEventListener('mentionClick', this.boundMentionClick);
+  }
+
+  private handleGlobalClick = (event: Event) => {
+    const target = event.target as HTMLElement;
+    if (target.closest('.mention')) {
+      const chatContainer = document.querySelector('.main-chat-body');
+      if (chatContainer instanceof HTMLElement) {
+        chatContainer.focus();
+      }
+
+      const mentionElement = target.closest('.mention') as HTMLElement;
+      const username = mentionElement.getAttribute('data-username');
+      if (username) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.openMentionedProfile(username);
+      }
+    }
+  };
 
   private async loadThreadInfo() {
     if (!this.allMessages || this.allMessages.length === 0) return;
 
     const message = this.allMessages[0];
     try {
-      // Lade die Kommentare für diese Nachricht
       const comments = await this.userData.getThreadMessages(
         message.userMessageId
       );
 
       if (comments && comments.length > 0) {
-        // Sortiere Kommentare nach Zeitstempel
         const sortedComments = comments.sort((a, b) => {
           const timeA = a.time.seconds * 1000 + a.time.nanoseconds / 1000000;
           const timeB = b.time.seconds * 1000 + b.time.nanoseconds / 1000000;
-          return timeB - timeA; // Absteigend sortieren
+          return timeB - timeA;
         });
 
-        // Hole den letzten Kommentar
         const lastComment = sortedComments[0];
         const lastCommentTime = new Date(
           lastComment.time.seconds * 1000 +
@@ -170,7 +238,7 @@ export class UserMessageComponent {
       );
       if (messageToEdit) {
         this.currentEditingMessageId = userMessageId;
-        this.originalMessageContent = messageToEdit.message; // Ursprünglichen Text speichern
+        this.originalMessageContent = messageToEdit.message;
       }
     } else {
       this.currentEditingMessageId = null;
@@ -179,7 +247,6 @@ export class UserMessageComponent {
     this.editStatusMessage = status;
   }
 
-  // onSave wird nun die editMessage Methode aufrufen und den Text aus der textarea übergeben
   onSave(): void {
     if (this.currentEditingMessageId) {
       this.editMessage(
@@ -192,10 +259,6 @@ export class UserMessageComponent {
   openThread() {
     if (this.allMessages && this.allMessages.length > 0) {
       const messageId = this.allMessages[0].userMessageId;
-      console.log(
-        'Thread wird über Antworten-Anzeige geöffnet mit ID:',
-        messageId
-      );
       this.openThreadWithMessage.emit(messageId);
     }
   }
@@ -238,10 +301,10 @@ export class UserMessageComponent {
           textarea.focus();
         });
       }
-      this.activeEmojiPicker = null; // Picker schließen nach Auswahl
+      this.activeEmojiPicker = null;
     } else {
       this.handleEmojiReaction(emoji, messageId);
-      this.activeEmojiPicker = null; // Picker schließen nach Reaktion
+      this.activeEmojiPicker = null;
     }
   }
 
@@ -311,14 +374,14 @@ export class UserMessageComponent {
       (msg) => msg.userMessageId === userMessageId
     );
     if (!messageToEdit) return;
-    this.originalMessageContent = messageToEdit.message; // Ursprünglichen Text speichern
-    const newMessage = updatedMessage || messageToEdit.message; // Wenn ein aktualisierter Text übergeben wurde (z. B. aus der textarea), verwenden wir diesen
+    this.originalMessageContent = messageToEdit.message;
+    const newMessage = updatedMessage || messageToEdit.message;
 
-    this.userData // Aktualisieren der Nachricht mit dem neuen Text (wird erst bei „Speichern“ durchgeführt)
+    this.userData
       .updateMessage(userMessageId, { message: newMessage })
       .then(() => {
         console.log('Nachricht erfolgreich aktualisiert');
-        this.editStatusMessage = false; // Bearbeitungsmodus beenden
+        this.editStatusMessage = false;
       })
       .catch((error) => {
         console.error('Fehler beim Aktualisieren der Nachricht:', error);
@@ -333,7 +396,7 @@ export class UserMessageComponent {
         (msg) => msg.userMessageId === this.currentEditingMessageId
       );
       if (message) {
-        message.message = this.originalMessageContent; // Zurücksetzen der Nachricht auf den ursprünglichen Text
+        message.message = this.originalMessageContent;
       }
     }
   }
@@ -345,37 +408,59 @@ export class UserMessageComponent {
     return this.emojiList.find((e) => e.name === emojiName)?.emoji || '';
   }
 
-  openUserProfile(msg: DisplayMessageInterface) {
-    if (msg.isOwnMessage) {
-      this.dialog.open(UserOverviewComponent, {
-        panelClass: ['profile-dialog', 'right-aligned'],
-        width: '400px',
-      });
+  formatMessageWithMentions(message: string): SafeHtml {
+    const formattedMessage = message.replace(
+      /@(\w+\s*\w*)/g,
+      (match, username) => {
+        const cleanUsername = username.trim();
+        // Statt onclick einen data-username Attribut verwenden
+        return `<span class="mention" data-username="${cleanUsername}">@${cleanUsername}</span>`;
+      }
+    );
+    return this.sanitizer.bypassSecurityTrustHtml(formattedMessage);
+  }
+
+  private openMentionedProfile(username: string): void {
+    if (this.dialog.openDialogs.length > 0) {
       return;
     }
 
-    // User-Daten aus dem user-Array holen
-    const userData = this.user.find((u) => u.username === msg.author);
+    const userData = this.user.find(
+      (u) => u.username?.toLowerCase() === username.toLowerCase()
+    );
 
-    if (userData) {
+    if (!userData) return;
+
+    const config = {
+      width: '400px',
+      hasBackdrop: true,
+      panelClass:
+        userData.localID === this.currentUser?.uid
+          ? ['profile-dialog', 'right-aligned']
+          : ['profile-dialog', 'center-aligned'],
+      autoFocus: false,
+      disableClose: false,
+    };
+
+    if (userData.localID === this.currentUser?.uid) {
+      this.dialog.open(UserOverviewComponent, config);
+    } else {
       const profileData: UserProfileData = {
         username: userData.username,
         email: userData.email,
         photoURL: userData.photoURL || 'img-placeholder/default-avatar.svg',
-        status: 'offline', // Status wird vom PresenceService aktualisiert
+        status: 'offline',
         uid: userData.localID,
       };
 
       this.dialog.open(ProfileOverviewComponent, {
+        ...config,
         data: profileData,
-        panelClass: ['profile-dialog', 'center-aligned'],
-        width: '400px',
       });
     }
   }
 
   onOpenThread(messageId: string): void {
-    console.log('2. Thread-Event in UserMessage erhalten mit ID:', messageId);
     this.openThreadWithMessage.emit(messageId);
   }
 }

@@ -1,13 +1,28 @@
 <div class="message-input-container">
   <label for="new-message"></label>
-  <textarea #messageInput [(ngModel)]="messageText" [placeholder]="placeholder" (keydown)="onKeyDown($event)">
-  </textarea>
+  <div class="textarea-wrapper">
+
+    <!-- Original Textarea -->
+    <textarea #messageInput [(ngModel)]="messageText" [placeholder]="placeholder" (keydown)="onKeyDown($event)"
+      (input)="onInput($event)">
+    </textarea>
+  </div>
+
+  <!-- Mention Dropdown -->
+  <div class="mention-dropdown" *ngIf="showMentionDropdown && mentionSearchResults.length > 0">
+    <div *ngFor="let user of mentionSearchResults" class="mention-item" (click)="selectMention(user)">
+      <img [src]="user.photoURL || 'img-placeholder/default-avatar.svg'" [alt]="user.username" class="mention-avatar">
+      <div class="mention-details">
+        <span class="mention-name">{{ user.username }}</span>
+        <span class="mention-email">{{ user.email }}</span>
+      </div>
+    </div>
+  </div>
 
   <div class="bottom-wrapper-icons">
     <div class="interactive-icons">
       <div class="circle-outline emoji-picker-container">
         <mat-icon (click)="toggleEmojiPicker($event)">sentiment_satisfied_alt</mat-icon>
-
         <app-emoji-picker *ngIf="showEmojiPicker" (emojiSelect)="handleEmojiSelected($event)"
           class="emoji-picker-popup input-emoji-picker">
         </app-emoji-picker>
@@ -16,7 +31,6 @@
         <mat-icon>alternate_email</mat-icon>
       </div>
     </div>
-
     <div class="send-icon-div" (click)="sendMessage()">
       <mat-icon>send</mat-icon>
     </div>
