@@ -81,7 +81,7 @@ export class SearchBarComponent implements OnInit {
           return this.filterMessage(msg, 'message');
         } else if (msg.directUserId) {
           return this.filterMessage(msg, 'directMessage');
-        } else if (msg.comments) {
+        } else if (!msg.channelId && !msg.directUserId) {          
           return this.filterMessage(msg, 'thread');
         } else {
           return;
@@ -106,7 +106,7 @@ export class SearchBarComponent implements OnInit {
       authorId: msg.authorId || '',
       username: author!.username || 'Gelöscht',
       photoURL: author!.photoURL || 'img-placeholder/default-avatar.svg',
-      channelId: msg.channelId || 0,
+      channelId: msg.channelId || '',
       directUserId: msg.directUserId || '',
       comments: msg.comments || [],
       emojis: msg.emojis || [],
@@ -149,11 +149,8 @@ export class SearchBarComponent implements OnInit {
 
     // Prüfe, ob der Benutzer Teil des Channels ist (falls `channelId` verwendet wird)
     if (msg.channelId) {
-      console.log(msg.channelId, msg.message);
-
       return this.isUserInChannel(msg.channelId);
     }
-
     // Weitere Regeln hinzufügen, falls nötig
     return false;
   }
@@ -171,6 +168,17 @@ export class SearchBarComponent implements OnInit {
     if (this.showHiddeService.getBorderTrigger() !== isEmpty) {
       this.showHiddeService.setBorderTrigger(isEmpty);
     }
+  }
+
+  showChannel(channelId: string) {
+    this.chatService.currentChannel$
+      .pipe(take(1))
+      .subscribe((currentChannel) => {
+        if (!currentChannel || currentChannel.id !== channelId) {
+          this.chatService.selectChannel(channelId);
+        }
+      });
+    this.showHiddeService.setShowResult(false);
   }
 
   showChannelMessage(channelId: string) {
@@ -230,25 +238,20 @@ export class SearchBarComponent implements OnInit {
   }
 
   channelResultData(channel: any) {
-    const members = Object.keys(channel.members).map((uid: string) => {
-      // const user = this.users.find(user => user.localID === channel.uId);
-      // console.log(uid, channel.members);
-
-      // const user = this.users.find(user => user.localID === uid);
-      const channelMember = this.users.find(user => user.localID === uid);
-      // const user = Object.keys(this.users).map((user) => {
-      //   user === uid
-      // });
-      // console.log(user);
-
-      return channelMember ? { uid: channelMember.localID, username: channelMember.username, photoURL: channelMember.photoURL } : { uid, username: 'Unknown', photoURL: '' };
-    });
-    return {
-      type: 'channel',
-      chnalleId: channel.channelId,
-      channelName: channel.name,
-      channelDescription: channel.description,
-      channelMembers: members,
+    if (this.isUserInChannel(channel.channelId)) {
+      const members = Object.keys(channel.members).map((uid: string) => {
+        const channelMember = this.users.find(user => user.localID === uid);
+        return channelMember ? { uid: channelMember.localID, username: channelMember.username, photoURL: channelMember.photoURL } : { uid, username: 'Unknown', photoURL: '' };
+      });
+      return {
+        type: 'channel',
+        channelId: channel.channelId,
+        channelName: channel.name,
+        channelDescription: channel.description,
+        channelMembers: members,
+      }
+    } else {
+      return
     }
   }
 

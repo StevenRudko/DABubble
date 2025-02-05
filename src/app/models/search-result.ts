@@ -32,8 +32,6 @@ export interface SearchResult {
      */
     localID: string;
 
-    chnalleId: string;
-
     channelName: string;
 
     channelDescription: string;

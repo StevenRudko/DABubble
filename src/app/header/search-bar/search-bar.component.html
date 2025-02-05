@@ -45,19 +45,19 @@
                         <div>{{result.type}}</div>
                 </div>
             }
-            <!-- @else if (result.type == 'thread') {
-                <div class="result-container" (click)="logSomething()">
+            @else if (result.type == 'thread') {
+                <div class="result-container" (click)="logSomething(result.channelId)">
                         <div>#</div>
                         <img src="{{result.photoURL}}" alt="">
                         <span>{{result.username}}</span>
                         <p>{{result.message}}</p>
                         <div>{{result.type}}</div>
                 </div>
-            } -->
+            }
         }
         @for (result of searchResults; track $index) {
             @if (result.type == 'channel') {
-                <div class="result-container" (click)="logSomething(result.channelId)">
+                <div class="result-container" (click)="showChannel(result.channelId)">
                         <div>
                             <svg class="workspaces-icon" width="24" height="24" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
