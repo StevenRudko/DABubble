@@ -5,11 +5,13 @@
 .message-input-container {
   width: 100%;
   box-sizing: border-box;
-  height: 150px;
+  height: 100%;
   border: 1px solid #adb0d9;
   border-radius: 20px;
   padding: 12px;
   cursor: text;
+  margin: 0 12px;
+  width: calc(100% - 24px);
 
   &:hover {
     border: 1px solid #797ef3;

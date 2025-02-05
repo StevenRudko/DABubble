@@ -28,10 +28,10 @@ import { PresenceService } from '../service/presence.service';
 })
 export class MainContentComponent {
   @ViewChild('drawer') drawer!: MatSidenav;
-
   onlineUsers: string[] = [];
   sidebarActive: boolean = false;
-  threadVisible: boolean = true;
+  threadVisible: boolean = false;
+  currentThreadMessageId: string | null = null;
 
   constructor(
     private authService: AuthService,
@@ -56,5 +56,10 @@ export class MainContentComponent {
   toggleSidebar() {
     this.sidebarActive = !this.sidebarActive;
     this.drawer.toggle();
+  }
+  onOpenThread(messageId: string) {
+    console.log('5. Thread-Event in MainContent erhalten mit ID:', messageId);
+    this.threadVisible = true;
+    this.currentThreadMessageId = messageId;
   }
 }

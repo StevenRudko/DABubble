@@ -8,6 +8,9 @@ import {
   onSnapshot,
   updateDoc,
   getDoc,
+  setDoc,
+  serverTimestamp,
+  addDoc,
 } from 'firebase/firestore';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { UserMessageInterface } from '../models/user-message';
@@ -22,6 +25,11 @@ export class UserData {
 
   private usersSubject = new BehaviorSubject<UserInterface[]>([]);
   users$ = this.usersSubject.asObservable();
+
+  private recentEmojisSubject = new BehaviorSubject<{ [key: string]: any[] }>(
+    {}
+  );
+  recentEmojis$ = this.recentEmojisSubject.asObservable();
 
   constructor(private firestore: Firestore) {
     this.getUserMessages();
@@ -215,6 +223,116 @@ export class UserData {
       }
     } catch (error) {
       console.error('Fehler beim Aktualisieren der Emoji-Reaktion:', error);
+      throw error;
+    }
+  }
+
+  async getRecentEmojis(userId: string): Promise<any[]> {
+    const docRef = doc(this.firestore, 'users', userId, 'recentEmojis', 'data');
+    const docSnap = await getDoc(docRef);
+    const emojis = docSnap.exists() ? docSnap.data()?.['emojis'] || [] : [];
+    this.recentEmojisSubject.next({
+      ...this.recentEmojisSubject.value,
+      [userId]: emojis,
+    });
+    return emojis;
+  }
+
+  async updateRecentEmojis(userId: string, newEmoji: any): Promise<void> {
+    const recentEmojis = await this.getRecentEmojis(userId);
+    const updatedEmojis = [
+      newEmoji,
+      ...recentEmojis.filter((e) => e.name !== newEmoji.name),
+    ].slice(0, 2);
+
+    const docRef = doc(this.firestore, 'users', userId, 'recentEmojis', 'data');
+    await setDoc(docRef, { emojis: updatedEmojis }, { merge: true });
+    this.recentEmojisSubject.next({
+      ...this.recentEmojisSubject.value,
+      [userId]: updatedEmojis,
+    });
+  }
+
+  async getMessage(messageId: string): Promise<any> {
+    const messageRef = doc(this.firestore, `userMessages/${messageId}`);
+    const messageSnap = await getDoc(messageRef);
+    if (messageSnap.exists()) {
+      return { ...messageSnap.data(), id: messageSnap.id };
+    }
+    return null;
+  }
+  async getThreadMessages(parentId: string) {
+    const messageRef = doc(this.firestore, `userMessages/${parentId}`);
+    const messageSnap = await getDoc(messageRef);
+
+    if (messageSnap.exists()) {
+      // Hier die Änderung von .comments zu ['comments']
+      const comments = messageSnap.data()?.[`comments`] || [];
+      const messagePromises = comments.map(async (commentId: string) => {
+        const commentRef = doc(this.firestore, `userMessages/${commentId}`);
+        const commentSnap = await getDoc(commentRef);
+        return commentSnap.exists()
+          ? { ...commentSnap.data(), id: commentSnap.id }
+          : null;
+      });
+
+      return (await Promise.all(messagePromises)).filter((msg) => msg !== null);
+    }
+    return [];
+  }
+  async getUserById(userId: string) {
+    try {
+      const userRef = doc(this.firestore, 'users', userId);
+      const userSnap = await getDoc(userRef);
+      return userSnap.exists()
+        ? { ...userSnap.data(), localID: userSnap.id }
+        : null;
+    } catch (error) {
+      console.error('Error getting user by ID:', error);
+      return null;
+    }
+  }
+
+  async addThreadMessage(
+    parentMessageId: string,
+    messageText: string,
+    authorId: string
+  ) {
+    try {
+      // 1. Neue Nachricht erstellen
+      const messagesCollection = collection(this.firestore, 'userMessages');
+      const messageData = {
+        message: messageText,
+        authorId: authorId,
+        time: serverTimestamp(),
+        emojis: [],
+        comments: [],
+      };
+
+      // 2. Nachricht zur userMessages Collection hinzufügen
+      const newMessageRef = await addDoc(messagesCollection, messageData);
+
+      // 3. Parent Message updaten - comments Array aktualisieren
+      const parentMessageRef = doc(
+        this.firestore,
+        'userMessages',
+        parentMessageId
+      );
+      const parentMessageSnap = await getDoc(parentMessageRef);
+
+      if (parentMessageSnap.exists()) {
+        const data = parentMessageSnap.data();
+        const currentComments =
+          data && data['comments'] ? data['comments'] : [];
+
+        await updateDoc(parentMessageRef, {
+          comments: [...currentComments, newMessageRef.id],
+        });
+      }
+
+      return newMessageRef.id;
+    } catch (error) {
+      console.error('Error adding thread message:', error);
       throw error;
     }
   }

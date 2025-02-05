@@ -58,7 +58,8 @@ export class AddPeopleDialogSidebarComponent implements OnInit {
    */
   constructor(
     @Optional() public dialogRef: MatDialogRef<AddPeopleDialogSidebarComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { channelId: string },
+    @Inject(MAT_DIALOG_DATA)
+    public data: { channelId: string; creatorId: string },
     private firestore: Firestore
   ) {
     const usersCollection = collection(this.firestore, 'users');
@@ -70,6 +71,16 @@ export class AddPeopleDialogSidebarComponent implements OnInit {
       .pipe(
         tap((users) => {
           this.allUsers = users;
+          // Automatisch Creator hinzufügen
+          const creator = users.find(
+            (user) => user.uid === this.data.creatorId
+          );
+          if (
+            creator &&
+            !this.selectedUsers.some((u) => u.uid === creator.uid)
+          ) {
+            this.selectedUsers.push(creator);
+          }
         })
       )
       .subscribe();
@@ -136,9 +147,11 @@ export class AddPeopleDialogSidebarComponent implements OnInit {
    */
   removeUser(user: UserProfile, event: Event): void {
     event.stopPropagation();
-    this.selectedUsers = this.selectedUsers.filter(
-      (selected) => selected.uid !== user.uid
-    );
+    if (user.uid !== this.data.creatorId) {
+      this.selectedUsers = this.selectedUsers.filter(
+        (selected) => selected.uid !== user.uid
+      );
+    }
   }
 
   /**

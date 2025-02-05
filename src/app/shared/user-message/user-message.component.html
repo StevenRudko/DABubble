@@ -1,22 +1,54 @@
 <section *ngFor="let msg of allMessages" (mouseenter)="onMouseEnter(msg.userMessageId)"
-  (mouseleave)="onMouseLeave(msg.userMessageId)" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
-  <app-user-msg-options [showAllOptions]="msg.isOwnMessage" [userMessageId]="msg.userMessageId"
-    (messageEdited)="editMessage($event)" (messageDeleted)="deleteMessage($event)"
-    *ngIf="hoverComponent"></app-user-msg-options>
+  (mouseleave)="onMouseLeave(msg.userMessageId)"
+  [ngClass]="{ myMessageStyle: msg.isOwnMessage, editMessageActive: editStatusMessage }" [id]="msg.userMessageId">
+  <app-user-msg-options *ngIf="hoverComponent && !editStatusMessage" [isThreadMessage]="threadMessage"
+    [parentMessageId]="parentMessageId" (changeEditMessageState)="getEditMessageStatus($event, msg.userMessageId)"
+    [showAllOptions]="msg.isOwnMessage" [userMessageId]="msg.userMessageId" (messageDeleted)="deleteMessage($event)"
+    (emojiSelected)="handleEmojiSelected($event.emoji, $event.messageId)" (openThread)="onOpenThread($event)">
+  </app-user-msg-options>
+
   <div class="user-message-container" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
     <div>
-      <img class="user-message-img" [src]="CurrentUserURL" alt="" />
+      <img class="user-message-img" [src]="CurrentUserURL" alt="" (click)="openUserProfile(msg)"
+        style="cursor: pointer" />
     </div>
     <div class="user-message-box" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
-      <div class="user-message-row-top" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
+      <!-- Normal Message View -->
+      <div *ngIf="!editStatusMessage" class="user-message-row-top" [ngClass]="{ myMessageStyle: msg.isOwnMessage }"
+        (click)="openUserProfile(msg)">
         <p class="user-message-name">{{ msg.author }}</p>
         <p class="user-message-time">{{ msg.hours }}:{{ msg.minutes }} Uhr</p>
       </div>
-      <div class="user-message-row-center" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
+      <div *ngIf="!editStatusMessage" class="user-message-row-center" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
         <p>{{ msg.message }}</p>
       </div>
 
-      <div class="reaction-icons-row-bottom" *ngIf="showReactionIcons">
+      <!-- Edit Message View -->
+      <div class="message-edit-container" *ngIf="editStatusMessage">
+        <textarea #messageTextarea [(ngModel)]="msg.message" rows="4" cols="50"></textarea>
+        <div class="edit-controls">
+          <div class="emoji-picker-container">
+            <button mat-icon-button (click)="toggleEmojiPicker(msg.userMessageId, $event)">
+              <mat-icon>tag_faces</mat-icon>
+            </button>
+            <app-emoji-picker *ngIf="activeEmojiPicker === msg.userMessageId" [isOwnMessage]="msg.isOwnMessage"
+              [ngClass]="{
+              'emoji-picker-popup': true,
+              'edit-mode': editStatusMessage,
+              'own-message': msg.isOwnMessage
+            }" (emojiSelect)="handleEmojiSelected($event, msg.userMessageId)" (emojiListChange)="emojiList = $event"
+              class="emoji-picker-overlay">
+            </app-emoji-picker>
+          </div>
+          <div class="edit-msg-save-btns">
+            <button mat-button (click)="onCancel()">Abbrechen</button>
+            <button mat-button (click)="onSave()">Speichern</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reactions Section -->
+      <div class="reaction-icons-row-bottom" *ngIf="showReactionIcons && !editStatusMessage">
         <div class="emoji-reactions">
           <div *ngFor="let emoji of msg.emojis | unique:'name'" class="reaction-btn-div bg-frame-v1"
             [class.active]="hasUserReacted(msg, emoji?.name || emoji)"
@@ -28,21 +60,30 @@
           </div>
         </div>
 
-        <div class="emoji-picker-container">
-          <button mat-icon-button (click)="toggleEmojiPicker(msg.userMessageId, $event)">
-            <mat-icon>tag_faces</mat-icon>
-          </button>
+        <div class="message-actions">
+          <div class="emoji-picker-container">
+            <button mat-icon-button (click)="toggleEmojiPicker(msg.userMessageId, $event)">
+              <mat-icon>tag_faces</mat-icon>
+            </button>
+            <app-emoji-picker *ngIf="activeEmojiPicker === msg.userMessageId" [isOwnMessage]="msg.isOwnMessage"
+              [ngClass]="{
+              'emoji-picker-popup': true,
+              'own-message': msg.isOwnMessage
+            }" (emojiSelect)="handleEmojiSelected($event, msg.userMessageId)" (emojiListChange)="emojiList = $event"
+              class="emoji-picker-overlay">
+            </app-emoji-picker>
+          </div>
 
-          <app-emoji-picker *ngIf="activeEmojiPicker === msg.userMessageId" [isOwnMessage]="msg.isOwnMessage"
-            [ngClass]="{'emoji-picker-popup': true, 'own-message': msg.isOwnMessage}"
-            (emojiSelect)="handleEmojiSelected($event, msg.userMessageId)" (emojiListChange)="emojiList = $event"
-            class="emoji-picker-overlay">
-          </app-emoji-picker>
-        </div>
-
-        <div class="user-message-row-bottom" *ngIf="showAnswerDetails" (click)="openThread()">
-          <p class="comments-number">2 Antworten</p>
-          <p class="last-comment-time">Letzte Antwort 14:56</p>
+          <div class="user-message-row-bottom" *ngIf="showAnswerDetails && threadInfo && threadInfo.replyCount > 0"
+            (click)="openThread()">
+            <p class="comments-number">
+              {{ threadInfo.replyCount }} {{ threadInfo.replyCount === 1 ? "Antwort" : "Antworten" }}
+            </p>
+            <p class="last-comment-time" *ngIf="threadInfo.lastReplyTime">
+              Letzte Antwort {{ threadInfo.lastReplyTime.hours | number:'2.0-0' }}:{{ threadInfo.lastReplyTime.minutes |
+              number:'2.0-0' }} Uhr
+            </p>
+          </div>
         </div>
       </div>
     </div>

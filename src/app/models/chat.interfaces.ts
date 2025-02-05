@@ -54,23 +54,15 @@ export interface DirectUser {
  * Represents a message in the chat system
  */
 export interface UserMessage {
-  /** Unique identifier for the message */
   id: string;
-  /** Message content */
   message: string;
-  /** ID of the message author */
   authorId: string;
-  /** Optional channel ID for channel messages */
   channelId?: string;
-  /** Optional user ID for direct messages */
   directUserId?: string;
-  /** Timestamp of the message */
   time: {
-    /** Seconds component of the timestamp */
     seconds: number;
-    /** Nanoseconds component of the timestamp */
     nanoseconds: number;
   };
-  /** Numeric message identifier */
   userMessageId: number;
+  comments: string[]; // Änderung hier: Typ auf string[] geändert
 }

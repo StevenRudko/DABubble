@@ -27,7 +27,7 @@ export class SearchBarComponent implements OnInit {
 
   private userMessages: UserMessageInterface[] = [];
   private users: UserInterface[] = [];
-  private channels: ChannelInterface[] = []
+  private channels: ChannelInterface[] = [];
 
   // objectKeys = Object.keys;
 
@@ -42,14 +42,22 @@ export class SearchBarComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.userData.userMessages$.subscribe((messages) => this.userMessages = messages);
+    this.userData.userMessages$.subscribe(
+      (messages) => (this.userMessages = messages)
+    );
 
-    this.userData.users$.subscribe((users) => this.users = users);
+    this.userData.users$.subscribe((users) => (this.users = users));
 
-    this.channelData.channels$.subscribe((channel) => this.channels = channel)
+    this.channelData.channels$.subscribe(
+      (channel) => (this.channels = channel)
+    );
 
-    this.showHiddeService.showResult$.subscribe(value => this.showResult = value);
-    this.showHiddeService.borderTrigger$.subscribe(value => this.borderTrigger = value);
+    this.showHiddeService.showResult$.subscribe(
+      (value) => (this.showResult = value)
+    );
+    this.showHiddeService.borderTrigger$.subscribe(
+      (value) => (this.borderTrigger = value)
+    );
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -126,7 +134,7 @@ export class SearchBarComponent implements OnInit {
   }
 
   private isAuthorMatching(msg: UserMessageInterface, query: string): boolean {
-    const author = this.users.find(user => user.localID === msg.authorId);
+    const author = this.users.find((user) => user.localID === msg.authorId);
     return author ? author.username.toLowerCase().includes(query) : false;
   }
 

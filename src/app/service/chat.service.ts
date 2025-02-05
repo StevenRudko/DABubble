@@ -61,6 +61,9 @@ export class ChatService {
 
   private currentUser: any = null;
 
+  private threadOpenSubject = new BehaviorSubject<boolean>(false);
+  threadOpen$ = this.threadOpenSubject.asObservable();
+
   constructor(private firestore: Firestore, private authService: AuthService) {
     this.authService.user$.subscribe((user) => {
       this.currentUser = user;
@@ -134,6 +137,8 @@ export class ChatService {
   }
 
   async selectChannel(channelId: string): Promise<void> {
+    this.threadOpenSubject.next(false); // Close thread
+
     try {
       const channelRef = doc(this.firestore, `channels/${channelId}`);
       const channelSnap = await getDoc(channelRef);
@@ -172,6 +177,8 @@ export class ChatService {
   }
 
   async selectDirectMessage(userId: string): Promise<void> {
+    this.threadOpenSubject.next(false); // Close thread
+
     try {
       const userRef = doc(this.firestore, `users/${userId}`);
       const userSnap = await getDoc(userRef);
@@ -342,5 +349,13 @@ export class ChatService {
       console.error('Error removing user from channel:', error);
       throw error;
     }
+  }
+
+  closeThread(): void {
+    this.threadOpenSubject.next(false);
+  }
+
+  openThread(): void {
+    this.threadOpenSubject.next(true);
   }
 }

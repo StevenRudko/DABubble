@@ -49,6 +49,7 @@
     .logo-text {
       font-size: 1rem;
       font-weight: 600;
+      cursor: default;
     }
   }
 
@@ -125,6 +126,13 @@
       border-radius: 2rem;
     }
 
+    &.active {
+      color: #535af1;
+      background-color: #eceefe;
+      border-radius: 2rem;
+      font-weight: bold;
+    }
+
     .channel-hash {
       margin-right: 0.25rem;
     }
@@ -154,6 +162,7 @@
   margin-bottom: 1rem;
   min-height: 0;
   max-height: 100%;
+  gap: 8px;
 
   &::-webkit-scrollbar {
     width: 6px;
@@ -180,6 +189,16 @@
     cursor: pointer;
     position: relative;
     flex-shrink: 0;
+
+    &.active {
+      background-color: #eceefe;
+      border-radius: 2rem;
+
+      span {
+        color: #535af1;
+        font-weight: bold;
+      }
+    }
 
     &:hover {
       background-color: #eceefe;
@@ -264,7 +283,7 @@
     flex-direction: column;
     min-height: 0;
     overflow: hidden;
-    max-height: calc(100vh - 300px);
+    max-height: calc(100vh - 500px);
   }
 
   &.collapsed {

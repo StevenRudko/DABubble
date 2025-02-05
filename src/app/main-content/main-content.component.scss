@@ -1,9 +1,10 @@
 @use "./../../styles.scss" as styles;
 @use "./../../assets/styles/fonts.scss" as fonts;
+@use "./../../assets/styles/colors.scss" as main-colors;
 @use "./../../assets/styles/theme-colors.scss" as colors;
 
 main {
-  background-color: #ECEEFE;
+  background-color: main-colors.$general-bg-color;
   height:100vh;
   width: 100%;
   box-sizing: border-box;
@@ -18,16 +19,16 @@ section {
 .content-container {
   width: 100%;
   height: 100%;
-  overflow: hidden;
   box-sizing: border-box;
+  overflow: hidden;
   padding: 0 12px;
 }
 
 mat-drawer-container {
   width: 100%;
   height: 100%;
-  background: transparent !important;
   box-sizing: border-box;
+  background: transparent !important;
 }
 
 .sidebar-container {
@@ -56,6 +57,7 @@ mat-drawer {
 }
 
 .mat-drawer-content {
+  height:100%;
   box-sizing: border-box;
   overflow: hidden;
   padding-left: 12px;
@@ -77,13 +79,12 @@ mat-drawer {
 
 app-main-chat {
   height:100%;
-  flex: 1;
   box-sizing: border-box;
 }
 
 app-thread {
   width: 430px;
-  height: 100%;
+  height:100%;
   box-sizing: border-box;
 }
 

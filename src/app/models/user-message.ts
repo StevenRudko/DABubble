@@ -13,23 +13,16 @@ export interface EmojiReaction {
  */
 export interface UserMessageInterface {
   type: string;
-  /** ID of the message author */
   authorId: string;
   username: string;
   authorPhoto: any;
   photoURL: string;
-  /** ID of the channel where the message was sent */
   channelId: string;
-  directUserId?: string; // NEU: für Direktnachrichten
-  /** Array of comment IDs associated with this message */
-  comments: number[];
-  /** Array of emoji reactions to this message */
-  emojis: EmojiReaction[] | string[]; // Unterstützt beide Formate
-  /** Content of the message */
+  directUserId?: string;
+  comments: string[];
+  emojis: EmojiReaction[] | string[];
   message: string;
-  /** Timestamp of when the message was sent */
   time: number;
-  /** Unique identifier for the user message */
   userMessageId: string;
   isOwnMessage: boolean;
 }

@@ -1,54 +1,55 @@
 @use "./../../../styles.scss" as styles;
 @use "./../../../assets/styles/fonts.scss" as fonts;
+@use "./../../../assets/styles/colors.scss" as main-colors;
 @use "./../../../assets/styles/theme-colors.scss" as colors;
 
 section {
-  @include styles.dFlex(
-    $d: flex,
+  @include styles.dFlex($d: flex,
     $fd: column,
     $jc: flex-start,
     $ai: flex-start,
-    $g: 24px
-  );
-  cursor: pointer;
+    $g: 24px);
+  // cursor: pointer;
   position: relative;
   z-index: 2;
   @include styles.padding($pl: 0px, $pr: 0px, $pt: 12px, $pb: 12px);
 
+  // &.editMessageActive {
+  //   background-color: #eceefe;
+  // }
+
   &:hover {
-    background-color: #eceefe;
+    background-color: main-colors.$user-msg-bg-hover;
   }
 
   &:hover .user-message-row-center {
-    background-color: white;
+    background-color: main-colors.$user-others-msg-text-bg;
   }
 
   &:hover .last-comment-time {
-    color: #393939;
+    color: main-colors.$user-msg-light-text;
   }
 
-  &:hover .add-reaction-btn {
-    background-color: white;
-  }
+  // &:hover .add-reaction-btn {
+  //   background-color: white;
+  // }
 
   &.myMessageStyle {
     align-items: flex-end;
     cursor: unset;
 
     &:hover .user-message-row-center {
-      background-color: #797ef3;
+      background-color: main-colors.$user-own-msg-text-bg-hover;
     }
   }
 }
 
 .user-message-container {
-  @include styles.dFlex(
-    $d: flex,
+  @include styles.dFlex($d: flex,
     $fd: row,
     $jc: flex-start,
     $ai: flex-start,
-    $g: 28px
-  );
+    $g: 28px);
   @include styles.padding($pl: 28px, $pr: 28px, $pt: 8px, $pb: 8px);
 
   &.myMessageStyle {
@@ -59,16 +60,16 @@ section {
 .user-message-img {
   width: 70px;
   height: 70px;
+  border-radius: 100%;
+  cursor: pointer;
 }
 
 .user-message-box {
-  @include styles.dFlex(
-    $d: flex,
+  @include styles.dFlex($d: flex,
     $fd: column,
     $jc: flex-start,
     $ai: flex-start,
-    $g: 12px
-  );
+    $g: 12px);
 
   &.myMessageStyle {
     align-items: flex-end;
@@ -76,13 +77,11 @@ section {
 }
 
 .user-message-row-top {
-  @include styles.dFlex(
-    $d: flex,
+  @include styles.dFlex($d: flex,
     $fd: row,
     $jc: flex-start,
     $ai: center,
-    $g: 24px
-  );
+    $g: 24px);
 
   &.myMessageStyle {
     flex-direction: row-reverse;
@@ -92,9 +91,10 @@ section {
 .user-message-name {
   font-weight: 700;
   font-size: 17px;
+  cursor: pointer;
 
   &:hover {
-    color: #535af1;
+    color: main-colors.$hover-user-name;
   }
 }
 
@@ -102,36 +102,34 @@ section {
 .last-comment-time {
   font-weight: 400;
   font-size: 14px;
-  color: grey;
+  color: main-colors.$user-msg-light-text;
 }
 
 .user-message-row-center {
-  background-color: white;
   padding: 12px;
-  background-color: #eceefe;
+  background-color: main-colors.$user-others-msg-text-bg-hover;
   border-radius: 30px;
   border-top-left-radius: 0px;
 
   &.myMessageStyle {
-    background-color: #797ef3;
-    color: white;
+    background-color: main-colors.$user-own-msg-text-bg;
+    color: main-colors.$user-own-msg-text;
     border-radius: 30px;
     border-top-right-radius: 0px;
   }
 }
 
 .user-message-row-bottom {
-  @include styles.dFlex(
-    $d: flex,
+  @include styles.dFlex($d: flex,
     $fd: row,
     $jc: flex-start,
     $ai: center,
-    $g: 24px
-  );
+    $g: 24px);
 }
 
 .comments-number {
-  color: #535af1;
+  color: main-colors.$user-msg-comments-number;
+  cursor: pointer;
 
   &:hover {
     font-weight: 700;
@@ -140,26 +138,63 @@ section {
 }
 
 .reaction-icons-row-bottom {
-  @include styles.dFlex(
-    $d: flex,
+  @include styles.dFlex($d: flex,
     $fd: row,
     $jc: flex-end,
     $ai: center,
-    $g: 12px
-  );
+    $g: 12px);
   margin-top: -6px;
+
+  &.editMessageActive {
+    width: 100%;
+    @include styles.dFlex($d: flex,
+      $fd: row,
+      $jc: space-between,
+      $ai: space-between,
+      $g: 0px);
+    box-sizing: border-box;
+    position: absolute;
+    top: 120px;
+    padding: 0 30px;
+  }
 }
 
-.check_circle {
-  color: #4bd37b;
-}
+// .check_circle {
+//   color: #4bd37b;
+// }
 
 .reaction-btn-div {
   @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
   padding: 2px 6px;
-  background-color: white;
-  border: 1px solid #adb0d9;
+  // background-color: white;
+  // border: 1px solid #adb0d9;
   cursor: pointer;
+
+  .reaction-btn-style {
+    background-color: inherit;
+  }
+
+  &.active {
+    background-color: main-colors.$user-msg-used-emoji-box-bg;
+    border-color: main-colors.$user-msg-used-emoji-box-border;
+
+    .reaction-btn-style {
+      background-color: inherit;
+    }
+
+    p {
+      color: main-colors.$user-msg-used-emoji-box-amount;
+    }
+  }
+
+  &:hover {
+    background-color: #f5f5f5;
+    border-color: #535af1;
+
+    .reaction-btn-style {
+      background-color: inherit;
+    }
+  }
 }
 
 .reaction-btn-style {
@@ -172,12 +207,7 @@ section {
 .reaction-btn {
   width: var(--mdc-icon-button-state-layer-size, 30px);
   height: var(--mdc-icon-button-state-layer-size, 30px);
-  padding: calc(
-    calc(
-        var(--mdc-icon-button-state-layer-size, 30px) -
-          var(--mdc-icon-button-icon-size, 24px)
-      ) / 2
-  );
+  padding: calc(calc(var(--mdc-icon-button-state-layer-size, 30px) - var(--mdc-icon-button-icon-size, 24px)) / 2);
 
   &:hover {
     color: #797ef3;
@@ -232,9 +262,15 @@ button {
 app-user-msg-options {
   position: absolute;
   z-index: 4;
-  left: 20px;
   top: -30px;
   width: 240px;
+  right: 200px;
+  left: auto;
+
+  .myMessageStyle & {
+    left: 20px;
+    right: auto;
+  }
 }
 
 .emoji-picker-container {
@@ -272,4 +308,75 @@ app-user-msg-options {
   &.own-message {
     animation: fadeInOwn 0.2s ease-in-out;
   }
+
+  // Edit-Modus spezifische Positionierung
+  &.edit-mode {
+    top: -200px; // Höher positioniert
+    right: 20px; // Rechts ausgerichtet
+    left: auto; // Links-Ausrichtung aufheben
+  }
+
+  // Kartenform im Edit-Modus
+  &.edit-mode ::ng-deep mat-card {
+    border-radius: 20px !important;
+    border-bottom-right-radius: 20px !important;
+    border-bottom-left-radius: 0px !important;
+  }
+}
+
+.emoji-reactions {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+}
+
+textarea {
+  width: 100%;
+  box-sizing: border-box;
+  height: 150px;
+  border: 1px solid #adb0d9;
+  border-radius: 20px;
+  padding: 12px;
+  cursor: text;
+  // color: grey;
+  resize: none;
+  font-family: Nunito;
+  font-size: 18px;
+  line-height: 24.55px;
+}
+
+.edit-msg-save-btns {
+  @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 28px);
+
+  button {
+    border: 1px solid #797ef3;
+  }
+
+  button:last-child {
+    border: 1px solid #444df2;
+    background-color: #444df2;
+    color: white;
+  }
+}
+
+.message-edit-container {
+  position: relative;
+  width: 90%;
+  margin-bottom: 20px;
+
+  .edit-controls {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.message-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
