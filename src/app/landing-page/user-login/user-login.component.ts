@@ -15,6 +15,7 @@ import { Router, RouterLink } from '@angular/router';
  */
 @Component({
   selector: 'app-user-login',
+  standalone:true,
   imports: [MATERIAL_MODULES, FormsModule, ReactiveFormsModule, RouterLink],
   templateUrl: './user-login.component.html',
   styleUrl: './user-login.component.scss',

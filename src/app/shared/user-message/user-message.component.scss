@@ -388,6 +388,7 @@ textarea {
 
 app-emoji-overview {
   position: absolute;
+  width:100%;
   z-index: 4;
   top: -10px;
   width: 150px;
@@ -396,7 +397,8 @@ app-emoji-overview {
   right: auto;
 
   .myMessageStyle & {
-    right: 20px;
+    right: 50px;
+    top:-20px;
     left: auto;
   }
 }

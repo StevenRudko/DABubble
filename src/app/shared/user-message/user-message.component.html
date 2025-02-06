@@ -51,6 +51,7 @@
             (click)="handleEmojiSelected({name: emoji?.name || emoji}, msg.userMessageId)"
             (mouseenter)="onMouseEnterReactionIcon(emoji?.name || emoji)"
             (mouseleave)="onMouseLeaveReactionIcon(emoji?.name || emoji)">
+
             <button class="reaction-btn-style">
               {{ getEmojiSymbol(emoji) }}
             </button>

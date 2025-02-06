@@ -4,26 +4,26 @@
 @use "./../../../assets/styles/theme-colors.scss" as colors;
 
 mat-card {
-  border-radius:30px;
+  border-radius: 30px;
   border-bottom-left-radius: 0px;
   background-color: main-colors.$emoji-overview-bg;
+  
 }
 
 mat-card-content {
-  @include styles.dFlex(
-  $d: flex,
-  $fd: column,
-  $jc: center,
-  $ai: center,
-  $g: 12px
-  );
+  @include styles.dFlex($d: flex,
+    $fd: column,
+    $jc: center,
+    $ai: center,
+    $g: 12px);
   width: 100%;
   box-sizing: border-box;
-  padding:0 5%;
+  padding: 0 5%;
   color: main-colors.$emoji-overview-text;
-  font-size:clamp(0.25rem, 5vw, 1rem);
+  font-size: clamp(0.25rem, 5vw, 1rem);
+
   p:first-child {
-    font-size:clamp(0.25rem, 5vw, 1.25rem);
-    text-align:center;
+    font-size: clamp(0.25rem, 5vw, 1.25rem);
+    text-align: center;
   }
 }
