@@ -1,5 +1,6 @@
 @use './../../styles.scss' as styles;
 @use './../../assets/styles/fonts.scss' as fonts;
+@use "./../../assets/styles/colors.scss" as main-colors;
 @use './../../assets/styles/theme-colors.scss' as colors;
 
 section {
@@ -12,16 +13,16 @@ section {
 .searchbar-container {
     @include styles.padding($pl: 12px, $pr: 24px, $pt: 0, $pb: 0);
     @include styles.dFlex($d: flex, $fd: row, $jc: space-between, $ai: center, $g: 0);
-    background-color: white;
+    background-color: main-colors.$searchbar-bg;
     width: 50%;
-    height: 50px;
+    height: 55px;
     box-shadow: unset;
     box-sizing: border-box;
     border-radius: 25px;
     position: relative;
 
     input {
-        color: rgba(104, 104, 104);
+        color: main-colors.$searchbar-text;
         border: unset;
         outline: unset;
         width: 100%;
@@ -35,14 +36,14 @@ section {
     border-radius: 25px 25px 0px 0px !important;
 }
 
-mat-card-content {
-    input {
-        color: rgba(104, 104, 104);
-        border: unset;
-        outline: unset;
-        width: 100%;
-    }
-}
+// mat-card-content {
+//     input {
+//         color: rgba(104, 104, 104);
+//         border: unset;
+//         outline: unset;
+//         width: 100%;
+//     }
+// }
 
 app-search-bar {
     position: absolute;

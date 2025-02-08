@@ -178,8 +178,8 @@ section {
   }
 
   &.active {
-    background-color: main-colors.$user-msg-used-emoji-box-bg;
-    border-color: main-colors.$user-msg-used-emoji-box-border;
+    background-color: white;
+    border: 1px solid main-colors.$user-msg-used-emoji-box-border;
 
     .reaction-btn-style {
       background-color: inherit;
@@ -191,8 +191,8 @@ section {
   }
 
   &:hover {
-    background-color: #f5f5f5;
-    border-color: #535af1;
+    background-color: white;
+    border: 1px solid main-colors.$user-msg-used-emoji-box-border-hover;
 
     .reaction-btn-style {
       background-color: inherit;

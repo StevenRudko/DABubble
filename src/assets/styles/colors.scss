@@ -13,7 +13,8 @@ $user-own-msg-text-bg-hover:#797ef3;
 $user-others-msg-text-bg:white;
 $user-others-msg-text-bg-hover:#eceefe;
 $user-msg-used-emoji-box-bg: #eceefe;
-$user-msg-used-emoji-box-border:#535af1;
+$user-msg-used-emoji-box-border:#797ef3;
+$user-msg-used-emoji-box-border-hover:#535af1;
 $user-msg-used-emoji-box-amount:#535af1;
 $emoji-overview-bg: #444DF2;
 $emoji-overview-text: white;
@@ -47,3 +48,8 @@ $overlay-selected-user-close-icon-hover: #535af1;
 /////////// other elements  /////////// 
 $toggle-sidebar-shadow: rgba(89, 89, 89, 0.3); // toggle btn sidebar 
 $toggle-sidebar-text:#797ef3;;
+
+/////////// searchbar  /////////// 
+$searchbar-bg: white;
+$searchbar-text: rgba(104, 104, 104);
+
