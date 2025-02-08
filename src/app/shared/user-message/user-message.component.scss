@@ -122,6 +122,10 @@ section {
   border-radius: 30px;
   border-top-left-radius: 0px;
 
+  p {
+    word-break: break-word;
+  }
+
   &.myMessageStyle {
     background-color: main-colors.$user-own-msg-text-bg;
     color: main-colors.$user-own-msg-text;
