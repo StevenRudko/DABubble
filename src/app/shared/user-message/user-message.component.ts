@@ -85,7 +85,7 @@ export class UserMessageComponent {
   @Output() openThreadEvent = new EventEmitter<void>();
   @Output() openThreadWithMessage = new EventEmitter<string>();
 
-  private currentUser: any = null;
+  public currentUser: any = null; // von private zu public geändert, wegen der emoji overview component
   emojiList: any[] = [];
   editStatusMessage: boolean = false;
 

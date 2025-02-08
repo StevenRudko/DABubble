@@ -1,7 +1,7 @@
 <mat-card>
   <mat-card-content>
-    {{ usedEmoji }}
-    <p>{{ emojiAuthor }}</p>
-    <p>hat reagiert</p>
+    <span class="used-emoji-icon">{{ usedEmoji }}</span>
+    <p class="used-emoji-author">{{ formatAuthors(emojiAuthor) }}</p>
+    <p class="used-emoji-text">{{ formatTextAfter }}</p>
   </mat-card-content>
 </mat-card>
