@@ -12,6 +12,7 @@ import { take } from 'rxjs';
 import { ShowHiddeResultsService } from '../../service/show-hidde-results.service';
 import { UserInfosService } from '../../service/user-infos.service';
 import { ChannelInterface } from '../../models/channel-interface';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-search-bar',
@@ -81,7 +82,7 @@ export class SearchBarComponent implements OnInit {
           return this.filterMessage(msg, 'message');
         } else if (msg.directUserId) {
           return this.filterMessage(msg, 'directMessage');
-        } else if (!msg.channelId && !msg.directUserId) {          
+        } else if (!msg.channelId && !msg.directUserId) {
           return this.filterMessage(msg, 'thread');
         } else {
           return;
@@ -101,18 +102,32 @@ export class SearchBarComponent implements OnInit {
 
   filterMessage(msg: UserMessageInterface, type: string) {
     const author = this.users.find((user) => user.localID === msg.authorId);
+    const channel = this.channels.find((channel) => channel.channelId === msg.channelId)
+    const directMessageName = this.users.find((user) => user.localID === msg.directUserId);
+    const threadMessage = this.userMessages.find((message) => {
+      return message.comments.includes(msg.userMessageId);
+    });
+    const nameOfTheRespondent = threadMessage
+      ? this.users.find((user) => user.localID === threadMessage.authorId)?.username || 'Unbekannt'
+      : 'Unbekannt';
+
+    const threadChannel = this.channels.find((channel) => threadMessage?.channelId === channel.channelId)
+
     return {
       type: type || '',
       authorId: msg.authorId || '',
       username: author!.username || 'Gelöscht',
       photoURL: author!.photoURL || 'img-placeholder/default-avatar.svg',
-      channelId: msg.channelId || '',
-      directUserId: msg.directUserId || '',
+      channelId: msg.channelId || threadChannel?.channelId || '',
+      directUserId: msg.directUserId || threadMessage?.directUserId || '',
       comments: msg.comments || [],
       emojis: msg.emojis || [],
       message: msg.message || '',
       time: msg.time || 0,
       userMessageId: msg.userMessageId || '',
+      channelName: channel?.name || threadChannel?.name || 'not found',
+      directUserName: directMessageName?.username || '',
+      nameOfTheRespondent: nameOfTheRespondent || '',
     };
   }
 
@@ -170,37 +185,6 @@ export class SearchBarComponent implements OnInit {
     }
   }
 
-  showChannel(channelId: string) {
-    this.chatService.currentChannel$
-      .pipe(take(1))
-      .subscribe((currentChannel) => {
-        if (!currentChannel || currentChannel.id !== channelId) {
-          this.chatService.selectChannel(channelId);
-        }
-      });
-    this.showHiddeService.setShowResult(false);
-  }
-
-  showChannelMessage(channelId: string) {
-    this.chatService.currentChannel$
-      .pipe(take(1))
-      .subscribe((currentChannel) => {
-        if (!currentChannel || currentChannel.id !== channelId) {
-          this.chatService.selectChannel(channelId);
-        }
-      });
-    this.showHiddeService.setShowResult(false);
-  }
-
-  showDirectMessage(result: any) {
-    if (this.userInfo.uId === result.directUserId) {
-      this.chatService.selectDirectMessage(result.authorId);
-    } else {
-      this.chatService.selectDirectMessage(result.directUserId);
-    }
-    this.showHiddeService.setShowResult(false);
-  }
-
   showProfile(result: SearchResult) {
     const dialogConfig = {
       data: result,
@@ -254,6 +238,75 @@ export class SearchBarComponent implements OnInit {
       return
     }
   }
+
+  async openChannel(channelId: string, messageId: string) {
+    await this.showChannel(channelId);
+    this.scrollWhenAvailable(messageId, '#chatContainer');
+  }
+
+  async showChannel(channelId: string): Promise<void> {
+    const currentChannel = await lastValueFrom(this.chatService.currentChannel$.pipe(take(1)));
+    if (!currentChannel || currentChannel.id !== channelId) {
+      this.chatService.selectChannel(channelId);
+    }
+    this.showHiddeService.setShowResult(false);
+  }
+
+  async openDirectMessage(result: any) {
+    await this.showDirectMessage(result);
+    this.scrollWhenAvailable(result.userMessageId, '#chatContainer');
+  }
+
+  async showDirectMessage(result: any) {
+    if (this.userInfo.uId === result.directUserId) {
+      const currentDirectUser = await lastValueFrom(this.chatService.currentDirectUser$.pipe(take(1)));
+      if (!currentDirectUser || currentDirectUser !== result.authorId) {
+        this.chatService.selectDirectMessage(result.authorId);
+      }
+    } else {
+      this.chatService.selectDirectMessage(result.directUserId);
+    }
+    this.showHiddeService.setShowResult(false);
+  }
+
+  async openThread(result: any) {
+    console.log(result);
+    
+  }
+
+  scrollWhenAvailable(messageId: string, domId: string) {
+    const observer = new MutationObserver(() => {
+      let checkCounter = 0;
+      const maxChecks = 20; // Maximale Versuche, um zu verhindern, dass es ewig läuft
+      const scrollOffset = 250; // Offset in Pixel (z. B. für eine fixe Navbar)
+
+      const interval = setInterval(() => {
+        const element = document.getElementById(messageId);
+        const container = document.querySelector(domId);
+
+        console.log(`Versuch ${checkCounter + 1}:`, element, container);
+
+        if (element && container) {
+          const targetScroll = element.offsetTop - scrollOffset; // Offset einberechnen
+          container.scrollTo({ top: targetScroll, behavior: 'smooth' });
+          console.log('Scrolling erfolgreich mit Offset:', scrollOffset);
+
+          clearInterval(interval);
+          observer.disconnect();
+        }
+
+        if (++checkCounter >= maxChecks) {
+          console.warn('Scroll-Element oder Container nicht gefunden.');
+          clearInterval(interval);
+          observer.disconnect();
+        }
+      }, 200);
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
+
+
 
   logSomething(i: string) {
     console.log('something', i);

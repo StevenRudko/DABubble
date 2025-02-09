@@ -1,5 +1,26 @@
 @use './../../../styles.scss' as styles;
 
+.nowrap {
+    white-space: nowrap;
+}
+
+.ellipsis-base {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.ellipsis-description {
+    @extend .ellipsis-base;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    display: -webkit-box;
+}
+
+.ellipsis-name {
+    @extend .ellipsis-base;
+    white-space: nowrap;
+}
+
 section {
     @include styles.dFlex($d: flex, $fd: column, $jc: flex-start, $ai: center, $g: 5px);
     max-height: 1000px; //350px;
@@ -41,17 +62,22 @@ section {
         border-radius: 100%;
     }
 
-    span {
-        white-space: nowrap;
-    }
-
     p {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        line-clamp: 2;
-        -webkit-box-orient: vertical;
+        width: 63%;
+    }
+}
+
+.result-container-basic-infos {
+    width: 20%;
+}
+
+.thread-message-container {
+    @include styles.dFlex($d: flex, $fd: row, $jc: flex-start, $ai: center, $g: 8px);
+    width: 63%;
+
+    span {
+        color: rgba(104, 104, 104);
+        width: 30%;
     }
 }
 
@@ -117,4 +143,8 @@ section {
     p {
         padding-left: 15px;
     }
+}
+
+.messageResultChannelInfo {
+    @include styles.dFlex($d: flex, $fd: row, $jc: flex-start, $ai: center, $g: 4px);
 }

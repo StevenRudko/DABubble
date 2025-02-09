@@ -37,4 +37,8 @@ export interface SearchResult {
     channelDescription: string;
 
     channelMembers: any;
+
+    directUserName: string;
+
+    nameOfTheRespondent:string;
 }

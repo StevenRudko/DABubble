@@ -1,4 +1,4 @@
-<section #chatContainer (scroll)="onScroll()">
+<section #chatContainer id="chatContainer" (scroll)="onScroll()">
   <!-- Wenn keine neuen Nachrichten vorhanden sind -->
   <ng-container *ngIf="!(chatService.isNewMessage$ | async)">
 
