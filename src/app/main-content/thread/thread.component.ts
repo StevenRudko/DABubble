@@ -53,6 +53,7 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
   @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
   @Input() messageId: string | null = null;
   @Output() closeThreadEvent = new EventEmitter<void>();
+  @Input() threadData!: { messageId: string; emojiAuthors: string[] };
 
   parentMessage: renderMessageInterface[] | null = null;
   threadMessages: renderMessageInterface[] = [];

@@ -80,6 +80,7 @@ export class UserMessageComponent {
   hoverComponent: boolean = false;
   hoverComponentEmojiOverviewMap: { [key: string]: boolean } = {};
   activeEmojiPicker: string | null = null;
+  emojiAuthors: string[] = [];
   @Input() user: any[] = [];
   @Input() parentMessageId: string | null = null;
   @Output() openThreadEvent = new EventEmitter<void>();
@@ -260,6 +261,7 @@ export class UserMessageComponent {
   openThread() {
     if (this.allMessages && this.allMessages.length > 0) {
       const messageId = this.allMessages[0].userMessageId;
+      console.log('emojiAuthors: ', this.emojiAuthors);
       this.openThreadWithMessage.emit(messageId);
     }
   }
@@ -411,7 +413,7 @@ export class UserMessageComponent {
   }
 
   getEmojiAuthorName(msg: any, emojiData: string | EmojiReaction): string[] {
-    const emojiAuthors: string[] = [];
+    this.emojiAuthors = [];
     const emojiName = this.isEmojiReaction(emojiData) ? emojiData.name : emojiData;
   
     if (this.isEmojiReaction(emojiData)) {
@@ -420,7 +422,7 @@ export class UserMessageComponent {
         if (reaction.name === emojiName) {
           const user = this.user.find((u) => u.localID === reaction.user);
           if (user) {
-            emojiAuthors.push(user.username);
+            this.emojiAuthors.push(user.username);
           }
         }
       });
@@ -428,12 +430,12 @@ export class UserMessageComponent {
       // Wenn es keine Emoji-Reaktion gibt, füge den ersten Benutzer hinzu, der das Emoji verwendet hat
       const user = this.user.find((u) => u.localID === emojiData);
       if (user) {
-        emojiAuthors.push(user.username);
+        this.emojiAuthors.push(user.username);
       }
     }
   
     // Rückgabe eines Arrays von Benutzernamen
-    return emojiAuthors;
+    return this.emojiAuthors;
   }
 
   getEmojiSymbol(emojiData: string | EmojiReaction): string {
