@@ -40,5 +40,7 @@ export interface SearchResult {
 
     directUserName: string;
 
-    nameOfTheRespondent:string;
+    nameOfTheRespondent: string;
+
+    idOfTheRespondentMessage: string;
 }

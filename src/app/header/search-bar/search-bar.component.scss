@@ -147,4 +147,8 @@ section {
 
 .messageResultChannelInfo {
     @include styles.dFlex($d: flex, $fd: row, $jc: flex-start, $ai: center, $g: 4px);
+
+    div {
+        font-size: 0.875rem;
+    }
 }

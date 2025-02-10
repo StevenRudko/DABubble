@@ -66,7 +66,7 @@
                         <p>{{result.message}}</p>
                 </div>
             }
-            @else if (result.type == 'thread') {
+            @else if (result.type == 'thread' && result.channelId) {
                 <div class="result-container" (click)="openThread(result)">
                     <div>#</div>
                     <img src="{{result.photoURL}}" alt="">
@@ -85,6 +85,23 @@
                                 </g>
                             </svg>
                             <span class="ellipsis-name">{{result.channelName}}</span>
+                        </div>
+                    </div>
+                    <div class="thread-message-container">
+                        <span class="ellipsis-name">&#64;{{result.nameOfTheRespondent}}</span>
+                        <p class="ellipsis-description">{{result.message}}</p>
+                    </div>
+                </div>
+            }
+            @else if (result.type == 'thread' && result.directUserId) {
+                <div class="result-container" (click)="openThread(result)">
+                    <div>#</div>
+                    <img src="{{result.photoURL}}" alt="">
+                    <div class="result-container-basic-infos">
+                        <span class="ellipsis-name">{{result.username}}</span>
+                        <div class="messageResultChannelInfo">
+                            <div>&#64;</div>
+                            <span class="ellipsis-name">{{result.nameOfTheRespondent}}</span>
                         </div>
                     </div>
                     <div class="thread-message-container">

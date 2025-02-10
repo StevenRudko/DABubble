@@ -30,8 +30,6 @@ export class SearchBarComponent implements OnInit {
   private users: UserInterface[] = [];
   private channels: ChannelInterface[] = [];
 
-  // objectKeys = Object.keys;
-
   constructor(
     private userData: UserData,
     private channelData: ChannelService,
@@ -108,8 +106,8 @@ export class SearchBarComponent implements OnInit {
       return message.comments.includes(msg.userMessageId);
     });
     const nameOfTheRespondent = threadMessage
-      ? this.users.find((user) => user.localID === threadMessage.authorId)?.username || 'Unbekannt'
-      : 'Unbekannt';
+      ? this.users.find((user) => user.localID === threadMessage.authorId) : undefined;
+      // ?.username || 'Unbekannt' : 'Unbekannt';
 
     const threadChannel = this.channels.find((channel) => threadMessage?.channelId === channel.channelId)
 
@@ -127,7 +125,8 @@ export class SearchBarComponent implements OnInit {
       userMessageId: msg.userMessageId || '',
       channelName: channel?.name || threadChannel?.name || 'not found',
       directUserName: directMessageName?.username || '',
-      nameOfTheRespondent: nameOfTheRespondent || '',
+      nameOfTheRespondent: nameOfTheRespondent?.username || '',
+      idOfTheRespondentMessage: threadMessage?.userMessageId || '',
     };
   }
 
@@ -241,7 +240,8 @@ export class SearchBarComponent implements OnInit {
 
   async openChannel(channelId: string, messageId: string) {
     await this.showChannel(channelId);
-    this.scrollWhenAvailable(messageId, '#chatContainer');
+    this.scrollWhenAvailable(messageId, 'chatContainer');
+
   }
 
   async showChannel(channelId: string): Promise<void> {
@@ -254,7 +254,7 @@ export class SearchBarComponent implements OnInit {
 
   async openDirectMessage(result: any) {
     await this.showDirectMessage(result);
-    this.scrollWhenAvailable(result.userMessageId, '#chatContainer');
+    this.scrollWhenAvailable(result.userMessageId, 'chatContainer');
   }
 
   async showDirectMessage(result: any) {
@@ -271,44 +271,53 @@ export class SearchBarComponent implements OnInit {
 
   async openThread(result: any) {
     console.log(result);
-    
+    if (result.channelId) {
+      await this.showChannel(result.channelId);
+      this.scrollWhenAvailable(result.idOfTheRespondentMessage, 'chatContainer');
+      // await this.mainChat.openThread()
+      // this.scrollWhenAvailable(result.userMessageId, 'messagesContainer');
+    } else if (result.directUserId) {
+      await this.showDirectMessage(result);
+      this.scrollWhenAvailable(result.idOfTheRespondentMessage, 'chatContainer');
+      // await this.mainChat.openThread()
+      // this.scrollWhenAvailable(result.userMessageId, 'messagesContainer');
+    }
+
+    this.scrollWhenAvailable(result.messageId, 'chatContainer');
+
   }
 
   scrollWhenAvailable(messageId: string, domId: string) {
-    const observer = new MutationObserver(() => {
+    const observer = new MutationObserver((mutations, obs) => {
       let checkCounter = 0;
-      const maxChecks = 20; // Maximale Versuche, um zu verhindern, dass es ewig läuft
-      const scrollOffset = 250; // Offset in Pixel (z. B. für eine fixe Navbar)
+      const maxChecks = 20; // Maximale Versuche
+      const scrollOffset = 250; // Offset für z. B. Navbar
 
       const interval = setInterval(() => {
         const element = document.getElementById(messageId);
-        const container = document.querySelector(domId);
+        const container = document.querySelector(`#${domId}`); // ID korrekt als Selector nutzen
 
         console.log(`Versuch ${checkCounter + 1}:`, element, container);
 
         if (element && container) {
-          const targetScroll = element.offsetTop - scrollOffset; // Offset einberechnen
+          const targetScroll = element.offsetTop - scrollOffset;
           container.scrollTo({ top: targetScroll, behavior: 'smooth' });
           console.log('Scrolling erfolgreich mit Offset:', scrollOffset);
 
           clearInterval(interval);
-          observer.disconnect();
+          observer.disconnect(); // MutationObserver deaktivieren
         }
 
         if (++checkCounter >= maxChecks) {
           console.warn('Scroll-Element oder Container nicht gefunden.');
           clearInterval(interval);
-          observer.disconnect();
+          observer.disconnect(); // Sicherheitshalber auch hier beenden
         }
       }, 200);
+
+      obs.disconnect(); // Observer nach dem ersten Trigger direkt deaktivieren
     });
 
     observer.observe(document.body, { childList: true, subtree: true });
-  }
-
-
-
-  logSomething(i: string) {
-    console.log('something', i);
   }
 }
