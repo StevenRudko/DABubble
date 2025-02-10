@@ -57,16 +57,25 @@
             </button>
             <p>{{ getEmojiCount(msg, emoji?.name || emoji) }}</p>
 
-            <app-emoji-overview *ngIf="hoverComponentEmojiOverviewMap[emoji?.name]" 
-            [emojiAuthor]="getEmojiAuthorName(msg, emoji)" 
-            [usedEmoji]="getEmojiSymbol(emoji)"
-            [currentUserName]="this.currentUser.displayName">
-          </app-emoji-overview>
-        
-       </div>
+            <app-emoji-overview *ngIf="hoverComponentEmojiOverviewMap[emoji?.name]"
+              [emojiAuthor]="getEmojiAuthorName(msg, emoji)" [usedEmoji]="getEmojiSymbol(emoji)"
+              [currentUserName]="this.currentUser.displayName">
+            </app-emoji-overview>
+
+          </div>
         </div>
 
         <div class="message-actions">
+          <div class="user-message-row-bottom" *ngIf="showAnswerDetails && threadInfo && threadInfo.replyCount > 0"
+            (click)="openThread()">
+            <p class="comments-number">
+              {{ threadInfo.replyCount }} {{ threadInfo.replyCount === 1 ? "Antwort" : "Antworten" }}
+            </p>
+            <p class="last-comment-time" *ngIf="threadInfo.lastReplyTime">
+              Letzte Antwort {{ threadInfo.lastReplyTime.hours | number:'2.0-0' }}:{{ threadInfo.lastReplyTime.minutes |
+              number:'2.0-0' }} Uhr
+            </p>
+          </div>
           <div class="emoji-picker-container">
             <button mat-icon-button (click)="toggleEmojiPicker(msg.userMessageId, $event)">
               <mat-icon>tag_faces</mat-icon>
@@ -78,17 +87,6 @@
             }" (emojiSelect)="handleEmojiSelected($event, msg.userMessageId)" (emojiListChange)="emojiList = $event"
               class="emoji-picker-overlay">
             </app-emoji-picker>
-          </div>
-
-          <div class="user-message-row-bottom" *ngIf="showAnswerDetails && threadInfo && threadInfo.replyCount > 0"
-            (click)="openThread()">
-            <p class="comments-number">
-              {{ threadInfo.replyCount }} {{ threadInfo.replyCount === 1 ? "Antwort" : "Antworten" }}
-            </p>
-            <p class="last-comment-time" *ngIf="threadInfo.lastReplyTime">
-              Letzte Antwort {{ threadInfo.lastReplyTime.hours | number:'2.0-0' }}:{{ threadInfo.lastReplyTime.minutes |
-              number:'2.0-0' }} Uhr
-            </p>
           </div>
         </div>
       </div>

@@ -1,39 +1,51 @@
-@use './../../styles.scss' as styles;
-@use './../../assets/styles/fonts.scss' as fonts;
+@use "./../../styles.scss" as styles;
+@use "./../../assets/styles/fonts.scss" as fonts;
 @use "./../../assets/styles/colors.scss" as main-colors;
-@use './../../assets/styles/theme-colors.scss' as colors;
+@use "./../../assets/styles/theme-colors.scss" as colors;
 
 section {
-    @include styles.padding($pl: 2rem, $pr: 2rem, $pt: 1rem, $pb: 0);
-    @include styles.dFlex($d: flex, $fd: row, $jc: space-between, $ai: center, $g: 0);
-    height: 100px;
-    box-sizing: border-box;
+  @include styles.padding($pl: 2rem, $pr: 2rem, $pt: 1rem, $pb: 0);
+  @include styles.dFlex(
+    $d: flex,
+    $fd: row,
+    $jc: space-between,
+    $ai: center,
+    $g: 0
+  );
+  height: 100px;
+  box-sizing: border-box;
 }
 
 .searchbar-container {
-    @include styles.padding($pl: 12px, $pr: 24px, $pt: 0, $pb: 0);
-    @include styles.dFlex($d: flex, $fd: row, $jc: space-between, $ai: center, $g: 0);
-    background-color: main-colors.$searchbar-bg;
-    width: 50%;
-    height: 55px;
-    box-shadow: unset;
-    box-sizing: border-box;
-    border-radius: 25px;
-    position: relative;
+  @include styles.padding($pl: 12px, $pr: 24px, $pt: 0, $pb: 0);
+  @include styles.dFlex(
+    $d: flex,
+    $fd: row,
+    $jc: space-between,
+    $ai: center,
+    $g: 0
+  );
+  background-color: main-colors.$searchbar-bg;
+  width: 50%;
+  height: 55px;
+  box-shadow: unset;
+  box-sizing: border-box;
+  border-radius: 25px;
+  position: relative;
 
-    input {
-        color: main-colors.$searchbar-text;
-        border: unset;
-        outline: unset;
-        width: 100%;
-        height: 50px;
-        border-radius: 25px;
-        font-size: 1.125rem;
-    }
+  input {
+    color: main-colors.$searchbar-text;
+    border: unset;
+    outline: unset;
+    width: 100%;
+    height: 50px;
+    border-radius: 25px;
+    font-size: 1.125rem;
+  }
 }
 
 .border-stretch {
-    border-radius: 25px 25px 0px 0px !important;
+  border-radius: 25px 25px 0px 0px !important;
 }
 
 // mat-card-content {
@@ -46,62 +58,90 @@ section {
 // }
 
 app-search-bar {
-    position: absolute;
-    top: 50px;
-    left: 0px;
-    width: 100%;
-    // max-height: 550px;
-    background-color: white;
-    z-index: 2;
+  position: absolute;
+  top: 50px;
+  left: 0px;
+  width: 100%;
+  // max-height: 550px;
+  background-color: white;
+  z-index: 2;
 }
 
 mat-icon {
-    height: 20px;
-    width: 20px;
+  height: 20px;
+  width: 20px;
 }
 
 .profile-container {
-    @include styles.dFlex($d: flex, $fd: row, $jc: space-between, $ai: center, $g: 0);
-    cursor: pointer;
+  @include styles.dFlex(
+    $d: flex,
+    $fd: row,
+    $jc: space-between,
+    $ai: center,
+    $g: 0
+  );
+  cursor: pointer;
 
-    &:hover {
-        color: #797EF3;
-    }
+  &:hover {
+    color: #797ef3;
+  }
 }
 
 .profile-div {
-    @include styles.dFlex($d: flex, $fd: row, $jc: space-between, $ai: center, $g: 16px);
+  @include styles.dFlex(
+    $d: flex,
+    $fd: row,
+    $jc: space-between,
+    $ai: center,
+    $g: 16px
+  );
 }
 
 .img-placeholder-div {
-    @include styles.dFlex($d: flex, $fd: row, $jc: flex-start, $ai: center, $g: 0);
+  @include styles.dFlex(
+    $d: flex,
+    $fd: row,
+    $jc: flex-start,
+    $ai: center,
+    $g: 0
+  );
 
-    img {
-        height: 50px;
-        width: 50px;
-        border-radius: 100%;
-    }
+  img {
+    height: 50px;
+    width: 50px;
+    border-radius: 100%;
+  }
 }
 
 .profile-name {
-    font-size: 1.5rem;
-    font-weight: 700;
+  font-size: 1.5rem;
+  font-weight: 700;
 }
 
 .status-circle-outline {
-    position: relative;
-    top: 19px;
-    right: 12px;
-    height: 15px;
-    width: 15px;
-    background-color: #ECEEFE;
-    border-radius: 100%;
-    @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
+  position: relative;
+  top: 19px;
+  right: 12px;
+  height: 15px;
+  width: 15px;
+  background-color: #eceefe;
+  border-radius: 100%;
+  @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
 }
 
 .status-circle-inline {
-    height: 10px;
-    width: 10px;
-    background-color: #92C83E;
-    border-radius: 100%;
+  height: 10px;
+  width: 10px;
+  background-color: #92c83e;
+  border-radius: 100%;
+}
+
+@media (max-width: 1200px) {
+  .profile-name {
+    font-size: 1.25rem;
+  }
+
+  .searchbar-container {
+    width: 40%;
+  }
 }

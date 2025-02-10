@@ -326,3 +326,9 @@ button {
     }
   }
 }
+
+@media (max-width: 1200px) {
+  .selection-name.direct-message-header p {
+    font-size: 20px;
+  }
+}

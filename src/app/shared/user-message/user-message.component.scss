@@ -427,3 +427,18 @@ app-emoji-overview {
     transform: translateX(0%) translateY(0px);
   }
 }
+
+@media (max-width: 1150px) {
+  .user-message-img {
+    height: 50px;
+    width: 50px;
+  }
+
+  .last-comment-time {
+    font-size: 12px;
+  }
+
+  .comments-number {
+    font-size: 12px !important;
+  }
+}
