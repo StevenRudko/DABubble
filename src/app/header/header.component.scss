@@ -145,3 +145,15 @@ mat-icon {
     width: 40%;
   }
 }
+
+@media (max-width: 1024px) {
+  .searchbar-container {
+    display: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .profile-name {
+    display: none;
+  }
+}

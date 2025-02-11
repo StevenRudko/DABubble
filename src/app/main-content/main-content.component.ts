@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, HostListener } from '@angular/core';
 import { MainChatComponent } from './main-chat/main-chat.component';
 import { ThreadComponent } from './thread/thread.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
@@ -32,21 +32,48 @@ export class MainContentComponent {
   sidebarActive: boolean = false;
   threadVisible: boolean = false;
   currentThreadMessageId: string | null = null;
+  isMobile: boolean = window.innerWidth <= 1024;
 
+  /**
+   * Initializes the main content component
+   * @param authService Service for handling authentication
+   * @param presenceService Service for handling user presence
+   */
   constructor(
     private authService: AuthService,
     private presenceService: PresenceService
   ) {
+    this.checkScreenSize();
+    this.initializeAuthListener();
+  }
+
+  /**
+   * Initializes the authentication listener
+   */
+  private initializeAuthListener(): void {
     this.authService.user$.subscribe((user) => {
-      console.log('USER DATEN:', user);
       if (user) {
-        console.log('Email:', user.email);
-        console.log('Name:', user.displayName);
-        console.log('Photo URL:', user.photoURL);
+        console.log('User Data:', user);
       } else {
-        console.log('Kein Benutzer angemeldet');
+        console.log('No user logged in');
       }
     });
+  }
+
+  /**
+   * Listens for window resize events and adjusts the sidebar accordingly
+   */
+  @HostListener('window:resize')
+  checkScreenSize(): void {
+    const wasMobile = this.isMobile;
+    this.isMobile = window.innerWidth <= 1024;
+
+    if (!wasMobile && this.isMobile) {
+      this.sidebarActive = true;
+      if (this.drawer) {
+        this.drawer.open();
+      }
+    }
   }
 
   /**
@@ -54,21 +81,35 @@ export class MainContentComponent {
    */
   ngOnInit(): void {
     this.presenceService.setOnlineStatus();
+    if (this.isMobile) {
+      this.sidebarActive = true;
+    }
   }
 
   /**
-   * Toggles the sidebar visibility state
+   * Initializes the view and opens sidebar if on mobile
    */
-  toggleSidebar() {
-    this.sidebarActive = !this.sidebarActive;
-    this.drawer.toggle();
+  ngAfterViewInit(): void {
+    if (this.isMobile) {
+      this.drawer.open();
+    }
+  }
+
+  /**
+   * Toggles the sidebar visibility state on desktop only
+   */
+  toggleSidebar(): void {
+    if (!this.isMobile) {
+      this.sidebarActive = !this.sidebarActive;
+      this.drawer.toggle();
+    }
   }
 
   /**
    * Opens the thread view with the selected message
    * @param messageId - ID of the message to show in thread
    */
-  onOpenThread(messageId: string) {
+  onOpenThread(messageId: string): void {
     this.threadVisible = true;
     this.currentThreadMessageId = messageId;
   }

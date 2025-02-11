@@ -183,3 +183,17 @@
     width: 70px;
   }
 }
+
+@media (max-width: 425px) {
+  .logo-div img {
+    height: 60px;
+    width: 60px;
+  }
+}
+
+@media (max-width: 375px) {
+  .logo-div img {
+    height: 50px;
+    width: 50px;
+  }
+}

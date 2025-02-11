@@ -17,6 +17,15 @@
     </svg>
   </div>
 
+  <div class="mobile-search">
+    <div class="searchbar-container">
+      <input type="text" placeholder="Gehe zu..." [(ngModel)]="searchQuery"
+        (focus)="showHiddeService.setShowResult(true)">
+      <div><mat-icon class="search-icon">search</mat-icon></div>
+      <app-search-bar [searchQuery]="searchQuery"></app-search-bar>
+    </div>
+  </div>
+
   <div class="section">
     <div class="section-header">
       <div class="header-content" (click)="toggleChannelSection()">

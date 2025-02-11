@@ -1,9 +1,8 @@
 <main>
-
   <app-header></app-header>
 
   <section>
-    <div class="open-sidebar-btn bg-frame-v1" (click)="toggleSidebar()">
+    <div *ngIf="!isMobile" class="open-sidebar-btn bg-frame-v1" (click)="toggleSidebar()">
       <mat-card class="bg-frame-v1">
         <mat-card-content class="open-sidebar-content">
           <span>Workspace-Menü {{ sidebarActive ? 'schließen' : 'öffnen' }}</span>
@@ -14,25 +13,22 @@
 
     <div class="content-container">
       <mat-drawer-container class="mat-drawer-container" autosize>
-
-        <mat-drawer #drawer class="sidenav bg-frame-v1" mode="side" [opened]="sidebarActive">
+        <mat-drawer #drawer class="sidenav bg-frame-v1" mode="side" [opened]="isMobile || sidebarActive">
           <div class="sidebar-container">
             <app-sidebar class="bg-frame-v1"></app-sidebar>
           </div>
         </mat-drawer>
 
         <div class="mat-drawer-content">
-          <div class="content-wrapper">
-            <app-main-chat class="bg-frame-v1 flex-g" (openThreadEvent)="onOpenThread($event)"></app-main-chat>
+          <div #contentWrapper class="content-wrapper">
+            <app-main-chat class="bg-frame-v1 flex-g" (openThreadEvent)="onOpenThread($event)">
+            </app-main-chat>
             <app-thread class="bg-frame-v1" *ngIf="threadVisible" [messageId]="currentThreadMessageId"
               (closeThreadEvent)="threadVisible = false">
             </app-thread>
           </div>
         </div>
-
       </mat-drawer-container>
-
     </div>
   </section>
-
 </main>
