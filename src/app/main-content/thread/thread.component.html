@@ -2,7 +2,7 @@
   <header>
     <div class="thread-header">
       <p>Thread</p>
-      <span class="channel-name"># Muss noche ersetzt werden</span>
+      <span class="channel-name" *ngIf="currentChannelName"># {{ currentChannelName }}</span>
     </div>
     <mat-icon class="close" (click)="closeThread()">close</mat-icon>
   </header>

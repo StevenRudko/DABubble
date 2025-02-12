@@ -22,6 +22,7 @@
   flex-direction: column;
   gap: 2rem;
   position: relative;
+  margin: 32px;
 }
 
 .dialog-header {
@@ -141,4 +142,16 @@ p {
   color: #f44336;
   font-size: 12px;
   margin-top: 4px;
+}
+
+@media (max-width: 600px) {
+  .dialog-container {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 425px) {
+  .dialog-container {
+    margin: 16px;
+  }
 }

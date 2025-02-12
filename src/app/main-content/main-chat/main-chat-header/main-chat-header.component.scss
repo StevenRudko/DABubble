@@ -356,8 +356,28 @@ button {
   }
 }
 
-@media (max-width: 425px) {
+@media (max-width: 600px) {
   .member-list {
     display: none;
+  }
+}
+
+@media (max-width: 500px) {
+  mat-icon {
+    font-size: 24px;
+  }
+  .selection-name {
+    font-size: 16px;
+  }
+  header {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+}
+
+@media (max-width: 375px) {
+  header {
+    padding-left: 24px;
+    padding-right: 24px;
   }
 }

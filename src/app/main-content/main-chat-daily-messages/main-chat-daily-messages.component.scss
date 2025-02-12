@@ -4,11 +4,13 @@
 @use "./../../../assets/styles/theme-colors.scss" as colors;
 
 section {
-  @include styles.dFlex($d: flex,
+  @include styles.dFlex(
+    $d: flex,
     $fd: column,
     $jc: flex-start,
     $ai: flex-start,
-    $g: 48px);
+    $g: 48px
+  );
   width: 100%;
   height: 100%;
   overflow-y: scroll;
@@ -29,33 +31,39 @@ section {
 }
 
 .message-wrapper {
-  @include styles.dFlex($d: flex,
+  @include styles.dFlex(
+    $d: flex,
     $fd: column,
     $jc: flex-start,
     $ai: flex-start,
-    $g: 42px);
+    $g: 42px
+  );
   width: 100%;
   height: auto;
   box-sizing: border-box;
 }
 
 .messages-by-date-container {
-  @include styles.dFlex($d: flex,
+  @include styles.dFlex(
+    $d: flex,
     $fd: column,
     $jc: center,
     $ai: center,
-    $g: 42px);
+    $g: 42px
+  );
   width: 100%;
   box-sizing: border-box;
   height: auto;
 }
 
 .divider-line {
-  @include styles.dFlex($d: flex,
+  @include styles.dFlex(
+    $d: flex,
     $fd: column,
     $jc: center,
     $ai: center,
-    $g: 0px);
+    $g: 0px
+  );
   height: 1px;
   background-color: main-colors.$divider-line;
   width: 100%;
@@ -147,6 +155,22 @@ section {
           color: main-colors.$preview-user-link;
         }
       }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .empty-chat-preview {
+    .channel-preview {
+      padding: 0;
+    }
+  }
+}
+
+@media (max-width: 425px) {
+  .empty-chat-preview {
+    .channel-preview {
+      margin: 12px;
     }
   }
 }

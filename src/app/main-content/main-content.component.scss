@@ -5,7 +5,7 @@
 
 main {
   background-color: main-colors.$general-bg-color;
-  height: 100vh;
+  height: 100%;
   width: 100%;
   box-sizing: border-box;
   padding-bottom: 12px;
@@ -14,6 +14,7 @@ main {
 section {
   height: calc(100% - 100px);
   box-sizing: border-box;
+  height: calc(100% - 80px);
 }
 
 .content-container {

@@ -405,6 +405,9 @@
   .search-icon {
     font-size: 24px;
   }
+  .collapsible-content.direct-messages {
+    max-height: calc(100vh - 450px);
+  }
 }
 
 @media (max-width: 700px) {

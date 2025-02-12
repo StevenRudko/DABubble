@@ -239,3 +239,15 @@
   @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 32px);
   width: 100%;
 }
+
+@media (max-width: 425px) {
+  .profile-modal {
+    width: 300px;
+  }
+}
+
+@media (max-width: 375px) {
+  .profile-modal {
+    width: 240px;
+  }
+}

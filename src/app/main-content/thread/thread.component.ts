@@ -61,6 +61,7 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
   replyCount: number = 0;
   currentUser: any;
   isMobile: boolean = window.innerWidth <= 1024;
+  currentChannelName: string = '';
 
   private isUserScrolled = false;
   private subscriptions: Subscription = new Subscription();
@@ -91,6 +92,25 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.subscriptions.add(
       this.chatService.threadOpen$.subscribe((isOpen) => {
         if (!isOpen) this.closeThread();
+      })
+    );
+
+    // Füge diese Subscription hinzu
+    this.subscriptions.add(
+      this.chatService.currentChannel$.subscribe((channel) => {
+        if (channel) {
+          this.currentChannelName = channel.name;
+        }
+      })
+    );
+
+    // Füge auch eine Subscription für DirectMessages hinzu
+    this.subscriptions.add(
+      this.chatService.currentDirectUser$.subscribe((user) => {
+        if (user) {
+          this.currentChannelName =
+            user.displayName || user.email || 'Direktnachricht';
+        }
       })
     );
   }

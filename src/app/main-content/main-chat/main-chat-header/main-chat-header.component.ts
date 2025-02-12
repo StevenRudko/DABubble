@@ -431,12 +431,21 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
   private getAddPeopleDialogConfig(
     btnRect: DOMRect
   ): MatDialogRef<AddPeopleComponent> {
-    return this.dialog.open(AddPeopleComponent, {
-      position: { top: '160px', left: `${btnRect.right - 420}px` },
+    const isMobileView = window.innerWidth <= 550;
+
+    const dialogConfig = {
       hasBackdrop: true,
       backdropClass: 'dialog-backdrop',
-      panelClass: 'member-dialog',
-    });
+      panelClass: ['member-dialog'],
+      position: isMobileView
+        ? undefined
+        : {
+            top: '160px',
+            left: `${btnRect.right - 420}px`,
+          },
+    };
+
+    return this.dialog.open(AddPeopleComponent, dialogConfig);
   }
 
   /**
