@@ -4,6 +4,7 @@ import {
   ElementRef,
   OnInit,
   OnDestroy,
+  HostListener,
 } from '@angular/core';
 import { MATERIAL_MODULES } from '../../../shared/material-imports';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -32,6 +33,7 @@ import {
   DocumentData,
 } from '@angular/fire/firestore';
 import { UserOverviewComponent } from '../../../shared/user-overview/user-overview.component';
+import { MainContentComponent } from '../../main-content.component';
 
 interface ChannelDocument extends DocumentData {
   name: string;
@@ -80,6 +82,7 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
   searchResults: SearchResult[] = [];
   selectedResult: SearchResult | null = null;
   showSearchDropdown = false;
+  isMobile: boolean = window.innerWidth <= 1024;
 
   private onlineUsers: string[] = [];
   private presenceSubscription: Subscription | null = null;
@@ -99,12 +102,14 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
     private auth: Auth,
     private router: Router,
     private firestore: Firestore,
-    private presenceService: PresenceService
+    private presenceService: PresenceService,
+    public mainContent: MainContentComponent
   ) {
     this.currentChannel$ = this.chatService.currentChannel$;
     this.currentDirectUser$ = this.chatService.currentDirectUser$;
     this.channelMembers$ = new Observable<ChatMember[]>();
     this.isNewMessage$ = this.chatService.isNewMessage$;
+    this.checkScreenSize();
 
     this.chatService.messageSent$.subscribe(() => {
       this.selectedResult = null;
@@ -115,6 +120,10 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
     this.setupSearchSubscription();
   }
 
+  @HostListener('window:resize')
+  checkScreenSize(): void {
+    this.isMobile = window.innerWidth <= 1024;
+  }
   /**
    * Sets up online status and tracks online users
    * @returns {void}

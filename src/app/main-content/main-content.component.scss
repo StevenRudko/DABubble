@@ -156,6 +156,24 @@ app-thread {
 }
 
 @media (max-width: 1024px) {
+  mat-drawer {
+    width: 100% !important;
+  }
+
+  .mat-drawer-content {
+    padding-left: 0;
+  }
+
+  .content-wrapper {
+    display: none !important;
+
+    &.chat-active {
+      display: flex !important;
+      height: 100%;
+      width: 100%;
+    }
+  }
+
   main {
     padding-bottom: 0;
   }
@@ -168,40 +186,71 @@ app-thread {
     border-radius: 0;
   }
 
-  .mat-drawer-container {
-    position: relative;
-  }
-
-  .open-sidebar-btn {
-    display: none;
-  }
-
-  .sidenav {
-    width: 100% !important;
-    position: absolute;
-    top: 0;
+  app-thread {
+    position: fixed !important;
+    top: 80px; // Höhe des Headers
     bottom: 0;
-    left: 0;
     right: 0;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    height: calc(100% - 80px) !important; // Volle Höhe minus Header
+    transform: translateX(100%);
     transition: transform 0.3s ease-in-out;
+    z-index: 1000;
+    background-color: main-colors.$general-bg-color;
 
-    &.chat-active {
-      transform: translateX(-100%);
+    &.thread-active {
+      transform: translateX(0);
     }
+  }
+}
+@media (max-width: 1024px) {
+  mat-drawer {
+    width: 100% !important;
+  }
+
+  .mat-drawer-content {
+    padding-left: 0;
   }
 
   .content-wrapper {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    transform: translateX(100%);
-    transition: transform 0.3s ease-in-out;
-    background-color: main-colors.$general-bg-color;
-    display: flex !important;
+    display: none !important;
 
     &.chat-active {
+      display: flex !important;
+      height: 100%;
+      width: 100%;
+    }
+  }
+
+  main {
+    padding-bottom: 0;
+  }
+
+  .content-container {
+    padding: 0;
+  }
+
+  .bg-frame-v1 {
+    border-radius: 0;
+  }
+
+  app-thread {
+    position: fixed !important;
+    top: 80px; // Höhe des Headers
+    bottom: 0;
+    right: 0;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    height: calc(100% - 80px) !important; // Volle Höhe minus Header
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+    z-index: 1000;
+    background-color: main-colors.$general-bg-color;
+
+    &.thread-active {
       transform: translateX(0);
     }
   }

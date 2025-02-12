@@ -24,7 +24,7 @@
             <app-main-chat class="bg-frame-v1 flex-g" (openThreadEvent)="onOpenThread($event)">
             </app-main-chat>
             <app-thread class="bg-frame-v1" *ngIf="threadVisible" [messageId]="currentThreadMessageId"
-              (closeThreadEvent)="threadVisible = false">
+              [class.thread-active]="threadVisible" (closeThreadEvent)="threadVisible = false">
             </app-thread>
           </div>
         </div>

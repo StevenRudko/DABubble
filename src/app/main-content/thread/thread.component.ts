@@ -8,6 +8,7 @@ import {
   ElementRef,
   AfterViewChecked,
   OnDestroy,
+  HostListener,
 } from '@angular/core';
 import { UserData } from '../../service/user-data.service';
 import { MatIconModule } from '@angular/material/icon';
@@ -59,6 +60,8 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
   threadMessages: renderMessageInterface[] = [];
   replyCount: number = 0;
   currentUser: any;
+  isMobile: boolean = window.innerWidth <= 1024;
+
   private isUserScrolled = false;
   private subscriptions: Subscription = new Subscription();
   private lastMessageCount = 0;
@@ -69,6 +72,12 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
     private chatService: ChatService
   ) {
     this.initializeSubscriptions();
+    this.checkScreenSize();
+  }
+
+  @HostListener('window:resize')
+  checkScreenSize(): void {
+    this.isMobile = window.innerWidth <= 1024;
   }
 
   /**

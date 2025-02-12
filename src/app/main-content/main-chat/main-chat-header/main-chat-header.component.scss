@@ -327,9 +327,37 @@ button {
   }
 }
 
+.mobile-back-btn {
+  display: none;
+}
+
 @media (max-width: 1200px) {
   .selection-name.direct-message-header p {
     font-size: 20px;
   }
 }
 
+@media (max-width: 1024px) {
+  .mobile-back-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    padding: 8px;
+    margin-right: 8px;
+    cursor: pointer;
+  }
+}
+
+@media (max-width: 800px) {
+  .selection-name {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 425px) {
+  .member-list {
+    display: none;
+  }
+}

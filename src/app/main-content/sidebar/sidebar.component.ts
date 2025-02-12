@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -13,6 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { PresenceService } from '../../service/presence.service';
 import { ShowHiddeResultsService } from '../../service/show-hidde-results.service';
 import { SearchBarComponent } from '../../header/search-bar/search-bar.component';
+import { MainContentComponent } from '../main-content.component';
 
 /**
  * Interface for channel data structure
@@ -62,6 +63,7 @@ export class SidebarComponent implements OnInit {
   newMessageInput = '';
   isNewMessage$: Observable<boolean> = new Observable<boolean>();
   searchQuery: string = '';
+  isMobile: boolean = window.innerWidth <= 1024;
 
   /**
    * Initializes the sidebar component and its data streams
@@ -72,11 +74,21 @@ export class SidebarComponent implements OnInit {
     private authService: AuthService,
     private presenceService: PresenceService,
     public chatService: ChatService,
-    public showHiddeService: ShowHiddeResultsService
+    public showHiddeService: ShowHiddeResultsService,
+    private mainContent: MainContentComponent
   ) {
     this.initializeUserStreams();
     this.initializeChannelStream();
     this.initializeUserList();
+    this.checkScreenSize();
+  }
+
+  /**
+   * Monitors window resize events and updates mobile status
+   */
+  @HostListener('window:resize')
+  checkScreenSize(): void {
+    this.isMobile = window.innerWidth <= 1024;
   }
 
   /**
@@ -188,6 +200,7 @@ export class SidebarComponent implements OnInit {
       .subscribe((currentChannel) => {
         if (!currentChannel || currentChannel.id !== channelId) {
           this.chatService.selectChannel(channelId);
+          this.mainContent.showChat(true);
         }
       });
   }
@@ -197,5 +210,6 @@ export class SidebarComponent implements OnInit {
    */
   selectDirectMessage(userId: string): void {
     this.chatService.selectDirectMessage(userId);
+    this.mainContent.showChat(true);
   }
 }

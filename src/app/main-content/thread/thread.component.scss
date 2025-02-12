@@ -98,6 +98,10 @@ header {
   }
 }
 
+.mobile-back-btn {
+  display: none;
+}
+
 app-message-input-box {
   padding-top: 4px;
 }
@@ -116,5 +120,24 @@ app-message-input-box {
 
   .channel-name {
     font-size: 12px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .mobile-back-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    padding: 8px;
+    margin-right: 8px;
+    cursor: pointer;
+    color: inherit;
+  }
+
+  .thread-header {
+    display: flex;
+    align-items: center;
   }
 }

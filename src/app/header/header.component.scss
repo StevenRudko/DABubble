@@ -16,6 +16,76 @@ section {
   box-sizing: border-box;
 }
 
+.header-left {
+  @include styles.dFlex(
+    $d: flex,
+    $fd: row,
+    $jc: flex-start,
+    $ai: center,
+    $g: 12px
+  );
+  flex: 0 0 auto; // Verhindert Schrumpfen
+}
+
+.mobile-back-btn {
+  display: none;
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  color: inherit;
+  align-items: center;
+  justify-content: center;
+
+  mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
+
+  &:hover {
+    color: #535af1;
+  }
+}
+
+.logo-container {
+  @include styles.dFlex(
+    $d: flex,
+    $fd: row,
+    $jc: flex-start,
+    $ai: center,
+    $g: 1rem
+  );
+  transition: all 0.3s ease-in-out;
+
+  .logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 0.5rem;
+  }
+
+  .logo-text {
+    font-size: 1.125rem;
+    font-weight: 600;
+    cursor: default;
+  }
+
+  &.chat-active {
+    transform: translateX(0);
+  }
+}
+
+.desktop-content {
+  @include styles.dFlex(
+    $d: flex,
+    $fd: row,
+    $jc: flex-end,
+    $ai: center,
+    $g: 2rem
+  );
+  flex: 1;
+}
+
 .searchbar-container {
   @include styles.padding($pl: 12px, $pr: 24px, $pt: 0, $pb: 0);
   @include styles.dFlex(
@@ -41,6 +111,7 @@ section {
     height: 50px;
     border-radius: 25px;
     font-size: 1.125rem;
+    background: transparent;
   }
 }
 
@@ -48,28 +119,13 @@ section {
   border-radius: 25px 25px 0px 0px !important;
 }
 
-// mat-card-content {
-//     input {
-//         color: rgba(104, 104, 104);
-//         border: unset;
-//         outline: unset;
-//         width: 100%;
-//     }
-// }
-
 app-search-bar {
   position: absolute;
   top: 50px;
   left: 0px;
   width: 100%;
-  // max-height: 550px;
   background-color: white;
   z-index: 2;
-}
-
-mat-icon {
-  height: 20px;
-  width: 20px;
 }
 
 .profile-container {
@@ -136,6 +192,25 @@ mat-icon {
   border-radius: 100%;
 }
 
+// Logo-Transition Styles
+.logo-switch {
+  position: relative;
+  overflow: hidden;
+}
+
+.dabubble-logo,
+.devspace-logo {
+  transition: transform 0.3s ease-in-out;
+}
+
+.dabubble-logo.hidden {
+  transform: translateX(-100%);
+}
+
+.devspace-logo.visible {
+  transform: translateX(0);
+}
+
 @media (max-width: 1200px) {
   .profile-name {
     font-size: 1.25rem;
@@ -147,12 +222,32 @@ mat-icon {
 }
 
 @media (max-width: 1024px) {
+  section {
+    padding: 0.5rem 1rem;
+    height: 80px;
+  }
+
+  .mobile-back-btn {
+    display: flex;
+  }
+
   .searchbar-container {
     display: none;
   }
+
+  .logo-container {
+    .logo {
+      width: 50px;
+      height: 50px;
+    }
+
+    .logo-text {
+      font-size: 1rem;
+    }
+  }
 }
 
-@media (max-width: 700px) {
+@media (max-width: 600px) {
   .profile-name {
     display: none;
   }

@@ -1,5 +1,6 @@
 <div class="sidebar">
-  <div class="header">
+  <!-- Header nur für Desktop anzeigen -->
+  <div class="header" *ngIf="!isMobile">
     <div class="logo-container">
       <img src="img/devspace-logo.svg" alt="Devspace" class="logo">
       <span class="logo-text">Devspace</span>
