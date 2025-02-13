@@ -13,7 +13,8 @@
       <div class="user-info">
         <div class="name-container">
           <h3>{{ this.userInfoService.displayName }}</h3>
-          <p (click)="openEdit()">Bearbeiten</p>
+          <p class="edit-text" (click)="openEdit()">Bearbeiten</p>
+          <mat-icon class="edit-icon" (click)="openEdit()">edit</mat-icon>
         </div>
         <div class="status">
           <div class="status-dot"></div>

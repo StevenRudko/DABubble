@@ -8,7 +8,11 @@
   border-radius: 16px;
   width: 420px;
   padding: 16px;
-  position: relative;
+  position: fixed;
+  top: 160px; // Angepasst um unter dem Header zu sein
+  right: 100px;
+  border-top-right-radius: 0; // Rechte obere Ecke eckig
+  z-index: 1000;
 }
 
 .overlay-header {
@@ -180,11 +184,19 @@
   }
 }
 
+@media (max-width: 1024px) {
+  .overlay-content {
+    right: 60px;
+    top: 140px;
+  }
+}
+
 @media (max-width: 550px) {
   .overlay-content {
-    width: 90%;
+    width: calc(100% - 32px);
     max-width: 300px;
-    margin: 0 auto;
+    right: 60px;
+    top: 140px;
   }
 
   .search-dropdown {
@@ -192,5 +204,17 @@
     width: calc(100% - 32px); // Berücksichtigt das Padding
     left: 16px;
     right: 16px;
+  }
+}
+
+@media (max-width: 375px) {
+  .overlay-content {
+    right: 20px;
+  }
+}
+
+@media (max-width: 320px) {
+  .overlay-content {
+    right: 0;
   }
 }

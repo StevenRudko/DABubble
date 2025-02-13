@@ -87,9 +87,8 @@ section,
   background: rgba(0, 0, 0, 0.5);
 }
 
-
 h1 {
-  color: #444DF2;
+  color: #444df2;
   margin-bottom: 30px;
   font-size: 2.875rem;
   white-space: nowrap;
@@ -99,7 +98,7 @@ h1 {
   @include dFlex($d: flex, $fd: row, $jc: unset, $ai: center);
   height: 60px;
   width: 100%;
-  background-color: #ECEEFE;
+  background-color: #eceefe;
   border-radius: 100px;
   border: 1px solid rgba(0, 0, 0, 0);
   margin-bottom: 40px;
@@ -121,7 +120,7 @@ h1 {
   }
 
   &:focus-within {
-    border: 1px solid #535AF1;
+    border: 1px solid #535af1;
 
     mat-icon {
       color: black;
@@ -131,7 +130,7 @@ h1 {
   input {
     width: 80%;
     border: none;
-    background-color: #ECEEFE;
+    background-color: #eceefe;
     font-family: Nunito;
     font-size: 18px;
     font-weight: 500;
@@ -171,11 +170,11 @@ h1 {
 
 @keyframes show {
   from {
-      opacity: 0;
+    opacity: 0;
   }
 
   to {
-      opacity: 1;
+    opacity: 1;
   }
 }
 
@@ -197,16 +196,16 @@ h1 {
 }
 
 .btn-full {
-  background-color: #444DF2;
+  background-color: #444df2;
   border: none;
-  color: #FFFFFF;
+  color: #ffffff;
 
   &:hover {
-      background-color: #797EF3;
+    background-color: #797ef3;
   }
 
   &:active {
-    background-color: #444DF2;
+    background-color: #444df2;
   }
 
   &:disabled {
@@ -215,17 +214,17 @@ h1 {
 }
 
 .btn-zero-fill {
-  border: 1px solid #797EF3;
+  border: 1px solid #797ef3;
   background-color: unset;
-  color: #444DF2;
+  color: #444df2;
 
   &:hover {
-      background-color: #535AF1;
-      color: #FFFFFF;
+    background-color: #535af1;
+    color: #ffffff;
   }
 
   &:active {
-      background-color: #444DF2;
+    background-color: #444df2;
   }
 }
 
@@ -248,5 +247,12 @@ h1 {
     background-color: #eceefe;
     border-radius: 50%;
     box-shadow: 0 0 0 5px #eceefe;
+  }
+}
+
+@media (max-width: 375px) {
+  .button-base {
+    font-size: 1rem;
+    padding: 8px 16px;
   }
 }
