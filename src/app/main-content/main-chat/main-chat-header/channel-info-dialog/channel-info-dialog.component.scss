@@ -417,20 +417,25 @@
   display: none;
 }
 
-@media (max-width: 600px) {
-  .mobile-only-members {
-    display: block;
+::ng-deep {
+  .cdk-overlay-container {
+    overflow-y: scroll;
   }
 }
 
 @media (max-width: 768px) {
-  .dialog-container {
-    height: 100vh;
-  }
-
   ::ng-deep {
     .mat-mdc-dialog-surface {
       // border-radius: 0 !important;
     }
+  }
+}
+
+@media (max-width: 600px) {
+  .mobile-only-members {
+    display: block;
+  }
+  .dialog-footer {
+    justify-content: center;
   }
 }
