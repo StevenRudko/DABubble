@@ -81,6 +81,7 @@ export class SearchBarComponent implements OnInit {
         } else if (msg.directUserId) {
           return this.filterMessage(msg, 'directMessage');
         } else if (!msg.channelId && !msg.directUserId) {
+          console.log(msg);
           return this.filterMessage(msg, 'thread');
         } else {
           return;
@@ -105,9 +106,9 @@ export class SearchBarComponent implements OnInit {
     const threadMessage = this.userMessages.find((message) => {
       return message.comments.includes(msg.userMessageId);
     });
-    const nameOfTheRespondent = threadMessage
+    const respondent = threadMessage
       ? this.users.find((user) => user.localID === threadMessage.authorId) : undefined;
-      // ?.username || 'Unbekannt' : 'Unbekannt';
+    // ?.username || 'Unbekannt' : 'Unbekannt';
 
     const threadChannel = this.channels.find((channel) => threadMessage?.channelId === channel.channelId)
 
@@ -125,7 +126,7 @@ export class SearchBarComponent implements OnInit {
       userMessageId: msg.userMessageId || '',
       channelName: channel?.name || threadChannel?.name || 'not found',
       directUserName: directMessageName?.username || '',
-      nameOfTheRespondent: nameOfTheRespondent?.username || '',
+      nameOfTheRespondent: respondent?.username || '',
       idOfTheRespondentMessage: threadMessage?.userMessageId || '',
     };
   }
@@ -165,16 +166,33 @@ export class SearchBarComponent implements OnInit {
     if (msg.channelId) {
       return this.isUserInChannel(msg.channelId);
     }
+
+    // Prüfe, ob der Benutzer Teil des Channels ist (falls die 'userMessageId' im Channel gefunden wird)
+    if (msg.authorId) {
+      return this.isUserInChannelThread(msg);
+    }
     // Weitere Regeln hinzufügen, falls nötig
     return false;
   }
 
-  isUserInChannel(channelId: any) {
-    const channel = this.channels.find((ch) => ch.channelId === channelId);
-    if (channel && channel.members && typeof channel.members === 'object') {
-      return channel.members[this.userInfo.uId] === true;
-    }
-    return false;
+  isUserInChannel(channelId: string): boolean {
+    return this.channels.some(
+      ch => ch.channelId === channelId && ch.members?.[this.userInfo.uId] === true
+    );
+  }
+
+  isUserInChannelThread(message: UserMessageInterface): boolean {
+    // const mainMessage = this.userMessages.find((msg) => {
+    //   msg.comments.includes(message.userMessageId);
+    // });
+    // if (mainMessage) {
+    //   return this.isUserInChannel(mainMessage!.channelId)
+    // } else {
+    //   return false
+    // }
+
+    const mainMessage = this.userMessages.find(msg => msg.comments.includes(message.userMessageId));
+    return mainMessage ? this.isUserInChannel(mainMessage.channelId) : false;
   }
 
   private updateBorderTrigger(): void {
