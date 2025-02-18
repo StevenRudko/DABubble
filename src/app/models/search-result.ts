@@ -7,7 +7,7 @@ export interface SearchResult {
   photoURL: string;
   /** ID of the channel where the message was sent */
   channelId: string;
-  directUserId: string; // NEU: für Direktnachrichten
+  directUserId: string;
   /** Array of comment IDs associated with this message */
   comments: string[];
   /** Array of emoji reactions to this message */
@@ -23,24 +23,24 @@ export interface SearchResult {
    * - Must be a valid email format.
    * @type {string}
    */
-    email: string;
+  email: string;
 
-    /**
-     * The unique local identifier (ID) assigned to the user.
-     * - Used to differentiate users within the system.
-     * @type {string}
-     */
-    localID: string;
+  /**
+   * The unique local identifier (ID) assigned to the user.
+   * - Used to differentiate users within the system.
+   * @type {string}
+   */
+  localID: string;
 
-    channelName: string;
+  channelName: string;
 
-    channelDescription: string;
+  channelDescription: string;
 
-    channelMembers: any;
+  channelMembers: any;
 
-    directUserName: string;
+  directUserName: string;
 
-    nameOfTheRespondent: string;
+  nameOfTheRespondent: string;
 
-    idOfTheRespondentMessage: string;
+  idOfTheRespondentMessage: string;
 }

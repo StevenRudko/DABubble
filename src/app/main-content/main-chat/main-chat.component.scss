@@ -1,28 +1,36 @@
-@use './../../../styles.scss' as styles;
-@use './../../../assets/styles/fonts.scss' as fonts;
+@use "./../../../styles.scss" as styles;
+@use "./../../../assets/styles/fonts.scss" as fonts;
 @use "./../../../assets/styles/colors.scss" as main-colors;
-@use './../../../assets/styles/theme-colors.scss' as colors;
+@use "./../../../assets/styles/theme-colors.scss" as colors;
 
 section {
-    @include styles.dFlex($d: flex, $fd: column, $jc: flex-start, $ai: flex-start, $g: 0);
-    height:100%;
-    box-sizing: border-box;
+  @include styles.dFlex(
+    $d: flex,
+    $fd: column,
+    $jc: flex-start,
+    $ai: flex-start,
+    $g: 0
+  );
+  height: 100%;
+  box-sizing: border-box;
 }
 
 .main-chat-body {
-    @include styles.padding($pl: 0px, $pr: 0px, $pt: 12px, $pb: 12px);
-    @include styles.dFlex($d: flex, $fd: column, $jc: space-between, $ai: space-between, $g: 10px);
-    width:100%;
-    height:calc(100% - 80px); // abzgl. Höhe von Header
+  @include styles.padding($pl: 0px, $pr: 0px, $pt: 12px, $pb: 12px);
+  @include styles.dFlex(
+    $d: flex,
+    $fd: column,
+    $jc: space-between,
+    $ai: space-between,
+    $g: 10px
+  );
+  width: 100%;
+  height: calc(100% - 80px);
+  box-sizing: border-box;
+
+  app-main-chat-daily-messages {
+    width: 100%;
+    height: calc(100% - 160px);
     box-sizing: border-box;
-
-    app-main-chat-daily-messages {
-        width:100%;
-        height:calc(100% - 160px);
-        box-sizing: border-box;
-    }
-    
+  }
 }
-
-
-

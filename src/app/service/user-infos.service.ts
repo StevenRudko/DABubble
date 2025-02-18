@@ -3,15 +3,14 @@ import { AuthService } from './auth.service';
 import { User } from '@angular/fire/auth';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserInfosService {
-
   /**
    * The currently authenticated user.
    * @type {User}
    */
-  currentUser!: User; //| null = null;
+  currentUser!: User;
 
   /**
    * The display name of the currently authenticated user.
@@ -26,9 +25,9 @@ export class UserInfosService {
   photoURL: any;
 
   /**
-  * The email address of the currently authenticated user.
-  * @type {string | null}
-  */
+   * The email address of the currently authenticated user.
+   * @type {string | null}
+   */
   email: string | null = null;
 
   /**
@@ -45,11 +44,11 @@ export class UserInfosService {
    * Retrieves and sets the current user's profile information.
    * - Updates the component properties with user details such as `displayName`, `photoURL`, `email`, and `uId`.
    * - Logs the user details to the console.
-   * 
+   *
    * @returns {void}
    */
   getUserInfo(): void {
-    this.authService.user$.subscribe(user => {
+    this.authService.user$.subscribe((user) => {
       if (user) {
         this.currentUser = user;
         this.displayName = user.displayName;

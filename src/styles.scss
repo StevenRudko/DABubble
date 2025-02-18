@@ -1,14 +1,13 @@
 @use "@angular/material";
 @use "./assets/styles/fonts.scss";
 @use "./assets/styles/colors.scss";
-@use "assets/styles/theme-colors.scss"; // location of generated file
+@use "assets/styles/theme-colors.scss";
 
 * {
   margin: 0;
 }
 
 html {
-  // Apply the dark theme by default
   @include material.theme(
     (
       color: (
@@ -21,7 +20,6 @@ html {
     )
   );
 
-  // Use high contrast dark theme colors when users prefer contrast
   @media (prefers-contrast: more) {
     @include theme-colors.high-contrast-overrides(dark);
   }
@@ -102,7 +100,6 @@ h1 {
   border-radius: 100px;
   border: 1px solid rgba(0, 0, 0, 0);
   margin-bottom: 40px;
-  // overflow: hidden;
   transition: ease-in-out 0.07s;
 }
 

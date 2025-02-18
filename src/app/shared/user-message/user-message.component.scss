@@ -11,7 +11,6 @@ section {
     $ai: flex-start,
     $g: 24px
   );
-  // cursor: pointer;
   position: relative;
   z-index: 2;
   @include styles.padding($pl: 0px, $pr: 0px, $pt: 12px, $pb: 12px);
@@ -35,12 +34,7 @@ section {
     color: main-colors.$user-msg-light-text;
   }
 
-  // &:hover .add-reaction-btn {
-  //   background-color: white;
-  // }
-
   &.myMessageStyle {
-    // align-items: flex-end;
     cursor: unset;
     padding-top: 24px;
 
@@ -182,16 +176,10 @@ section {
   }
 }
 
-// .check_circle {
-//   color: #4bd37b;
-// }
-
 .reaction-btn-div {
   position: relative;
   @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
   padding: 2px 6px;
-  // background-color: white;
-  // border: 1px solid #adb0d9;
   cursor: pointer;
 
   .reaction-btn-style {
@@ -338,14 +326,12 @@ app-user-msg-options {
     animation: fadeInOwn 0.2s ease-in-out;
   }
 
-  // Edit-Modus spezifische Positionierung
   &.edit-mode {
-    top: -200px; // Höher positioniert
-    right: 20px; // Rechts ausgerichtet
-    left: auto; // Links-Ausrichtung aufheben
+    top: -200px;
+    right: 20px;
+    left: auto;
   }
 
-  // Kartenform im Edit-Modus
   &.edit-mode ::ng-deep mat-card {
     border-radius: 20px !important;
     border-bottom-right-radius: 20px !important;
@@ -368,7 +354,6 @@ textarea {
   border-radius: 20px;
   padding: 12px;
   cursor: text;
-  // color: grey;
   resize: none;
   font-family: Nunito;
   font-size: 18px;
@@ -417,14 +402,14 @@ textarea {
 app-emoji-overview {
   position: absolute;
   z-index: 4;
-  bottom: 100%; // Position above the emoji
-  left: 50%; // Center horizontally
-  transform: translateX(0%) translateY(0px); // Center and offset slightly up
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(0%) translateY(0px);
   min-width: 150px;
   width: max-content;
   max-width: 150px;
   box-sizing: border-box;
-  pointer-events: none; // Prevent hover issues
+  pointer-events: none;
 
   .myMessageStyle & {
     left: 50%;

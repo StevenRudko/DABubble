@@ -41,7 +41,7 @@ export interface renderMessageInterface {
   userMessageId: string;
   /** Message content */
   message: string;
-  emojis: EmojiReaction[] | string[]; // Unterstützt beide Formate
+  emojis: EmojiReaction[] | string[];
   /** Hour component of the message time */
   hours: number;
   isOwnMessage: boolean;

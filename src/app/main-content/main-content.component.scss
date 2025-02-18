@@ -192,13 +192,13 @@ app-thread {
 
   app-thread {
     position: fixed !important;
-    top: 80px; // Höhe des Headers
+    top: 80px;
     bottom: 0;
     right: 0;
     width: 100% !important;
     min-width: 100% !important;
     max-width: 100% !important;
-    height: calc(100% - 80px) !important; // Volle Höhe minus Header
+    height: calc(100% - 80px) !important;
     transform: translateX(100%);
     transition: transform 0.3s ease-in-out;
     z-index: 1000;
@@ -242,13 +242,13 @@ app-thread {
 
   app-thread {
     position: fixed !important;
-    top: 80px; // Höhe des Headers
+    top: 80px;
     bottom: 0;
     right: 0;
     width: 100% !important;
     min-width: 100% !important;
     max-width: 100% !important;
-    height: calc(100% - 80px) !important; // Volle Höhe minus Header
+    height: calc(100% - 80px) !important;
     transform: translateX(100%);
     transition: transform 0.3s ease-in-out;
     z-index: 1000;

@@ -323,7 +323,7 @@ export class UserMessageComponent {
     } else {
       this.stopEditing();
     }
-    this.editStatusMessage = status; // Add this line
+    this.editStatusMessage = status;
   }
 
   /**
