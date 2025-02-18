@@ -48,8 +48,8 @@ interface SearchResult {
 interface MentionedUser {
   uid: string;
   username: string;
-  displayName: string | null | undefined; // Fügen Sie undefined hinzu
-  photoURL: string | null | undefined; // Fügen Sie undefined hinzu
+  displayName: string | null | undefined;
+  photoURL: string | null | undefined;
   start: number;
   end: number;
 }
@@ -80,7 +80,7 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
   @ViewChild('messageInput') messageInput!: ElementRef;
   @Input() isThreadMessage: boolean = false;
   @Input() parentMessageId: string | null = null;
-  @Input() placeholder: string = 'Nachricht schreiben...';
+  @Input() placeholder: string = 'Write message...';
 
   messageText: string = '';
   private currentChannel: any;
@@ -90,8 +90,6 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription = new Subscription();
   private isNewMessage: boolean = false;
   showEmojiPicker: boolean = false;
-
-  // Neue Properties für Mentions
   showMentionDropdown = false;
   mentionSearchResults: User[] = [];
   mentionedUsers: MentionedUser[] = [];
@@ -100,6 +98,9 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
   mentionTags: MentionTag[] = [];
   plainText: string = '';
 
+  /**
+   * Initializes component with required services
+   */
   constructor(
     private firestore: Firestore,
     private chatService: ChatService,
@@ -109,36 +110,52 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer
   ) {}
 
+  /**
+   * Handles document click events for focus management
+   */
   @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent) {
+  onDocumentClick(event: MouseEvent): void {
+    this.handleDocumentClick(event);
+  }
+
+  /**
+   * Updates input focus state based on click location
+   */
+  private handleDocumentClick(event: MouseEvent): void {
     const inputBox = this.elementRef.nativeElement;
-    if (!inputBox.contains(event.target)) {
-      if (this.messageInput?.nativeElement) {
-        this.messageInput.nativeElement.dataset.focused = 'false';
-      }
+    const isClickInside = inputBox.contains(event.target);
+
+    if (this.messageInput?.nativeElement) {
+      this.messageInput.nativeElement.dataset.focused = isClickInside
+        ? 'true'
+        : 'false';
+    }
+
+    if (!isClickInside) {
       this.showEmojiPicker = false;
       this.showMentionDropdown = false;
-    } else {
-      if (this.messageInput?.nativeElement) {
-        this.messageInput.nativeElement.dataset.focused = 'true';
-      }
     }
   }
 
+  /**
+   * Toggles emoji picker visibility
+   */
   toggleEmojiPicker(event: MouseEvent): void {
     event.stopPropagation();
     this.showEmojiPicker = !this.showEmojiPicker;
   }
 
+  /**
+   * Handles emoji selection and insertion
+   */
   handleEmojiSelected(emoji: any): void {
     const textarea = this.messageInput.nativeElement;
     const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
 
     this.messageText =
       this.messageText.substring(0, start) +
       emoji.emoji +
-      this.messageText.substring(end);
+      this.messageText.substring(textarea.selectionEnd);
 
     setTimeout(() => {
       textarea.selectionStart = start + emoji.emoji.length;
@@ -149,6 +166,9 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
     this.showEmojiPicker = false;
   }
 
+  /**
+   * Initializes component and sets up subscriptions
+   */
   ngOnInit(): void {
     this.setupUserSubscription();
     if (!this.isThreadMessage) {
@@ -158,30 +178,39 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Sets up channel subscription
+   */
   private setupChannelSubscription(): void {
     this.subscriptions.add(
       this.chatService.currentChannel$.subscribe((channel) => {
         this.currentChannel = channel;
         if (channel && !this.isNewMessage && !this.isThreadMessage) {
-          this.placeholder = `Nachricht an #${channel.name}`;
+          this.placeholder = `Message to #${channel.name}`;
           this.focusInput();
         }
       })
     );
   }
 
+  /**
+   * Sets up direct message subscription
+   */
   private setupDirectMessageSubscription(): void {
     this.subscriptions.add(
       this.chatService.currentDirectUser$.subscribe((user) => {
         this.currentDirectUser = user;
         if (user && !this.isNewMessage && !this.isThreadMessage) {
-          this.placeholder = `Nachricht an ${this.getDisplayName(user)}`;
+          this.placeholder = `Message to ${this.getDisplayName(user)}`;
           this.focusInput();
         }
       })
     );
   }
 
+  /**
+   * Focuses input field
+   */
   private focusInput(): void {
     setTimeout(() => {
       if (this.messageInput?.nativeElement) {
@@ -191,90 +220,149 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
     }, 100);
   }
 
+  /**
+   * Handles key events for message input
+   */
   onKeyDown(event: KeyboardEvent): void {
-    if (event.key === 'Enter' && !event.shiftKey) {
+    if (this.isEnterToSend(event)) {
       event.preventDefault();
       this.sendMessage();
     } else if (event.key === '@') {
       this.handleMentionTrigger();
     } else if (event.key === 'Backspace') {
-      const cursorPos = this.messageInput.nativeElement.selectionStart;
-
-      // Finde einen Tag an der aktuellen Position
-      const mentionTag = this.mentionTags.find(
-        (tag) => cursorPos > tag.start && cursorPos <= tag.end + 1
-      );
-
-      if (mentionTag) {
-        event.preventDefault();
-        // Entferne den kompletten Tag
-        this.messageText =
-          this.messageText.substring(0, mentionTag.start) +
-          this.messageText.substring(mentionTag.end + 1);
-
-        // Entferne den Tag aus den Arrays
-        this.mentionTags = this.mentionTags.filter((t) => t !== mentionTag);
-        this.mentionedUsers = this.mentionedUsers.filter(
-          (u) => u.start !== mentionTag.start && u.end !== mentionTag.end
-        );
-
-        // Setze den Cursor an die richtige Position
-        setTimeout(() => {
-          this.messageInput.nativeElement.selectionStart = mentionTag.start;
-          this.messageInput.nativeElement.selectionEnd = mentionTag.start;
-        });
-      }
+      this.handleBackspace();
     }
   }
 
+  /**
+   * Checks if enter key should trigger message send
+   */
+  private isEnterToSend(event: KeyboardEvent): boolean {
+    return event.key === 'Enter' && !event.shiftKey;
+  }
+
+  /**
+   * Handles backspace for mention tags
+   */
+  private handleBackspace(): void {
+    const cursorPos = this.messageInput.nativeElement.selectionStart;
+    const mentionTag = this.findMentionTagAtCursor(cursorPos);
+
+    if (mentionTag) {
+      this.deleteMentionTag(mentionTag);
+    }
+  }
+
+  /**
+   * Finds mention tag at cursor position
+   */
+  private findMentionTagAtCursor(cursorPos: number): MentionTag | undefined {
+    return this.mentionTags.find(
+      (tag) => cursorPos > tag.start && cursorPos <= tag.end + 1
+    );
+  }
+
+  /**
+   * Deletes mention tag from text and arrays
+   */
+  private deleteMentionTag(mentionTag: MentionTag): void {
+    this.messageText =
+      this.messageText.substring(0, mentionTag.start) +
+      this.messageText.substring(mentionTag.end + 1);
+
+    this.mentionTags = this.mentionTags.filter((t) => t !== mentionTag);
+    this.mentionedUsers = this.mentionedUsers.filter(
+      (u) => u.start !== mentionTag.start && u.end !== mentionTag.end
+    );
+
+    setTimeout(() => {
+      this.messageInput.nativeElement.selectionStart = mentionTag.start;
+      this.messageInput.nativeElement.selectionEnd = mentionTag.start;
+    });
+  }
+
+  /**
+   * Handles input changes and mention search
+   */
   onInput(event: Event): void {
     const textarea = this.messageInput.nativeElement;
     this.cursorPosition = textarea.selectionStart;
 
-    // Einfache Prüfung am Anfang - wenn Text leer ist, setze Tags zurück
     if (!this.messageText.trim()) {
-      this.mentionTags = [];
-      this.mentionedUsers = [];
-    }
-
-    if (this.showMentionDropdown) {
-      const lastIndex = this.messageText.lastIndexOf(
-        '@',
-        this.cursorPosition - 1
-      );
-      if (lastIndex >= 0) {
-        const searchText = this.messageText.slice(
-          lastIndex + 1,
-          this.cursorPosition
-        );
-        if (searchText.includes(' ')) {
-          this.showMentionDropdown = false;
-          return;
-        }
-        this.mentionSearchTerm = searchText;
-        this.searchUsers(this.mentionSearchTerm);
-      } else {
-        this.showMentionDropdown = false;
-      }
-    }
-  }
-
-  private async searchUsers(term: string): Promise<void> {
-    if (!term.trim()) {
-      const usersRef = collection(this.firestore, 'users');
-      const snapshot = await getDocs(usersRef);
-      this.mentionSearchResults = snapshot.docs
-        .map(
-          (doc) =>
-            ({
-              uid: doc.id,
-              ...doc.data(),
-            } as User)
-        )
-        .slice(0, 5); // Limit to 5 results when no search term
+      this.resetMentions();
       return;
     }
 
+    if (this.showMentionDropdown) {
+      this.handleMentionSearch();
+    }
+  }
+
+  /**
+   * Resets mention data
+   */
+  private resetMentions(): void {
+    this.mentionTags = [];
+    this.mentionedUsers = [];
+  }
+
+  /**
+   * Handles mention search based on input
+   */
+  private handleMentionSearch(): void {
+    const lastIndex = this.messageText.lastIndexOf(
+      '@',
+      this.cursorPosition - 1
+    );
+    if (lastIndex >= 0) {
+      const searchText = this.messageText.slice(
+        lastIndex + 1,
+        this.cursorPosition
+      );
+      if (searchText.includes(' ')) {
+        this.showMentionDropdown = false;
+        return;
+      }
+      this.mentionSearchTerm = searchText;
+      this.searchUsers(this.mentionSearchTerm);
+    } else {
+      this.showMentionDropdown = false;
+    }
+  }
+
+  /**
+   * Searches users for mention suggestions
+   */
+  private async searchUsers(term: string): Promise<void> {
+    if (!term.trim()) {
+      await this.loadAllUsers();
+      return;
+    }
+
+    await this.searchUsersByTerm(term);
+  }
+
+  /**
+   * Loads initial users for mention suggestions
+   */
+  private async loadAllUsers(): Promise<void> {
+    const usersRef = collection(this.firestore, 'users');
+    const snapshot = await getDocs(usersRef);
+    this.mentionSearchResults = snapshot.docs
+      .map(
+        (doc) =>
+          ({
+            uid: doc.id,
+            ...doc.data(),
+          } as User)
+      )
+      .slice(0, 5);
+  }
+
+  /**
+   * Searches users by term for mention suggestions
+   */
+  private async searchUsersByTerm(term: string): Promise<void> {
     const usersRef = collection(this.firestore, 'users');
     const q = query(
       usersRef,
@@ -297,43 +385,62 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Initiates mention functionality
+   */
   handleMentionTrigger(): void {
     this.showMentionDropdown = true;
     this.searchUsers('');
   }
 
+  /**
+   * Handles user selection from mention dropdown
+   */
   selectMention(user: User): void {
     const textarea = this.messageInput.nativeElement;
     const lastIndex = this.messageText.lastIndexOf(
       '@',
       this.cursorPosition - 1
     );
-
-    // Sicherer Umgang mit möglicherweise undefiniertem username
     const username = user.username || user.displayName || user.email || 'user';
-    const mentionText = username;
 
-    // Erstelle den Tag
-    const mentionTag: MentionTag = {
+    const mentionTag = this.createMentionTag(user, username, lastIndex);
+    this.addMentionToText(mentionTag, textarea);
+  }
+
+  /**
+   * Creates mention tag object
+   */
+  private createMentionTag(
+    user: User,
+    username: string,
+    startIndex: number
+  ): MentionTag {
+    return {
       id: user.uid,
       username: username,
       displayName: user.displayName || null,
       photoURL: user.photoURL || null,
-      start: lastIndex,
-      end: lastIndex + mentionText.length + 1,
+      start: startIndex,
+      end: startIndex + username.length + 1,
     };
+  }
 
-    // Füge den Tag zur Liste hinzu
+  /**
+   * Adds mention to text and updates state
+   */
+  private addMentionToText(
+    mentionTag: MentionTag,
+    textarea: HTMLTextAreaElement
+  ): void {
     this.mentionTags.push(mentionTag);
 
-    // Update text - Hier die Änderung
     this.messageText =
-      this.messageText.substring(0, lastIndex) +
-      '@' + // Explizit das @ hinzufügen
-      mentionText +
-      ' '; // Leerzeichen am Ende
+      this.messageText.substring(0, mentionTag.start) +
+      '@' +
+      mentionTag.username +
+      ' ';
 
-    // Aktualisiere mentionedUsers für die Datenbank
     this.mentionedUsers.push({
       uid: mentionTag.id,
       username: mentionTag.username,
@@ -346,15 +453,27 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
     this.showMentionDropdown = false;
     this.mentionSearchResults = [];
 
-    // Cursor ans Ende setzen
-    const newCursorPos = lastIndex + mentionText.length + 2; // +2 für @ und Leerzeichen
+    const newCursorPos = mentionTag.start + mentionTag.username.length + 2;
+    this.updateCursorPosition(textarea, newCursorPos);
+  }
+
+  /**
+   * Updates cursor position in textarea
+   */
+  private updateCursorPosition(
+    textarea: HTMLTextAreaElement,
+    position: number
+  ): void {
     textarea.focus();
     setTimeout(() => {
-      textarea.selectionStart = newCursorPos;
-      textarea.selectionEnd = newCursorPos;
+      textarea.selectionStart = position;
+      textarea.selectionEnd = position;
     });
   }
 
+  /**
+   * Sets up user subscription
+   */
   private setupUserSubscription(): void {
     this.subscriptions.add(
       this.authService.user$.subscribe((user) => {
@@ -363,6 +482,9 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
     );
   }
 
+  /**
+   * Sets up new message subscription
+   */
   private setupNewMessageSubscription(): void {
     this.subscriptions.add(
       this.chatService.isNewMessage$.subscribe((isNew) => {
@@ -376,29 +498,42 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
     );
   }
 
+  /**
+   * Sets up new message recipient subscription
+   */
   private setupNewMessageRecipientSubscription(): void {
     this.subscriptions.add(
       this.chatService.selectedSearchResult$.subscribe((recipient) => {
         this.newMessageRecipient = recipient;
         if (recipient) {
-          this.placeholder = `Nachricht an ${
-            recipient.type === 'channel' ? '#' : ''
-          }${recipient.name}`;
+          this.updatePlaceholderForRecipient(recipient);
         } else {
-          this.placeholder = 'Wähle einen Empfänger aus...';
+          this.placeholder = 'Choose a recipient...';
         }
       })
     );
   }
 
-  getDisplayName(user: User): string {
-    if (!user) return 'Unbenannter Benutzer';
-    if (user.username) return user.username;
-    if (user.displayName) return user.displayName;
-    if (user.email) return user.email;
-    return 'Unbenannter Benutzer';
+  /**
+   * Updates placeholder text for selected recipient
+   */
+  private updatePlaceholderForRecipient(recipient: SearchResult): void {
+    this.placeholder = `Message to ${recipient.type === 'channel' ? '#' : ''}${
+      recipient.name
+    }`;
   }
 
+  /**
+   * Gets display name for user
+   */
+  getDisplayName(user: User): string {
+    if (!user) return 'Unnamed User';
+    return user.username || user.displayName || user.email || 'Unnamed User';
+  }
+
+  /**
+   * Creates message data object for sending
+   */
   private createMessageData(): any {
     const baseMessage = {
       authorId: this.currentUser.uid,
@@ -415,19 +550,33 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
     };
 
     if (this.isNewMessage && this.newMessageRecipient) {
-      return {
-        ...baseMessage,
-        channelId:
-          this.newMessageRecipient.type === 'channel'
-            ? this.newMessageRecipient.id
-            : null,
-        directUserId:
-          this.newMessageRecipient.type === 'user'
-            ? this.newMessageRecipient.id
-            : null,
-      };
+      return this.createNewMessageData(baseMessage);
     }
 
+    return this.createExistingChatMessageData(baseMessage);
+  }
+
+  /**
+   * Creates message data for new message
+   */
+  private createNewMessageData(baseMessage: any): any {
+    return {
+      ...baseMessage,
+      channelId:
+        this.newMessageRecipient?.type === 'channel'
+          ? this.newMessageRecipient.id
+          : null,
+      directUserId:
+        this.newMessageRecipient?.type === 'user'
+          ? this.newMessageRecipient.id
+          : null,
+    };
+  }
+
+  /**
+   * Creates message data for existing chat
+   */
+  private createExistingChatMessageData(baseMessage: any): any {
     return {
       ...baseMessage,
       channelId: this.currentChannel?.id || null,
@@ -435,62 +584,102 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
     };
   }
 
+  /**
+   * Sends message
+   */
   async sendMessage(): Promise<void> {
-    if (!this.messageText.trim() || !this.currentUser) return;
-    if (this.isNewMessage && !this.newMessageRecipient && !this.isThreadMessage)
-      return;
+    if (!this.isValidMessageState()) return;
 
     try {
-      if (this.isThreadMessage && this.parentMessageId) {
-        // Entfernen des vierten Arguments (mentions)
-        await this.userData.addThreadMessage(
-          this.parentMessageId,
-          this.messageText.trim(),
-          this.currentUser.uid
-        );
-      } else {
-        const messageData = this.createMessageData();
-        const messagesRef = collection(this.firestore, 'userMessages');
-        await addDoc(messagesRef, messageData);
-      }
-
-      // Reset all message-related data
-      this.messageText = '';
-      this.mentionedUsers = [];
-      this.mentionTags = []; // Reset the mentionTags array
-
-      if (
-        this.isNewMessage &&
-        this.newMessageRecipient &&
-        !this.isThreadMessage
-      ) {
-        if (this.newMessageRecipient.type === 'channel') {
-          await this.chatService.selectChannel(this.newMessageRecipient.id);
-        } else {
-          await this.chatService.selectDirectMessage(
-            this.newMessageRecipient.id
-          );
-        }
-        this.chatService.messageWasSent();
-      }
+      await this.processMessageSend();
+      this.resetMessageState();
+      await this.handlePostSend();
     } catch (error) {
       console.error('Error sending message:', error);
     }
   }
 
+  /**
+   * Checks if message can be sent
+   */
+  private isValidMessageState(): boolean {
+    if (!this.messageText.trim() || !this.currentUser) return false;
+    if (this.isNewMessage && !this.newMessageRecipient && !this.isThreadMessage)
+      return false;
+    return true;
+  }
+
+  /**
+   * Processes message sending
+   */
+  private async processMessageSend(): Promise<void> {
+    if (this.isThreadMessage && this.parentMessageId) {
+      await this.userData.addThreadMessage(
+        this.parentMessageId,
+        this.messageText.trim(),
+        this.currentUser.uid
+      );
+    } else {
+      const messageData = this.createMessageData();
+      const messagesRef = collection(this.firestore, 'userMessages');
+      await addDoc(messagesRef, messageData);
+    }
+  }
+
+  /**
+   * Resets message state after sending
+   */
+  private resetMessageState(): void {
+    this.messageText = '';
+    this.mentionedUsers = [];
+    this.mentionTags = [];
+  }
+
+  /**
+   * Handles post-send actions
+   */
+  private async handlePostSend(): Promise<void> {
+    if (
+      this.isNewMessage &&
+      this.newMessageRecipient &&
+      !this.isThreadMessage
+    ) {
+      await this.handleNewMessageSent();
+    }
+  }
+
+  /**
+   * Handles actions after new message is sent
+   */
+  private async handleNewMessageSent(): Promise<void> {
+    if (this.newMessageRecipient?.type === 'channel') {
+      await this.chatService.selectChannel(this.newMessageRecipient.id);
+    } else {
+      await this.chatService.selectDirectMessage(
+        this.newMessageRecipient?.id || ''
+      );
+    }
+    this.chatService.messageWasSent();
+  }
+
+  /**
+   * Cleans up subscriptions
+   */
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
 
+  /**
+   * Inserts @ symbol at cursor position
+   */
   insertAtSymbol(): void {
     const textarea = this.messageInput.nativeElement;
     const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
 
     this.messageText =
       this.messageText.substring(0, start) +
       '@' +
-      this.messageText.substring(end);
+      this.messageText.substring(textarea.selectionEnd);
 
     setTimeout(() => {
       textarea.selectionStart = start + 1;
@@ -501,6 +690,9 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
     this.handleMentionTrigger();
   }
 
+  /**
+   * Gets formatted text with mention highlights
+   */
   getFormattedText(): SafeHtml {
     let text = this.messageText;
     const sortedTags = [...this.mentionTags].sort((a, b) => b.start - a.start);

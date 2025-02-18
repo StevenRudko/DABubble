@@ -1,5 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Database, ref, set, onDisconnect, onValue } from '@angular/fire/database';
+import {
+  Database,
+  ref,
+  set,
+  onDisconnect,
+  onValue,
+} from '@angular/fire/database';
 import { Auth } from '@angular/fire/auth';
 import { BehaviorSubject, map, Observable } from 'rxjs';
 
@@ -9,7 +15,7 @@ import { BehaviorSubject, map, Observable } from 'rxjs';
  * observables for accessing the list of online users.
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PresenceService {
   /**
@@ -80,13 +86,6 @@ export class PresenceService {
    * @param {(users: Record<string, string>) => void} callback - Callback function that receives the list of users.
    * @returns {void}
    */
-  // getOnlineUsers(callback: (users: Record<string, string>) => void): void {
-  //   const statusRef = ref(this.db, 'status');
-  //   onValue(statusRef, (snapshot) => {
-  //     callback(snapshot.val());
-  //   });
-  // }
-
   getOnlineUsers(): Observable<string[]> {
     return this.onlineUsers$.pipe(
       map((statusData) =>
@@ -96,12 +95,4 @@ export class PresenceService {
       )
     );
   }
-
-
-  // Funktion zum abrufen der User die online sind
-  // this.presenceService.getOnlineUsers().subscribe((onlineUsers) => {
-  //   this.string = onlineUsers;
-  //   console.log('Online USER' ,this.onlineUsers);
-  // });
-
 }

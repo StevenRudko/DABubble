@@ -78,26 +78,25 @@ export class UserMessageComponent {
   @Input() showReactionIcons: boolean = true;
   @Input() allMessages: DisplayMessageInterface[] = [];
   @Input() CurrentUserURL: any;
+  @Input() user: any[] = [];
+  @Input() parentMessageId: string | null = null;
+
+  public currentUser: any = null;
+  emojiList: any[] = [];
+  editStatusMessage: boolean = false;
+  currentEditingMessageId: string | null = null;
+  originalMessageContent: string = '';
+  threadInfo: ThreadInfo | null = null;
   hoverComponent: boolean = false;
   hoverComponentEmojiOverviewMap: { [key: string]: boolean } = {};
   activeEmojiPicker: string | null = null;
   emojiAuthors: string[] = [];
-  @Input() user: any[] = [];
-  @Input() parentMessageId: string | null = null;
 
-  public currentUser: any = null; // von private zu public geändert, wegen der emoji overview component
-  emojiList: any[] = [];
-  editStatusMessage: boolean = false;
+  private boundMentionClick = this.handleMentionClick.bind(this);
 
-  currentEditingMessageId: string | null = null;
-  originalMessageContent: string = '';
-  threadInfo: ThreadInfo | null = null;
-
-  private boundMentionClick = (event: Event) => {
-    if (event instanceof CustomEvent) {
-      this.openMentionedProfile(event.detail);
-    }
-  };
+  /**
+   * Initializes component with required services
+   */
   constructor(
     private dialog: MatDialog,
     private userData: UserData,
@@ -108,36 +107,76 @@ export class UserMessageComponent {
     private sanitizer: DomSanitizer,
     private threadService: ThreadService
   ) {
+    this.initializeComponent();
+  }
+
+  /**
+   * Sets up initial component state
+   */
+  private initializeComponent(): void {
     this.emojiList = this.emojiService.emojiList;
     this.authService.user$.subscribe((user) => {
       this.currentUser = user;
     });
   }
 
-  ngOnInit() {
+  /**
+   * Initializes component and sets up event listeners
+   */
+  ngOnInit(): void {
     this.loadThreadInfo();
-    document.addEventListener('mentionClick', this.boundMentionClick);
-    document.addEventListener('click', this.handleGlobalClick, true);
-
-    // Neuer Listener für Emoji-Picker
-    document.addEventListener('click', (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (!target.closest('mat-icon') && !target.closest('app-emoji-picker')) {
-        this.activeEmojiPicker = null;
-      }
-    });
+    this.setupEventListeners();
   }
 
+  /**
+   * Sets up document event listeners
+   */
+  private setupEventListeners(): void {
+    document.addEventListener('mentionClick', this.boundMentionClick);
+    document.addEventListener('click', this.handleGlobalClick, true);
+    document.addEventListener('click', (e: MouseEvent) =>
+      this.handleEmojiPickerClick(e)
+    );
+  }
+
+  /**
+   * Handles click events for emoji picker
+   */
+  private handleEmojiPickerClick(e: MouseEvent): void {
+    const target = e.target as HTMLElement;
+    if (!target.closest('mat-icon') && !target.closest('app-emoji-picker')) {
+      this.activeEmojiPicker = null;
+    }
+  }
+
+  /**
+   * Handles mention click events
+   */
+  private handleMentionClick(event: Event): void {
+    if (event instanceof CustomEvent) {
+      this.openMentionedProfile(event.detail);
+    }
+  }
+
+  /**
+   * Opens profile dialog
+   */
   openProfile(event: Event): void {
     event.preventDefault();
     event.stopPropagation();
 
     const msg = this.allMessages[0];
-    if (!msg) return;
+    if (!msg || this.dialog.openDialogs.length > 0) return;
 
-    if (this.dialog.openDialogs.length > 0) return; // Verhindert mehrfaches Öffnen
+    const config = this.createDialogConfig(msg);
+    this.openProfileDialog(msg, config);
+  }
 
-    const config = {
+  /**
+   * Creates dialog configuration
+   */
+  private createDialogConfig(msg: DisplayMessageInterface): any {
+    return {
       width: '400px',
       hasBackdrop: true,
       panelClass: msg.isOwnMessage
@@ -146,7 +185,12 @@ export class UserMessageComponent {
       autoFocus: false,
       disableClose: false,
     };
+  }
 
+  /**
+   * Opens appropriate profile dialog
+   */
+  private openProfileDialog(msg: DisplayMessageInterface, config: any): void {
     if (msg.isOwnMessage) {
       this.dialog.open(UserOverviewComponent, config);
     } else {
@@ -157,6 +201,9 @@ export class UserMessageComponent {
     }
   }
 
+  /**
+   * Creates profile data object
+   */
   private createProfileData(msg: DisplayMessageInterface): UserProfileData {
     const userData = this.user.find((u) => u.username === msg.author);
     return {
@@ -168,87 +215,141 @@ export class UserMessageComponent {
     };
   }
 
-  ngOnDestroy() {
+  /**
+   * Cleans up event listeners
+   */
+  ngOnDestroy(): void {
     document.removeEventListener('click', this.handleGlobalClick);
     document.removeEventListener('mentionClick', this.boundMentionClick);
   }
 
-  private handleGlobalClick = (event: Event) => {
+  /**
+   * Handles global click events
+   */
+  private handleGlobalClick = (event: Event): void => {
     const target = event.target as HTMLElement;
-    if (target.closest('.mention')) {
-      const chatContainer = document.querySelector('.main-chat-body');
-      if (chatContainer instanceof HTMLElement) {
-        chatContainer.focus();
-      }
+    const mentionElement = target.closest('.mention') as HTMLElement;
 
-      const mentionElement = target.closest('.mention') as HTMLElement;
-      const username = mentionElement.getAttribute('data-username');
-      if (username) {
-        event.preventDefault();
-        event.stopPropagation();
-        this.openMentionedProfile(username);
-      }
+    if (mentionElement) {
+      this.handleMentionElementClick(event, mentionElement);
     }
   };
 
-  private async loadThreadInfo() {
+  /**
+   * Handles clicks on mention elements
+   */
+  private handleMentionElementClick(
+    event: Event,
+    mentionElement: HTMLElement
+  ): void {
+    const chatContainer = document.querySelector('.main-chat-body');
+    if (chatContainer instanceof HTMLElement) {
+      chatContainer.focus();
+    }
+
+    const username = mentionElement.getAttribute('data-username');
+    if (username) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.openMentionedProfile(username);
+    }
+  }
+
+  /**
+   * Loads thread information
+   */
+  private async loadThreadInfo(): Promise<void> {
     if (!this.allMessages || this.allMessages.length === 0) return;
 
-    const message = this.allMessages[0];
     try {
+      const message = this.allMessages[0];
       const comments = await this.userData.getThreadMessages(
         message.userMessageId
       );
-
-      if (comments && comments.length > 0) {
-        const sortedComments = comments.sort((a, b) => {
-          const timeA = a.time.seconds * 1000 + a.time.nanoseconds / 1000000;
-          const timeB = b.time.seconds * 1000 + b.time.nanoseconds / 1000000;
-          return timeB - timeA;
-        });
-
-        const lastComment = sortedComments[0];
-        const lastCommentTime = new Date(
-          lastComment.time.seconds * 1000 +
-            lastComment.time.nanoseconds / 1000000
-        );
-
-        this.threadInfo = {
-          replyCount: comments.length,
-          lastReplyTime: {
-            hours: lastCommentTime.getHours(),
-            minutes: lastCommentTime.getMinutes(),
-          },
-        };
-      } else {
-        this.threadInfo = {
-          replyCount: 0,
-        };
-      }
+      this.updateThreadInfo(comments);
     } catch (error) {
       console.error('Error loading thread info:', error);
+      this.threadInfo = { replyCount: 0 };
+    }
+  }
+
+  /**
+   * Updates thread info with comment data
+   */
+  private updateThreadInfo(comments: any[]): void {
+    if (comments && comments.length > 0) {
+      const sortedComments = this.sortCommentsByTime(comments);
+      const lastComment = sortedComments[0];
+      const lastCommentTime = this.getCommentTime(lastComment);
+
       this.threadInfo = {
-        replyCount: 0,
+        replyCount: comments.length,
+        lastReplyTime: {
+          hours: lastCommentTime.getHours(),
+          minutes: lastCommentTime.getMinutes(),
+        },
       };
-    }
-  }
-
-  getEditMessageStatus(status: boolean, userMessageId: string) {
-    if (status) {
-      const messageToEdit = this.allMessages.find(
-        (msg) => msg.userMessageId === userMessageId
-      );
-      if (messageToEdit) {
-        this.currentEditingMessageId = userMessageId;
-        this.originalMessageContent = messageToEdit.message;
-      }
     } else {
-      this.currentEditingMessageId = null;
-      this.originalMessageContent = '';
+      this.threadInfo = { replyCount: 0 };
     }
-    this.editStatusMessage = status;
   }
 
+  /**
+   * Sorts comments by timestamp
+   */
+  private sortCommentsByTime(comments: any[]): any[] {
+    return comments.sort((a, b) => {
+      const timeA = a.time.seconds * 1000 + a.time.nanoseconds / 1000000;
+      const timeB = b.time.seconds * 1000 + b.time.nanoseconds / 1000000;
+      return timeB - timeA;
+    });
+  }
+
+  /**
+   * Gets comment timestamp
+   */
+  private getCommentTime(comment: any): Date {
+    return new Date(
+      comment.time.seconds * 1000 + comment.time.nanoseconds / 1000000
+    );
+  }
+
+  /**
+   * Updates message edit status
+   */
+  getEditMessageStatus(status: boolean, userMessageId: string): void {
+    if (status) {
+      this.startEditing(userMessageId);
+    } else {
+      this.stopEditing();
+    }
+    this.editStatusMessage = status; // Add this line
+  }
+
+  /**
+   * Starts message editing
+   */
+  private startEditing(userMessageId: string): void {
+    const messageToEdit = this.allMessages.find(
+      (msg) => msg.userMessageId === userMessageId
+    );
+    if (messageToEdit) {
+      this.currentEditingMessageId = userMessageId;
+      this.originalMessageContent = messageToEdit.message;
+    }
+  }
+
+  /**
+   * Stops message editing
+   */
+  private stopEditing(): void {
+    this.currentEditingMessageId = null;
+    this.originalMessageContent = '';
+  }
+
+  /**
+   * Saves edited message
+   */
   onSave(): void {
     if (this.currentEditingMessageId) {
       this.editMessage(
@@ -258,31 +359,49 @@ export class UserMessageComponent {
     }
   }
 
-  openThread() {
+  /**
+   * Opens thread view
+   */
+  openThread(): void {
     if (this.allMessages && this.allMessages.length > 0) {
       const messageId = this.allMessages[0].userMessageId;
       this.threadService.openThread(messageId);
     }
   }
 
-  onMouseEnter(msgId: string) {
+  /**
+   * Handles mouse enter on message
+   */
+  onMouseEnter(msgId: string): void {
     if (!this.activeEmojiPicker) {
       this.hoverComponent = true;
     }
   }
 
-  onMouseLeave(msgId: string) {
+  /**
+   * Handles mouse leave on message
+   */
+  onMouseLeave(msgId: string): void {
     this.hoverComponent = false;
   }
 
+  /**
+   * Handles mouse enter on reaction icon
+   */
   onMouseEnterReactionIcon(emojiId: string): void {
     this.hoverComponentEmojiOverviewMap[emojiId] = true;
   }
 
+  /**
+   * Handles mouse leave on reaction icon
+   */
   onMouseLeaveReactionIcon(emojiId: string): void {
     this.hoverComponentEmojiOverviewMap[emojiId] = false;
   }
 
+  /**
+   * Toggles emoji picker visibility
+   */
   toggleEmojiPicker(messageId: string, event: MouseEvent): void {
     event.stopPropagation();
     setTimeout(() => {
@@ -292,34 +411,46 @@ export class UserMessageComponent {
     }, 100);
   }
 
+  /**
+   * Handles emoji selection
+   */
   handleEmojiSelected(emoji: any, messageId: string): void {
     if (this.editStatusMessage) {
-      const textarea = this.messageTextarea.nativeElement;
-      const start = textarea.selectionStart;
-      const end = textarea.selectionEnd;
-      const message = this.allMessages.find(
-        (msg) => msg.userMessageId === messageId
-      );
-
-      if (message) {
-        message.message =
-          message.message.substring(0, start) +
-          emoji.emoji +
-          message.message.substring(end);
-
-        setTimeout(() => {
-          textarea.selectionStart = start + emoji.emoji.length;
-          textarea.selectionEnd = start + emoji.emoji.length;
-          textarea.focus();
-        });
-      }
-      this.activeEmojiPicker = null;
+      this.insertEmojiIntoMessage(emoji, messageId);
     } else {
       this.handleEmojiReaction(emoji, messageId);
-      this.activeEmojiPicker = null;
+    }
+    this.activeEmojiPicker = null;
+  }
+
+  /**
+   * Inserts emoji into message text
+   */
+  private insertEmojiIntoMessage(emoji: any, messageId: string): void {
+    const textarea = this.messageTextarea.nativeElement;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const message = this.allMessages.find(
+      (msg) => msg.userMessageId === messageId
+    );
+
+    if (message) {
+      message.message =
+        message.message.substring(0, start) +
+        emoji.emoji +
+        message.message.substring(end);
+
+      setTimeout(() => {
+        textarea.selectionStart = start + emoji.emoji.length;
+        textarea.selectionEnd = start + emoji.emoji.length;
+        textarea.focus();
+      });
     }
   }
 
+  /**
+   * Handles emoji reaction to message
+   */
   async handleEmojiReaction(emoji: any, messageId: string): Promise<void> {
     try {
       const currentUser = await firstValueFrom(this.authService.user$);
@@ -333,16 +464,22 @@ export class UserMessageComponent {
         this.activeEmojiPicker = null;
       }
     } catch (error) {
-      console.error('Fehler beim Hinzufügen der Emoji-Reaktion:', error);
+      console.error('Error adding emoji reaction:', error);
     }
   }
 
+  /**
+   * Checks if emoji is reaction object
+   */
   private isEmojiReaction(
     emoji: string | EmojiReaction
   ): emoji is EmojiReaction {
     return typeof emoji === 'object' && emoji !== null && 'name' in emoji;
   }
 
+  /**
+   * Gets emoji count for message
+   */
   getEmojiCount(message: DisplayMessageInterface, emojiName: string): number {
     return (message.emojis || []).filter((reaction) => {
       if (this.isEmojiReaction(reaction)) {
@@ -352,6 +489,9 @@ export class UserMessageComponent {
     }).length;
   }
 
+  /**
+   * Checks if user has reacted with emoji
+   */
   hasUserReacted(message: DisplayMessageInterface, emojiName: string): boolean {
     if (!this.currentUser) return false;
 
@@ -365,6 +505,9 @@ export class UserMessageComponent {
     });
   }
 
+  /**
+   * Opens emoji picker dialog
+   */
   openEmojiPicker(): void {
     const dialogRef = this.dialog.open(EmojiPickerComponent, {
       backdropClass: 'custom-backdrop',
@@ -372,34 +515,40 @@ export class UserMessageComponent {
     dialogRef.afterClosed().subscribe(() => {});
   }
 
-  deleteMessage(messageId: string) {
-    this.userData
-      .deleteMessage(messageId)
-      .then(() => {})
-      .catch((error) => {
-        console.error('Fehler beim Löschen der Nachricht:', error);
-      });
+  /**
+   * Deletes message
+   */
+  deleteMessage(messageId: string): void {
+    this.userData.deleteMessage(messageId).catch((error) => {
+      console.error('Error deleting message:', error);
+    });
   }
 
-  editMessage(userMessageId: string, updatedMessage?: string) {
+  /**
+   * Updates message content
+   */
+  editMessage(userMessageId: string, updatedMessage?: string): void {
     const messageToEdit = this.allMessages.find(
       (msg) => msg.userMessageId === userMessageId
     );
     if (!messageToEdit) return;
+
     this.originalMessageContent = messageToEdit.message;
     const newMessage = updatedMessage || messageToEdit.message;
 
     this.userData
       .updateMessage(userMessageId, { message: newMessage })
       .then(() => {
-        console.log('Nachricht erfolgreich aktualisiert');
         this.editStatusMessage = false;
       })
       .catch((error) => {
-        console.error('Fehler beim Aktualisieren der Nachricht:', error);
+        console.error('Error updating message:', error);
       });
   }
 
+  /**
+   * Cancels message editing
+   */
   onCancel(): void {
     this.editStatusMessage = false;
 
@@ -413,6 +562,9 @@ export class UserMessageComponent {
     }
   }
 
+  /**
+   * Gets emoji author names
+   */
   getEmojiAuthorName(msg: any, emojiData: string | EmojiReaction): string[] {
     this.emojiAuthors = [];
     const emojiName = this.isEmojiReaction(emojiData)
@@ -420,27 +572,41 @@ export class UserMessageComponent {
       : emojiData;
 
     if (this.isEmojiReaction(emojiData)) {
-      // Durchlaufe alle Reaktionen, um die Autoren zu finden, die auf dieses Emoji reagiert haben
-      msg.emojis.forEach((reaction: EmojiReaction) => {
-        if (reaction.name === emojiName) {
-          const user = this.user.find((u) => u.localID === reaction.user);
-          if (user) {
-            this.emojiAuthors.push(user.username);
-          }
-        }
-      });
+      this.collectEmojiAuthors(msg, emojiName);
     } else {
-      // Wenn es keine Emoji-Reaktion gibt, füge den ersten Benutzer hinzu, der das Emoji verwendet hat
-      const user = this.user.find((u) => u.localID === emojiData);
-      if (user) {
-        this.emojiAuthors.push(user.username);
-      }
+      this.addSingleEmojiAuthor(emojiData);
     }
 
-    // Rückgabe eines Arrays von Benutzernamen
     return this.emojiAuthors;
   }
 
+  /**
+   * Collects authors who reacted with emoji
+   */
+  private collectEmojiAuthors(msg: any, emojiName: string): void {
+    msg.emojis.forEach((reaction: EmojiReaction) => {
+      if (reaction.name === emojiName) {
+        const user = this.user.find((u) => u.localID === reaction.user);
+        if (user) {
+          this.emojiAuthors.push(user.username);
+        }
+      }
+    });
+  }
+
+  /**
+   * Adds single emoji author
+   */
+  private addSingleEmojiAuthor(emojiData: string): void {
+    const user = this.user.find((u) => u.localID === emojiData);
+    if (user) {
+      this.emojiAuthors.push(user.username);
+    }
+  }
+
+  /**
+   * Gets emoji symbol
+   */
   getEmojiSymbol(emojiData: string | EmojiReaction): string {
     const emojiName = this.isEmojiReaction(emojiData)
       ? emojiData.name
@@ -448,30 +614,40 @@ export class UserMessageComponent {
     return this.emojiList.find((e) => e.name === emojiName)?.emoji || '';
   }
 
+  /**
+   * Formats message with mention highlights
+   */
   formatMessageWithMentions(message: string): SafeHtml {
     const formattedMessage = message.replace(
       /@(\w+\s*\w*)/g,
       (match, username) => {
         const cleanUsername = username.trim();
-        // Statt onclick einen data-username Attribut verwenden
         return `<span class="mention" data-username="${cleanUsername}">@${cleanUsername}</span>`;
       }
     );
     return this.sanitizer.bypassSecurityTrustHtml(formattedMessage);
   }
 
+  /**
+   * Opens mentioned user's profile
+   */
   private openMentionedProfile(username: string): void {
-    if (this.dialog.openDialogs.length > 0) {
-      return;
-    }
+    if (this.dialog.openDialogs.length > 0) return;
 
     const userData = this.user.find(
       (u) => u.username?.toLowerCase() === username.toLowerCase()
     );
-
     if (!userData) return;
 
-    const config = {
+    const config = this.createMentionProfileConfig(userData);
+    this.openMentionProfileDialog(userData, config);
+  }
+
+  /**
+   * Creates config for mention profile dialog
+   */
+  private createMentionProfileConfig(userData: any): any {
+    return {
       width: '400px',
       hasBackdrop: true,
       panelClass:
@@ -481,7 +657,12 @@ export class UserMessageComponent {
       autoFocus: false,
       disableClose: false,
     };
+  }
 
+  /**
+   * Opens appropriate dialog for mentioned profile
+   */
+  private openMentionProfileDialog(userData: any, config: any): void {
     if (userData.localID === this.currentUser?.uid) {
       this.dialog.open(UserOverviewComponent, config);
     } else {

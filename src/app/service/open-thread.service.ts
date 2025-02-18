@@ -15,20 +15,35 @@ export class ThreadService {
 
   constructor() {}
 
+  /**
+   * Opens thread for specified message
+   * @param messageId ID of message to open thread for
+   */
   openThread(messageId: string): void {
     this.currentThreadMessageIdSubject.next(messageId);
     this.threadVisibleSubject.next(true);
   }
 
+  /**
+   * Closes current thread and resets message ID
+   */
   closeThread(): void {
     this.threadVisibleSubject.next(false);
     this.currentThreadMessageIdSubject.next(null);
   }
 
+  /**
+   * Gets ID of current thread message
+   * @returns Current thread message ID or null if no thread open
+   */
   getCurrentThreadMessageId(): string | null {
     return this.currentThreadMessageIdSubject.getValue();
   }
 
+  /**
+   * Checks if thread view is currently visible
+   * @returns Boolean indicating thread visibility
+   */
   isThreadVisible(): boolean {
     return this.threadVisibleSubject.getValue();
   }

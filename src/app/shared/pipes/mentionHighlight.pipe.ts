@@ -11,7 +11,6 @@ export class MentionHighlightPipe implements PipeTransform {
   transform(text: string): SafeHtml {
     if (!text) return '';
 
-    // Ersetzt @mentions mit einem span in der gewünschten Farbe
     const mentionRegex = /@(\w+)/g;
     const htmlText = text.replace(
       mentionRegex,

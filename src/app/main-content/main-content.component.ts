@@ -37,7 +37,6 @@ export class MainContentComponent {
   @ViewChild('drawer') drawer!: MatSidenav;
   @ViewChild('contentWrapper') contentWrapper!: ElementRef;
 
-  // Public properties
   public isMobile: boolean = window.innerWidth <= 1024;
   public isChatActive: boolean = false;
   public isChatActive$ = new BehaviorSubject<boolean>(false);
@@ -50,6 +49,9 @@ export class MainContentComponent {
     showThread: false,
   };
 
+  /**
+   * Initializes auth state monitoring and UI state subscriptions.
+   */
   constructor(
     private authService: AuthService,
     private presenceService: PresenceService,
@@ -67,6 +69,9 @@ export class MainContentComponent {
     });
   }
 
+  /**
+   * Monitors auth state changes and logs user status.
+   */
   private initializeAuthListener(): void {
     this.authService.user$.subscribe((user) => {
       if (user) {
@@ -77,6 +82,10 @@ export class MainContentComponent {
     });
   }
 
+  /**
+   * Updates mobile view state on window resize.
+   * Opens drawer when transitioning to mobile view.
+   */
   @HostListener('window:resize')
   checkScreenSize(): void {
     const wasMobile = this.isMobile;
@@ -90,6 +99,9 @@ export class MainContentComponent {
     }
   }
 
+  /**
+   * Initializes user presence and mobile view settings.
+   */
   ngOnInit(): void {
     this.presenceService.setOnlineStatus();
     if (this.isMobile) {
@@ -97,12 +109,19 @@ export class MainContentComponent {
     }
   }
 
+  /**
+   * Sets up initial mobile view drawer state.
+   */
   ngAfterViewInit(): void {
     if (this.isMobile) {
       this.drawer?.open();
     }
   }
 
+  /**
+   * Handles navigation between thread, chat and sidebar views.
+   * Updates UI state and visibility flags.
+   */
   handleBack(): void {
     if (this.navigationState.showThread) {
       this.navigationState.showThread = false;
@@ -115,6 +134,10 @@ export class MainContentComponent {
     this.isChatActive$.next(this.navigationState.showChat);
   }
 
+  /**
+   * Controls chat view visibility and updates mobile UI.
+   * @param show - Toggle chat view visibility
+   */
   showChat(show: boolean) {
     this.navigationState.showChat = show;
     this.isChatActive = show;
@@ -135,6 +158,9 @@ export class MainContentComponent {
     }
   }
 
+  /**
+   * Toggles sidebar visibility in desktop view only.
+   */
   public toggleSidebar(): void {
     if (!this.isMobile) {
       this.sidebarActive = !this.sidebarActive;
@@ -142,6 +168,10 @@ export class MainContentComponent {
     }
   }
 
+  /**
+   * Opens thread view for a message.
+   * @param messageId - ID of message to show thread for
+   */
   onOpenThread(messageId: string): void {
     this.threadService.openThread(messageId);
   }

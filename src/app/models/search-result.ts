@@ -24,7 +24,7 @@ export interface SearchResult {
    * @type {string}
    */
     email: string;
-      
+
     /**
      * The unique local identifier (ID) assigned to the user.
      * - Used to differentiate users within the system.
