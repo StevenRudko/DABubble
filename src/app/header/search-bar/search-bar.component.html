@@ -3,7 +3,6 @@
         @for (result of searchResults; track $index) {
             @if (result.type == 'user') {
                 <div class="result-container" (click)="showProfile(result)">
-                    <div>&#64;</div>
                         <img src="{{result.photoURL}}" alt="">
                         <div class="result-container-basic-infos">
                             <span class="nowrap">
@@ -29,8 +28,7 @@
         @for (result of searchResults; track $index) {
             @if (result.type == 'message') {
                 <div class="result-container"
-                (click)="openChannel(result.channelId, result.userMessageId)">
-                        <div>#</div>
+                (click)="openMessage(result.channelId, result.userMessageId)">
                         <img src="{{result.photoURL}}" alt="">
                         <div class="result-container-basic-infos">
                             <span class="ellipsis-name">{{result.username}}</span>
@@ -54,7 +52,6 @@
             } 
             @else if (result.type == 'directMessage') {
                 <div class="result-container" (click)="openDirectMessage(result)">
-                    <div>#</div>
                         <img src="{{result.photoURL}}" alt="">
                         <div class="result-container-basic-infos">
                             <span class="ellipsis-name">{{result.username}}</span>
@@ -68,7 +65,6 @@
             }
             @else if (result.type == 'thread' && result.channelId) {
                 <div class="result-container" (click)="openThread(result)">
-                    <div>#</div>
                     <img src="{{result.photoURL}}" alt="">
                     <div class="result-container-basic-infos">
                         <span class="ellipsis-name">{{result.username}}</span>
@@ -95,7 +91,7 @@
             }
             @else if (result.type == 'thread' && result.directUserId) {
                 <div class="result-container" (click)="openThread(result)">
-                    <div>#</div>
+                    <!-- <div>#</div> -->
                     <img src="{{result.photoURL}}" alt="">
                     <div class="result-container-basic-infos">
                         <span class="ellipsis-name">{{result.username}}</span>

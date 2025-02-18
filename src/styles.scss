@@ -250,3 +250,18 @@ h1 {
     box-shadow: 0 0 0 5px #eceefe;
   }
 }
+
+.highlight {
+  background-color: #eceefe;
+  animation: fadeOut 1s linear 1.5s forwards;
+}
+
+@keyframes fadeOut {
+  from {
+      background-color: #eceefe;
+  }
+
+  to {
+      background-color: unset;
+  }
+}

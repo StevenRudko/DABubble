@@ -167,11 +167,10 @@ export class SearchBarComponent implements OnInit {
       return this.isUserInChannel(msg.channelId);
     }
 
-    // Prüfe, ob der Benutzer Teil des Channels ist (falls die 'userMessageId' im Channel gefunden wird)
+    // Prüfe, ob der Benutzer Teil des Channels ist 
     if (msg.authorId) {
       return this.isUserInChannelThread(msg);
     }
-    // Weitere Regeln hinzufügen, falls nötig
     return false;
   }
 
@@ -182,15 +181,6 @@ export class SearchBarComponent implements OnInit {
   }
 
   isUserInChannelThread(message: UserMessageInterface): boolean {
-    // const mainMessage = this.userMessages.find((msg) => {
-    //   msg.comments.includes(message.userMessageId);
-    // });
-    // if (mainMessage) {
-    //   return this.isUserInChannel(mainMessage!.channelId)
-    // } else {
-    //   return false
-    // }
-
     const mainMessage = this.userMessages.find(msg => msg.comments.includes(message.userMessageId));
     return mainMessage ? this.isUserInChannel(mainMessage.channelId) : false;
   }
@@ -256,7 +246,7 @@ export class SearchBarComponent implements OnInit {
     }
   }
 
-  async openChannel(channelId: string, messageId: string) {
+  async openMessage(channelId: string, messageId: string) {
     await this.showChannel(channelId);
     this.scrollWhenAvailable(messageId, 'chatContainer');
 
@@ -292,12 +282,12 @@ export class SearchBarComponent implements OnInit {
     if (result.channelId) {
       await this.showChannel(result.channelId);
       this.scrollWhenAvailable(result.idOfTheRespondentMessage, 'chatContainer');
-      // await this.mainChat.openThread()
+      // await this.mainChat.onOpenThread(result.messageId)
       // this.scrollWhenAvailable(result.userMessageId, 'messagesContainer');
     } else if (result.directUserId) {
       await this.showDirectMessage(result);
       this.scrollWhenAvailable(result.idOfTheRespondentMessage, 'chatContainer');
-      // await this.mainChat.openThread()
+      // await this.mainChat.onOpenThread(result.messageId)
       // this.scrollWhenAvailable(result.userMessageId, 'messagesContainer');
     }
 
@@ -315,7 +305,7 @@ export class SearchBarComponent implements OnInit {
         const element = document.getElementById(messageId);
         const container = document.querySelector(`#${domId}`); // ID korrekt als Selector nutzen
 
-        console.log(`Versuch ${checkCounter + 1}:`, element, container);
+        // console.log(`Versuch ${checkCounter + 1}:`, element, container);
 
         if (element && container) {
           const targetScroll = element.offsetTop - scrollOffset;
@@ -324,6 +314,7 @@ export class SearchBarComponent implements OnInit {
 
           clearInterval(interval);
           observer.disconnect(); // MutationObserver deaktivieren
+          this.highlightMessage(element);
         }
 
         if (++checkCounter >= maxChecks) {
@@ -337,5 +328,15 @@ export class SearchBarComponent implements OnInit {
     });
 
     observer.observe(document.body, { childList: true, subtree: true });
+  }
+
+  highlightMessage(element: HTMLElement | null) {
+    if (element) {
+      element.classList.add('highlight');
+
+      setTimeout(() => {
+        element.classList.remove('highlight');
+      }, 3000);
+    }
   }
 }
