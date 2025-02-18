@@ -336,6 +336,33 @@
   }
 }
 
+.mobile-new-message-btn {
+  display: none; // Standardmäßig ausgeblendet
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: #535af1;
+  border: none;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: darken(#535af1, 5%);
+  }
+
+  mat-icon {
+    color: white;
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
+}
+
 @media (max-width: 1400px) {
   .sidebar {
     margin-left: 8px;
@@ -407,6 +434,11 @@
   }
   .collapsible-content.direct-messages {
     max-height: calc(100vh - 450px);
+  }
+  .mobile-new-message-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 
