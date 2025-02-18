@@ -10,7 +10,7 @@
 
   <div class="chat">
     <div #messagesContainer id="messagesContainer" class="messages-container">
-      <!-- Parent Message -->
+
       <app-user-message *ngIf="parentMessage" [threadMessage]="true" [showAnswerDetails]="false"
         [showReactionIcons]="true" [allMessages]="parentMessage" [CurrentUserURL]="parentMessage[0]?.authorPhoto"
         [user]="allUsers">
@@ -18,7 +18,7 @@
 
 
 
-      <!-- Thread Divider -->
+
       <div class="thread-divider">
         <div class="divider-text">
           {{ replyCount }} {{ replyCount === 1 ? "Antwort" : "Antworten" }}
@@ -26,7 +26,7 @@
         <div class="divider-line"></div>
       </div>
 
-      <!-- Thread Messages -->
+
       <ng-container *ngFor="let message of threadMessages">
         <app-user-message [threadMessage]="true" [showAnswerDetails]="false" [showReactionIcons]="true"
           [allMessages]="[message]" [CurrentUserURL]="message.authorPhoto" [parentMessageId]="messageId"

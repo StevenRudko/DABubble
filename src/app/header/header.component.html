@@ -1,7 +1,5 @@
-<!-- In header.component.html -->
 <section class="custom-scrollbar">
   <div class="header-left">
-    <!-- Back Button und Devspace Logo nur auf Mobile/Tablet anzeigen -->
     <ng-container *ngIf="isMobile && mainContent.navigationState.showChat">
       <button class="mobile-back-btn" (click)="mainContent.handleBack()">
         <mat-icon>arrow_back</mat-icon>
@@ -12,14 +10,12 @@
       </div>
     </ng-container>
 
-    <!-- DABubble Logo für Desktop oder wenn kein Chat aktiv ist -->
     <ng-container *ngIf="!isMobile || !mainContent.navigationState.showChat">
       <app-logo-component></app-logo-component>
     </ng-container>
   </div>
 
   <div class="desktop-content">
-    <!-- Rest des Headers bleibt unverändert -->
     <div class="searchbar-container" [ngClass]="{ 'border-stretch': borderTrigger && showResult }">
       <input type="text" #searchInput placeholder="Devspace durchsuchen" [(ngModel)]="searchQuery"
         (focus)="this.showHiddeService.setShowResult(true)">
