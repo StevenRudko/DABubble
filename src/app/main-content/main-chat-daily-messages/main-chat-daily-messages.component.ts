@@ -429,7 +429,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
       } ${creationDate.getFullYear()}`;
     }
   }
-  onOpenThreadMessage(messageId: string) {
-    this.openThreadEvent.emit(messageId);
-  }
+  // onOpenThreadMessage(messageId: string) {
+  //   this.openThreadEvent.emit(messageId);
+  // }
 }

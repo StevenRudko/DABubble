@@ -95,7 +95,7 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
       })
     );
 
-    // Füge diese Subscription hinzu
+    // Channel Subscription bleibt unverändert
     this.subscriptions.add(
       this.chatService.currentChannel$.subscribe((channel) => {
         if (channel) {
@@ -104,12 +104,27 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
       })
     );
 
-    // Füge auch eine Subscription für DirectMessages hinzu
+    // DirectMessage Subscription mit UserInterface
     this.subscriptions.add(
-      this.chatService.currentDirectUser$.subscribe((user) => {
-        if (user) {
-          this.currentChannelName =
-            user.displayName || user.email || 'Direktnachricht';
+      this.chatService.currentDirectUser$.subscribe(async (directUser) => {
+        if (directUser) {
+          try {
+            // Hole vollständige Benutzerdaten mit UserInterface
+            const userData = (await this.userData.getUserById(
+              directUser.uid
+            )) as UserInterface;
+            if (userData) {
+              this.currentChannelName = userData.username;
+            } else {
+              this.currentChannelName =
+                directUser.displayName || 'Unnamed User';
+            }
+          } catch (error) {
+            console.error('Error fetching user data:', error);
+            this.currentChannelName = directUser.displayName || 'Unnamed User';
+          }
+        } else {
+          this.currentChannelName = '';
         }
       })
     );
