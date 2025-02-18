@@ -10,6 +10,7 @@ import { HeaderComponent } from '../header/header.component';
 import { AuthService } from '../service/auth.service';
 import { PresenceService } from '../service/presence.service';
 import { BehaviorSubject } from 'rxjs';
+import { ThreadService } from '../service/open-thread.service';
 
 export interface NavigationState {
   showChat: boolean;
@@ -51,10 +52,19 @@ export class MainContentComponent {
 
   constructor(
     private authService: AuthService,
-    private presenceService: PresenceService
+    private presenceService: PresenceService,
+    private threadService: ThreadService
   ) {
     this.checkScreenSize();
     this.initializeAuthListener();
+    this.threadService.threadVisible$.subscribe((visible) => {
+      this.threadVisible = visible;
+      this.navigationState.showThread = visible;
+    });
+
+    this.threadService.currentThreadMessageId$.subscribe((messageId) => {
+      this.currentThreadMessageId = messageId;
+    });
   }
 
   private initializeAuthListener(): void {
@@ -133,8 +143,6 @@ export class MainContentComponent {
   }
 
   onOpenThread(messageId: string): void {
-    this.navigationState.showThread = true;
-    this.threadVisible = true;
-    this.currentThreadMessageId = messageId;
+    this.threadService.openThread(messageId);
   }
 }

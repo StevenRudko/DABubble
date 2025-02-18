@@ -430,8 +430,6 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     }
   }
   onOpenThreadMessage(messageId: string) {
-    console.log('3. Thread-Event in MainChatDaily erhalten mit ID:', messageId);
-    // Hier emittieren wir die ID
     this.openThreadEvent.emit(messageId);
   }
 }

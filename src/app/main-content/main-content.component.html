@@ -21,7 +21,7 @@
 
         <div class="mat-drawer-content">
           <div #contentWrapper class="content-wrapper">
-            <app-main-chat class="bg-frame-v1 flex-g" (openThreadEvent)="onOpenThread($event)">
+            <app-main-chat class="bg-frame-v1 flex-g">
             </app-main-chat>
             <app-thread class="bg-frame-v1" *ngIf="threadVisible" [messageId]="currentThreadMessageId"
               [class.thread-active]="threadVisible" (closeThreadEvent)="threadVisible = false">

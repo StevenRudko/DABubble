@@ -23,6 +23,7 @@ import { ProfileOverviewComponent } from '../profile-overview/profile-overview.c
 import { UserOverviewComponent } from '../../shared/user-overview/user-overview.component';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { EmojiOverviewComponent } from '../emoji-overview/emoji-overview.component';
+import { ThreadService } from '../../service/open-thread.service';
 
 interface DisplayMessageInterface {
   timestamp: number;
@@ -83,8 +84,6 @@ export class UserMessageComponent {
   emojiAuthors: string[] = [];
   @Input() user: any[] = [];
   @Input() parentMessageId: string | null = null;
-  @Output() openThreadEvent = new EventEmitter<void>();
-  @Output() openThreadWithMessage = new EventEmitter<string>();
 
   public currentUser: any = null; // von private zu public geändert, wegen der emoji overview component
   emojiList: any[] = [];
@@ -106,7 +105,8 @@ export class UserMessageComponent {
     private authService: AuthService,
     private emojiService: EmojiService,
     private recentEmojisService: RecentEmojisService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private threadService: ThreadService
   ) {
     this.emojiList = this.emojiService.emojiList;
     this.authService.user$.subscribe((user) => {
@@ -261,8 +261,7 @@ export class UserMessageComponent {
   openThread() {
     if (this.allMessages && this.allMessages.length > 0) {
       const messageId = this.allMessages[0].userMessageId;
-      console.log('emojiAuthors: ', this.emojiAuthors);
-      this.openThreadWithMessage.emit(messageId);
+      this.threadService.openThread(messageId);
     }
   }
 
@@ -279,7 +278,7 @@ export class UserMessageComponent {
   onMouseEnterReactionIcon(emojiId: string): void {
     this.hoverComponentEmojiOverviewMap[emojiId] = true;
   }
-  
+
   onMouseLeaveReactionIcon(emojiId: string): void {
     this.hoverComponentEmojiOverviewMap[emojiId] = false;
   }
@@ -338,7 +337,9 @@ export class UserMessageComponent {
     }
   }
 
-  private isEmojiReaction(emoji: string | EmojiReaction): emoji is EmojiReaction {
+  private isEmojiReaction(
+    emoji: string | EmojiReaction
+  ): emoji is EmojiReaction {
     return typeof emoji === 'object' && emoji !== null && 'name' in emoji;
   }
 
@@ -414,8 +415,10 @@ export class UserMessageComponent {
 
   getEmojiAuthorName(msg: any, emojiData: string | EmojiReaction): string[] {
     this.emojiAuthors = [];
-    const emojiName = this.isEmojiReaction(emojiData) ? emojiData.name : emojiData;
-  
+    const emojiName = this.isEmojiReaction(emojiData)
+      ? emojiData.name
+      : emojiData;
+
     if (this.isEmojiReaction(emojiData)) {
       // Durchlaufe alle Reaktionen, um die Autoren zu finden, die auf dieses Emoji reagiert haben
       msg.emojis.forEach((reaction: EmojiReaction) => {
@@ -433,7 +436,7 @@ export class UserMessageComponent {
         this.emojiAuthors.push(user.username);
       }
     }
-  
+
     // Rückgabe eines Arrays von Benutzernamen
     return this.emojiAuthors;
   }
@@ -495,9 +498,5 @@ export class UserMessageComponent {
         data: profileData,
       });
     }
-  }
-
-  onOpenThread(messageId: string): void {
-    this.openThreadWithMessage.emit(messageId);
   }
 }
