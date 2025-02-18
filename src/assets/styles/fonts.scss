@@ -1,21 +1,32 @@
 @font-face {
-    font-family: 'Nunito';
-    src: url('./../../../public/fonts/Nunito/Nunito-VariableFont_wght.ttf');
+  font-family: "Nunito";
+  src: url("./../../../public/fonts/Nunito/Nunito-VariableFont_wght.ttf");
 }
 
 @font-face {
-    font-family: 'Figtree';
-    src: url('./../../../public/fonts/figtree/Figtree-VariableFont_wght.ttf');
+  font-family: "Figtree";
+  src: url("./../../../public/fonts/figtree/Figtree-VariableFont_wght.ttf");
 }
 
 @font-face {
-    font-family: 'OpenSans';
-    src: url('./../../../public/fonts/Open_Sans/OpenSans-VariableFont_wdth\,wght.ttf');
+  font-family: "OpenSans";
+  src: url("./../../../public/fonts/Open_Sans/OpenSans-VariableFont_wdth\,wght.ttf");
 }
 
 .logo-text {
-    font-family: Nunito;
-    font-weight: 700;
-    font-size: 38px;
+  font-family: Nunito;
+  font-weight: 700;
+  font-size: 38px;
 }
 
+@media (max-width: 425px) {
+  .logo-text {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 375px) {
+  .logo-text {
+    font-size: 16px;
+  }
+}

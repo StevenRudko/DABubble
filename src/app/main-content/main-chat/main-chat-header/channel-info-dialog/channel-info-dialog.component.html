@@ -10,12 +10,13 @@
     <div class="section-box name-part" [class.editing]="isEditingName">
       <div class="section-header">
         <span>Channel-Name</span>
-        <button mat-button color="primary" class="edit-button" *ngIf="!isEditingName" (click)="toggleEditName()">
-          Bearbeiten
+        <button mat-button class="edit-button" *ngIf="!isEditingName" (click)="toggleEditName()">
+          <span class="button-text">Bearbeiten</span>
+          <mat-icon class="button-icon">edit</mat-icon>
         </button>
-        <button mat-button color="primary" class="save-button" *ngIf="isEditingName" [disabled]="!canSave"
-          (click)="saveChanges()">
-          Speichern
+        <button mat-button class="save-button" *ngIf="isEditingName" [disabled]="!canSave" (click)="saveChanges()">
+          <span class="button-text">Speichern</span>
+          <mat-icon class="button-icon">check</mat-icon>
         </button>
       </div>
       <div class="section-content">
@@ -42,12 +43,13 @@
       <div class="description-part" [class.editing]="isEditingDescription">
         <div class="section-header">
           <span>Beschreibung</span>
-          <button mat-button color="primary" class="edit-button" *ngIf="!isEditingDescription"
-            (click)="toggleEditDescription()">
-            Bearbeiten
+          <button mat-button class="edit-button" *ngIf="!isEditingDescription" (click)="toggleEditDescription()">
+            <span class="button-text">Bearbeiten</span>
+            <mat-icon class="button-icon">edit</mat-icon>
           </button>
-          <button mat-button color="primary" class="save-button" *ngIf="isEditingDescription" (click)="saveChanges()">
-            Speichern
+          <button mat-button class="save-button" *ngIf="isEditingDescription" (click)="saveChanges()">
+            <span class="button-text">Speichern</span>
+            <mat-icon class="button-icon">check</mat-icon>
           </button>
         </div>
         <div class="section-content">
@@ -71,12 +73,37 @@
           <p class="creator">{{ createdBy }}</p>
         </div>
       </div>
-    </div>
-  </div>
 
-  <div class="dialog-footer">
-    <button mat-button class="footer-button" (click)="leaveChannel()">
-      Channel verlassen
-    </button>
-  </div>
-</div>
+
+      <div class="members-section mobile-only-members">
+        <hr class="divider">
+        <div class="section-header">
+          <span>Mitglieder</span>
+        </div>
+
+        <div class="members-list">
+          <div *ngIf="isLoadingMembers" class="loading-spinner-container">
+            <mat-spinner diameter="40"></mat-spinner>
+          </div>
+
+          <ng-container *ngIf="!isLoadingMembers">
+            <div class="user-item" *ngFor="let member of members" (click)="openProfileDialog(member)">
+              <img [src]="member.photoURL" class="user-avatar" [alt]="member.username">
+              <span>{{ member.username }}</span>
+              <div class="status-dot" [class.online]="member.online"></div>
+            </div>
+
+            <button class="add-member-btn" (click)="openAddPeopleDialog()">
+              <mat-icon>person_add_alt</mat-icon>
+              <span>Mitglieder hinzufügen</span>
+            </button>
+          </ng-container>
+        </div>
+      </div>
+
+      <div class="dialog-footer">
+        <button mat-button class="footer-button" (click)="leaveChannel()">
+          Channel verlassen
+        </button>
+      </div>
+    </div>

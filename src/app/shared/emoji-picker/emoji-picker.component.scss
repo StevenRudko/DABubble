@@ -23,3 +23,9 @@ mat-card-content {
   cursor: pointer;
   font-size: 24px;
 }
+
+@media (max-width: 1200px) {
+  .emoji-icons {
+    // font-size: 20px;
+  }
+}

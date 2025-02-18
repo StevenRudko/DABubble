@@ -8,6 +8,7 @@ import {
   ElementRef,
   AfterViewChecked,
   OnDestroy,
+  HostListener,
 } from '@angular/core';
 import { UserData } from '../../service/user-data.service';
 import { MatIconModule } from '@angular/material/icon';
@@ -59,6 +60,9 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
   threadMessages: renderMessageInterface[] = [];
   replyCount: number = 0;
   currentUser: any;
+  isMobile: boolean = window.innerWidth <= 1024;
+  currentChannelName: string = '';
+
   private isUserScrolled = false;
   private subscriptions: Subscription = new Subscription();
   private lastMessageCount = 0;
@@ -69,6 +73,12 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
     private chatService: ChatService
   ) {
     this.initializeSubscriptions();
+    this.checkScreenSize();
+  }
+
+  @HostListener('window:resize')
+  checkScreenSize(): void {
+    this.isMobile = window.innerWidth <= 1024;
   }
 
   /**
@@ -82,6 +92,40 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.subscriptions.add(
       this.chatService.threadOpen$.subscribe((isOpen) => {
         if (!isOpen) this.closeThread();
+      })
+    );
+
+    // Channel Subscription bleibt unverändert
+    this.subscriptions.add(
+      this.chatService.currentChannel$.subscribe((channel) => {
+        if (channel) {
+          this.currentChannelName = channel.name;
+        }
+      })
+    );
+
+    // DirectMessage Subscription mit UserInterface
+    this.subscriptions.add(
+      this.chatService.currentDirectUser$.subscribe(async (directUser) => {
+        if (directUser) {
+          try {
+            // Hole vollständige Benutzerdaten mit UserInterface
+            const userData = (await this.userData.getUserById(
+              directUser.uid
+            )) as UserInterface;
+            if (userData) {
+              this.currentChannelName = userData.username;
+            } else {
+              this.currentChannelName =
+                directUser.displayName || 'Unnamed User';
+            }
+          } catch (error) {
+            console.error('Error fetching user data:', error);
+            this.currentChannelName = directUser.displayName || 'Unnamed User';
+          }
+        } else {
+          this.currentChannelName = '';
+        }
       })
     );
   }

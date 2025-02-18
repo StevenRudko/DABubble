@@ -4,6 +4,7 @@ import { CommonModule, NgIf, NgFor } from '@angular/common';
 import { EmojiPickerComponent } from '../emoji-picker/emoji-picker.component';
 import { MessagesEditOptionsComponent } from '../messages-edit-options/messages-edit-options.component';
 import { RecentEmojisService } from '../../service/recent-emojis.service';
+import { ThreadService } from '../../service/open-thread.service';
 
 @Component({
   selector: 'app-user-msg-options',
@@ -25,7 +26,6 @@ export class UserMsgOptionsComponent implements OnInit {
   @Output() messageDeleted = new EventEmitter<string>();
   @Output() messageEdited = new EventEmitter<string>();
   @Output() emojiSelected = new EventEmitter<any>();
-  @Output() openThread = new EventEmitter<string>();
 
   @Input() userMessageId: string | undefined;
   @Input() showAllOptions: boolean = false;
@@ -39,7 +39,10 @@ export class UserMsgOptionsComponent implements OnInit {
 
   @Output() changeEditMessageState = new EventEmitter<boolean>();
 
-  constructor(private recentEmojisService: RecentEmojisService) {}
+  constructor(
+    private recentEmojisService: RecentEmojisService,
+    private threadService: ThreadService
+  ) {}
 
   ngOnInit() {
     this.recentEmojisService.recentEmojis$.subscribe((emojis) => {
@@ -55,7 +58,7 @@ export class UserMsgOptionsComponent implements OnInit {
     this.isMouseOverButton = true;
     setTimeout(() => {
       this.activePopup =
-      type === 'tag_face' ? 'emoji' : type === 'edit' ? 'edit' : 'none';
+        type === 'tag_face' ? 'emoji' : type === 'edit' ? 'edit' : 'none';
     }, 100);
   }
 
@@ -124,11 +127,7 @@ export class UserMsgOptionsComponent implements OnInit {
 
   onOpenThread(): void {
     if (this.userMessageId) {
-      console.log(
-        '1. Thread wird in UserMsgOptions geöffnet mit ID:',
-        this.userMessageId
-      );
-      this.openThread.emit(this.userMessageId);
+      this.threadService.openThread(this.userMessageId);
     }
   }
 }

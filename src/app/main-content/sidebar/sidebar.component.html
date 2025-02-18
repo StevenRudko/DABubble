@@ -1,5 +1,6 @@
 <div class="sidebar">
-  <div class="header">
+  <!-- Header nur für Desktop anzeigen -->
+  <div class="header" *ngIf="!isMobile">
     <div class="logo-container">
       <img src="img/devspace-logo.svg" alt="Devspace" class="logo">
       <span class="logo-text">Devspace</span>
@@ -15,6 +16,15 @@
           fill="currentColor" />
       </g>
     </svg>
+  </div>
+
+  <div class="mobile-search">
+    <div class="searchbar-container">
+      <input type="text" placeholder="Gehe zu..." [(ngModel)]="searchQuery"
+        (focus)="showHiddeService.setShowResult(true)">
+      <div><mat-icon class="search-icon">search</mat-icon></div>
+      <app-search-bar [searchQuery]="searchQuery"></app-search-bar>
+    </div>
   </div>
 
   <div class="section">

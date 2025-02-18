@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, HostListener, ElementRef } from '@angular/core';
 import { MainChatComponent } from './main-chat/main-chat.component';
 import { ThreadComponent } from './thread/thread.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
@@ -9,6 +9,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { HeaderComponent } from '../header/header.component';
 import { AuthService } from '../service/auth.service';
 import { PresenceService } from '../service/presence.service';
+import { BehaviorSubject } from 'rxjs';
+import { ThreadService } from '../service/open-thread.service';
+
+export interface NavigationState {
+  showChat: boolean;
+  showThread: boolean;
+}
 
 @Component({
   selector: 'app-main-content',
@@ -28,48 +35,114 @@ import { PresenceService } from '../service/presence.service';
 })
 export class MainContentComponent {
   @ViewChild('drawer') drawer!: MatSidenav;
-  onlineUsers: string[] = [];
-  sidebarActive: boolean = false;
-  threadVisible: boolean = false;
-  currentThreadMessageId: string | null = null;
+  @ViewChild('contentWrapper') contentWrapper!: ElementRef;
+
+  // Public properties
+  public isMobile: boolean = window.innerWidth <= 1024;
+  public isChatActive: boolean = false;
+  public isChatActive$ = new BehaviorSubject<boolean>(false);
+  public sidebarActive: boolean = false;
+  public threadVisible: boolean = false;
+  public currentThreadMessageId: string | null = null;
+  public onlineUsers: string[] = [];
+  public navigationState: NavigationState = {
+    showChat: false,
+    showThread: false,
+  };
 
   constructor(
     private authService: AuthService,
-    private presenceService: PresenceService
+    private presenceService: PresenceService,
+    private threadService: ThreadService
   ) {
+    this.checkScreenSize();
+    this.initializeAuthListener();
+    this.threadService.threadVisible$.subscribe((visible) => {
+      this.threadVisible = visible;
+      this.navigationState.showThread = visible;
+    });
+
+    this.threadService.currentThreadMessageId$.subscribe((messageId) => {
+      this.currentThreadMessageId = messageId;
+    });
+  }
+
+  private initializeAuthListener(): void {
     this.authService.user$.subscribe((user) => {
-      console.log('USER DATEN:', user);
       if (user) {
-        console.log('Email:', user.email);
-        console.log('Name:', user.displayName);
-        console.log('Photo URL:', user.photoURL);
+        console.log('User Data:', user);
       } else {
-        console.log('Kein Benutzer angemeldet');
+        console.log('No user logged in');
       }
     });
   }
 
-  /**
-   * Initializes component and sets user's online status
-   */
+  @HostListener('window:resize')
+  checkScreenSize(): void {
+    const wasMobile = this.isMobile;
+    this.isMobile = window.innerWidth <= 1024;
+
+    if (!wasMobile && this.isMobile) {
+      this.sidebarActive = true;
+      if (this.drawer) {
+        this.drawer.open();
+      }
+    }
+  }
+
   ngOnInit(): void {
     this.presenceService.setOnlineStatus();
+    if (this.isMobile) {
+      this.sidebarActive = true;
+    }
   }
 
-  /**
-   * Toggles the sidebar visibility state
-   */
-  toggleSidebar() {
-    this.sidebarActive = !this.sidebarActive;
-    this.drawer.toggle();
+  ngAfterViewInit(): void {
+    if (this.isMobile) {
+      this.drawer?.open();
+    }
   }
 
-  /**
-   * Opens the thread view with the selected message
-   * @param messageId - ID of the message to show in thread
-   */
-  onOpenThread(messageId: string) {
-    this.threadVisible = true;
-    this.currentThreadMessageId = messageId;
+  handleBack(): void {
+    if (this.navigationState.showThread) {
+      this.navigationState.showThread = false;
+      this.threadVisible = false;
+    } else if (this.navigationState.showChat) {
+      this.navigationState.showChat = false;
+      this.showChat(false);
+    }
+    this.isChatActive = this.navigationState.showChat;
+    this.isChatActive$.next(this.navigationState.showChat);
+  }
+
+  showChat(show: boolean) {
+    this.navigationState.showChat = show;
+    this.isChatActive = show;
+    this.isChatActive$.next(show);
+
+    if (this.isMobile) {
+      if (show) {
+        this.drawer.close();
+        if (this.contentWrapper) {
+          this.contentWrapper.nativeElement.classList.add('chat-active');
+        }
+      } else {
+        this.drawer.open();
+        if (this.contentWrapper) {
+          this.contentWrapper.nativeElement.classList.remove('chat-active');
+        }
+      }
+    }
+  }
+
+  public toggleSidebar(): void {
+    if (!this.isMobile) {
+      this.sidebarActive = !this.sidebarActive;
+      this.drawer?.toggle();
+    }
+  }
+
+  onOpenThread(messageId: string): void {
+    this.threadService.openThread(messageId);
   }
 }

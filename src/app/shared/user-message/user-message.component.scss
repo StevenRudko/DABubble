@@ -42,6 +42,7 @@ section {
   &.myMessageStyle {
     align-items: flex-end;
     cursor: unset;
+    padding-top: 24px;
 
     &:hover .user-message-row-center {
       background-color: main-colors.$user-own-msg-text-bg-hover;
@@ -425,5 +426,26 @@ app-emoji-overview {
   .myMessageStyle & {
     left: 50%;
     transform: translateX(0%) translateY(0px);
+  }
+}
+
+@media (max-width: 1150px) {
+  .user-message-img {
+    height: 50px;
+    width: 50px;
+  }
+
+  .last-comment-time {
+    font-size: 12px;
+  }
+
+  .comments-number {
+    font-size: 12px !important;
+  }
+}
+
+@media (max-width: 320px) {
+  .user-message-container {
+    gap: 0;
   }
 }

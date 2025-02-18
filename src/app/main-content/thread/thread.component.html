@@ -1,24 +1,18 @@
-<!-- In thread.component.html anpassen -->
 <section>
   <header>
     <div class="thread-header">
       <p>Thread</p>
-      <span class="channel-name"># Entwicklerteam</span>
+      <span class="channel-name" *ngIf="currentChannelName"># {{ currentChannelName }}</span>
     </div>
     <mat-icon class="close" (click)="closeThread()">close</mat-icon>
   </header>
 
+
   <div class="chat">
     <div #messagesContainer id="messagesContainer" class="messages-container">
       <!-- Parent Message -->
-      <app-user-message
-        *ngIf="parentMessage"
-        [threadMessage]="true"
-        [showAnswerDetails]="false"
-        [showReactionIcons]="true"
-        [allMessages]="parentMessage"
-        [CurrentUserURL]="parentMessage[0]?.authorPhoto"
-      >
+      <app-user-message *ngIf="parentMessage" [threadMessage]="true" [showAnswerDetails]="false"
+        [showReactionIcons]="true" [allMessages]="parentMessage" [CurrentUserURL]="parentMessage[0]?.authorPhoto">
       </app-user-message>
 
 
@@ -33,24 +27,15 @@
 
       <!-- Thread Messages -->
       <ng-container *ngFor="let message of threadMessages">
-        <app-user-message
-          [threadMessage]="true"
-          [showAnswerDetails]="false"
-          [showReactionIcons]="true"
-          [allMessages]="[message]"
-          [CurrentUserURL]="message.authorPhoto"
-          [parentMessageId]="messageId"
-          class="width-100"
-        >
+        <app-user-message [threadMessage]="true" [showAnswerDetails]="false" [showReactionIcons]="true"
+          [allMessages]="[message]" [CurrentUserURL]="message.authorPhoto" [parentMessageId]="messageId"
+          class="width-100">
         </app-user-message>
       </ng-container>
     </div>
 
-    <app-message-input-box
-      [isThreadMessage]="true"
-      [parentMessageId]="messageId"
-      [placeholder]="'Auf diese Nachricht antworten...'"
-    >
+    <app-message-input-box [isThreadMessage]="true" [parentMessageId]="messageId"
+      [placeholder]="'Auf diese Nachricht antworten...'">
     </app-message-input-box>
   </div>
 </section>
