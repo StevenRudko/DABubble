@@ -23,7 +23,7 @@ import {
 } from '../../models/user-message';
 import { Subscription } from 'rxjs';
 import { ChatService } from '../../service/chat.service';
-
+import { Firestore, collection, getDocs } from '@angular/fire/firestore';
 interface FirestoreMessage {
   authorId: string;
   message: string;
@@ -62,6 +62,7 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
   currentUser: any;
   isMobile: boolean = window.innerWidth <= 1024;
   currentChannelName: string = '';
+  allUsers: any[] = [];
 
   private isUserScrolled = false;
   private subscriptions: Subscription = new Subscription();
@@ -70,10 +71,12 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
   constructor(
     private userData: UserData,
     private authService: AuthService,
-    private chatService: ChatService
+    private chatService: ChatService,
+    private firestore: Firestore
   ) {
     this.initializeSubscriptions();
     this.checkScreenSize();
+    this.loadAllUsers();
   }
 
   @HostListener('window:resize')
@@ -317,5 +320,22 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
    */
   closeThread(): void {
     this.closeThreadEvent.emit();
+  }
+  private async loadAllUsers(): Promise<void> {
+    try {
+      const usersCollectionRef = collection(this.firestore, 'users');
+      const usersSnapshot = await getDocs(usersCollectionRef);
+      this.allUsers = usersSnapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          username: data['username'] || data['displayName'],
+          email: data['email'],
+          photoURL: data['photoURL'],
+          localID: doc.id,
+        };
+      });
+    } catch (error) {
+      console.error('Error loading users:', error);
+    }
   }
 }
