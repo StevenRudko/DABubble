@@ -79,11 +79,11 @@ section {
   @include styles.dFlex(
     $d: flex,
     $fd: row,
-    $jc: flex-end,
+    $jc: space-between,
     $ai: center,
     $g: 2rem
   );
-  flex: 1;
+  width: 100%;
 }
 
 .searchbar-container {

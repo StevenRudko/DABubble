@@ -1,21 +1,7 @@
 <section class="custom-scrollbar">
-  <div class="header-left">
-    <ng-container *ngIf="isMobile && mainContent.navigationState.showChat">
-      <button class="mobile-back-btn" (click)="mainContent.handleBack()">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
-      <div class="logo-container">
-        <img src="img/devspace-logo.svg" alt="Devspace" class="logo">
-        <span class="logo-text">Devspace</span>
-      </div>
-    </ng-container>
-
-    <ng-container *ngIf="!isMobile || !mainContent.navigationState.showChat">
-      <app-logo-component></app-logo-component>
-    </ng-container>
-  </div>
-
   <div class="desktop-content">
+    <app-logo-component></app-logo-component>
+
     <div class="searchbar-container" [ngClass]="{ 'border-stretch': borderTrigger && showResult }">
       <input type="text" #searchInput placeholder="Devspace durchsuchen" [(ngModel)]="searchQuery"
         (focus)="this.showHiddeService.setShowResult(true)">
@@ -36,4 +22,14 @@
       <mat-icon>keyboard_arrow_down</mat-icon>
     </div>
   </div>
+
+  <ng-container *ngIf="isMobile && mainContent.navigationState.showChat">
+    <button class="mobile-back-btn" (click)="mainContent.handleBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div class="logo-container">
+      <img src="img/devspace-logo.svg" alt="Devspace" class="logo">
+      <span class="logo-text">Devspace</span>
+    </div>
+  </ng-container>
 </section>
