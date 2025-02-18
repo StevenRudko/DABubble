@@ -7,7 +7,7 @@ section {
     $fd: column,
     $jc: flex-start,
     $ai: space-evenly,
-    $g: 12px
+    $g: 0
   );
   flex: 1;
   height: 100%;
@@ -75,7 +75,6 @@ header {
     $ai: space-between,
     $g: 10px
   );
-  padding-bottom: 12px;
 }
 
 .thread-divider {

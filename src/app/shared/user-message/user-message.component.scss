@@ -13,6 +13,7 @@ section {
   );
   position: relative;
   z-index: 2;
+  margin-top: 32px;
   @include styles.padding($pl: 0px, $pr: 0px, $pt: 12px, $pb: 12px);
 
   &.editMessageActive {
@@ -36,7 +37,6 @@ section {
 
   &.myMessageStyle {
     cursor: unset;
-    padding-top: 24px;
 
     &:hover .user-message-row-center {
       background-color: main-colors.$user-own-msg-text-bg-hover;
