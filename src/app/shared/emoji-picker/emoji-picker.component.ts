@@ -18,24 +18,34 @@ export class EmojiPickerComponent {
 
   emojiList: any[] = [];
 
+  /**
+   * Initializes component with emoji list from service
+   */
   constructor(private emojiService: EmojiService) {
     this.emojiList = this.emojiService.emojiList;
   }
 
+  /**
+   * Handles emoji selection and emits selected emoji
+   * @param emoji Selected emoji object
+   */
   onEmojiSelect(emoji: any): void {
-    console.log('EmojiPicker - emoji selected:', emoji);
     this.emojiSelect.emit(emoji);
     this.emojiListChange.emit(this.emojiList);
   }
 
+  /**
+   * Handles mouse enter event on emoji picker
+   */
   onMouseEnter(): void {
-    console.log('Mouse entered emoji picker');
     this.mouseStateChange.emit(true);
     this.emojiListChange.emit(this.emojiList);
   }
 
+  /**
+   * Handles mouse leave event on emoji picker
+   */
   onMouseLeave(): void {
-    console.log('Mouse left emoji picker');
     this.mouseStateChange.emit(false);
   }
 }

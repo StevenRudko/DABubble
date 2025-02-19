@@ -49,7 +49,7 @@
                         </div>
                         <p class="ellipsis-description">{{result.message}}</p>
                 </div>
-            } 
+            }
             @else if (result.type == 'directMessage') {
                 <div class="result-container" (click)="openDirectMessage(result)">
                         <img src="{{result.photoURL}}" alt="">
@@ -105,7 +105,7 @@
                         <p class="ellipsis-description">{{result.message}}</p>
                     </div>
                 </div>
-            } 
+            }
         }
         @for (result of searchResults; track $index) {
             @if (result.type == 'channel') {

@@ -1,6 +1,5 @@
 .dialog-container {
   background-color: white;
-  // width: 800px;
   min-height: 600px;
 }
 
@@ -420,14 +419,6 @@
 ::ng-deep {
   .cdk-overlay-container {
     overflow-y: scroll;
-  }
-}
-
-@media (max-width: 768px) {
-  ::ng-deep {
-    .mat-mdc-dialog-surface {
-      // border-radius: 0 !important;
-    }
   }
 }
 

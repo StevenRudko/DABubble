@@ -9,11 +9,13 @@ mat-card {
 }
 
 mat-card-content {
-  @include styles.dFlex($d: flex,
+  @include styles.dFlex(
+    $d: flex,
     $fd: column,
     $jc: center,
     $ai: center,
-    $g: 12px);
+    $g: 12px
+  );
   width: 100%;
   box-sizing: border-box;
   padding: 0 5%;

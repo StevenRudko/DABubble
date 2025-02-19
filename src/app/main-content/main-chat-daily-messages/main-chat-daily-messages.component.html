@@ -1,10 +1,9 @@
 <section #chatContainer id="chatContainer" (scroll)="onScroll()">
-  <!-- Wenn keine neuen Nachrichten vorhanden sind -->
   <ng-container *ngIf="!(chatService.isNewMessage$ | async)">
 
-    <!-- Leerer Chat-Bereich -->
+
     <div class="empty-chat-preview" *ngIf="!allMessages.length">
-      <!-- Profil-Preview für Direktnachrichten -->
+
       <div class="profile-preview" *ngIf="currentDirectUser$ | async">
         <div class="preview-header">
           <div class="clickable-area" (click)="openProfileDialog()">
@@ -25,7 +24,7 @@
         </div>
       </div>
 
-      <!-- Channel-Preview für Channels -->
+
       <div class="channel-preview" *ngIf="currentChannel$ | async as channel">
         <div class="preview-header">
           <span class="channel-name"># {{ channel.name }}</span>
@@ -39,9 +38,9 @@
       </div>
     </div>
 
-    <!-- Anzeige der Nachrichten -->
+
     <div class="message-wrapper" *ngIf="allMessages.length">
-      <!-- Ältere Nachrichten nach Datum gruppiert -->
+
       <ng-container *ngFor="let entry of groupedMessages | keyvalue">
         <div class="messages-by-date-container" *ngIf="entry.key !== 'HEUTE'">
           <div class="divider-line">
@@ -51,13 +50,14 @@
           </div>
           <app-user-message *ngFor="let msg of entry.value" [allMessages]="[msg]" [threadMessage]="false"
             [ownMessage]="msg.isOwnMessage" [CurrentUserURL]="msg.authorPhoto" [showAnswerDetails]="true"
-            [showReactionIcons]="true" [user]="user" (openThreadEvent)="openThread()" class="width-100">
+            [showReactionIcons]="true" [user]="user" [activeEmojiPicker]="activeEmojiPicker"
+            (setActiveEmojiPicker)="setActiveEmojiPicker($event)" (openThreadEvent)="openThread()" class="width-100">
           </app-user-message>
 
         </div>
       </ng-container>
 
-      <!-- Heutige Nachrichten -->
+
       <div class="messages-by-date-container" *ngIf="groupedMessages['HEUTE']">
         <div class="divider-line">
           <div class="divider-text-box bg-frame-v1">
@@ -66,7 +66,8 @@
         </div>
         <app-user-message *ngFor="let msg of groupedMessages['HEUTE']" [allMessages]="[msg]" [threadMessage]="false"
           [ownMessage]="msg.isOwnMessage" [CurrentUserURL]="msg.authorPhoto" [showAnswerDetails]="true" [user]="user"
-          [showReactionIcons]="true" (openThreadEvent)="openThread()" class="width-100">
+          [showReactionIcons]="true" [activeEmojiPicker]="activeEmojiPicker"
+          (setActiveEmojiPicker)="setActiveEmojiPicker($event)" (openThreadEvent)="openThread()" class="width-100">
         </app-user-message>
       </div>
     </div>
@@ -74,7 +75,7 @@
 
   <ng-container *ngIf="chatService.isNewMessage$ | async">
     <div class="new-message-content">
-      <!-- Inhalt für neue Nachrichten -->
+
     </div>
   </ng-container>
 </section>

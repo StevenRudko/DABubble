@@ -431,6 +431,10 @@ export class ChannelInfoDialogComponent
     return updates;
   }
 
+  /**
+   * Applies pending edits to channel name and description.
+   * Resets editing flags after applying changes.
+   */
   private applyUpdates(): void {
     if (this.isEditingName) {
       this.data.name = this.channelName;
@@ -442,6 +446,11 @@ export class ChannelInfoDialogComponent
     }
   }
 
+  /**
+   * Removes current user from channel, opens self chat, and closes dialog.
+   * Handles errors during the process.
+   * @returns Promise that resolves when all operations complete
+   */
   async leaveChannel(): Promise<void> {
     try {
       await this.chatService.removeUserFromChannel(

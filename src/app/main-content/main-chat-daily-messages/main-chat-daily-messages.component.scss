@@ -43,13 +43,7 @@ section {
 }
 
 .messages-by-date-container {
-  @include styles.dFlex(
-    $d: flex,
-    $fd: column,
-    $jc: center,
-    $ai: center,
-    $g: 42px
-  );
+  @include styles.dFlex($d: flex, $fd: column, $jc: center, $ai: center, $g: 0);
   width: 100%;
   box-sizing: border-box;
   height: auto;

@@ -1,5 +1,4 @@
 <div class="sidebar">
-  <!-- Header nur für Desktop anzeigen -->
   <div class="header" *ngIf="!isMobile">
     <div class="logo-container">
       <img src="img/devspace-logo.svg" alt="Devspace" class="logo">
@@ -84,7 +83,6 @@
     <div class="collapsible-content direct-messages" [class.collapsed]="!isDirectMessageSectionExpanded">
 
       <div class="user-list">
-        <!-- Current User (always online) -->
         <ng-container *ngFor="let user of allUsers$ | async">
           <div class="user-item" *ngIf="(currentUser$ | async)?.uid === user.uid"
             (click)="selectDirectMessage(user.uid)"
@@ -95,7 +93,6 @@
           </div>
         </ng-container>
 
-        <!-- Other Users with dynamic status -->
         <ng-container *ngFor="let user of allUsers$ | async">
           <div class="user-item" *ngIf="(currentUser$ | async)?.uid !== user.uid"
             (click)="selectDirectMessage(user.uid)"
@@ -108,4 +105,7 @@
       </div>
     </div>
   </div>
+  <button *ngIf="isMobile" class="mobile-new-message-btn" (click)="openNewMessage()">
+    <mat-icon>edit_square</mat-icon>
+  </button>
 </div>

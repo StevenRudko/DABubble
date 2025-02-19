@@ -23,6 +23,7 @@ import { AuthService } from '../../service/auth.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ProfileOverviewComponent } from '../../shared/profile-overview/profile-overview.component';
 import { UserOverviewComponent } from '../../shared/user-overview/user-overview.component';
+
 @Component({
   selector: 'app-main-chat-daily-messages',
   standalone: true,
@@ -32,6 +33,8 @@ import { UserOverviewComponent } from '../../shared/user-overview/user-overview.
 })
 export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   @Output() openThreadEvent = new EventEmitter<string>();
+  @ViewChild('chatContainer') chatContainer!: ElementRef;
+
   months = [
     'Januar',
     'Februar',
@@ -56,9 +59,6 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     'Samstag',
   ];
 
-  @ViewChild('chatContainer') chatContainer!: ElementRef;
-  private isUserScrolled = false;
-
   timeDateToday: any;
   msgTime: any;
   msgDateTime: any;
@@ -68,39 +68,48 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   userName: string = '';
   currentUser: string = '';
   ownMessageStyle: boolean = false;
-  // userMessageDate: any = undefined;
   emojiList: { [key: string]: string } = {};
   userMessages: UserMessageInterface[] = [];
-  userMessages$: Observable<any> = new Observable<any>();
   user: UserInterface[] = [];
-  users$: Observable<any> = new Observable<any>();
-  subscription!: Subscription; // Das ! sagt TypeScript, dass wir uns um die Initialisierung kümmern
-
+  subscription!: Subscription;
+  activeEmojiPicker: string | null = null;
   allMessages: renderMessageInterface[] = [];
-  // allMsgPast: renderMessageInterface[] = [];
   groupedMessages: { [date: string]: renderMessageInterface[] } = {};
   currentAuthUser: any;
   currentDirectUser: any;
-  currentChannel$: Observable<any>;
-  currentDirectUser$: Observable<any>;
-  isNewMessage$: Observable<boolean>;
   authorPhotoURl: any;
   threadMessageId: string | null = null;
+  private isUserScrolled = false;
+  userMessages$: Observable<any> = new Observable<any>();
+  users$: Observable<any> = new Observable<any>();
+  currentChannel$!: Observable<any>;
+  currentDirectUser$!: Observable<any>;
+  isNewMessage$!: Observable<boolean>;
 
   constructor(
     private userData: UserData,
     private cdr: ChangeDetectorRef,
-    public chatService: ChatService, // NEU: ChatService hinzufügen
-    private authService: AuthService, // NEU
-    private dialog: MatDialog // NEU
+    public chatService: ChatService,
+    private authService: AuthService,
+    private dialog: MatDialog
   ) {
     this.currentChannel$ = this.chatService.currentChannel$;
     this.currentDirectUser$ = this.chatService.currentDirectUser$;
     this.isNewMessage$ = this.chatService.isNewMessage$;
   }
 
-  // abonniert die Daten aus der DB und ruft die init-Funtkion auf
-  ngOnInit(): Promise<void> {
+  /**
+   * Initializes component subscriptions
+   */
+  async ngOnInit(): Promise<void> {
+    this.setupDataSubscription();
+    return Promise.resolve();
+  }
+
+  /**
+   * Sets up main data subscription
+   */
+  private setupDataSubscription(): void {
     this.subscription = combineLatest([
       this.userData.users$,
       this.userData.userMessages$,
@@ -109,172 +118,220 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
       this.authService.user$,
     ]).subscribe(
       ([users, messages, currentChannel, directUser, currentAuthUser]) => {
-        this.user = users;
-        this.currentAuthUser = currentAuthUser;
-        this.currentDirectUser = directUser;
-
-        // Der Rest der Logik bleibt gleich
-        if (currentChannel) {
-          this.userMessages = messages.filter(
-            (msg) =>
-              msg.channelId && msg.channelId.toString() === currentChannel.id
-          );
-        } else if (directUser && currentAuthUser) {
-          this.userMessages = messages.filter((msg) => {
-            const isDirectMessage = !!msg.directUserId;
-            const isMessageBetweenUsers =
-              (msg.authorId === currentAuthUser.uid &&
-                msg.directUserId === directUser.uid) ||
-              (msg.authorId === directUser.uid &&
-                msg.directUserId === currentAuthUser.uid);
-            return isDirectMessage && isMessageBetweenUsers;
-          });
-        } else {
-          this.userMessages = [];
-        }
-
-        this.allMessages = [];
-        this.initChat();
+        this.handleDataUpdate(
+          users,
+          messages,
+          currentChannel,
+          directUser,
+          currentAuthUser
+        );
       }
     );
-    return Promise.resolve();
   }
 
-  // Abo auflösen
-  ngOnDestroy() {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
+  /**
+   * Handles data updates from subscription
+   */
+  private handleDataUpdate(
+    users: any[],
+    messages: any[],
+    currentChannel: any,
+    directUser: any,
+    currentAuthUser: any
+  ): void {
+    this.user = users;
+    this.currentAuthUser = currentAuthUser;
+    this.currentDirectUser = directUser;
+    this.userMessages = this.filterMessages(
+      messages,
+      currentChannel,
+      directUser,
+      currentAuthUser
+    );
+    this.allMessages = [];
+    this.initChat();
+  }
+
+  /**
+   * Filters messages based on channel or direct message context
+   */
+  private filterMessages(
+    messages: UserMessageInterface[],
+    currentChannel: any,
+    directUser: any,
+    currentAuthUser: any
+  ): UserMessageInterface[] {
+    if (currentChannel) {
+      return messages.filter(
+        (msg) => msg.channelId && msg.channelId.toString() === currentChannel.id
+      );
     }
+    if (directUser && currentAuthUser) {
+      return this.filterDirectMessages(messages, directUser, currentAuthUser);
+    }
+    return [];
   }
 
-  // Alle Funktionen werden hier initialisiert
-  initChat() {
+  /**
+   * Filters direct messages between users
+   */
+  private filterDirectMessages(
+    messages: UserMessageInterface[],
+    directUser: any,
+    currentAuthUser: any
+  ): UserMessageInterface[] {
+    return messages.filter((msg) => {
+      return (
+        msg.directUserId &&
+        ((msg.authorId === currentAuthUser.uid &&
+          msg.directUserId === directUser.uid) ||
+          (msg.authorId === directUser.uid &&
+            msg.directUserId === currentAuthUser.uid))
+      );
+    });
+  }
+
+  /**
+   * Initializes chat data
+   */
+  private initChat(): void {
     this.getTimeToday();
     this.loadMessages();
-    // this.loadOldMessages();
-    // console.log(this.emojiList['rocket']);
   }
 
-  // ruft das heutige Datum ab und wandelt es ins entsprechende Format um
-  getTimeToday() {
+  /**
+   * Gets current date formatted
+   */
+  private getTimeToday(): void {
     const todayTimeStamp = new Date().getTime();
     this.timeDateToday = this.formatTimeStamp(todayTimeStamp);
   }
 
-  // nimmt nur die brauchbaren Elemente vom Datum heraus
-  formatTimeStamp(timestamp: number): string {
+  /**
+   * Formats timestamp to date string
+   */
+  private formatTimeStamp(timestamp: number): string {
     const date = new Date(timestamp);
     return `${date.getDate()} ${
       this.months[date.getMonth()]
     } ${date.getFullYear()}`;
   }
 
-  // lädt und verarbeitet die Daten aus der DB weiter
-  // Lädt und verarbeitet die Nachrichten, sortiert und gruppiert sie nach Datum
-  loadMessages() {
-    if (!this.userMessages) {
-      console.error('No userMessages found.');
-      return;
-    }
+  /**
+   * Loads and processes messages
+   */
+  private loadMessages(): void {
+    if (!this.userMessages || this.allMessages.length > 0) return;
 
-    // Wenn die Nachrichten bereits geladen wurden, beende die Funktion
-    if (this.allMessages.length > 0) {
-      return;
-    }
+    this.resetMessageArrays();
+    this.processMessages();
+    this.sortMessagesByTime();
+    this.groupMessagesByDate();
+  }
 
-    // Arrays vor dem Laden leeren
+  /**
+   * Resets message arrays
+   */
+  private resetMessageArrays(): void {
     this.allMessages = [];
     this.groupedMessages = {};
+  }
 
-    this.userMessages.forEach((msg: UserMessageInterface) => {
+  /**
+   * Processes all messages
+   */
+  private processMessages(): void {
+    this.userMessages.forEach((msg) => {
       this.getMsgTime(msg);
       this.getUserNameAndPhoto(msg);
       this.getAllMessages(msg);
     });
-
-    // Sortiere alle Nachrichten nach dem Zeitstempel (älteste zuerst)
-    this.sortMessagesByTime();
-
-    // Gruppiere die Nachrichten nach Datum
-    this.groupMessagesByDate();
   }
 
-  formatTimeUnit(unit: number): string {
+  /**
+   * Formats time units
+   */
+  private formatTimeUnit(unit: number): string {
     return unit < 10 ? `0${unit}` : `${unit}`;
   }
 
-  // vearbeitet die msg time in verschiedene Formate um
-  getMsgTime(msg: UserMessageInterface) {
+  /**
+   * Processes message timestamp
+   */
+  private getMsgTime(msg: UserMessageInterface): void {
     const timestamp: any = msg.time;
-    const msgTimeStampSeconds = timestamp.seconds;
-    const msgTimeStampNano = timestamp.nanoseconds;
-    this.msgTime = msgTimeStampSeconds * 1000 + msgTimeStampNano / 1000000;
+    this.msgTime = timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000;
 
-    this.msgDateTime = new Date(this.msgTime);
-    this.msgDateTime.setHours(0, 0, 0, 0); // Uhrzeit auf Mitternacht setzen, da nur der Tag für uns relevant ist
+    const exactTime = new Date(this.msgTime);
+    this.msgTimeHours = this.formatTimeUnit(exactTime.getHours());
+    this.msgTimeMins = this.formatTimeUnit(exactTime.getMinutes());
+
+    this.setDateTimes(exactTime);
+  }
+
+  /**
+   * Sets date time values
+   */
+  private setDateTimes(exactTime: Date): void {
+    this.msgDateTime = new Date(exactTime);
+    this.msgDateTime.setHours(0, 0, 0, 0);
 
     this.todayDateTime = new Date(this.timeDateToday);
     this.todayDateTime.setHours(0, 0, 0, 0);
-
-    const exactTime = new Date(this.msgTime);
-    this.msgTimeHours = this.formatTimeUnit(exactTime.getHours()); // Formatieren der Stunden
-    this.msgTimeMins = this.formatTimeUnit(exactTime.getMinutes()); // Formatieren der Minuten
   }
 
-  // holt sich den usernamen aus der anderen Sammlung entsprechend der authorId
-  getUserNameAndPhoto(msg: UserMessageInterface) {
-    // console.log('dies sind die user: ', this.user);
-    const userFound = this.user.find(
-      (user: UserInterface) => user.localID === msg.authorId
-    );
+  /**
+   * Gets user data for message
+   */
+  private getUserNameAndPhoto(msg: UserMessageInterface): void {
+    const userFound = this.user.find((user) => user.localID === msg.authorId);
     if (userFound) {
-      // console.log('authorId: ', msg.authorId);
-      // console.log('loaclId ', userFound.localID);
       this.userName = userFound.username;
-      if (userFound.photoURL) {
-        this.authorPhotoURl = userFound.photoURL;
-      } else {
-        this.authorPhotoURl = 'img-placeholder/default-avatar.svg';
-      }
+      this.authorPhotoURl =
+        userFound.photoURL || 'img-placeholder/default-avatar.svg';
     }
   }
 
-  // lädt alle alten Nachrichten in das Array allMessages
-  getAllMessages(msg: UserMessageInterface) {
-    if (this.userName) {
-      this.allMessages.push({
-        timestamp: this.msgTime,
-        userMessageId: msg.userMessageId,
-        author: this.userName,
-        authorPhoto: this.authorPhotoURl,
-        emojis: msg.emojis,
-        message: msg.message,
-        isOwnMessage: (msg.isOwnMessage =
-          msg.authorId === this.currentAuthUser.uid),
-        hours: this.msgTimeHours,
-        minutes: this.msgTimeMins,
-      });
-    }
+  /**
+   * Formats message for display
+   */
+  private getAllMessages(msg: UserMessageInterface): void {
+    if (!this.userName) return;
+
+    this.allMessages.push({
+      timestamp: this.msgTime,
+      userMessageId: msg.userMessageId,
+      author: this.userName,
+      authorPhoto: this.authorPhotoURl,
+      emojis: msg.emojis,
+      message: msg.message,
+      isOwnMessage: msg.authorId === this.currentAuthUser.uid,
+      hours: this.msgTimeHours,
+      minutes: this.msgTimeMins,
+    });
   }
 
-  sortMessagesByTime() {
-    this.allMessages.sort((a, b) => a.timestamp - b.timestamp); // Sortierung in aufsteigender Reihenfolge
+  /**
+   * Sorts messages by timestamp
+   */
+  private sortMessagesByTime(): void {
+    this.allMessages.sort((a, b) => a.timestamp - b.timestamp);
   }
 
-  // Funktion zum Gruppieren der Nachrichten nach Datum
-  groupMessagesByDate() {
-    const today = new Date().setHours(0, 0, 0, 0); // Setzt heute auf Mitternacht (00:00)
+  /**
+   * Groups messages by date
+   */
+  private groupMessagesByDate(): void {
+    const today = new Date().setHours(0, 0, 0, 0);
 
     this.allMessages.forEach((msg) => {
-      const msgDate = new Date(msg.timestamp).setHours(0, 0, 0, 0); // Setzt die Nachricht auf Mitternacht
+      const msgDate = new Date(msg.timestamp).setHours(0, 0, 0, 0);
+      const dateKey = msgDate === today ? 'HEUTE' : msgDate.toString();
 
-      const dateKey = msgDate === today ? 'HEUTE' : msgDate.toString(); // "HEUTE" für Nachrichten vom heutigen Tag
-
-      // Gruppiere Nachrichten nach Datum
       if (!this.groupedMessages[dateKey]) {
         this.groupedMessages[dateKey] = [];
       }
-      // Überprüfen, ob die Nachricht bereits hinzugefügt wurde, um Duplikate zu vermeiden
+
       if (
         !this.groupedMessages[dateKey].some(
           (existingMsg) => existingMsg.userMessageId === msg.userMessageId
@@ -284,7 +341,13 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
       }
     });
 
-    // Für das heutige Datum die "HEUTE"-Nachrichten ans Ende verschieben
+    this.moveToDateToEnd();
+  }
+
+  /**
+   * Moves today's messages to end
+   */
+  private moveToDateToEnd(): void {
     if (this.groupedMessages['HEUTE']) {
       const todayMessages = this.groupedMessages['HEUTE'];
       delete this.groupedMessages['HEUTE'];
@@ -292,29 +355,19 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     }
   }
 
-  openThread(): void {
-    this.openThreadEvent.emit(); // Für den alten Weg
-  }
-
-  getMessages(): renderMessageInterface[] {
-    return this.allMessages;
-  }
-
-  // Methode, um festzustellen, ob der Benutzer nach oben gescrollt hat
-  onScroll() {
+  /**
+   * Handles scroll events
+   */
+  onScroll(): void {
     const container = this.chatContainer.nativeElement;
-    // Überprüfen, ob der Benutzer fast am unteren Ende des Containers ist
-    if (
+    this.isUserScrolled =
       container.scrollTop + container.clientHeight <
-      container.scrollHeight - 10
-    ) {
-      this.isUserScrolled = true;
-    } else {
-      this.isUserScrolled = false;
-    }
+      container.scrollHeight - 10;
   }
 
-  // Scrollt nach unten, aber nur, wenn der Benutzer nicht nach oben gescrollt hat
+  /**
+   * Scrolls to bottom if needed
+   */
   private scrollToBottom(): void {
     const container = this.chatContainer?.nativeElement;
     console.log(this.chatService.autoScroll);
@@ -324,23 +377,40 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Handles view initialization
+   */
   ngAfterViewInit(): void {
     this.cdr.detectChanges();
-    this.scrollToBottom(); // Initiales Scrollen nach unten
+    this.scrollToBottom();
   }
 
+  /**
+   * Handles view updates
+   */
   ngAfterViewChecked(): void {
-    this.scrollToBottom(); // Nach jeder Änderung das Scrollen ausführen, wenn nötig
+    this.scrollToBottom();
   }
 
-  trackByDate(index: number, group: any): string {
-    return group[0]?.timestamp; // Einzigartiger Schlüssel für die Datumsgruppe
+  /**
+   * Cleans up subscriptions
+   */
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
-  trackByMessage(index: number, msg: any): number {
-    return msg.timestamp; // Einzigartiger Schlüssel für jede Nachricht
+  /**
+   * Emits thread open event
+   */
+  openThread(): void {
+    this.openThreadEvent.emit();
   }
-  // Neue Methoden:
+
+  /**
+   * Gets current user's photo URL
+   */
   getCurrentUserPhotoURL(): string {
     if (this.currentDirectUser) {
       return (
@@ -352,17 +422,23 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     );
   }
 
+  /**
+   * Gets current user's name
+   */
   getCurrentUserName(): string {
     if (this.currentDirectUser) {
       return (
         this.currentDirectUser.username ||
         this.currentDirectUser.displayName ||
-        'Unbenannter Benutzer'
+        'Unnamed User'
       );
     }
-    return this.currentAuthUser?.displayName || 'Du';
+    return this.currentAuthUser?.displayName || 'You';
   }
 
+  /**
+   * Gets current user's email
+   */
   getCurrentUserEmail(): string {
     if (this.currentDirectUser) {
       return this.currentDirectUser.email || '';
@@ -371,23 +447,30 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Opens the profile dialog for a user
-   * Shows UserOverviewComponent for own profile or ProfileOverviewComponent for other users
+   * Opens profile dialog
    */
-  openProfileDialog() {
-    const isOwnProfile =
-      !this.currentDirectUser ||
-      this.currentDirectUser.uid === this.currentAuthUser?.uid;
-
-    if (isOwnProfile) {
-      this.dialog.open(UserOverviewComponent, {
-        panelClass: ['profile-dialog', 'right-aligned'],
-        width: '400px',
-      });
-      return;
+  openProfileDialog(): void {
+    if (this.isOwnProfile()) {
+      this.openOwnProfileDialog();
+    } else {
+      this.openOtherProfileDialog();
     }
+  }
 
-    // Direkt die Daten aus currentDirectUser verwenden
+  /**
+   * Opens own profile dialog
+   */
+  private openOwnProfileDialog(): void {
+    this.dialog.open(UserOverviewComponent, {
+      panelClass: ['profile-dialog', 'right-aligned'],
+      width: '400px',
+    });
+  }
+
+  /**
+   * Opens other user's profile dialog
+   */
+  private openOtherProfileDialog(): void {
     const userData = {
       username: this.currentDirectUser.username,
       email: this.currentDirectUser.email,
@@ -403,6 +486,9 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Checks if current profile is own
+   */
   isOwnProfile(): boolean {
     return (
       !this.currentDirectUser ||
@@ -411,7 +497,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Gets the formatted creation time string for a channel
+   * Gets formatted creation time
    */
   getChannelCreationTime(createdAt: string): string {
     const creationDate = new Date(createdAt);
@@ -421,17 +507,19 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
 
-    if (creationDate >= today) {
-      return 'heute';
-    } else if (creationDate >= yesterday) {
-      return 'gestern';
-    } else {
-      return `am ${creationDate.getDate()}. ${
-        this.months[creationDate.getMonth()]
-      } ${creationDate.getFullYear()}`;
-    }
+    if (creationDate >= today) return 'today';
+    if (creationDate >= yesterday) return 'yesterday';
+
+    return `on ${creationDate.getDate()}. ${
+      this.months[creationDate.getMonth()]
+    } ${creationDate.getFullYear()}`;
   }
-  // onOpenThreadMessage(messageId: string) {
-  //   this.openThreadEvent.emit(messageId);
-  // }
+
+  /**
+   * Sets the active emoji picker for a message
+   * @param messageId - ID of message with active picker, or null to close
+   */
+  setActiveEmojiPicker(messageId: string | null): void {
+    this.activeEmojiPicker = messageId;
+  }
 }

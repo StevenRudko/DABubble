@@ -23,6 +23,7 @@ import {
 } from '../../models/user-message';
 import { Subscription } from 'rxjs';
 import { ChatService } from '../../service/chat.service';
+import { Firestore, collection, getDocs } from '@angular/fire/firestore';
 
 interface FirestoreMessage {
   authorId: string;
@@ -62,40 +63,67 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
   currentUser: any;
   isMobile: boolean = window.innerWidth <= 1024;
   currentChannelName: string = '';
-
+  allUsers: any[] = [];
   private isUserScrolled = false;
   private subscriptions: Subscription = new Subscription();
   private lastMessageCount = 0;
 
+  /**
+   * Initialize component and setup required services
+   */
   constructor(
     private userData: UserData,
     private authService: AuthService,
-    private chatService: ChatService
+    private chatService: ChatService,
+    private firestore: Firestore
   ) {
     this.initializeSubscriptions();
     this.checkScreenSize();
+    this.loadAllUsers();
   }
 
+  /**
+   * Updates mobile view state on window resize
+   */
   @HostListener('window:resize')
   checkScreenSize(): void {
     this.isMobile = window.innerWidth <= 1024;
   }
 
   /**
-   * Initialize component subscriptions for user and thread state
+   * Sets up subscriptions for user and thread state
    */
   private initializeSubscriptions(): void {
+    this.setupAuthSubscription();
+    this.setupThreadSubscription();
+    this.setupChannelSubscription();
+    this.setupDirectMessageSubscription();
+  }
+
+  /**
+   * Sets up authentication subscription
+   */
+  private setupAuthSubscription(): void {
     this.subscriptions.add(
       this.authService.user$.subscribe((user) => (this.currentUser = user))
     );
+  }
 
+  /**
+   * Sets up thread state subscription
+   */
+  private setupThreadSubscription(): void {
     this.subscriptions.add(
       this.chatService.threadOpen$.subscribe((isOpen) => {
         if (!isOpen) this.closeThread();
       })
     );
+  }
 
-    // Channel Subscription bleibt unverändert
+  /**
+   * Sets up channel subscription
+   */
+  private setupChannelSubscription(): void {
     this.subscriptions.add(
       this.chatService.currentChannel$.subscribe((channel) => {
         if (channel) {
@@ -103,26 +131,16 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
         }
       })
     );
+  }
 
-    // DirectMessage Subscription mit UserInterface
+  /**
+   * Sets up direct message subscription
+   */
+  private setupDirectMessageSubscription(): void {
     this.subscriptions.add(
       this.chatService.currentDirectUser$.subscribe(async (directUser) => {
         if (directUser) {
-          try {
-            // Hole vollständige Benutzerdaten mit UserInterface
-            const userData = (await this.userData.getUserById(
-              directUser.uid
-            )) as UserInterface;
-            if (userData) {
-              this.currentChannelName = userData.username;
-            } else {
-              this.currentChannelName =
-                directUser.displayName || 'Unnamed User';
-            }
-          } catch (error) {
-            console.error('Error fetching user data:', error);
-            this.currentChannelName = directUser.displayName || 'Unnamed User';
-          }
+          await this.updateDirectUserChannelName(directUser);
         } else {
           this.currentChannelName = '';
         }
@@ -131,7 +149,23 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   /**
-   * Initialize thread component and load messages
+   * Updates channel name for direct message user
+   */
+  private async updateDirectUserChannelName(directUser: any): Promise<void> {
+    try {
+      const userData = (await this.userData.getUserById(
+        directUser.uid
+      )) as UserInterface;
+      this.currentChannelName =
+        userData?.username || directUser.displayName || 'Unnamed User';
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      this.currentChannelName = directUser.displayName || 'Unnamed User';
+    }
+  }
+
+  /**
+   * Initializes component and loads messages
    */
   ngOnInit(): void {
     if (this.messageId) {
@@ -142,7 +176,7 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   /**
-   * Subscribe to real-time message updates
+   * Sets up real-time message updates
    */
   private setupMessageUpdates(): void {
     this.subscriptions.add(
@@ -153,7 +187,7 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   /**
-   * Check and scroll to bottom when new messages arrive
+   * Handles scrolling to bottom for new messages
    */
   ngAfterViewChecked(): void {
     if (this.threadMessages.length > this.lastMessageCount) {
@@ -163,14 +197,14 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   /**
-   * Clean up subscriptions on component destruction
+   * Cleans up subscriptions
    */
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
 
   /**
-   * Handle scroll events in the message container
+   * Handles message container scroll events
    */
   onScroll(event: any): void {
     const element = this.messagesContainer.nativeElement;
@@ -182,7 +216,7 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   /**
-   * Scroll to bottom of message container if user hasn't scrolled up
+   * Scrolls to bottom of message container
    */
   private scrollToBottom(): void {
     try {
@@ -196,14 +230,14 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   /**
-   * Get user data from Firestore
+   * Retrieves user data from Firestore
    */
   private async getUserData(authorId: string): Promise<UserInterface> {
     return (await this.userData.getUserById(authorId)) as UserInterface;
   }
 
   /**
-   * Create message metadata with timestamp and date
+   * Creates message metadata from timestamp
    */
   private createMessageMetadata(time: {
     seconds: number;
@@ -217,7 +251,7 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   /**
-   * Build message author information
+   * Builds author information object
    */
   private buildAuthorInfo(user: UserInterface) {
     return {
@@ -227,7 +261,7 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   /**
-   * Convert raw Firestore message to formatted message interface
+   * Formats Firestore message data
    */
   private async formatMessage(
     messageData: FirestoreMessage,
@@ -253,7 +287,7 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   /**
-   * Calculate timestamp from Firestore time object
+   * Calculates timestamp from Firestore time
    */
   private calculateTimestamp(time: {
     seconds: number;
@@ -263,7 +297,7 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   /**
-   * Load and format parent message
+   * Loads and formats parent message
    */
   private async loadParentMessage(messageId: string): Promise<void> {
     try {
@@ -282,7 +316,7 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   /**
-   * Load and format thread messages
+   * Loads and formats thread messages
    */
   private async loadThreadMessages(parentId: string): Promise<void> {
     try {
@@ -299,7 +333,7 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   /**
-   * Format array of thread messages
+   * Formats array of thread messages
    */
   private async formatThreadMessages(
     comments: any[]
@@ -313,9 +347,27 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   /**
-   * Close thread and emit event
+   * Closes thread and emits event
    */
   closeThread(): void {
     this.closeThreadEvent.emit();
+  }
+
+  /**
+   * Loads all users from Firestore
+   */
+  private async loadAllUsers(): Promise<void> {
+    try {
+      const usersCollectionRef = collection(this.firestore, 'users');
+      const usersSnapshot = await getDocs(usersCollectionRef);
+      this.allUsers = usersSnapshot.docs.map((doc) => ({
+        username: doc.data()['username'] || doc.data()['displayName'],
+        email: doc.data()['email'],
+        photoURL: doc.data()['photoURL'],
+        localID: doc.id,
+      }));
+    } catch (error) {
+      console.error('Error loading users:', error);
+    }
   }
 }

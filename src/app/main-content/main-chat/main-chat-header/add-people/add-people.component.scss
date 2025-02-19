@@ -8,9 +8,9 @@
   width: 420px;
   padding: 16px;
   position: fixed;
-  top: 160px; // Angepasst um unter dem Header zu sein
+  top: 160px;
   right: 100px;
-  border-top-right-radius: 0; // Rechte obere Ecke eckig
+  border-top-right-radius: 0;
   z-index: 1000;
 }
 
@@ -41,9 +41,6 @@
   margin-bottom: 16px;
   color: main-colors.$overlay-channel-name;
   font-weight: 500;
-  // .hashtag {
-  //   color: #535af1;
-  // }
 }
 
 .search-container {
@@ -200,7 +197,7 @@
 
   .search-dropdown {
     position: fixed;
-    width: calc(100% - 32px); // Berücksichtigt das Padding
+    width: calc(100% - 32px);
     left: 16px;
     right: 16px;
   }

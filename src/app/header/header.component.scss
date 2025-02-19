@@ -23,7 +23,7 @@ section {
     $ai: center,
     $g: 12px
   );
-  flex: 0 0 auto; // Verhindert Schrumpfen
+  flex: 0 0 auto;
 }
 
 .mobile-back-btn {
@@ -191,7 +191,6 @@ app-search-bar {
   border-radius: 100%;
 }
 
-// Logo-Transition Styles
 .logo-switch {
   position: relative;
   overflow: hidden;

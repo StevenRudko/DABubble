@@ -10,9 +10,9 @@ section {
     $ai: flex-start,
     $g: 24px
   );
-  // cursor: pointer;
   position: relative;
   z-index: 2;
+  margin-top: 32px;
   @include styles.padding($pl: 0px, $pr: 0px, $pt: 12px, $pb: 12px);
 
   &.editMessageActive {
@@ -34,14 +34,8 @@ section {
     color: main-colors.$user-msg-light-text;
   }
 
-  // &:hover .add-reaction-btn {
-  //   background-color: white;
-  // }
-
   &.myMessageStyle {
-    align-items: flex-end;
     cursor: unset;
-    padding-top: 24px;
 
     &:hover .user-message-row-center {
       background-color: main-colors.$user-own-msg-text-bg-hover;
@@ -163,6 +157,7 @@ section {
     $g: 12px
   );
   margin-top: -6px;
+  flex-wrap: wrap;
 
   &.editMessageActive {
     width: 100%;
@@ -180,43 +175,56 @@ section {
   }
 }
 
-// .check_circle {
-//   color: #4bd37b;
-// }
-
 .reaction-btn-div {
   position: relative;
-  @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
-  padding: 2px 6px;
-  // background-color: white;
-  // border: 1px solid #adb0d9;
+  @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 4px);
+  padding: 4px 8px;
   cursor: pointer;
+  border-radius: 16px;
+  border: 1px solid transparent;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  background-color: rgba(248, 249, 255, 0.5);
 
   .reaction-btn-style {
-    background-color: inherit;
+    background-color: transparent;
+    border: none;
+    font-size: 16px;
+    padding: 0;
   }
 
-  &.active {
-    background-color: white;
-    border: 1px solid main-colors.$user-msg-used-emoji-box-border;
-
-    .reaction-btn-style {
-      background-color: inherit;
-    }
-
-    p {
-      color: main-colors.$user-msg-used-emoji-box-amount;
-    }
+  p {
+    font-size: 13px;
+    color: #666;
+    margin: 0;
+    transition: color 0.2s ease;
   }
 
   &:hover {
-    background-color: white;
-    border: 1px solid main-colors.$user-msg-used-emoji-box-border-hover;
+    background-color: rgba(248, 249, 255, 0.9);
+    border-color: #e0e2f5;
+  }
 
-    .reaction-btn-style {
-      background-color: inherit;
+  &.active {
+    background-color: #f0f2ff;
+    border-color: #adb0d9;
+
+    p {
+      color: #797ef3;
+    }
+
+    &:hover {
+      border-color: #797ef3;
+      background-color: #f0f2ff;
     }
   }
+}
+
+.emoji-reactions {
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 2px 0;
 }
 
 .reaction-btn-style {
@@ -336,14 +344,12 @@ app-user-msg-options {
     animation: fadeInOwn 0.2s ease-in-out;
   }
 
-  // Edit-Modus spezifische Positionierung
   &.edit-mode {
-    top: -200px; // Höher positioniert
-    right: 20px; // Rechts ausgerichtet
-    left: auto; // Links-Ausrichtung aufheben
+    top: -200px;
+    right: 20px;
+    left: auto;
   }
 
-  // Kartenform im Edit-Modus
   &.edit-mode ::ng-deep mat-card {
     border-radius: 20px !important;
     border-bottom-right-radius: 20px !important;
@@ -355,6 +361,7 @@ app-user-msg-options {
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 textarea {
@@ -365,7 +372,6 @@ textarea {
   border-radius: 20px;
   padding: 12px;
   cursor: text;
-  // color: grey;
   resize: none;
   font-family: Nunito;
   font-size: 18px;
@@ -408,19 +414,20 @@ textarea {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
 app-emoji-overview {
   position: absolute;
   z-index: 4;
-  bottom: 100%; // Position above the emoji
-  left: 50%; // Center horizontally
-  transform: translateX(0%) translateY(0px); // Center and offset slightly up
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(0%) translateY(0px);
   min-width: 150px;
   width: max-content;
   max-width: 150px;
   box-sizing: border-box;
-  pointer-events: none; // Prevent hover issues
+  pointer-events: none;
 
   .myMessageStyle & {
     left: 50%;
@@ -440,6 +447,85 @@ app-emoji-overview {
 
   .comments-number {
     font-size: 12px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .reaction-icons-row-bottom {
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    align-items: flex-start;
+
+    .myMessageStyle & {
+      align-items: flex-end;
+    }
+  }
+
+  .message-actions {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+
+    .myMessageStyle & {
+      justify-content: flex-end;
+    }
+  }
+
+  .emoji-reactions {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+    justify-content: flex-start;
+
+    .myMessageStyle & {
+      justify-content: flex-end;
+    }
+  }
+
+  .user-message-box {
+    &.myMessageStyle {
+      .reaction-icons-row-bottom {
+        align-items: flex-end;
+      }
+
+      .message-actions,
+      .emoji-reactions {
+        justify-content: flex-end;
+      }
+    }
+
+    &:not(.myMessageStyle) {
+      .reaction-icons-row-bottom {
+        align-items: flex-start;
+      }
+
+      .message-actions,
+      .emoji-reactions {
+        justify-content: flex-start;
+      }
+    }
+  }
+}
+
+@media (max-width: 320px) {
+  .user-message-container {
+    padding: 8px;
+    gap: 8px;
+  }
+
+  .user-message-row-center {
+    max-width: calc(100vw - 80px);
+  }
+
+  .user-message-name {
+    font-size: 14px;
+  }
+
+  .user-message-time {
+    font-size: 12px;
   }
 }
 

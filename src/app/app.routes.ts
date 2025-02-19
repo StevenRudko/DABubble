@@ -46,5 +46,5 @@ export const routes: Routes = [
     ],
   },
   { path: 'main', component: MainContentComponent, canActivate: [authGuard] },
-  { path: '**', redirectTo: '' }, // Fallback für ungültige Routen
+  { path: '**', redirectTo: '' },
 ];

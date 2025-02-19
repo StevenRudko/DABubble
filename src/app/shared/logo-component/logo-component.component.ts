@@ -14,16 +14,19 @@ export class LogoComponentComponent {
   animation: boolean = false;
   private appCompopnent = inject(AppComponent);
 
+  /**
+   * Initializes component and sets up navigation monitoring
+   */
   constructor(private router: Router) {
-    // Überwache Navigationsänderungen
     this.router.events.subscribe(() => {
       this.checkIfHomePage();
     });
-
-    // Initiale Überprüfung
     this.checkIfHomePage();
   }
 
+  /**
+   * Checks if current route is homepage and handles animation state
+   */
   private checkIfHomePage(): void {
     if (this.appCompopnent.firstVisit) {
       this.animation = this.router.url === '/';

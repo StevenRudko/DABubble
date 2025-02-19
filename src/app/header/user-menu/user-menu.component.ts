@@ -17,11 +17,12 @@ export class UserMenuComponent {
   readonly dialogRef = inject(MatDialogRef<HeaderComponent>);
   router = inject(Router);
 
-    constructor(
-      private dialog: MatDialog,
-      private authService: AuthService
-    ) {}
+  constructor(private dialog: MatDialog, private authService: AuthService) {}
 
+  /**
+   * Opens a dialog displaying the UserOverviewComponent.
+   * Closes the current dialog after opening the new one.
+   */
   openDialog(): void {
     const dialogRef = this.dialog.open(UserOverviewComponent, {});
     dialogRef.afterClosed().subscribe((result) => {
@@ -30,6 +31,9 @@ export class UserMenuComponent {
     this.dialogRef.close();
   }
 
+  /**
+   * Logs out the current user, closes the dialog, and navigates to the home page.
+   */
   logOut(): void {
     this.authService.logout();
     this.dialogRef.close();

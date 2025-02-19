@@ -96,7 +96,6 @@ export class MemberOverviewComponent implements OnInit, OnDestroy {
    * @returns {boolean} Whether the user is online
    */
   private isUserOnline(userId: string): boolean {
-    // If the user is the current logged-in user, always show as online
     if (userId === this.auth.currentUser?.uid) {
       return true;
     }

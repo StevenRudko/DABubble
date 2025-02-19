@@ -1,5 +1,4 @@
 <header [class.new-message-header]="isNewMessage$ | async">
-  <!-- New Message Section -->
   <ng-container *ngIf="isNewMessage$ | async; else normalContent">
     <div class="new-message-container">
       <h2>New Message</h2>
@@ -53,9 +52,7 @@
     </div>
   </ng-container>
 
-  <!-- Normal Content (Channel or DirectMessage) -->
   <ng-template #normalContent>
-    <!-- Channel Content -->
     <ng-container *ngIf="currentChannel$ | async as channel">
       <div class="selection-name" (click)="openChannelInfoDialog(channel)">
         <span>#</span>
@@ -81,7 +78,6 @@
       </div>
     </ng-container>
 
-    <!-- DirectMessage Content -->
     <ng-container *ngIf="currentDirectUser$ | async as user">
       <div class="selection-name direct-message-header" (click)="openProfileDialog(user)">
         <div style="position: relative; height: 50px;">

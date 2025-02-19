@@ -2,13 +2,13 @@
   <label for="new-message"></label>
   <div class="textarea-wrapper">
 
-    <!-- Original Textarea -->
+
     <textarea #messageInput [(ngModel)]="messageText" [placeholder]="placeholder" (keydown)="onKeyDown($event)"
       (input)="onInput($event)">
     </textarea>
   </div>
 
-  <!-- Mention Dropdown -->
+
   <div class="mention-dropdown" *ngIf="showMentionDropdown && mentionSearchResults.length > 0">
     <div *ngFor="let user of mentionSearchResults" class="mention-item" (click)="selectMention(user)">
       <img [src]="user.photoURL || 'img-placeholder/default-avatar.svg'" [alt]="user.username" class="mention-avatar">

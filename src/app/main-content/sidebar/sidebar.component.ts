@@ -212,4 +212,12 @@ export class SidebarComponent implements OnInit {
     this.chatService.selectDirectMessage(userId);
     this.mainContent.showChat(true);
   }
+
+  /**
+   * Opens new message interface and shows chat view.
+   */
+  openNewMessage(): void {
+    this.chatService.toggleNewMessage();
+    this.mainContent.showChat(true);
+  }
 }

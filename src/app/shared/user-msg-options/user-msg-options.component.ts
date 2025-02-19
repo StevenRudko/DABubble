@@ -26,6 +26,7 @@ export class UserMsgOptionsComponent implements OnInit {
   @Output() messageDeleted = new EventEmitter<string>();
   @Output() messageEdited = new EventEmitter<string>();
   @Output() emojiSelected = new EventEmitter<any>();
+  @Output() changeEditMessageState = new EventEmitter<boolean>();
 
   @Input() userMessageId: string | undefined;
   @Input() showAllOptions: boolean = false;
@@ -37,23 +38,33 @@ export class UserMsgOptionsComponent implements OnInit {
   isMouseOverPopup: boolean = false;
   recentEmojis: any[] = [];
 
-  @Output() changeEditMessageState = new EventEmitter<boolean>();
-
+  /**
+   * Initializes component with required services
+   */
   constructor(
     private recentEmojisService: RecentEmojisService,
     private threadService: ThreadService
   ) {}
 
-  ngOnInit() {
+  /**
+   * Sets up recent emojis subscription
+   */
+  ngOnInit(): void {
     this.recentEmojisService.recentEmojis$.subscribe((emojis) => {
       this.recentEmojis = emojis;
     });
   }
 
-  onHoverStateChange(status: boolean) {
+  /**
+   * Emits edit message state change
+   */
+  onHoverStateChange(status: boolean): void {
     this.changeEditMessageState.emit(status);
   }
 
+  /**
+   * Handles mouse enter on option buttons
+   */
   onMouseEnter(type: string): void {
     this.isMouseOverButton = true;
     setTimeout(() => {
@@ -62,6 +73,9 @@ export class UserMsgOptionsComponent implements OnInit {
     }, 100);
   }
 
+  /**
+   * Handles mouse leave on option buttons
+   */
   onMouseLeave(type: string): void {
     this.isMouseOverButton = false;
     setTimeout(() => {
@@ -71,18 +85,24 @@ export class UserMsgOptionsComponent implements OnInit {
     }, 100);
   }
 
+  /**
+   * Handles emoji picker mouse state
+   */
   onEmojiPickerMouseState(isOver: boolean): void {
-    this.isMouseOverPopup = isOver;
-    if (!isOver && !this.isMouseOverButton) {
-      setTimeout(() => {
-        if (!this.isMouseOverButton) {
-          this.activePopup = 'none';
-        }
-      }, 100);
-    }
+    this.handlePopupMouseState(isOver);
   }
 
+  /**
+   * Handles edit options mouse state
+   */
   onEditOptionsMouseState(isOver: boolean): void {
+    this.handlePopupMouseState(isOver);
+  }
+
+  /**
+   * Common handler for popup mouse states
+   */
+  private handlePopupMouseState(isOver: boolean): void {
     this.isMouseOverPopup = isOver;
     if (!isOver && !this.isMouseOverButton) {
       setTimeout(() => {
@@ -93,26 +113,41 @@ export class UserMsgOptionsComponent implements OnInit {
     }
   }
 
+  /**
+   * Emits edit message event
+   */
   onEditMessage(): void {
     this.editMessageEvent.emit();
     this.activePopup = 'none';
   }
 
+  /**
+   * Emits delete message event
+   */
   onDeleteMessage(): void {
     this.deleteMessageEvent.emit();
     this.activePopup = 'none';
   }
 
+  /**
+   * Forwards delete message event
+   */
   forwardDeleteMessage(messageId: string): void {
     this.messageDeleted.emit(messageId);
     this.activePopup = 'none';
   }
 
+  /**
+   * Forwards edit message event
+   */
   forwardEditMessage(messageId: string): void {
     this.messageEdited.emit(messageId);
     this.activePopup = 'none';
   }
 
+  /**
+   * Handles emoji selection
+   */
   onEmojiSelect(emoji: any): void {
     if (this.userMessageId) {
       this.emojiSelected.emit({ emoji, messageId: this.userMessageId });
@@ -121,10 +156,16 @@ export class UserMsgOptionsComponent implements OnInit {
     this.activePopup = 'none';
   }
 
+  /**
+   * Handles recent emoji click
+   */
   onRecentEmojiClick(emoji: any): void {
     this.onEmojiSelect(emoji);
   }
 
+  /**
+   * Opens thread view
+   */
   onOpenThread(): void {
     if (this.userMessageId) {
       this.threadService.openThread(this.userMessageId);

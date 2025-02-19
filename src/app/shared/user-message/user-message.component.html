@@ -19,7 +19,7 @@
       <div *ngIf="!editStatusMessage" class="user-message-row-center" [ngClass]="{ myMessageStyle: msg.isOwnMessage }">
         <p [innerHTML]="formatMessageWithMentions(msg.message)"></p>
       </div>
-      <!-- Edit Message View -->
+
       <div class="message-edit-container" *ngIf="editStatusMessage">
         <textarea #messageTextarea [(ngModel)]="msg.message" rows="4" cols="50"></textarea>
         <div class="edit-controls">
@@ -43,7 +43,7 @@
         </div>
       </div>
 
-      <!-- Reactions Section -->
+
       <div class="reaction-icons-row-bottom" *ngIf="showReactionIcons && !editStatusMessage">
         <div class="emoji-reactions">
           <div *ngFor="let emoji of msg.emojis | unique:'name'" class="reaction-btn-div bg-frame-v1"

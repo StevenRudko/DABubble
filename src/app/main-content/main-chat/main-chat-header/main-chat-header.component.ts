@@ -320,18 +320,6 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Gets the selected recipient
-   * @returns {Object | null} Selected recipient details
-   */
-  getSelectedRecipient(): { id: string; type: 'channel' | 'user' } | null {
-    if (!this.selectedResult) return null;
-    return {
-      id: this.selectedResult.id,
-      type: this.selectedResult.type,
-    };
-  }
-
-  /**
    * Removes the selected search result
    * @returns {void}
    */
