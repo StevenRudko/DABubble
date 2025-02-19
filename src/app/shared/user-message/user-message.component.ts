@@ -5,6 +5,7 @@ import {
   EventEmitter,
   ElementRef,
   ViewChild,
+  HostListener,
 } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
 import { MATERIAL_MODULES } from '../material-imports';
@@ -80,6 +81,8 @@ export class UserMessageComponent {
   @Input() CurrentUserURL: any;
   @Input() user: any[] = [];
   @Input() parentMessageId: string | null = null;
+  @Input() activeEmojiPicker: string | null = null;
+  @Output() setActiveEmojiPicker = new EventEmitter<string | null>();
 
   public currentUser: any = null;
   emojiList: any[] = [];
@@ -89,7 +92,6 @@ export class UserMessageComponent {
   threadInfo: ThreadInfo | null = null;
   hoverComponent: boolean = false;
   hoverComponentEmojiOverviewMap: { [key: string]: boolean } = {};
-  activeEmojiPicker: string | null = null;
   emojiAuthors: string[] = [];
 
   private boundMentionClick = this.handleMentionClick.bind(this);
@@ -400,15 +402,30 @@ export class UserMessageComponent {
   }
 
   /**
-   * Toggles emoji picker visibility
+   * Handles emoji picker toggle for a message
    */
   toggleEmojiPicker(messageId: string, event: MouseEvent): void {
     event.stopPropagation();
     setTimeout(() => {
-      this.activeEmojiPicker =
-        this.activeEmojiPicker === messageId ? null : messageId;
-      this.hoverComponent = !this.activeEmojiPicker;
+      // Immer umschalten, unabhängig vom aktuellen Status
+      this.setActiveEmojiPicker.emit(
+        this.activeEmojiPicker === messageId ? null : messageId
+      );
+      this.hoverComponent = false;
     }, 100);
+  }
+
+  /**
+   * Handles document click events for emoji picker
+   */
+  @HostListener('document:click', ['$event'])
+  handleDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    // Wenn außerhalb des Pickers geklickt wurde
+    if (!target.closest('app-emoji-picker') && !target.closest('button')) {
+      this.setActiveEmojiPicker.emit(null);
+      this.hoverComponent = false;
+    }
   }
 
   /**

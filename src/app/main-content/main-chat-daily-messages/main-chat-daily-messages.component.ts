@@ -72,7 +72,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   userMessages: UserMessageInterface[] = [];
   user: UserInterface[] = [];
   subscription!: Subscription;
-
+  activeEmojiPicker: string | null = null;
   allMessages: renderMessageInterface[] = [];
   groupedMessages: { [date: string]: renderMessageInterface[] } = {};
   currentAuthUser: any;
@@ -80,7 +80,6 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   authorPhotoURl: any;
   threadMessageId: string | null = null;
   private isUserScrolled = false;
-
   userMessages$: Observable<any> = new Observable<any>();
   users$: Observable<any> = new Observable<any>();
   currentChannel$!: Observable<any>;
@@ -512,5 +511,13 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     return `on ${creationDate.getDate()}. ${
       this.months[creationDate.getMonth()]
     } ${creationDate.getFullYear()}`;
+  }
+
+  /**
+   * Sets the active emoji picker for a message
+   * @param messageId - ID of message with active picker, or null to close
+   */
+  setActiveEmojiPicker(messageId: string | null): void {
+    this.activeEmojiPicker = messageId;
   }
 }
