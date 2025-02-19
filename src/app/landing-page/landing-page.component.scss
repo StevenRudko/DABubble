@@ -1,6 +1,5 @@
 @use './../../styles.scss' as styles;
 @use './../../assets/styles/fonts.scss' as fonts;
-@use './../../assets/styles/theme-colors.scss' as colors;
 
 .button-link {
     padding: 10px 15px;
@@ -40,10 +39,10 @@
     }
 }
 
-.user-auth-section {
-    // width: 600px;
-    // max-width: 800px;
-}
+// .user-auth-section {
+//     // width: 600px;
+//     // max-width: 800px;
+// }
 
 .footer {
     @include styles.dFlex($d: flex, $jc: center, $ai: center, $g: 16px);

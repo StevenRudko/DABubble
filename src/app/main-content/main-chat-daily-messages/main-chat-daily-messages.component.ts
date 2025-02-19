@@ -317,7 +317,9 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   // Scrollt nach unten, aber nur, wenn der Benutzer nicht nach oben gescrollt hat
   private scrollToBottom(): void {
     const container = this.chatContainer?.nativeElement;
-    if (container && !this.isUserScrolled) {
+    console.log(this.chatService.autoScroll);
+    
+    if (container && !this.isUserScrolled && this.chatService.autoScroll) {
       container.scrollTop = container.scrollHeight;
     }
   }

@@ -13,6 +13,7 @@ import { ShowHiddeResultsService } from '../../service/show-hidde-results.servic
 import { UserInfosService } from '../../service/user-infos.service';
 import { ChannelInterface } from '../../models/channel-interface';
 import { lastValueFrom } from 'rxjs';
+import { ThreadService } from '../../service/open-thread.service';
 
 @Component({
   selector: 'app-search-bar',
@@ -38,6 +39,7 @@ export class SearchBarComponent implements OnInit {
     private chatService: ChatService,
     public showHiddeService: ShowHiddeResultsService,
     public userInfo: UserInfosService,
+    private threadService: ThreadService
   ) { }
 
   ngOnInit(): void {
@@ -247,9 +249,10 @@ export class SearchBarComponent implements OnInit {
   }
 
   async openMessage(channelId: string, messageId: string) {
+    this.switchAutoScroll(false);
     await this.showChannel(channelId);
     this.scrollWhenAvailable(messageId, 'chatContainer');
-
+    this.switchAutoScroll(true);
   }
 
   async showChannel(channelId: string): Promise<void> {
@@ -261,8 +264,10 @@ export class SearchBarComponent implements OnInit {
   }
 
   async openDirectMessage(result: any) {
+    this.switchAutoScroll(false);
     await this.showDirectMessage(result);
     this.scrollWhenAvailable(result.userMessageId, 'chatContainer');
+    this.switchAutoScroll(true);
   }
 
   async showDirectMessage(result: any) {
@@ -278,21 +283,22 @@ export class SearchBarComponent implements OnInit {
   }
 
   async openThread(result: any) {
+    this.switchAutoScroll(false);
     console.log(result);
     if (result.channelId) {
       await this.showChannel(result.channelId);
       this.scrollWhenAvailable(result.idOfTheRespondentMessage, 'chatContainer');
-      // await this.mainChat.onOpenThread(result.messageId)
-      // this.scrollWhenAvailable(result.userMessageId, 'messagesContainer');
+      await this.threadService.openThread(result.idOfTheRespondentMessage)
+      this.scrollWhenAvailable(result.userMessageId, 'messagesContainer');
     } else if (result.directUserId) {
       await this.showDirectMessage(result);
       this.scrollWhenAvailable(result.idOfTheRespondentMessage, 'chatContainer');
-      // await this.mainChat.onOpenThread(result.messageId)
-      // this.scrollWhenAvailable(result.userMessageId, 'messagesContainer');
+      await this.threadService.openThread(result.idOfTheRespondentMessage)
+      this.scrollWhenAvailable(result.userMessageId, 'messagesContainer');
     }
 
     this.scrollWhenAvailable(result.messageId, 'chatContainer');
-
+    this.switchAutoScroll(true);
   }
 
   scrollWhenAvailable(messageId: string, domId: string) {
@@ -337,6 +343,14 @@ export class SearchBarComponent implements OnInit {
       setTimeout(() => {
         element.classList.remove('highlight');
       }, 3000);
+    }
+  }
+
+  switchAutoScroll(status: boolean) {
+    if (!status) {
+      this.chatService.autoScroll = status;
+    } else {
+      setTimeout(() => this.chatService.autoScroll = status ,3000)
     }
   }
 }

@@ -56,6 +56,8 @@ export class ChatService {
   /** Observable for message sent events */
   messageSent$ = this.messageSentSubject.asObservable();
 
+  autoScroll: boolean = true;
+
   private channelMembersUpdatedSource = new Subject<string>();
   channelMembersUpdated$ = this.channelMembersUpdatedSource.asObservable();
 
