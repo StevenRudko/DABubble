@@ -389,18 +389,6 @@ export class ChatService {
   }
 
   /**
-   * Refreshes channel members list
-   */
-  async refreshChannelMembers(channelId: string): Promise<void> {
-    try {
-      const members = await this.loadChannelMembers(channelId);
-      this.updateChannelMembersState(members, channelId);
-    } catch (error) {
-      console.error('Error refreshing channel members:', error);
-    }
-  }
-
-  /**
    * Loads channel members data
    */
   private async loadChannelMembers(channelId: string): Promise<ChatMember[]> {

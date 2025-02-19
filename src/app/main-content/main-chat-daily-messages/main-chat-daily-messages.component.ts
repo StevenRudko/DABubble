@@ -408,27 +408,6 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Gets all messages
-   */
-  getMessages(): renderMessageInterface[] {
-    return this.allMessages;
-  }
-
-  /**
-   * Gets tracking key for date group
-   */
-  trackByDate(index: number, group: any): string {
-    return group[0]?.timestamp;
-  }
-
-  /**
-   * Gets tracking key for message
-   */
-  trackByMessage(index: number, msg: any): number {
-    return msg.timestamp;
-  }
-
-  /**
    * Gets current user's photo URL
    */
   getCurrentUserPhotoURL(): string {
