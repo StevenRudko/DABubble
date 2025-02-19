@@ -40,7 +40,7 @@ export class MainContentComponent {
   public isMobile: boolean = window.innerWidth <= 1024;
   public isChatActive: boolean = false;
   public isChatActive$ = new BehaviorSubject<boolean>(false);
-  public sidebarActive: boolean = false;
+  public sidebarActive: boolean = true;
   public threadVisible: boolean = false;
   public currentThreadMessageId: string | null = null;
   public onlineUsers: string[] = [];
