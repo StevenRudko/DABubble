@@ -1,6 +1,5 @@
 @use "./../../../styles.scss" as styles;
 @use "./../../../assets/styles/fonts.scss" as fonts;
-@use "./../../../assets/styles/theme-colors.scss" as colors;
 
 mat-card-content {
   @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);

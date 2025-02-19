@@ -1,28 +1,9 @@
 @use "@angular/material";
 @use "./assets/styles/fonts.scss";
 @use "./assets/styles/colors.scss";
-@use "assets/styles/theme-colors.scss";
 
 * {
   margin: 0;
-}
-
-html {
-  @include material.theme(
-    (
-      color: (
-        primary: theme-colors.$primary-palette,
-        tertiary: theme-colors.$tertiary-palette,
-        theme-type: light,
-      ),
-      typography: Roboto,
-      density: 0,
-    )
-  );
-
-  @media (prefers-contrast: more) {
-    @include theme-colors.high-contrast-overrides(dark);
-  }
 }
 
 html,

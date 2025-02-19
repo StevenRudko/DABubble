@@ -1,7 +1,6 @@
 @use "./../../styles.scss" as styles;
 @use "./../../assets/styles/fonts.scss" as fonts;
 @use "./../../assets/styles/colors.scss" as main-colors;
-@use "./../../assets/styles/theme-colors.scss" as colors;
 
 main {
   background-color: main-colors.$general-bg-color;
