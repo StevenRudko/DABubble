@@ -368,12 +368,14 @@ export class UserMessageComponent {
   }
 
   /**
-   * Opens thread view
+   * Handles opening the thread from the message
    */
   openThread(): void {
     if (this.allMessages && this.allMessages.length > 0) {
       const messageId = this.allMessages[0].userMessageId;
-      this.threadService.openThread(messageId);
+      if (messageId) {
+        this.threadService.openThread(messageId);
+      }
     }
   }
 
