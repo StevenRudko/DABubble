@@ -16,12 +16,23 @@ export class ThreadService {
   constructor() {}
 
   /**
-   * Opens thread for specified message
+   * Opens thread for specified message with a small delay to ensure proper UI updates
    * @param messageId ID of message to open thread for
    */
   openThread(messageId: string): void {
-    this.currentThreadMessageIdSubject.next(messageId);
-    this.threadVisibleSubject.next(true);
+    const currentMessageId = this.currentThreadMessageIdSubject.getValue();
+
+    if (currentMessageId === messageId) {
+      return;
+    }
+
+    this.threadVisibleSubject.next(false);
+    this.currentThreadMessageIdSubject.next(null);
+
+    setTimeout(() => {
+      this.currentThreadMessageIdSubject.next(messageId);
+      this.threadVisibleSubject.next(true);
+    }, 0);
   }
 
   /**
