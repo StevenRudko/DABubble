@@ -15,10 +15,8 @@ export class ThreadService {
   currentThreadMessageId$ = this.currentThreadMessageIdSubject.asObservable();
 
   constructor() {
-    // Monitor thread visibility changes
     this.threadVisible$.subscribe((visible) => {
       if (!visible) {
-        // Store the previous message ID when thread is closed
         this.previousThreadMessageId =
           this.currentThreadMessageIdSubject.getValue();
         this.currentThreadMessageIdSubject.next(null);
@@ -34,16 +32,13 @@ export class ThreadService {
     const isCurrentlyVisible = this.threadVisibleSubject.getValue();
     const currentMessageId = this.currentThreadMessageIdSubject.getValue();
 
-    // Case 1: Opening the same thread that was just closed
     if (messageId === this.previousThreadMessageId && !isCurrentlyVisible) {
       this.currentThreadMessageIdSubject.next(messageId);
       this.threadVisibleSubject.next(true);
       return;
     }
 
-    // Case 2: Switching to a different thread while one is open
     if (isCurrentlyVisible && currentMessageId !== messageId) {
-      // Brief delay to ensure smooth transition
       this.threadVisibleSubject.next(false);
       setTimeout(() => {
         this.currentThreadMessageIdSubject.next(messageId);
@@ -52,7 +47,6 @@ export class ThreadService {
       return;
     }
 
-    // Case 3: Opening a new thread when none is visible
     this.currentThreadMessageIdSubject.next(messageId);
     this.threadVisibleSubject.next(true);
   }

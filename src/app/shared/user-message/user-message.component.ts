@@ -427,7 +427,6 @@ export class UserMessageComponent {
   @HostListener('document:click', ['$event'])
   handleDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
-    // Wenn außerhalb des Pickers geklickt wurde
     if (!target.closest('app-emoji-picker') && !target.closest('button')) {
       this.setActiveEmojiPicker.emit(null);
       this.hoverComponent = false;
