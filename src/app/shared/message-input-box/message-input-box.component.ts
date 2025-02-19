@@ -26,6 +26,7 @@ import { EmojiPickerComponent } from '../emoji-picker/emoji-picker.component';
 import { UserData } from '../../service/user-data.service';
 import { MentionHighlightPipe } from '../pipes/mentionHighlight.pipe';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { EmojiPickerService } from '../../service/emoji-picker.service';
 
 interface User {
   uid: string;
@@ -107,8 +108,15 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private elementRef: ElementRef,
     private userData: UserData,
-    private sanitizer: DomSanitizer
-  ) {}
+    private sanitizer: DomSanitizer,
+    private emojiPickerService: EmojiPickerService
+  ) {
+    this.emojiPickerService.activePickerId$.subscribe((id) => {
+      if (id !== 'message-input') {
+        this.showEmojiPicker = false;
+      }
+    });
+  }
 
   /**
    * Handles document click events for focus management
@@ -142,7 +150,9 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
    */
   toggleEmojiPicker(event: MouseEvent): void {
     event.stopPropagation();
+    const newValue = this.showEmojiPicker ? null : 'message-input';
     this.showEmojiPicker = !this.showEmojiPicker;
+    this.emojiPickerService.setActivePickerId(newValue);
   }
 
   /**

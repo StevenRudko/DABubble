@@ -25,7 +25,7 @@ import { UserOverviewComponent } from '../../shared/user-overview/user-overview.
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { EmojiOverviewComponent } from '../emoji-overview/emoji-overview.component';
 import { ThreadService } from '../../service/open-thread.service';
-
+import { EmojiPickerService } from '../../service/emoji-picker.service';
 interface DisplayMessageInterface {
   timestamp: number;
   userMessageId: string;
@@ -93,7 +93,6 @@ export class UserMessageComponent {
   hoverComponent: boolean = false;
   hoverComponentEmojiOverviewMap: { [key: string]: boolean } = {};
   emojiAuthors: string[] = [];
-
   private boundMentionClick = this.handleMentionClick.bind(this);
 
   /**
@@ -107,9 +106,16 @@ export class UserMessageComponent {
     private emojiService: EmojiService,
     private recentEmojisService: RecentEmojisService,
     private sanitizer: DomSanitizer,
-    private threadService: ThreadService
+    private threadService: ThreadService,
+    private emojiPickerService: EmojiPickerService
   ) {
     this.initializeComponent();
+    this.emojiPickerService.activePickerId$.subscribe((id) => {
+      if (id && id !== this.activeEmojiPicker) {
+        this.setActiveEmojiPicker.emit(null);
+        this.hoverComponent = false;
+      }
+    });
   }
 
   /**
@@ -407,14 +413,12 @@ export class UserMessageComponent {
   toggleEmojiPicker(messageId: string, event: MouseEvent): void {
     event.stopPropagation();
     setTimeout(() => {
-      // Immer umschalten, unabhängig vom aktuellen Status
-      this.setActiveEmojiPicker.emit(
-        this.activeEmojiPicker === messageId ? null : messageId
-      );
-      this.hoverComponent = false;
+      const newValue = this.activeEmojiPicker === messageId ? null : messageId;
+      this.emojiPickerService.setActivePickerId(newValue);
+      this.setActiveEmojiPicker.emit(newValue);
+      this.hoverComponent = !newValue;
     }, 100);
   }
-
   /**
    * Handles document click events for emoji picker
    */
