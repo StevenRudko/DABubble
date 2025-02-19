@@ -178,35 +178,54 @@ section {
 
 .reaction-btn-div {
   position: relative;
-  @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
-  padding: 2px 6px;
+  @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 4px);
+  padding: 4px 8px;
   cursor: pointer;
+  border-radius: 16px;
+  border: 1px solid transparent;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  background-color: rgba(248, 249, 255, 0.5);
 
   .reaction-btn-style {
-    background-color: inherit;
+    background-color: transparent;
+    border: none;
+    font-size: 16px;
+    padding: 0;
   }
 
-  &.active {
-    background-color: white;
-    border: 1px solid main-colors.$user-msg-used-emoji-box-border;
-
-    .reaction-btn-style {
-      background-color: inherit;
-    }
-
-    p {
-      color: main-colors.$user-msg-used-emoji-box-amount;
-    }
+  p {
+    font-size: 13px;
+    color: #666;
+    margin: 0;
+    transition: color 0.2s ease;
   }
 
   &:hover {
-    background-color: white;
-    border: 1px solid main-colors.$user-msg-used-emoji-box-border-hover;
+    background-color: rgba(248, 249, 255, 0.9);
+    border-color: #e0e2f5;
+  }
 
-    .reaction-btn-style {
-      background-color: inherit;
+  &.active {
+    background-color: #f0f2ff;
+    border-color: #adb0d9;
+
+    p {
+      color: #797ef3;
+    }
+
+    &:hover {
+      border-color: #797ef3;
+      background-color: #f0f2ff;
     }
   }
+}
+
+.emoji-reactions {
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 2px 0;
 }
 
 .reaction-btn-style {
