@@ -3,7 +3,7 @@
 @use "./../../assets/styles/colors.scss" as main-colors;
 
 section {
-  @include styles.padding($pl: 2rem, $pr: 2rem, $pt: 1rem, $pb: 0);
+  @include styles.padding($pl: 2rem, $pr: 2rem, $pt: 0, $pb: 0);
   @include styles.dFlex(
     $d: flex,
     $fd: row,
