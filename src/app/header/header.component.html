@@ -15,7 +15,8 @@
     </ng-container>
   </div>
 
-  <div class="desktop-content">
+  <!-- <div class="desktop-content"> -->
+
     <div class="searchbar-container" [ngClass]="{ 'border-stretch': borderTrigger && showResult }">
       <input type="text" #searchInput placeholder="Devspace durchsuchen" [(ngModel)]="searchQuery"
         (focus)="this.showHiddeService.setShowResult(true)">
@@ -35,5 +36,7 @@
       </div>
       <mat-icon>keyboard_arrow_down</mat-icon>
     </div>
-  </div>
+
+  <!-- </div> -->
+
 </section>
