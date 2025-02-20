@@ -1,25 +1,109 @@
 @use "./../../../styles.scss" as styles;
 @use "./../../../assets/styles/fonts.scss" as fonts;
 
-mat-card {
-  border-top-left-radius: 0px !important;
+:host {
+  position: absolute;
+  right: 0;
+  top: 0;
+  animation: fadeIn 0.1s ease forwards;
 }
 
-button {
-  @include styles.dFlex($d: flex, $fd: column, $jc: center, $ai: center, $g: 0);
-  padding: 10px 4px;
-  width: 100%;
-  box-sizing: border-box;
-  cursor: pointer;
-  outline: none;
-  font-size: 14px;
-  border: none;
-  background-color: white;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+mat-card {
+  border-top-left-radius: 0px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(121, 126, 243, 0.1);
+  backdrop-filter: blur(8px);
+  transition: all 0.15s ease;
 
   &:hover {
-    background-color: #eceefe;
-    border-radius: 30px;
-    color: #797ef3;
-    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12), 0 8px 16px rgba(0, 0, 0, 0.04);
+    transform: translateY(-1px);
+  }
+
+  &:has(.thread-options) {
+    width: fit-content;
+  }
+
+  &:has(.main-chat-options) {
+    min-width: 180px;
+  }
+}
+
+.main-chat-options {
+  button {
+    @include styles.dFlex(
+      $d: flex,
+      $fd: column,
+      $jc: center,
+      $ai: center,
+      $g: 0
+    );
+    padding: 10px 16px;
+    width: 100%;
+    box-sizing: border-box;
+    cursor: pointer;
+    outline: none;
+    font-size: 14px;
+    border: none;
+    background-color: white;
+    white-space: nowrap;
+    transition: all 0.1s ease;
+
+    &:hover {
+      background-color: #eceefe;
+      border-radius: 30px;
+      color: #797ef3;
+      font-weight: 700;
+    }
+  }
+}
+
+.thread-options {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  width: fit-content;
+  min-width: unset;
+
+  button {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      color: var(--primary-text-color);
+      transition: all 0.15s ease;
+    }
+
+    &:hover {
+      background-color: transparent;
+      border-radius: 0;
+      font-weight: normal;
+
+      mat-icon {
+        color: #797ef3;
+        transform: scale(1.1);
+      }
+    }
   }
 }
