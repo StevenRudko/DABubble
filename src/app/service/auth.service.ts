@@ -10,10 +10,10 @@ import {
   GoogleAuthProvider,
   sendPasswordResetEmail,
   User,
-  onAuthStateChanged,
+  browserSessionPersistence,
 } from '@angular/fire/auth';
-import { browserLocalPersistence, setPersistence } from 'firebase/auth';
-import { BehaviorSubject, from, Observable } from 'rxjs';
+import { setPersistence } from 'firebase/auth';
+import { from, Observable } from 'rxjs';
 import { PresenceService } from './presence.service';
 import { Firestore, doc, setDoc, updateDoc } from '@angular/fire/firestore';
 
@@ -31,8 +31,7 @@ export class AuthService {
    * Automatically updates when the authentication state changes.
    * @type {Observable<User | null>}
    */
-  private userSubject = new BehaviorSubject<User | null>(null);
-  user$ = this.userSubject.asObservable();
+  user$: Observable<User | null>;
 
   /**
    * Initializes the AuthService with necessary dependencies.
@@ -49,7 +48,7 @@ export class AuthService {
     private presenceService: PresenceService
   ) {
     this.setSessionStoragePersistence();
-    this.initializeAuthState();
+    this.user$ = user(this.firebaseAuth);
   }
 
   /**
@@ -59,19 +58,7 @@ export class AuthService {
    * @returns {void}
    */
   private setSessionStoragePersistence(): void {
-    setPersistence(this.firebaseAuth, browserLocalPersistence);
-  }
-
-  /**
-   * Initializes authentication state and ensures the user data is loaded
-   * after a page refresh.
-   * @private
-   * @returns {void}
-   */
-  private initializeAuthState(): void {
-    onAuthStateChanged(this.firebaseAuth, (user) => {
-      this.userSubject.next(user);
-    });
+    setPersistence(this.firebaseAuth, browserSessionPersistence);
   }
 
   /**
@@ -112,8 +99,7 @@ export class AuthService {
       this.firebaseAuth,
       email,
       password
-    ).then((response) => {
-      this.userSubject.next(response.user);
+    ).then(() => {
       this.presenceService.setOnlineStatus();
     });
     return from(promise);
@@ -135,7 +121,6 @@ export class AuthService {
         );
         throw new Error('Google-Login fehlgeschlagen');
       }
-      this.userSubject.next(user);
       await this.saveUserInfoToFirestore(user);
       this.presenceService.setOnlineStatus();
     } catch (error) {
@@ -153,7 +138,6 @@ export class AuthService {
    */
   logout(): Observable<void> {
     const promise = signOut(this.firebaseAuth).then(() => {
-      this.userSubject.next(null);
       sessionStorage.clear();
       this.presenceService.setOfflineStatus();
     });
@@ -203,6 +187,7 @@ export class AuthService {
         username: user.displayName,
         photoURL: user.photoURL,
       });
+      console.log('Benutzerinformationen erfolgreich in Firestore gespeichert');
     } catch (error) {
       console.error(
         'Fehler beim Speichern der Benutzerinformationen in Firestore:',
