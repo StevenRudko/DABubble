@@ -1,24 +1,57 @@
 @use "./../../../styles.scss" as styles;
 @use "./../../../assets/styles/fonts.scss" as fonts;
 
+:host {
+  animation: fadeIn 0.1s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 mat-card {
   border-top-left-radius: 0px !important;
-  width: 290px;
+  width: 260px; // Etwas breiter für mehr Seitenabstand
   position: absolute;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(121, 126, 243, 0.1);
+  backdrop-filter: blur(8px);
+  transition: all 0.15s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12), 0 8px 16px rgba(0, 0, 0, 0.04);
+  }
 }
 
 mat-card-content {
-  @include styles.dFlex(
-    $d: flex,
-    $fd: row,
-    $jc: flex-start,
-    $ai: flex-start,
-    $g: 12px
-  );
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  padding: 16px; // Mehr Padding an allen Seiten
+  justify-content: center;
+  align-items: center;
 }
 
 .emoji-icons {
   cursor: pointer;
-  font-size: 24px;
+  font-size: 20px;
+  transition: all 0.15s ease;
+  padding: 3px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:hover {
+    color: #797ef3;
+    transform: scale(1.1);
+    background-color: #eceefe;
+  }
 }

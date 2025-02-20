@@ -10,6 +10,10 @@ mat-card {
   border-bottom-right-radius: 0px !important;
   width: fit-content !important;
   margin-left: auto;
+  background-color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(121, 126, 243, 0.1);
+  backdrop-filter: blur(8px);
 }
 
 .check_circle {
@@ -41,4 +45,35 @@ mat-card-content {
     height: 40px;
     width: 40px;
   }
+
+  .primary-buttons {
+    button {
+      mat-icon {
+        color: var(--primary-text-color);
+        transition: all 0.2s ease;
+      }
+
+      &:hover {
+        mat-icon {
+          color: #797ef3;
+          transform: scale(1.1);
+        }
+      }
+    }
+  }
+
+  .emoji-recent {
+    &:hover {
+      mat-icon {
+        color: #797ef3;
+        transform: scale(1.1);
+      }
+    }
+  }
+}
+
+mat-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12), 0 8px 16px rgba(0, 0, 0, 0.04);
+  transform: translateY(-1px);
+  transition: all 0.2s ease;
 }
