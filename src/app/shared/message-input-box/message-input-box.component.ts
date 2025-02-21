@@ -82,6 +82,7 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
   @Input() isThreadMessage: boolean = false;
   @Input() parentMessageId: string | null = null;
   @Input() placeholder: string = 'Write message...';
+  @Input() inputId: string = 'main-chat';
 
   messageText: string = '';
   private currentChannel: any;
@@ -297,6 +298,14 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
   onInput(event: Event): void {
     const textarea = this.messageInput.nativeElement;
     this.cursorPosition = textarea.selectionStart;
+
+    const hasAtSymbol = this.messageText.includes('@');
+
+    if (!hasAtSymbol) {
+      this.showMentionDropdown = false;
+      this.mentionSearchResults = [];
+      return;
+    }
 
     if (!this.messageText.trim()) {
       this.resetMentions();
