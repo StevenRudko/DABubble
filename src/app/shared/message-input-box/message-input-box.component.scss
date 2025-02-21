@@ -97,7 +97,7 @@ textarea {
 
 .emoji-picker-popup {
   position: absolute;
-  bottom: 240px;
+  bottom: 180px;
   left: 20px;
   z-index: 1000;
 }
@@ -187,5 +187,12 @@ textarea {
   textarea {
     font-size: 16px;
     padding: 8px;
+  }
+}
+
+@media (max-width: 400px) {
+  .emoji-picker-popup {
+    bottom: 160px;
+    left: 20px;
   }
 }

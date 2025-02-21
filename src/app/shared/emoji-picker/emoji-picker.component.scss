@@ -55,3 +55,25 @@ mat-card-content {
     background-color: #eceefe;
   }
 }
+
+@media (max-width: 400px) {
+  mat-card {
+    width: 230px;
+    transform-origin: top left;
+  }
+
+  mat-card-content {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
+    padding: 12px;
+  }
+
+  .emoji-icons {
+    font-size: 18px;
+    padding: 2px;
+
+    &:hover {
+      transform: scale(1.08);
+    }
+  }
+}
