@@ -156,7 +156,8 @@ section {
     $ai: center,
     $g: 0px
   );
-  width: 20%;
+  // width: 20%;
+  min-width: 110px;
 
   img {
     height: 30px;

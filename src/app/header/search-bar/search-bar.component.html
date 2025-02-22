@@ -123,9 +123,9 @@
                         </div>
                         <span class="channel-name">{{result.channelName}}</span>
                         @if (!result.channelDescription) {
-                            <p class="">Keine Beschreibung verfügbar</p>
+                            <p class="ellipsis-description">Keine Beschreibung verfügbar</p>
                         } @else {
-                            <p class="">{{result.channelDescription}}</p>
+                            <p class="ellipsis-description">{{result.channelDescription}}</p>
                         }
                         <div class="memberImgList">
                             @for (channelMember of result.channelMembers.slice(0, 3); track $index) {
