@@ -314,8 +314,8 @@ app-user-msg-options {
 
 .emoji-picker-popup {
   position: absolute;
-  top: -200px;
-  left: 20px;
+  top: -150px;
+  left: 30px;
   z-index: 1000;
 
   ::ng-deep mat-card {
@@ -324,10 +324,10 @@ app-user-msg-options {
   }
 
   &.own-message {
-    right: 320px;
+    right: 290px;
     left: auto;
     top: auto;
-    bottom: 240px;
+    bottom: 180px;
     transform-origin: bottom right;
 
     ::ng-deep mat-card {
@@ -506,6 +506,18 @@ app-emoji-overview {
       .emoji-reactions {
         justify-content: flex-start;
       }
+    }
+  }
+}
+
+@media (max-width: 400px) {
+  .emoji-picker-popup {
+    top: -120px;
+    left: 30px;
+
+    &.own-message {
+      right: 260px;
+      bottom: 160px;
     }
   }
 }

@@ -3,7 +3,7 @@
 @use "./../../assets/styles/colors.scss" as main-colors;
 
 section {
-  @include styles.padding($pl: 2rem, $pr: 2rem, $pt: 1rem, $pb: 0);
+  @include styles.padding($pl: 2rem, $pr: 2rem, $pt: 0, $pb: 0);
   @include styles.dFlex(
     $d: flex,
     $fd: row,
@@ -74,16 +74,16 @@ section {
   }
 }
 
-.desktop-content {
-  @include styles.dFlex(
-    $d: flex,
-    $fd: row,
-    $jc: flex-end,
-    $ai: center,
-    $g: 2rem
-  );
-  flex: 1;
-}
+// .desktop-content {
+//   @include styles.dFlex(
+//     $d: flex,
+//     $fd: row,
+//     $jc: flex-end,
+//     $ai: center,
+//     $g: 2rem
+//   );
+//   flex: 1;
+// }
 
 .searchbar-container {
   @include styles.padding($pl: 12px, $pr: 24px, $pt: 0, $pb: 0);

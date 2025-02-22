@@ -1,4 +1,4 @@
-<div class="message-input-container">
+<div class="message-input-container" [id]="'input-container-' + inputId">
   <label for="new-message"></label>
   <div class="textarea-wrapper">
 
@@ -9,7 +9,8 @@
   </div>
 
 
-  <div class="mention-dropdown" *ngIf="showMentionDropdown && mentionSearchResults.length > 0">
+  <div class="mention-dropdown" *ngIf="showMentionDropdown && mentionSearchResults.length > 0"
+    [class.thread-dropdown]="isThreadMessage">
     <div *ngFor="let user of mentionSearchResults" class="mention-item" (click)="selectMention(user)">
       <img [src]="user.photoURL || 'img-placeholder/default-avatar.svg'" [alt]="user.username" class="mention-avatar">
       <div class="mention-details">

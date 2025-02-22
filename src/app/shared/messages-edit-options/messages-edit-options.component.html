@@ -1,10 +1,21 @@
 <mat-card class="bg-frame-v1" (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()">
-  <mat-card-content>
-    <button (click)="onEditedMessageStatusChanged()">
-      <span>Nachricht bearbeiten</span>
-    </button>
-    <button (click)="deleteUserMessage()">
-      <span>Nachricht löschen</span>
-    </button>
+  <mat-card-content [ngClass]="{'thread-options': isThreadMessage, 'main-chat-options': !isThreadMessage}">
+    <ng-container *ngIf="!isThreadMessage">
+      <button (click)="onEditedMessageStatusChanged()">
+        <span>Nachricht bearbeiten</span>
+      </button>
+      <button (click)="deleteUserMessage()">
+        <span>Nachricht löschen</span>
+      </button>
+    </ng-container>
+
+    <ng-container *ngIf="isThreadMessage">
+      <button mat-icon-button (click)="onEditedMessageStatusChanged()" class="edit-icon-btn">
+        <mat-icon>edit_square</mat-icon>
+      </button>
+      <button mat-icon-button (click)="deleteUserMessage()" class="delete-icon-btn">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </ng-container>
   </mat-card-content>
 </mat-card>

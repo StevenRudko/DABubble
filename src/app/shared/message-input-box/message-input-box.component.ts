@@ -82,6 +82,7 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
   @Input() isThreadMessage: boolean = false;
   @Input() parentMessageId: string | null = null;
   @Input() placeholder: string = 'Write message...';
+  @Input() inputId: string = 'main-chat';
 
   messageText: string = '';
   private currentChannel: any;
@@ -239,8 +240,6 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
       this.sendMessage();
     } else if (event.key === '@') {
       this.handleMentionTrigger();
-    } else if (event.key === 'Backspace') {
-      this.handleBackspace();
     }
   }
 
@@ -252,51 +251,19 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Handles backspace for mention tags
-   */
-  private handleBackspace(): void {
-    const cursorPos = this.messageInput.nativeElement.selectionStart;
-    const mentionTag = this.findMentionTagAtCursor(cursorPos);
-
-    if (mentionTag) {
-      this.deleteMentionTag(mentionTag);
-    }
-  }
-
-  /**
-   * Finds mention tag at cursor position
-   */
-  private findMentionTagAtCursor(cursorPos: number): MentionTag | undefined {
-    return this.mentionTags.find(
-      (tag) => cursorPos > tag.start && cursorPos <= tag.end + 1
-    );
-  }
-
-  /**
-   * Deletes mention tag from text and arrays
-   */
-  private deleteMentionTag(mentionTag: MentionTag): void {
-    this.messageText =
-      this.messageText.substring(0, mentionTag.start) +
-      this.messageText.substring(mentionTag.end + 1);
-
-    this.mentionTags = this.mentionTags.filter((t) => t !== mentionTag);
-    this.mentionedUsers = this.mentionedUsers.filter(
-      (u) => u.start !== mentionTag.start && u.end !== mentionTag.end
-    );
-
-    setTimeout(() => {
-      this.messageInput.nativeElement.selectionStart = mentionTag.start;
-      this.messageInput.nativeElement.selectionEnd = mentionTag.start;
-    });
-  }
-
-  /**
    * Handles input changes and mention search
    */
   onInput(event: Event): void {
     const textarea = this.messageInput.nativeElement;
     this.cursorPosition = textarea.selectionStart;
+
+    const hasAtSymbol = this.messageText.includes('@');
+
+    if (!hasAtSymbol) {
+      this.showMentionDropdown = false;
+      this.mentionSearchResults = [];
+      return;
+    }
 
     if (!this.messageText.trim()) {
       this.resetMentions();

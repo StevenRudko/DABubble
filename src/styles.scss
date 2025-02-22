@@ -220,6 +220,7 @@ h1 {
 
 .close-back {
   cursor: pointer;
+
   &:hover {
     color: #535af1;
     background-color: #eceefe;
@@ -233,15 +234,20 @@ h1 {
   animation: fadeOut 1s linear 1.5s forwards;
 }
 
+.mat-mdc-dialog-surface {
+  border-radius: 30px !important;
+}
+
 @keyframes fadeOut {
   from {
-      background-color: #eceefe;
+    background-color: #eceefe;
   }
 
   to {
-      background-color: unset;
+    background-color: unset;
   }
 }
+
 @media (max-width: 375px) {
   .button-base {
     font-size: 1rem;

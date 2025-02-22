@@ -64,6 +64,8 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
   isMobile: boolean = window.innerWidth <= 1024;
   currentChannelName: string = '';
   allUsers: any[] = [];
+  activeEmojiPicker: string | null = null;
+
   private isUserScrolled = false;
   private subscriptions: Subscription = new Subscription();
   private lastMessageCount = 0;
@@ -88,6 +90,14 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
   @HostListener('window:resize')
   checkScreenSize(): void {
     this.isMobile = window.innerWidth <= 1024;
+  }
+
+  /**
+   * Handles the emoji picker toggle state for thread messages
+   * @param messageId - The ID of the message for which the emoji picker should be shown, or null to close
+   */
+  handleEmojiPicker(messageId: string | null): void {
+    this.activeEmojiPicker = messageId;
   }
 
   /**

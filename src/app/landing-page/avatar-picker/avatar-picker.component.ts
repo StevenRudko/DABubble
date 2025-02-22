@@ -10,6 +10,7 @@ import { UserAccountInfoService } from '../../service/user-account-info.service'
  */
 @Component({
   selector: 'app-avatar-picker',
+  standalone: true,
   imports: [MATERIAL_MODULES],
   templateUrl: './avatar-picker.component.html',
   styleUrl: './avatar-picker.component.scss',
