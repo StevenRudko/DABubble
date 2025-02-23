@@ -29,10 +29,10 @@
             </button>
             <app-emoji-picker *ngIf="activeEmojiPicker === msg.userMessageId" [isOwnMessage]="msg.isOwnMessage"
               [ngClass]="{
-              'emoji-picker-popup': true,
-              'edit-mode': editStatusMessage,
-              'own-message': msg.isOwnMessage
-            }" (emojiSelect)="handleEmojiSelected($event, msg.userMessageId)" (emojiListChange)="emojiList = $event"
+                'emoji-picker-popup': true,
+                'edit-mode': editStatusMessage,
+                'own-message': msg.isOwnMessage
+              }" (emojiSelect)="handleEmojiSelected($event, msg.userMessageId)" (emojiListChange)="emojiList = $event"
               class="emoji-picker-overlay">
             </app-emoji-picker>
           </div>
@@ -43,51 +43,49 @@
         </div>
       </div>
 
-
       <div class="reaction-icons-row-bottom" *ngIf="showReactionIcons && !editStatusMessage">
-        <div class="emoji-reactions">
-          <div *ngFor="let emoji of msg.emojis | unique:'name'" class="reaction-btn-div bg-frame-v1"
-            [class.active]="hasUserReacted(msg, emoji?.name || emoji)"
-            (click)="handleEmojiSelected({name: emoji?.name || emoji}, msg.userMessageId)"
-            (mouseenter)="onMouseEnterReactionIcon(emoji?.name || emoji)"
-            (mouseleave)="onMouseLeaveReactionIcon(emoji?.name || emoji)">
-
-            <button class="reaction-btn-style">
-              {{ getEmojiSymbol(emoji) }}
-            </button>
-            <p>{{ getEmojiCount(msg, emoji?.name || emoji) }}</p>
-
-            <app-emoji-overview *ngIf="hoverComponentEmojiOverviewMap[emoji?.name]"
-              [emojiAuthor]="getEmojiAuthorName(msg, emoji)" [usedEmoji]="getEmojiSymbol(emoji)"
-              [currentUserName]="this.currentUser.displayName">
-            </app-emoji-overview>
-
+        <div class="actions-and-reactions">
+          <div class="message-actions">
+            <div class="emoji-picker-container">
+              <button mat-icon-button (click)="toggleEmojiPicker(msg.userMessageId, $event)">
+                <mat-icon>tag_faces</mat-icon>
+              </button>
+              <app-emoji-picker *ngIf="activeEmojiPicker === msg.userMessageId" [isOwnMessage]="msg.isOwnMessage"
+                [ngClass]="{
+                  'emoji-picker-popup': true,
+                  'own-message': msg.isOwnMessage
+                }" (emojiSelect)="handleEmojiSelected($event, msg.userMessageId)"
+                (emojiListChange)="emojiList = $event" class="emoji-picker-overlay">
+              </app-emoji-picker>
+            </div>
+            <div class="emoji-reactions">
+              <div *ngFor="let emoji of msg.emojis | unique:'name'" class="reaction-btn-div bg-frame-v1"
+                [class.active]="hasUserReacted(msg, emoji?.name || emoji)"
+                (click)="handleEmojiSelected({name: emoji?.name || emoji}, msg.userMessageId)"
+                (mouseenter)="onMouseEnterReactionIcon(emoji?.name || emoji)"
+                (mouseleave)="onMouseLeaveReactionIcon(emoji?.name || emoji)">
+                <button class="reaction-btn-style">
+                  {{ getEmojiSymbol(emoji) }}
+                </button>
+                <p>{{ getEmojiCount(msg, emoji?.name || emoji) }}</p>
+                <app-emoji-overview *ngIf="hoverComponentEmojiOverviewMap[emoji?.name]"
+                  [emojiAuthor]="getEmojiAuthorName(msg, emoji)" [usedEmoji]="getEmojiSymbol(emoji)"
+                  [currentUserName]="this.currentUser.displayName">
+                </app-emoji-overview>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="message-actions">
-          <div class="user-message-row-bottom" *ngIf="showAnswerDetails && threadInfo && threadInfo.replyCount > 0"
-            (click)="openThread()">
-            <p class="comments-number">
-              {{ threadInfo.replyCount }} {{ threadInfo.replyCount === 1 ? "Antwort" : "Antworten" }}
-            </p>
-            <p class="last-comment-time" *ngIf="threadInfo.lastReplyTime">
-              Letzte Antwort {{ threadInfo.lastReplyTime.hours | number:'2.0-0' }}:{{ threadInfo.lastReplyTime.minutes |
-              number:'2.0-0' }} Uhr
-            </p>
-          </div>
-          <div class="emoji-picker-container">
-            <button mat-icon-button (click)="toggleEmojiPicker(msg.userMessageId, $event)">
-              <mat-icon>tag_faces</mat-icon>
-            </button>
-            <app-emoji-picker *ngIf="activeEmojiPicker === msg.userMessageId" [isOwnMessage]="msg.isOwnMessage"
-              [ngClass]="{
-              'emoji-picker-popup': true,
-              'own-message': msg.isOwnMessage
-            }" (emojiSelect)="handleEmojiSelected($event, msg.userMessageId)" (emojiListChange)="emojiList = $event"
-              class="emoji-picker-overlay">
-            </app-emoji-picker>
-          </div>
+        <div class="user-message-row-bottom" *ngIf="showAnswerDetails && threadInfo && threadInfo.replyCount > 0"
+          (click)="openThread()">
+          <p class="comments-number">
+            {{ threadInfo.replyCount }} {{ threadInfo.replyCount === 1 ? "Antwort" : "Antworten" }}
+          </p>
+          <p class="last-comment-time" *ngIf="threadInfo.lastReplyTime">
+            Letzte Antwort {{ threadInfo.lastReplyTime.hours | number:'2.0-0' }}:{{ threadInfo.lastReplyTime.minutes |
+            number:'2.0-0' }} Uhr
+          </p>
         </div>
       </div>
     </div>
