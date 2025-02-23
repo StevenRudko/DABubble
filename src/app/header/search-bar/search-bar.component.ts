@@ -77,13 +77,12 @@ export class SearchBarComponent implements OnInit {
         // zum filter der nachrichten wenn nach einem user gesucht wird
         // mit der bedingung das nur nachrichten angezeigt werden die in verbindung stehen mit currentUser
         this.isAuthorMatching(msg, query) && this.canCurrentUserSeeMessage(msg)
-      ).map((msg) => {
+      ).map((msg) => {        
         if (msg.channelId) {
           return this.filterMessage(msg, 'message');
         } else if (msg.directUserId) {
           return this.filterMessage(msg, 'directMessage');
         } else if (!msg.channelId && !msg.directUserId) {
-          console.log(msg);
           return this.filterMessage(msg, 'thread');
         } else {
           return;
@@ -110,9 +109,9 @@ export class SearchBarComponent implements OnInit {
     });
     const respondent = threadMessage
       ? this.users.find((user) => user.localID === threadMessage.authorId) : undefined;
-    // ?.username || 'Unbekannt' : 'Unbekannt';
-
     const threadChannel = this.channels.find((channel) => threadMessage?.channelId === channel.channelId)
+    const threadDirectUser = threadMessage
+      ? this.users.find((user) => user.localID === threadMessage.directUserId) : undefined;
 
     return {
       type: type || '',
@@ -126,10 +125,10 @@ export class SearchBarComponent implements OnInit {
       message: msg.message || '',
       time: msg.time || 0,
       userMessageId: msg.userMessageId || '',
-      channelName: channel?.name || threadChannel?.name || 'not found',
-      directUserName: directMessageName?.username || '',
-      nameOfTheRespondent: respondent?.username || '',
-      idOfTheRespondentMessage: threadMessage?.userMessageId || '',
+      channelName: channel?.name || threadChannel?.name || 'Gelöscht',
+      directUserName: directMessageName?.username || threadDirectUser?.username || 'Gelöscht',
+      nameOfTheRespondent: respondent?.username || 'Gelöscht',
+      idOfTheRespondentMessage: threadMessage?.userMessageId || 'Gelöscht',
     };
   }
 
@@ -184,7 +183,18 @@ export class SearchBarComponent implements OnInit {
 
   isUserInChannelThread(message: UserMessageInterface): boolean {
     const mainMessage = this.userMessages.find(msg => msg.comments.includes(message.userMessageId));
-    return mainMessage ? this.isUserInChannel(mainMessage.channelId) : false;
+    if (!mainMessage) {
+      return false;
+    } else if (this.isUserInChannel(mainMessage.channelId)) {
+      return true;
+    } else {
+      if (this.userMessages.find(msg => msg.directUserId === message.authorId && message.authorId === this.userInfo.uId
+        || msg.directUserId === message.authorId && mainMessage.directUserId === this.userInfo.uId)) {       
+        return true
+      } else {
+        return false
+      }
+    }
   }
 
   private updateBorderTrigger(): void {
@@ -284,7 +294,6 @@ export class SearchBarComponent implements OnInit {
 
   async openThread(result: any) {
     this.switchAutoScroll(false);
-    console.log(result);
     if (result.channelId) {
       await this.showChannel(result.channelId);
       this.scrollWhenAvailable(result.idOfTheRespondentMessage, 'chatContainer');
@@ -350,7 +359,7 @@ export class SearchBarComponent implements OnInit {
     if (!status) {
       this.chatService.autoScroll = status;
     } else {
-      setTimeout(() => this.chatService.autoScroll = status ,3000)
+      setTimeout(() => this.chatService.autoScroll = status, 3000)
     }
   }
 }

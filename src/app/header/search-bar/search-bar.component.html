@@ -5,9 +5,9 @@
                 <div class="result-container" (click)="showProfile(result)">
                         <img src="{{result.photoURL}}" alt="">
                         <div class="result-container-basic-infos">
-                            <span class="nowrap">
+                            <div class="ellipsis-name">
                                 {{result.username}}
-                            </span>
+                            </div>
                             @if (getPresenceStatus(result.localID)) {
                                 <div class="status-online">
                                   <div></div>
@@ -31,7 +31,7 @@
                 (click)="openMessage(result.channelId, result.userMessageId)">
                         <img src="{{result.photoURL}}" alt="">
                         <div class="result-container-basic-infos">
-                            <span class="ellipsis-name">{{result.username}}</span>
+                            <div class="ellipsis-name">{{result.username}}</div>
                             <div class="messageResultChannelInfo">
                                 <svg class="workspaces-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
@@ -54,7 +54,7 @@
                 <div class="result-container" (click)="openDirectMessage(result)">
                         <img src="{{result.photoURL}}" alt="">
                         <div class="result-container-basic-infos">
-                            <span class="ellipsis-name">{{result.username}}</span>
+                            <div class="ellipsis-name">{{result.username}}</div>
                             <div class="messageResultChannelInfo">
                                 <div>&#64;</div>
                                 <div class="ellipsis-name">{{result.directUserName}}</div>
@@ -67,7 +67,7 @@
                 <div class="result-container" (click)="openThread(result)">
                     <img src="{{result.photoURL}}" alt="">
                     <div class="result-container-basic-infos">
-                        <span class="ellipsis-name">{{result.username}}</span>
+                        <div class="ellipsis-name">{{result.username}}</div>
                         <div class="messageResultChannelInfo">
                             <svg class="workspaces-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -88,16 +88,14 @@
                         <p class="ellipsis-description">{{result.message}}</p>
                     </div>
                 </div>
-            }
-            @else if (result.type == 'thread' && result.directUserId) {
+            } @else if (result.type == 'thread' && result.directUserId) {
                 <div class="result-container" (click)="openThread(result)">
-                    <!-- <div>#</div> -->
                     <img src="{{result.photoURL}}" alt="">
                     <div class="result-container-basic-infos">
-                        <span class="ellipsis-name">{{result.username}}</span>
+                        <div class="ellipsis-name">{{result.username}}</div>
                         <div class="messageResultChannelInfo">
                             <div>&#64;</div>
-                            <span class="ellipsis-name">{{result.nameOfTheRespondent}}</span>
+                            <span class="ellipsis-name">{{result.directUserName}}</span>
                         </div>
                     </div>
                     <div class="thread-message-container">
@@ -110,7 +108,7 @@
         @for (result of searchResults; track $index) {
             @if (result.type == 'channel') {
                 <div class="result-container" (click)="showChannel(result.channelId)">
-                        <div>
+                        <div class="channel-img-container">
                             <svg class="workspaces-icon" width="24" height="24" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <mask id="mask0_101911_10589" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24"
@@ -123,11 +121,11 @@
                                 </g>
                             </svg>
                         </div>
-                        <span>{{result.channelName}}</span>
+                        <span class="channel-name">{{result.channelName}}</span>
                         @if (!result.channelDescription) {
-                            <p>Keine Beschreibung verfügbar</p>
+                            <p class="ellipsis-description">Keine Beschreibung verfügbar</p>
                         } @else {
-                            <p>{{result.channelDescription}}</p>
+                            <p class="ellipsis-description">{{result.channelDescription}}</p>
                         }
                         <div class="memberImgList">
                             @for (channelMember of result.channelMembers.slice(0, 3); track $index) {

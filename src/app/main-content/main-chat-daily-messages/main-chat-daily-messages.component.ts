@@ -370,7 +370,6 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
    */
   private scrollToBottom(): void {
     const container = this.chatContainer?.nativeElement;
-    console.log(this.chatService.autoScroll);
     
     if (container && !this.isUserScrolled && this.chatService.autoScroll) {
       container.scrollTop = container.scrollHeight;
