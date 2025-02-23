@@ -92,6 +92,16 @@ export class SidebarComponent implements OnInit {
   }
 
   /**
+   * Handles returning to the sidebar view
+   */
+  @HostListener('mainContent.showSidebar')
+  onShowSidebar(): void {
+    if (this.isMobile) {
+      this.chatService.resetCurrentSelection();
+    }
+  }
+
+  /**
    * Initializes user list data stream
    */
   private initializeUserList(): void {
@@ -195,14 +205,19 @@ export class SidebarComponent implements OnInit {
    * Selects a channel if different from current
    */
   selectChannel(channelId: string): void {
-    this.chatService.currentChannel$
-      .pipe(take(1))
-      .subscribe((currentChannel) => {
-        if (!currentChannel || currentChannel.id !== channelId) {
-          this.chatService.selectChannel(channelId);
-          this.mainContent.showChat(true);
-        }
-      });
+    if (this.isMobile) {
+      this.chatService.selectChannel(channelId);
+      this.mainContent.showChat(true);
+    } else {
+      this.chatService.currentChannel$
+        .pipe(take(1))
+        .subscribe((currentChannel) => {
+          if (!currentChannel || currentChannel.id !== channelId) {
+            this.chatService.selectChannel(channelId);
+            this.mainContent.showChat(true);
+          }
+        });
+    }
   }
 
   /**

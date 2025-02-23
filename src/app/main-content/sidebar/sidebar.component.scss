@@ -440,6 +440,34 @@
     align-items: center;
     justify-content: center;
   }
+
+  .section .channel-item.active {
+    color: inherit;
+    background-color: transparent;
+    font-weight: normal;
+    border-radius: 2rem;
+
+    &:hover {
+      color: #535af1;
+      background-color: #eceefe;
+    }
+  }
+
+  .user-list .user-item.active {
+    background-color: transparent;
+
+    span {
+      color: inherit;
+      font-weight: normal;
+    }
+
+    &:hover {
+      background-color: #eceefe;
+      span {
+        color: #535af1;
+      }
+    }
+  }
 }
 
 @media (max-width: 700px) {
