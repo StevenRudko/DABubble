@@ -1,4 +1,5 @@
-import { Routes } from '@angular/router';
+import { Routes, RouterModule } from '@angular/router';
+import { NgModule } from '@angular/core';
 import { LandingPageComponent } from './landing-page/landing-page.component';
 import { CreateAccountComponent } from './landing-page/create-account/create-account.component';
 import { AvatarPickerComponent } from './landing-page/avatar-picker/avatar-picker.component';
@@ -48,3 +49,9 @@ export const routes: Routes = [
   { path: 'main', component: MainContentComponent, canActivate: [authGuard] },
   { path: '**', redirectTo: '' },
 ];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes, { useHash: true })],
+  exports: [RouterModule],
+})
+export class AppRoutingModule {}

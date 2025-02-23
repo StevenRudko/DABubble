@@ -11,6 +11,7 @@ import {
   sendPasswordResetEmail,
   User,
   browserSessionPersistence,
+  browserLocalPersistence,
 } from '@angular/fire/auth';
 import { setPersistence } from 'firebase/auth';
 import { from, Observable } from 'rxjs';
@@ -47,7 +48,7 @@ export class AuthService {
     private firestore: Firestore,
     private presenceService: PresenceService
   ) {
-    this.setSessionStoragePersistence();
+    this.setLocalStoragePersistence();
     this.user$ = user(this.firebaseAuth);
   }
 
@@ -57,8 +58,8 @@ export class AuthService {
    * @private
    * @returns {void}
    */
-  private setSessionStoragePersistence(): void {
-    setPersistence(this.firebaseAuth, browserSessionPersistence);
+  private setLocalStoragePersistence(): void {
+    setPersistence(this.firebaseAuth, browserLocalPersistence);
   }
 
   /**

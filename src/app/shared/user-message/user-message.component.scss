@@ -452,43 +452,31 @@ app-emoji-overview {
 
 @media (max-width: 600px) {
   .reaction-icons-row-bottom {
-    flex-direction: column;
     gap: 8px;
     width: 100%;
-    align-items: flex-start;
-
-    .myMessageStyle & {
-      align-items: flex-end;
-    }
+    align-items: center;
+    flex-direction: row;
   }
 
   .message-actions {
-    width: 100%;
+    width: auto;
     display: flex;
     flex-direction: row;
-    justify-content: flex-start;
-
-    .myMessageStyle & {
-      justify-content: flex-end;
-    }
+    justify-content: flex-end;
   }
 
   .emoji-reactions {
-    width: 100%;
+    width: auto;
     display: flex;
     flex-direction: row;
     gap: 4px;
-    justify-content: flex-start;
-
-    .myMessageStyle & {
-      justify-content: flex-end;
-    }
+    justify-content: flex-end;
   }
 
   .user-message-box {
     &.myMessageStyle {
       .reaction-icons-row-bottom {
-        align-items: flex-end;
+        align-items: center;
       }
 
       .message-actions,
@@ -499,7 +487,7 @@ app-emoji-overview {
 
     &:not(.myMessageStyle) {
       .reaction-icons-row-bottom {
-        align-items: flex-start;
+        align-items: center;
       }
 
       .message-actions,
