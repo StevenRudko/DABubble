@@ -6,13 +6,14 @@
 
   <div class="profile-content">
     <div class="avatar-container">
-      <img [src]="this.userInfoService.photoURL" [alt]="this.userInfoService.displayName" class="profile-avatar">
+      <img class="profile-avatar" [src]="this.userInfoService.photoURL" alt="avatar"
+      onerror="this.onerror=null; this.src='img/person.png';"  (click)="openDialog()">
     </div>
     @if (!edit) {
     <div class="info-container">
       <div class="user-info">
         <div class="name-container">
-          <h3>{{ this.userInfoService.displayName }}</h3>
+          <h3>{{ this.userInfoService.displayName }}</h3> 
           <p class="edit-text" (click)="openEdit()">Bearbeiten</p>
           <mat-icon class="edit-icon" (click)="openEdit()">edit</mat-icon>
         </div>

@@ -2,10 +2,10 @@
     <h1>Wähle deinen Avatar</h1>
     <div class="avatar-picker-container">
         <div class="person-circle">
-            <img [class.avatarImg]="selectedUserAvatar !== 'img/person.png'" src="{{selectedUserAvatar}}">
+            <img [class.avatar-img]="selectedUserAvatar !== 'img/person.png'" [class.person-circle-img]="selectedUserAvatar == 'img/person.png'" src="{{selectedUserAvatar}}">
         </div>
         <div class="user-information">
-            <h2>Frederik Beck</h2>
+            <h2>{{this.formData.username}}</h2>
             <p>Aus der Liste wählen</p>
         </div>
         <div class="login-form">

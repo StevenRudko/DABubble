@@ -5,7 +5,7 @@
     border-radius: 30px;
     padding: 5px 15px;
     font-family: Figtree;
-    font-size: 1.125rem;
+    font-size: 1rem;
     color: #797EF3;
     cursor: pointer;
 
@@ -17,12 +17,12 @@
 .separator {
     width: 100%;
     @include styles.dFlex($d: flex, $fd: none, $jc: center, $ai: center);
-    padding: 30px 0;
+    padding: 25px 0;
 }
 
 .seperator-text {
     padding: 5px 15px;
-    font-size: 1.125rem;
+    font-size: 1rem;
 }
 
 .separator-line {
@@ -48,18 +48,18 @@
 }
 
 .google-button {
-    @include styles.dFlex($d: flex, $fd: none, $jc: center, $ai: center);
+    @include styles.dFlex($d: flex, $fd: unset, $jc: center, $ai: center);
     width: 100%;
     height: 100%;
     font-family: Figtree;
-    font-size: 1.125rem;
+    font-size: 1rem;
     color: #444DF2;
     cursor: pointer;
 }
 
 .google-img {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     padding-right: 20px;
 }
 

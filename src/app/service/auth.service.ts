@@ -179,7 +179,7 @@ export class AuthService {
    * @returns {Promise<void>} - Promise that resolves when the information is successfully saved.
    * @throws {Error} - Throws an error if the saving process fails.
    */
-  private async saveUserInfoToFirestore(user: User): Promise<void> {
+  async saveUserInfoToFirestore(user: User): Promise<void> {
     try {
       const userRef = doc(this.firestore, `users/${user.uid}`);
       await setDoc(userRef, {

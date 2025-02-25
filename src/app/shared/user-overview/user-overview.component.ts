@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { AuthService } from '../../service/auth.service';
 import {
   FormBuilder,
@@ -10,6 +10,7 @@ import {
   FormsModule,
 } from '@angular/forms';
 import { UserInfosService } from '../../service/user-infos.service';
+import { AvatarPickerOverlayComponent } from '../avatar-picker-overlay/avatar-picker-overlay.component';
 
 /**
  * The UserOverviewComponent allows the user to view and update their profile information,
@@ -67,7 +68,9 @@ export class UserOverviewComponent {
    */
   constructor(
     private authService: AuthService,
-    public userInfoService: UserInfosService
+    public userInfoService: UserInfosService,
+    private dialog: MatDialog,
+    public userInfo: UserInfosService,
   ) {
     this.userInfoService.getUserInfo();
   }
@@ -92,6 +95,7 @@ export class UserOverviewComponent {
           this.userInfoService.uId,
           this.form.controls.username.value
         );
+        this.userInfo.getUserInfo();
         this.dialogRef.close();
       })
       .catch((error) => {
@@ -128,4 +132,15 @@ export class UserOverviewComponent {
       username: this.userInfoService.displayName,
     });
   }
+
+  openDialog(): void {
+      const dialogRef = this.dialog.open(AvatarPickerOverlayComponent, {
+        // width: '500px',
+        // panelClass: 'user-menu-dialog',
+      });
+  
+      dialogRef.afterClosed().subscribe(() => {
+        console.log('The dialog was closed');
+      });
+    }
 }

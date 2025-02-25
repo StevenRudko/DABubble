@@ -68,19 +68,19 @@ section,
 
 h1 {
   color: #444df2;
-  margin-bottom: 30px;
-  font-size: 2.875rem;
+  margin-bottom: 1.5rem;
+  font-size: 2.125rem;
   white-space: nowrap;
 }
 
 .rounded-container {
   @include dFlex($d: flex, $fd: row, $jc: unset, $ai: center);
-  height: 60px;
+  height: 50px;
   width: 100%;
   background-color: #eceefe;
   border-radius: 100px;
   border: 1px solid rgba(0, 0, 0, 0);
-  margin-bottom: 40px;
+  margin-bottom: 35px;
   transition: ease-in-out 0.07s;
 }
 
@@ -93,7 +93,7 @@ h1 {
   }
 
   mat-icon {
-    padding: 0 30px;
+    padding: 0 25px;
     color: #686868;
   }
 
@@ -110,7 +110,7 @@ h1 {
     border: none;
     background-color: #eceefe;
     font-family: Nunito;
-    font-size: 18px;
+    font-size: 1rem;
     font-weight: 500;
 
     &:focus {
@@ -124,23 +124,23 @@ h1 {
 }
 
 .login-description {
-  font-size: 1.25rem;
+  font-size: 1rem;
   text-align: center;
-  padding-bottom: 46px;
-  width: 490px;
+  padding-bottom: 30px;
+  width: 400px;
 }
 
 .login-cointainer {
-  height: calc(100% - 80px);
-  width: calc(100% - 100px);
-  padding: 40px 50px;
+  height: calc(100% - 60px);
+  width: calc(100% - 80px);
+  padding: 30px 40px;
   @include dFlex($d: flex, $fd: column, $jc: unset, $ai: center);
 }
 
 .error-message {
   position: absolute;
   bottom: -25px;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   color: red;
   opacity: 0;
   animation: show 0.12s ease-in-out forwards;
@@ -159,15 +159,15 @@ h1 {
 .login-form {
   position: relative;
   width: 100%;
-  max-width: 500px;
+  max-width: 400px;
   @include dFlex($d: flex, $fd: column, $jc: unset, $ai: center);
 }
 
 .button-base {
-  height: 50px;
+  height: 40px;
   border-radius: 25px;
   font-size: 1.125rem;
-  padding: 12px 25px;
+  padding: 0px 18px;
   font-weight: 700;
   font-family: Nunito;
   cursor: pointer;
@@ -214,7 +214,7 @@ h1 {
 
 .arrow-back {
   position: absolute;
-  top: 55px;
+  top: 40px;
   left: 30px;
 }
 
