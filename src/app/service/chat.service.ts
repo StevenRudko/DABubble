@@ -508,4 +508,12 @@ export class ChatService {
   openThread(): void {
     this.threadOpenSubject.next(true);
   }
+
+  /**
+   * Resets the current channel and direct message selection
+   */
+  resetCurrentSelection(): void {
+    this.currentChannelSubject.next(null);
+    this.currentDirectUserSubject.next(null);
+  }
 }

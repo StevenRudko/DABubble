@@ -24,16 +24,20 @@
   );
   width: 100%;
   flex-shrink: 0;
-  @include styles.padding($pl: 0.5rem, $pr: 24px, $pt: 0.5rem, $pb: 0.5rem);
+  @include styles.padding($pl: 0.5rem, $pr: 8px, $pt: 0.5rem, $pb: 0.5rem);
+  box-sizing: border-box;
 
   .edit-square {
     width: 40px;
     height: 40px;
     cursor: pointer;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+    border-radius: 50%;
+
     &:hover {
       color: #535af1;
       background-color: #eceefe;
-      border-radius: 50%;
     }
   }
 
@@ -101,6 +105,7 @@
     .add-icon {
       margin-left: auto;
       cursor: pointer;
+      margin-right: 1rem;
       &:hover {
         color: #535af1;
         background-color: #eceefe;
@@ -444,6 +449,34 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .section .channel-item.active {
+    color: inherit;
+    background-color: transparent;
+    font-weight: normal;
+    border-radius: 2rem;
+
+    &:hover {
+      color: #535af1;
+      background-color: #eceefe;
+    }
+  }
+
+  .user-list .user-item.active {
+    background-color: transparent;
+
+    span {
+      color: inherit;
+      font-weight: normal;
+    }
+
+    &:hover {
+      background-color: #eceefe;
+      span {
+        color: #535af1;
+      }
+    }
   }
 }
 

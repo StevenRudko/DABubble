@@ -250,18 +250,11 @@
     transition: all 0.3s ease-in-out;
     position: absolute;
     bottom: 2rem;
+    right: 2rem;
 
     &:hover {
       background-color: #797ef3 !important;
       transform: translateY(-1px);
-    }
-  }
-
-  @media (max-width: 768px) {
-    .footer-button {
-      position: relative;
-      bottom: auto;
-      margin-top: 1rem;
     }
   }
 }
@@ -430,5 +423,10 @@
   }
   .dialog-footer {
     justify-content: center;
+  }
+  .dialog-footer .footer-button {
+    position: relative;
+    bottom: 0.5rem;
+    right: 0;
   }
 }

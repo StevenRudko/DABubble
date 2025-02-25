@@ -132,10 +132,14 @@ section {
   @include styles.dFlex(
     $d: flex,
     $fd: row,
-    $jc: flex-start,
+    $jc: flex-end,
     $ai: center,
     $g: 24px
   );
+
+  .myMessageStyle & {
+    justify-content: flex-start;
+  }
 }
 
 .comments-number {
@@ -152,26 +156,27 @@ section {
   @include styles.dFlex(
     $d: flex,
     $fd: row,
-    $jc: flex-end,
+    $jc: flex-start,
     $ai: center,
     $g: 12px
   );
   margin-top: -6px;
   flex-wrap: wrap;
+  width: 100%;
 
-  &.editMessageActive {
-    width: 100%;
-    @include styles.dFlex(
-      $d: flex,
-      $fd: row,
-      $jc: space-between,
-      $ai: space-between,
-      $g: 0px
-    );
-    box-sizing: border-box;
-    position: absolute;
-    top: 120px;
-    padding: 0 30px;
+  .myMessageStyle & {
+    flex-direction: row-reverse;
+  }
+}
+
+.message-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  .myMessageStyle & {
+    flex-direction: row-reverse;
   }
 }
 
@@ -415,6 +420,10 @@ textarea {
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
+
+  .myMessageStyle & {
+    flex-direction: row-reverse;
+  }
 }
 
 app-emoji-overview {
@@ -452,61 +461,82 @@ app-emoji-overview {
 
 @media (max-width: 600px) {
   .reaction-icons-row-bottom {
+    width: 100%;
+    display: flex;
     flex-direction: column;
     gap: 8px;
-    width: 100%;
-    align-items: flex-start;
+  }
 
-    .myMessageStyle & {
-      align-items: flex-end;
-    }
+  .actions-and-reactions {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
   }
 
   .message-actions {
-    width: 100%;
     display: flex;
     flex-direction: row;
-    justify-content: flex-start;
-
-    .myMessageStyle & {
-      justify-content: flex-end;
-    }
+    align-items: center;
+    gap: 8px;
+    width: 100%;
   }
 
   .emoji-reactions {
-    width: 100%;
     display: flex;
     flex-direction: row;
     gap: 4px;
-    justify-content: flex-start;
-
-    .myMessageStyle & {
-      justify-content: flex-end;
-    }
+    align-items: center;
   }
 
   .user-message-box {
+    &:not(.myMessageStyle) {
+      .actions-and-reactions {
+        align-items: flex-start;
+      }
+
+      .message-actions {
+        justify-content: flex-start;
+      }
+
+      .emoji-reactions {
+        justify-content: flex-start;
+      }
+
+      .user-message-row-bottom {
+        justify-content: flex-start;
+      }
+    }
+
     &.myMessageStyle {
       .reaction-icons-row-bottom {
         align-items: flex-end;
       }
 
-      .message-actions,
+      .actions-and-reactions {
+        align-items: flex-end;
+      }
+
+      .message-actions {
+        justify-content: flex-end;
+        flex-direction: row-reverse;
+        width: auto;
+      }
+
       .emoji-reactions {
         justify-content: flex-end;
       }
-    }
 
-    &:not(.myMessageStyle) {
-      .reaction-icons-row-bottom {
-        align-items: flex-start;
-      }
-
-      .message-actions,
-      .emoji-reactions {
-        justify-content: flex-start;
+      .user-message-row-bottom {
+        justify-content: flex-end;
+        text-align: right;
+        width: 100%;
       }
     }
+  }
+
+  .user-message-row-bottom {
+    width: 100%;
+    margin-top: 8px;
   }
 }
 

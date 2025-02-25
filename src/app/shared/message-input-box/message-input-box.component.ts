@@ -197,7 +197,7 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
       this.chatService.currentChannel$.subscribe((channel) => {
         this.currentChannel = channel;
         if (channel && !this.isNewMessage && !this.isThreadMessage) {
-          this.placeholder = `Message to #${channel.name}`;
+          this.placeholder = `Nachricht an #${channel.name}`;
           this.focusInput();
         }
       })
@@ -212,7 +212,7 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
       this.chatService.currentDirectUser$.subscribe((user) => {
         this.currentDirectUser = user;
         if (user && !this.isNewMessage && !this.isThreadMessage) {
-          this.placeholder = `Message to ${this.getDisplayName(user)}`;
+          this.placeholder = `Nachricht an ${this.getDisplayName(user)}`;
           this.focusInput();
         }
       })
@@ -485,7 +485,7 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
         if (recipient) {
           this.updatePlaceholderForRecipient(recipient);
         } else {
-          this.placeholder = 'Choose a recipient...';
+          this.placeholder = 'Starte eine neue Nachricht';
         }
       })
     );
@@ -495,9 +495,9 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
    * Updates placeholder text for selected recipient
    */
   private updatePlaceholderForRecipient(recipient: SearchResult): void {
-    this.placeholder = `Message to ${recipient.type === 'channel' ? '#' : ''}${
-      recipient.name
-    }`;
+    this.placeholder = `Nachricht an ${
+      recipient.type === 'channel' ? '#' : ''
+    }${recipient.name}`;
   }
 
   /**
