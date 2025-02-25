@@ -51,7 +51,7 @@ interface UserProfile {
     SearchBarComponent,
   ],
   templateUrl: './sidebar.component.html',
-  styleUrls: ['./sidebar.component.scss'],
+  styleUrls: ['./sidebar.component.scss', './../../header/header.component.scss', './../../header/search-bar/search-bar.component.scss'],
 })
 export class SidebarComponent implements OnInit {
   channels$!: Observable<Channel[]>;

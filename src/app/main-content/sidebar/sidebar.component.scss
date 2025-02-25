@@ -432,6 +432,11 @@
   .search-icon {
     font-size: 24px;
   }
+  app-search-bar {
+    position: fixed !important;
+    top: 150px !important;
+    width: 100vw !important;
+  }
   .collapsible-content.direct-messages {
     max-height: calc(100vh - 450px);
   }

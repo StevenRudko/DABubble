@@ -117,7 +117,7 @@ export class SearchBarComponent implements OnInit {
       type: type || '',
       authorId: msg.authorId || '',
       username: author!.username || 'Gelöscht',
-      photoURL: author!.photoURL || 'img-placeholder/default-avatar.svg',
+      photoURL: author!.photoURL || 'img-placeholder/person.png',
       channelId: msg.channelId || threadChannel?.channelId || '',
       directUserId: msg.directUserId || threadMessage?.directUserId || '',
       comments: msg.comments || [],

@@ -1,9 +1,9 @@
-@if (showResult) {
+@if (showResult && searchResults.length > 0) {
     <section>
         @for (result of searchResults; track $index) {
             @if (result.type == 'user') {
                 <div class="result-container" (click)="showProfile(result)">
-                        <img src="{{result.photoURL}}" alt="">
+                        <img src="{{result.photoURL}}" alt="avatar" onerror="this.onerror=null; this.src='img/person.png';">
                         <div class="result-container-basic-infos">
                             <div class="ellipsis-name">
                                 {{result.username}}
@@ -29,7 +29,7 @@
             @if (result.type == 'message') {
                 <div class="result-container"
                 (click)="openMessage(result.channelId, result.userMessageId)">
-                        <img src="{{result.photoURL}}" alt="">
+                <img src="{{result.photoURL}}" alt="avatar" onerror="this.onerror=null; this.src='img/person.png';">
                         <div class="result-container-basic-infos">
                             <div class="ellipsis-name">{{result.username}}</div>
                             <div class="messageResultChannelInfo">
@@ -47,12 +47,12 @@
                                 <span class="ellipsis-name">{{result.channelName}}</span>
                             </div>
                         </div>
-                        <p class="ellipsis-description">{{result.message}}</p>
+                        <div class="ellipsis-description">{{result.message}}</div>
                 </div>
             }
             @else if (result.type == 'directMessage') {
                 <div class="result-container" (click)="openDirectMessage(result)">
-                        <img src="{{result.photoURL}}" alt="">
+                    <img src="{{result.photoURL}}" alt="avatar" onerror="this.onerror=null; this.src='img/person.png';">
                         <div class="result-container-basic-infos">
                             <div class="ellipsis-name">{{result.username}}</div>
                             <div class="messageResultChannelInfo">
@@ -60,12 +60,12 @@
                                 <div class="ellipsis-name">{{result.directUserName}}</div>
                             </div>
                         </div>
-                        <p>{{result.message}}</p>
+                        <div>{{result.message}}</div>
                 </div>
             }
             @else if (result.type == 'thread' && result.channelId) {
                 <div class="result-container" (click)="openThread(result)">
-                    <img src="{{result.photoURL}}" alt="">
+                    <img src="{{result.photoURL}}" alt="avatar" onerror="this.onerror=null; this.src='img/person.png';">
                     <div class="result-container-basic-infos">
                         <div class="ellipsis-name">{{result.username}}</div>
                         <div class="messageResultChannelInfo">
@@ -90,7 +90,7 @@
                 </div>
             } @else if (result.type == 'thread' && result.directUserId) {
                 <div class="result-container" (click)="openThread(result)">
-                    <img src="{{result.photoURL}}" alt="">
+                    <img src="{{result.photoURL}}" alt="avatar" onerror="this.onerror=null; this.src='img/person.png';">
                     <div class="result-container-basic-infos">
                         <div class="ellipsis-name">{{result.username}}</div>
                         <div class="messageResultChannelInfo">
@@ -107,7 +107,7 @@
         }
         @for (result of searchResults; track $index) {
             @if (result.type == 'channel') {
-                <div class="result-container" (click)="showChannel(result.channelId)">
+                <div class="result-container channel-result-container" (click)="showChannel(result.channelId)">
                         <div class="channel-img-container">
                             <svg class="workspaces-icon" width="24" height="24" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -121,7 +121,7 @@
                                 </g>
                             </svg>
                         </div>
-                        <span class="channel-name">{{result.channelName}}</span>
+                        <span class="channel-name ellipsis-description">{{result.channelName}}</span>
                         @if (!result.channelDescription) {
                             <p class="ellipsis-description">Keine Beschreibung verfügbar</p>
                         } @else {
@@ -130,7 +130,7 @@
                         <div class="memberImgList">
                             @for (channelMember of result.channelMembers.slice(0, 3); track $index) {
                                 <div>
-                                    <img src="{{channelMember.photoURL}}" alt="{{channelMember.username}}">
+                                    <img src="{{channelMember.photoURL}}" alt="avatar" onerror="this.onerror=null; this.src='img/person.png';">
                                 </div>
                             }
                             @if (result.channelMembers?.length > 3) {
