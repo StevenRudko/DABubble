@@ -10,7 +10,7 @@
   <div class="chat">
     <div #messagesContainer id="messagesContainer" class="messages-container">
       <app-user-message *ngIf="parentMessage" [threadMessage]="true" [showAnswerDetails]="false"
-        [showReactionIcons]="true" [allMessages]="parentMessage" [CurrentUserURL]="parentMessage[0]?.authorPhoto"
+        [showReactionIcons]="true" [allMessages]="parentMessage" [CurrentUserURL]="parentMessage[0].authorPhoto"
         [user]="allUsers" [activeEmojiPicker]="activeEmojiPicker" (setActiveEmojiPicker)="handleEmojiPicker($event)">
       </app-user-message>
 

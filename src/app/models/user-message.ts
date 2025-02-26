@@ -34,9 +34,9 @@ export interface renderMessageInterface {
   /** Message timestamp */
   timestamp: number;
   /** Author information */
-  author: any;
+  author: string;
   /** Author Photo URL */
-  authorPhoto: any;
+  authorPhoto: string;
   /** Unique message identifier */
   userMessageId: string;
   /** Message content */
