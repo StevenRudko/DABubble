@@ -70,16 +70,27 @@ export class MainContentComponent {
   }
 
   /**
-   * Monitors auth state changes and logs user status.
+   * Monitors auth state changes and resets thread state on user changes.
    */
   private initializeAuthListener(): void {
+    let previousUserId: string | null = null;
+
     this.authService.user$.subscribe((user) => {
-      if (user) {
-        console.log('User Data:', user);
-      } else {
-        console.log('No user logged in');
-      }
+      const isNewUser = user && previousUserId && previousUserId !== user.uid;
+      if (isNewUser || !user) this.resetThreadState();
+
+      previousUserId = user ? user.uid : null;
+      console.log(user ? 'User Data:' : 'No user logged in', user || '');
     });
+  }
+
+  /**
+   * Resets thread state when user changes or logs out
+   */
+  private resetThreadState(): void {
+    this.threadVisible = false;
+    this.currentThreadMessageId = null;
+    this.threadService.closeThread();
   }
 
   /**
