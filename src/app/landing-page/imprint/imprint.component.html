@@ -1,20 +1,49 @@
 <div class="login-cointainer">
-    <h1>Impressum</h1>
-    <div class="imprint-info-container">
-        <div>
-            <p>Steven Rudko</p>
-            <p>Samuel Hilgert</p>
-            <p>Gerald Pesendorer</p>
+  <h1>Impressum</h1>
+  <mat-icon class="arrow-back" [routerLink]="['']">arrow_back</mat-icon>
+
+  <div class="imprint-content">
+    <section>
+      <h2>Angaben gemäß § 5 TMG</h2>
+      <div class="imprint-info-container">
+        <div class="team-members">
+          <p><strong>Verantwortliche:</strong></p>
+          <p>Steven Rudko</p>
+          <p>Samuel Hilgert</p>
+          <p>Gerald Pesendoner</p>
         </div>
-        <div>
-            Musterstraße 1234<br>
-            12345 Musterstadt<br>
-            Germany
+
+        <div class="address">
+          <p><strong>Anschrift:</strong></p>
+          <p>Developer Akademie<br>
+            Tassilopl. 25<br>
+            81541 München<br>
+            Deutschland</p>
         </div>
-    </div>
-    <h1>Kontakt</h1>
-    <div class="imprint-info-container">
-        <a href="mailto:max-mustermann@mustermail.com">max-mustermann&#64;mustermail.com</a>
-    </div>
-    <mat-icon class="arrow-back" [routerLink]="['']">arrow_back</mat-icon>
+      </div>
+    </section>
+
+    <section>
+      <h2>Kontakt</h2>
+      <div class="imprint-info-container">
+        <p><strong>E-Mail:</strong> <a href="mailto:info@devspace.de">info&#64;devspace.de</a></p>
+        <p><strong>Telefon:</strong> +49 123 456789</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Rechtliche Hinweise</h2>
+      <p>Trotz sorgfältiger inhaltlicher Kontrolle übernehmen wir keine Haftung für die Inhalte externer Links. Für den
+        Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich.</p>
+
+      <p>Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen
+        Urheberrecht.</p>
+    </section>
+
+    <section>
+      <h2>Streitschlichtung</h2>
+      <p>Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle
+        teilzunehmen.</p>
+    </section>
+  </div>
 </div>

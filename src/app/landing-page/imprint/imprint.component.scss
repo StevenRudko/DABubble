@@ -1,3 +1,168 @@
+.login-cointainer {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 30px 20px 60px 20px;
+  position: relative;
+  height: auto;
+  min-height: 100%;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #444df2;
+  position: relative;
+}
+
+.arrow-back {
+  position: absolute;
+  top: 40px;
+  left: 20px;
+  cursor: pointer;
+
+  &:hover {
+    color: #535af1;
+    transform: scale(1.1);
+    transition: all 0.2s ease;
+  }
+}
+
+.imprint-content {
+  background-color: white;
+  border-radius: 12px;
+  padding: 32px;
+  margin-bottom: 40px;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+section {
+  margin-bottom: 36px;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 24px;
+
+  &:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+}
+
+h2 {
+  color: #444df2;
+  margin-bottom: 20px;
+  font-size: 20px;
+  font-weight: 700;
+  position: relative;
+  padding-left: 12px;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    background-color: #444df2;
+    border-radius: 4px;
+  }
+}
+
 .imprint-info-container {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 48px;
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+
+.team-members,
+.address {
+  flex: 1;
+  min-width: 250px;
+}
+
+p {
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+strong {
+  color: #333;
+  font-weight: 600;
+}
+
+a {
+  color: #535af1;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
     width: 100%;
+    height: 1px;
+    bottom: -2px;
+    left: 0;
+    background-color: #535af1;
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+    transform-origin: bottom right;
+  }
+
+  &:hover {
+    color: #7078f3;
+
+    &::after {
+      transform: scaleX(1);
+      transform-origin: bottom left;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .login-cointainer {
+    padding: 16px 16px 30px 16px;
+  }
+
+  .arrow-back {
+    top: 30px;
+  }
+
+  .imprint-content {
+    padding: 24px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+  }
+
+  .imprint-info-container {
+    flex-direction: column;
+    gap: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 24px;
+    margin-top: 24px;
+  }
+
+  .arrow-back {
+    top: 45px;
+  }
+
+  .imprint-content {
+    padding: 16px;
+    margin-bottom: 15px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  .login-cointainer {
+    padding: 16px 16px 15px 16px;
+  }
 }
