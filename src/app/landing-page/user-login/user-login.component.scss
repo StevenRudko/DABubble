@@ -16,7 +16,7 @@
 
 .separator {
     width: 100%;
-    @include styles.dFlex($d: flex, $fd: none, $jc: center, $ai: center);
+    @include styles.dFlex($d: flex, $fd: unset, $jc: center, $ai: center);
     padding: 25px 0;
 }
 
@@ -64,6 +64,21 @@
 }
 
 .login-button-container {
+    max-width: 315px;
     width: 100%;
-    @include styles.dFlex($d: flex, $fd: none, $jc: center, $ai: center, $g: 30px)
+    @include styles.dFlex($d: flex, $fd: row, $jc: space-between, $ai: center, $g: 0px)
+}
+
+@media(max-width: 500px) {
+    .forgot-pw {
+        margin-top: -10px;
+    }
+
+    .separator {
+        padding: 16px 0;
+    }
+
+    .google-login-container {
+        margin-bottom: 20px;
+    }
 }

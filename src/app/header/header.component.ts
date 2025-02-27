@@ -89,7 +89,7 @@ export class HeaderComponent implements OnInit {
   /**
    * Handles document click events for search visibility
    */
-  @HostListener('document:click', ['$event'])
+  @HostListener('document:mousedown', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
     if (!target.closest('.searchbar-container')) {

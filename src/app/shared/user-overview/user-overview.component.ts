@@ -134,10 +134,7 @@ export class UserOverviewComponent {
   }
 
   openDialog(): void {
-      const dialogRef = this.dialog.open(AvatarPickerOverlayComponent, {
-        // width: '500px',
-        // panelClass: 'user-menu-dialog',
-      });
+      const dialogRef = this.dialog.open(AvatarPickerOverlayComponent, {});
   
       dialogRef.afterClosed().subscribe(() => {
         console.log('The dialog was closed');

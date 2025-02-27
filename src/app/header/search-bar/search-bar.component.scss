@@ -256,6 +256,7 @@ section {
     flex-wrap: wrap; // Erlaubt Umbruch
     height: 100%;
     padding: 5px 10px;
+    max-height: fit-content;
   
     // Die ersten beiden Divs nehmen jeweils 50% der Breite ein
     > img {
@@ -284,8 +285,9 @@ section {
     $fd: column,
     $jc: center,
     $ai: flex-start,
-    $g: 8px
+    $g: 0px
   );
+  padding-top: 4px;
 
     span {
       width: 100%;

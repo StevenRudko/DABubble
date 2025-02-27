@@ -68,9 +68,14 @@ section,
 
 h1 {
   color: #444df2;
-  margin-bottom: 1.5rem;
+  margin-bottom: 24px;
   font-size: 2.125rem;
   white-space: nowrap;
+  text-align: center
+}
+
+.user-auth-section {
+  margin-top: auto;
 }
 
 .rounded-container {
@@ -112,6 +117,7 @@ h1 {
     font-family: Nunito;
     font-size: 1rem;
     font-weight: 500;
+    margin-right: 5px;
 
     &:focus {
       outline: none;
@@ -127,12 +133,13 @@ h1 {
   font-size: 1rem;
   text-align: center;
   padding-bottom: 30px;
-  width: 400px;
+  // width: 400px;
 }
 
-.login-cointainer {
+.login-container {
   height: calc(100% - 60px);
-  width: calc(100% - 80px);
+  width: calc(100vw - 100px);
+  max-width: 400px;
   padding: 30px 40px;
   @include dFlex($d: flex, $fd: column, $jc: unset, $ai: center);
 }
@@ -164,10 +171,10 @@ h1 {
 }
 
 .button-base {
-  height: 40px;
+  height: 50px;
   border-radius: 25px;
   font-size: 1.125rem;
-  padding: 0px 18px;
+  padding: 0px 24px;
   font-weight: 700;
   font-family: Nunito;
   cursor: pointer;
@@ -248,9 +255,51 @@ h1 {
   }
 }
 
-@media (max-width: 375px) {
+@media(max-width: 500px) {
+  h1 {
+    margin-bottom: 8px;
+    font-size: 2rem;
+    white-space: break-spaces;
+  }
+
+  .login-container {
+    padding: 30px 20px;
+    width: calc(100vw - 60px);
+  }
+
+  .login-description {
+    padding-bottom: 16px
+  }
+
+  .rounded-container {
+    margin-bottom: 30px;
+  }
+
+  .error-message {
+    top: 65px;
+  }
+
+  .margin-bottom-error {
+    margin-bottom: 60px;
+  }
+}
+
+@media (max-width: 350px) {
   .button-base {
     font-size: 1rem;
     padding: 8px 16px;
+  }
+
+  .auth-input-container {
+    mat-icon {
+      font-size: 1.25rem;
+      text-align: center;
+      height: auto;
+      width: auto;
+    }
+
+    input {
+      font-size: 0.875rem;
+    }
   }
 }

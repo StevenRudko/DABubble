@@ -24,6 +24,7 @@
 .avatar-img {
     height: 140px;
     width: 140px;
+    border-radius: 100%;
 }
 
 .user-information {
@@ -67,3 +68,17 @@ p {
 .button-container {
     @include styles.dFlex($d: flex, $fd: center, $jc: center, $ai: center, $g: 30px);
 }
+
+@media (max-width: 500px) {
+    .profile-modal {
+      background: white;
+      border-radius: 0px;
+      width: calc( 100% - 32px);
+      padding: 16px;
+      position: fixed;
+      top: 80px;
+      bottom: 0px;
+      right: 0px;
+      left: 0px;
+    }
+  }

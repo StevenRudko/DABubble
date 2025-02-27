@@ -1,8 +1,8 @@
 <div class="landing-continer">
     <div class="header">
         <app-logo-component></app-logo-component> 
-        <div class="create-container">
-            @if (this.router.url === '/';) {
+        <div class="create-container d-none">
+            @if (this.router.url === '/') {
             <p>Neu bei DABubble?</p>
             <p class="button-link" [routerLink]="['/register']">Konto erstellen</p>
             }
@@ -12,10 +12,16 @@
         <router-outlet></router-outlet>
          <!-- <app-set-new-password></app-set-new-password> -->
     </mat-card>
-    <div class="footer">
+    <div class="footer d-none">
         @if (this.router.url === '/';) {
         <p class="button-link" [routerLink]="['/imprint']">Impressum</p>
         <p class="button-link" [routerLink]="['/privacy-policy']">Datenschutz</p>
+        }
+    </div>
+    <div class="create-container d-none-desktop">
+        @if (this.router.url === '/') {
+        <p>Neu bei DABubble?</p>
+        <p class="button-link" [routerLink]="['/register']">Konto erstellen</p>
         }
     </div>
 

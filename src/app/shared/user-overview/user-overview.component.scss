@@ -4,7 +4,7 @@
   background: white;
   border-radius: 30px;
   width: 340px;
-  padding: 24px;
+  padding: 30px;
   position: fixed;
   top: 100px;
   right: 13px;
@@ -182,6 +182,9 @@
   font-size: 1rem;
   margin-left: 37px;
   cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: calc(100% - 37px);
 }
 
 .mail-header {
@@ -260,19 +263,24 @@
   width: 100%;
 }
 
-@media (max-width: 425px) {
+@media (max-width: 500px) {
   .profile-modal {
-    width: 300px;
+    width: calc( 100vw - 70px);
+    max-width: 300px;
+    padding: 25px;
+    top: 50%;
+    right: 50%;
+    transform: translate(50%, -50%);
   }
+}
+
+@media (max-width: 425px) {
   .user-info .name-container h3 {
     font-size: 1.5rem;
   }
 }
 
 @media (max-width: 375px) {
-  .profile-modal {
-    width: 240px;
-  }
   .button-container {
     gap: 16px;
   }

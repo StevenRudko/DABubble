@@ -77,7 +77,7 @@ export class SearchBarComponent implements OnInit {
         // zum filter der nachrichten wenn nach einem user gesucht wird
         // mit der bedingung das nur nachrichten angezeigt werden die in verbindung stehen mit currentUser
         this.isAuthorMatching(msg, query) && this.canCurrentUserSeeMessage(msg)
-      ).map((msg) => {        
+      ).map((msg) => {
         if (msg.channelId) {
           return this.filterMessage(msg, 'message');
         } else if (msg.directUserId) {
@@ -188,8 +188,10 @@ export class SearchBarComponent implements OnInit {
     } else if (this.isUserInChannel(mainMessage.channelId)) {
       return true;
     } else {
-      if (this.userMessages.find(msg => msg.directUserId === message.authorId && message.authorId === this.userInfo.uId
-        || msg.directUserId === message.authorId && mainMessage.directUserId === this.userInfo.uId)) {       
+      if (this.userMessages.find(msg =>
+        msg.directUserId === message.authorId && message.authorId === this.userInfo.uId ||
+        msg.directUserId === message.authorId && mainMessage.directUserId === this.userInfo.uId) ||
+        mainMessage.authorId === this.userInfo.uId) {
         return true
       } else {
         return false
