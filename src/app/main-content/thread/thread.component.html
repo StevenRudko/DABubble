@@ -8,7 +8,7 @@
   </header>
 
   <div class="chat">
-    <div #messagesContainer id="messagesContainer" class="messages-container">
+    <div #messagesContainer id="messagesContainer" class="messages-container" (scroll)="onScroll()">
       <app-user-message *ngIf="parentMessage" [isInThreadView]="true" [threadMessage]="true" [showAnswerDetails]="false"
         [showReactionIcons]="true" [allMessages]="parentMessage" [CurrentUserURL]="parentMessage[0].authorPhoto"
         [user]="allUsers" [activeEmojiPicker]="activeEmojiPicker" (setActiveEmojiPicker)="handleEmojiPicker($event)">

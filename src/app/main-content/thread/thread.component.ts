@@ -25,6 +25,7 @@ import {
 import { Subscription } from 'rxjs';
 import { ChatService } from '../../service/chat.service';
 import { Firestore, collection, getDocs } from '@angular/fire/firestore';
+import { ScrollService } from '../../service/scroll.service';
 
 @Component({
   selector: 'app-thread',
@@ -64,7 +65,8 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
     private userData: UserData,
     private authService: AuthService,
     private chatService: ChatService,
-    private firestore: Firestore
+    private firestore: Firestore,
+    private scrollService: ScrollService
   ) {
     this.initializeSubscriptions();
     this.checkScreenSize();
@@ -167,11 +169,15 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
   ngOnInit(): void {
     if (this.messageId) {
       this.loadParentMessage(this.messageId);
-      this.loadThreadMessages(this.messageId);
+      this.loadThreadMessages(this.messageId).then(() => {
+        // Scroll to bottom after messages are loaded
+        setTimeout(() => {
+          this.scrollService.scrollToBottom(this.messagesContainer, true);
+        }, 100);
+      });
       this.setupMessageUpdates();
     }
   }
-
   /**
    * Sets up real-time message updates
    */
@@ -184,16 +190,6 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   /**
-   * Handles scrolling to bottom for new messages
-   */
-  ngAfterViewChecked(): void {
-    if (this.threadMessages.length > this.lastMessageCount) {
-      this.scrollToBottom();
-      this.lastMessageCount = this.threadMessages.length;
-    }
-  }
-
-  /**
    * Cleans up subscriptions
    */
   ngOnDestroy(): void {
@@ -201,29 +197,26 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   /**
-   * Handles message container scroll events
+   * Handles view initialization
    */
-  onScroll(event: any): void {
-    const element = this.messagesContainer.nativeElement;
-    const atBottom =
-      Math.abs(
-        element.scrollHeight - element.scrollTop - element.clientHeight
-      ) < 50;
-    this.isUserScrolled = !atBottom;
+  ngAfterViewInit(): void {
+    // Force scroll to bottom when thread is initially loaded
+    this.scrollService.scrollToBottom(this.messagesContainer, true);
   }
 
-  /**
-   * Scrolls to bottom of message container
-   */
-  private scrollToBottom(): void {
-    try {
-      if (!this.isUserScrolled && this.messagesContainer) {
-        this.messagesContainer.nativeElement.scrollTop =
-          this.messagesContainer.nativeElement.scrollHeight;
-      }
-    } catch (err) {
-      console.error('Error scrolling to bottom:', err);
+  // onScroll-Methode ändern
+  onScroll(): void {
+    if (this.messagesContainer) {
+      this.scrollService.onScroll(this.messagesContainer.nativeElement);
     }
+  }
+
+  // ngAfterViewChecked-Methode anpassen
+  ngAfterViewChecked(): void {
+    this.lastMessageCount = this.scrollService.handleNewMessages(
+      this.messagesContainer,
+      this.threadMessages.length
+    );
   }
 
   /**
@@ -316,11 +309,16 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
     try {
       const rawComments = await this.userData.getThreadMessages(parentId);
       this.replyCount = rawComments.length;
-
+  
       const messages = await this.formatThreadMessages(rawComments);
       this.threadMessages = messages.filter(
         (msg): msg is renderMessageInterface => msg !== null
       );
+      
+      // Scroll to bottom after messages are loaded
+      setTimeout(() => {
+        this.scrollService.scrollToBottom(this.messagesContainer, true);
+      }, 0);
     } catch (error) {
       console.error('Error loading thread messages:', error);
     }

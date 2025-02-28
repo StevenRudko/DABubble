@@ -48,7 +48,10 @@ export class ScrollService {
       const shouldScroll = force || !this.isUserScrolledSubject.getValue();
       
       if (shouldScroll) {
-        container.nativeElement.scrollTop = container.nativeElement.scrollHeight;
+        // Erhöhen wir den Timeout und stellen sicher, dass alles gerendert wurde
+        setTimeout(() => {
+          container.nativeElement.scrollTop = container.nativeElement.scrollHeight;
+        }, 50); // Erhöht von 0 auf 50ms für besseres Timing
       }
     } catch (err) {
       console.error('Error scrolling to bottom:', err);
@@ -63,7 +66,7 @@ export class ScrollService {
    */
   handleNewMessages(container: ElementRef | null, currentCount: number): number {
     if (currentCount > this.lastMessageCount) {
-      this.scrollToBottom(container);
+      this.scrollToBottom(container, true); // Force scroll bei neuen Nachrichten
       this.lastMessageCount = currentCount;
     }
     return this.lastMessageCount;
