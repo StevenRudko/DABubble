@@ -1,7 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
-import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import {
+  MatDialog,
+  MatDialogModule,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { AuthService } from '../../service/auth.service';
 import {
   FormBuilder,
@@ -18,7 +22,7 @@ import { AvatarPickerOverlayComponent } from '../avatar-picker-overlay/avatar-pi
  */
 @Component({
   selector: 'app-user-overview',
-  standalone:true,
+  standalone: true,
   imports: [
     CommonModule,
     MatIconModule,
@@ -70,7 +74,7 @@ export class UserOverviewComponent {
     private authService: AuthService,
     public userInfoService: UserInfosService,
     private dialog: MatDialog,
-    public userInfo: UserInfosService,
+    public userInfo: UserInfosService
   ) {
     this.userInfoService.getUserInfo();
   }
@@ -134,13 +138,10 @@ export class UserOverviewComponent {
   }
 
   openDialog(): void {
-      const dialogRef = this.dialog.open(AvatarPickerOverlayComponent, {
-        // width: '500px',
-        // panelClass: 'user-menu-dialog',
-      });
-  
-      dialogRef.afterClosed().subscribe(() => {
-        console.log('The dialog was closed');
-      });
-    }
+    const dialogRef = this.dialog.open(AvatarPickerOverlayComponent, {});
+
+    dialogRef.afterClosed().subscribe(() => {
+      console.log('The dialog was closed');
+    });
+  }
 }

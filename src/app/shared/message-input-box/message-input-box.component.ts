@@ -24,47 +24,17 @@ import { AuthService } from '../../service/auth.service';
 import { Subscription } from 'rxjs';
 import { EmojiPickerComponent } from '../emoji-picker/emoji-picker.component';
 import { UserData } from '../../service/user-data.service';
-import { MentionHighlightPipe } from '../pipes/mentionHighlight.pipe';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { EmojiPickerService } from '../../service/emoji-picker.service';
 import { SearchResult } from '../../models/search-result';
-
-interface User {
-  uid: string;
-  username?: string;
-  displayName: string | null;
-  email: string | null;
-  photoURL?: string | null;
-}
-
-interface MentionedUser {
-  uid: string;
-  username: string;
-  displayName: string | null | undefined;
-  photoURL: string | null | undefined;
-  start: number;
-  end: number;
-}
-
-interface MentionTag {
-  id: string;
-  username: string;
-  displayName: string | null | undefined;
-  photoURL: string | null | undefined;
-  start: number;
-  end: number;
-}
+import { UserInterface } from '../../models/user-interface';
+import { DirectUser } from '../../models/chat.interfaces';
+import { MentionedUser, MentionTag } from '../../models/user-message';
 
 @Component({
   selector: 'app-message-input-box',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatIconModule,
-    EmojiPickerComponent,
-    MentionHighlightPipe,
-  ],
+  imports: [CommonModule, FormsModule, MatIconModule, EmojiPickerComponent],
   templateUrl: './message-input-box.component.html',
   styleUrl: './message-input-box.component.scss',
 })
@@ -77,14 +47,14 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
 
   messageText: string = '';
   private currentChannel: any;
-  private currentUser: any;
-  private currentDirectUser: any;
+  private currentUser: UserInterface | null = null;
+  private currentDirectUser: DirectUser | null = null;
   private newMessageRecipient: SearchResult | null = null;
   private subscriptions: Subscription = new Subscription();
   private isNewMessage: boolean = false;
   showEmojiPicker: boolean = false;
   showMentionDropdown = false;
-  mentionSearchResults: User[] = [];
+  mentionSearchResults: UserInterface[] = [];
   mentionedUsers: MentionedUser[] = [];
   mentionSearchTerm = '';
   cursorPosition = 0;
@@ -321,8 +291,12 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
         (doc) =>
           ({
             uid: doc.id,
-            ...doc.data(),
-          } as User)
+            localID: doc.id,
+            username: doc.data()['username'] || '',
+            email: doc.data()['email'] || '',
+            photoURL: doc.data()['photoURL'] || null,
+            online: false,
+          } as UserInterface)
       )
       .slice(0, 5);
   }
@@ -344,8 +318,12 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
         (doc) =>
           ({
             uid: doc.id,
-            ...doc.data(),
-          } as User)
+            localID: doc.id,
+            username: doc.data()['username'] || '',
+            email: doc.data()['email'] || '',
+            photoURL: doc.data()['photoURL'] || null,
+            online: false,
+          } as UserInterface)
       );
     } catch (error) {
       console.error('Error searching users:', error);
@@ -364,13 +342,13 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
   /**
    * Handles user selection from mention dropdown
    */
-  selectMention(user: User): void {
+  selectMention(user: UserInterface): void {
     const textarea = this.messageInput.nativeElement;
     const lastIndex = this.messageText.lastIndexOf(
       '@',
       this.cursorPosition - 1
     );
-    const username = user.username || user.displayName || user.email || 'user';
+    const username = user.username || user.email || 'user';
 
     const mentionTag = this.createMentionTag(user, username, lastIndex);
     this.addMentionToText(mentionTag, textarea);
@@ -380,15 +358,15 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
    * Creates mention tag object
    */
   private createMentionTag(
-    user: User,
+    user: UserInterface,
     username: string,
     startIndex: number
   ): MentionTag {
     return {
-      id: user.uid,
+      id: user.uid || user.localID,
       username: username,
-      displayName: user.displayName || null,
-      photoURL: user.photoURL || null,
+      displayName: null,
+      photoURL: user.photoURL,
       start: startIndex,
       end: startIndex + username.length + 1,
     };
@@ -445,7 +423,18 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
   private setupUserSubscription(): void {
     this.subscriptions.add(
       this.authService.user$.subscribe((user) => {
-        this.currentUser = user;
+        if (user) {
+          this.currentUser = {
+            uid: user.uid,
+            localID: user.uid,
+            username: user.displayName || user.email?.split('@')[0] || '',
+            email: user.email || '',
+            photoURL: user.photoURL,
+            online: true,
+          };
+        } else {
+          this.currentUser = null;
+        }
       })
     );
   }
@@ -504,9 +493,22 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
   /**
    * Gets display name for user
    */
-  getDisplayName(user: User): string {
+  getDisplayName(user: UserInterface | DirectUser): string {
     if (!user) return 'Unnamed User';
-    return user.username || user.displayName || user.email || 'Unnamed User';
+
+    if ('username' in user && user.username) {
+      return user.username;
+    }
+
+    if ('displayName' in user && user.displayName) {
+      return user.displayName;
+    }
+
+    if (user.email) {
+      return user.email;
+    }
+
+    return 'Unnamed User';
   }
 
   /**
@@ -514,7 +516,7 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
    */
   private createMessageData(): any {
     const baseMessage = {
-      authorId: this.currentUser.uid,
+      authorId: this.currentUser?.uid || '',
       message: this.messageText.trim(),
       time: serverTimestamp(),
       comments: [],
@@ -595,7 +597,7 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
       await this.userData.addThreadMessage(
         this.parentMessageId,
         this.messageText.trim(),
-        this.currentUser.uid
+        this.currentUser?.uid || ''
       );
     } else {
       const messageData = this.createMessageData();

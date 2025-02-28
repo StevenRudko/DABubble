@@ -20,24 +20,11 @@ import { UserInterface } from '../../models/user-interface';
 import {
   renderMessageInterface,
   EmojiReaction,
+  UserMessageInterface,
 } from '../../models/user-message';
 import { Subscription } from 'rxjs';
 import { ChatService } from '../../service/chat.service';
 import { Firestore, collection, getDocs } from '@angular/fire/firestore';
-
-interface FirestoreMessage {
-  authorId: string;
-  message: string;
-  time: {
-    seconds: number;
-    nanoseconds: number;
-  };
-  comments?: string[];
-  channelId?: string;
-  directUserId?: string;
-  emojis?: EmojiReaction[];
-  id?: string;
-}
 
 @Component({
   selector: 'app-thread',
@@ -63,7 +50,7 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
   currentUser: any;
   isMobile: boolean = window.innerWidth <= 1024;
   currentChannelName: string = '';
-  allUsers: any[] = [];
+  allUsers: UserInterface[] = [];
   activeEmojiPicker: string | null = null;
 
   private isUserScrolled = false;
@@ -249,10 +236,7 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
   /**
    * Creates message metadata from timestamp
    */
-  private createMessageMetadata(time: {
-    seconds: number;
-    nanoseconds: number;
-  }) {
+  private createMessageMetadata(time: any) {
     const timestamp = this.calculateTimestamp(time);
     return {
       timestamp,
@@ -274,7 +258,7 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
    * Formats Firestore message data
    */
   private async formatMessage(
-    messageData: FirestoreMessage,
+    messageData: any,
     messageId: string
   ): Promise<renderMessageInterface | null> {
     if (!messageData || !messageData.authorId) return null;
@@ -299,11 +283,11 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
   /**
    * Calculates timestamp from Firestore time
    */
-  private calculateTimestamp(time: {
-    seconds: number;
-    nanoseconds: number;
-  }): number {
-    return time.seconds * 1000 + time.nanoseconds / 1000000;
+  private calculateTimestamp(time: any): number {
+    if (time && typeof time === 'object' && 'seconds' in time) {
+      return time.seconds * 1000 + (time.nanoseconds || 0) / 1000000;
+    }
+    return typeof time === 'number' ? time : Date.now();
   }
 
   /**
@@ -314,7 +298,7 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
       const rawMessage = await this.userData.getMessage(messageId);
       if (!rawMessage) return;
 
-      const messageData = { ...rawMessage, id: messageId } as FirestoreMessage;
+      const messageData = { ...rawMessage, userMessageId: messageId };
       const formattedMessage = await this.formatMessage(messageData, messageId);
 
       if (formattedMessage) {
@@ -351,7 +335,10 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
     return Promise.all(
       comments.map(async (comment) => {
         if (!comment || !comment.authorId) return null;
-        return this.formatMessage(comment, comment.id || '');
+        return this.formatMessage(
+          comment,
+          comment.id || comment.userMessageId || ''
+        );
       })
     );
   }
@@ -370,12 +357,17 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
     try {
       const usersCollectionRef = collection(this.firestore, 'users');
       const usersSnapshot = await getDocs(usersCollectionRef);
-      this.allUsers = usersSnapshot.docs.map((doc) => ({
-        username: doc.data()['username'] || doc.data()['displayName'],
-        email: doc.data()['email'],
-        photoURL: doc.data()['photoURL'],
-        localID: doc.id,
-      }));
+      this.allUsers = usersSnapshot.docs.map(
+        (doc) =>
+          ({
+            username: doc.data()['username'] || doc.data()['displayName'] || '',
+            email: doc.data()['email'] || '',
+            photoURL: doc.data()['photoURL'] || null,
+            localID: doc.id,
+            uid: doc.id,
+            online: false,
+          } as UserInterface)
+      );
     } catch (error) {
       console.error('Error loading users:', error);
     }

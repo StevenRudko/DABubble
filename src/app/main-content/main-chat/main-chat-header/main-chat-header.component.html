@@ -9,12 +9,12 @@
               <ng-container [ngSwitch]="selectedResult.type">
                 <ng-container *ngSwitchCase="'channel'">
                   <span class="hashtag">#</span>
-                  <span>{{ selectedResult.name }}</span>
+                  <span>{{ getResultName(selectedResult) }}</span>
                 </ng-container>
                 <ng-container *ngSwitchCase="'user'">
                   <img [src]="selectedResult.photoURL || 'img-placeholder/default-avatar.svg'"
-                    [alt]="selectedResult.name">
-                  <span>{{ selectedResult.name }}</span>
+                    [alt]="getResultName(selectedResult)">
+                  <span>{{ getResultName(selectedResult) }}</span>
                 </ng-container>
               </ng-container>
               <mat-icon class="remove-tag" (click)="removeSelectedResult()">close</mat-icon>
@@ -32,18 +32,19 @@
               <ng-container *ngSwitchCase="'channel'">
                 <span class="hashtag">#</span>
                 <div class="result-details">
-                  <span class="name">{{ result.name }}</span>
-                  <span *ngIf="result.description" class="description">{{ result.description }}</span>
+                  <span class="name">{{ getResultName(result) }}</span>
+                  <span *ngIf="getResultDescription(result)" class="description">{{ getResultDescription(result)
+                    }}</span>
                 </div>
               </ng-container>
               <ng-container *ngSwitchCase="'user'">
-                <img [src]="result.photoURL || 'img-placeholder/default-avatar.svg'" [alt]="result.name"
+                <img [src]="result.photoURL || 'img-placeholder/default-avatar.svg'" [alt]="getResultName(result)"
                   class="user-avatar">
                 <div class="result-details">
-                  <span class="name">{{ result.name }}</span>
+                  <span class="name">{{ getResultName(result) }}</span>
                   <span class="email">{{ result.email }}</span>
                 </div>
-                <div class="status-dot" [class.online]="result.online"></div>
+                <div class="status-dot" [class.online]="isResultUserOnline(result)"></div>
               </ng-container>
             </ng-container>
           </div>

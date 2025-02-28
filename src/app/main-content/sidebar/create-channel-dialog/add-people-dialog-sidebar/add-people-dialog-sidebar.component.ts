@@ -23,14 +23,7 @@ import {
 } from '@angular/fire/firestore';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-
-interface UserProfile {
-  uid: string;
-  email: string;
-  photoURL: string | null;
-  username: string;
-  online?: boolean;
-}
+import { UserInterface } from '../../../../models/user-interface';
 
 @Component({
   selector: 'app-add-people-dialog-sidebar',
@@ -47,11 +40,11 @@ export class AddPeopleDialogSidebarComponent implements OnInit {
   selectedOption: 'all' | 'specific' = 'all';
   searchInput = '';
   searchTerm = new BehaviorSubject<string>('');
-  users$: Observable<UserProfile[]>;
-  filteredUsers$: Observable<UserProfile[]>;
-  selectedUsers: UserProfile[] = [];
+  users$: Observable<UserInterface[]>;
+  filteredUsers$: Observable<UserInterface[]>;
+  selectedUsers: UserInterface[] = [];
   showDropdown = false;
-  allUsers: UserProfile[] = [];
+  allUsers: UserInterface[] = [];
 
   /**
    * Initializes component with user data streams
@@ -69,11 +62,24 @@ export class AddPeopleDialogSidebarComponent implements OnInit {
   /**
    * Sets up initial user stream
    */
-  private initializeUserStream(): Observable<UserProfile[]> {
+  private initializeUserStream(): Observable<UserInterface[]> {
     const usersCollection = collection(this.firestore, 'users');
     const users$ = collectionData(usersCollection, {
       idField: 'uid',
-    }) as Observable<UserProfile[]>;
+    }).pipe(
+      map(
+        (users) =>
+          users.map((user) => ({
+            ...user,
+            uid: user['uid'] || '',
+            localID: user['uid'] || '',
+            email: user['email'] || '',
+            username: user['username'] || '',
+            photoURL: user['photoURL'] || null,
+            online: user['online'] || false,
+          })) as UserInterface[]
+      )
+    );
 
     users$.pipe(tap((users) => this.handleUsersUpdate(users))).subscribe();
     return users$;
@@ -82,10 +88,18 @@ export class AddPeopleDialogSidebarComponent implements OnInit {
   /**
    * Handles users data update
    */
-  private handleUsersUpdate(users: UserProfile[]): void {
+  private handleUsersUpdate(users: UserInterface[]): void {
     this.allUsers = users;
-    const creator = users.find((user) => user.uid === this.data.creatorId);
-    if (creator && !this.selectedUsers.some((u) => u.uid === creator.uid)) {
+    const creator = users.find(
+      (user) =>
+        user.uid === this.data.creatorId || user.localID === this.data.creatorId
+    );
+    if (
+      creator &&
+      !this.selectedUsers.some(
+        (u) => u.uid === creator.uid || u.localID === creator.localID
+      )
+    ) {
       this.selectedUsers.push(creator);
     }
   }
@@ -93,20 +107,24 @@ export class AddPeopleDialogSidebarComponent implements OnInit {
   /**
    * Sets up filtered users stream
    */
-  private initializeFilteredUsers(): Observable<UserProfile[]> {
+  private initializeFilteredUsers(): Observable<UserInterface[]> {
     return this.searchTerm.pipe(map((term) => this.filterUsers(term)));
   }
 
   /**
    * Filters users based on search term
    */
-  private filterUsers(term: string): UserProfile[] {
+  private filterUsers(term: string): UserInterface[] {
     if (!term.trim()) return [];
     const searchTerm = term.toLowerCase();
     return this.allUsers.filter(
       (user) =>
-        user.username?.toLowerCase().includes(searchTerm) &&
-        !this.selectedUsers.some((selected) => selected.uid === user.uid)
+        typeof user['username'] === 'string' &&
+        user['username'].toLowerCase().includes(searchTerm) &&
+        !this.selectedUsers.some(
+          (selected) =>
+            selected.uid === user.uid || selected.localID === user.localID
+        )
     );
   }
 
@@ -142,7 +160,7 @@ export class AddPeopleDialogSidebarComponent implements OnInit {
   /**
    * Selects a user from search results
    */
-  selectUser(user: UserProfile): void {
+  selectUser(user: UserInterface): void {
     if (this.isUserNotSelected(user)) {
       this.addUserToSelection(user);
       this.resetSearch();
@@ -152,14 +170,17 @@ export class AddPeopleDialogSidebarComponent implements OnInit {
   /**
    * Checks if user is not already selected
    */
-  private isUserNotSelected(user: UserProfile): boolean {
-    return !this.selectedUsers.some((selected) => selected.uid === user.uid);
+  private isUserNotSelected(user: UserInterface): boolean {
+    return !this.selectedUsers.some(
+      (selected) =>
+        selected.uid === user.uid || selected.localID === user.localID
+    );
   }
 
   /**
    * Adds user to selected users list
    */
-  private addUserToSelection(user: UserProfile): void {
+  private addUserToSelection(user: UserInterface): void {
     this.selectedUsers.push(user);
   }
 
@@ -176,11 +197,15 @@ export class AddPeopleDialogSidebarComponent implements OnInit {
   /**
    * Removes user from selection
    */
-  removeUser(user: UserProfile, event: Event): void {
+  removeUser(user: UserInterface, event: Event): void {
     event.stopPropagation();
-    if (user.uid !== this.data.creatorId) {
+    if (
+      user.uid !== this.data.creatorId &&
+      user.localID !== this.data.creatorId
+    ) {
       this.selectedUsers = this.selectedUsers.filter(
-        (selected) => selected.uid !== user.uid
+        (selected) =>
+          selected.uid !== user.uid && selected.localID !== user.localID
       );
     }
   }
@@ -188,7 +213,7 @@ export class AddPeopleDialogSidebarComponent implements OnInit {
   /**
    * Adds users to channel
    */
-  async addUsers(users: UserProfile[]): Promise<void> {
+  async addUsers(users: UserInterface[]): Promise<void> {
     if (!users.length) return;
     try {
       await this.updateChannelMembers(users);
@@ -201,9 +226,11 @@ export class AddPeopleDialogSidebarComponent implements OnInit {
   /**
    * Updates channel members in Firestore
    */
-  private async updateChannelMembers(users: UserProfile[]): Promise<void> {
+  private async updateChannelMembers(users: UserInterface[]): Promise<void> {
     const channelRef = doc(this.firestore, 'channels', this.data.channelId);
-    const members = Object.fromEntries(users.map((user) => [user.uid, true]));
+    const members = Object.fromEntries(
+      users.map((user) => [user.uid || user.localID, true])
+    );
     await updateDoc(channelRef, {
       members,
       updatedAt: new Date().toISOString(),
@@ -233,7 +260,7 @@ export class AddPeopleDialogSidebarComponent implements OnInit {
   /**
    * Gets user's photo URL
    */
-  getPhotoURL(user: UserProfile): string {
+  getPhotoURL(user: UserInterface): string {
     return user.photoURL || 'img-placeholder/default-avatar.svg';
   }
 

@@ -11,14 +11,7 @@ import { ChatService } from '../../service/chat.service';
 import { PresenceService } from '../../service/presence.service';
 import { Subscription } from 'rxjs';
 import { Auth } from '@angular/fire/auth';
-
-interface UserData {
-  username: string;
-  email: string;
-  photoURL: string;
-  status: 'active' | 'offline';
-  uid: string;
-}
+import { UserInterface } from '../../models/user-interface';
 
 @Component({
   selector: 'app-profile-overview',
@@ -40,12 +33,15 @@ export class ProfileOverviewComponent implements OnInit, OnDestroy {
    */
   constructor(
     public dialogRef: MatDialogRef<ProfileOverviewComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: UserData,
+    @Inject(MAT_DIALOG_DATA)
+    public data: UserInterface & { status: 'active' | 'offline' },
     private chatService: ChatService,
     private presenceService: PresenceService,
     private dialog: MatDialog,
     private auth: Auth
-  ) {}
+  ) {
+    this.data.status = this.data.online ? 'active' : 'offline';
+  }
 
   /**
    * Sets up presence subscription to update user status
@@ -54,12 +50,14 @@ export class ProfileOverviewComponent implements OnInit, OnDestroy {
     this.presenceSubscription = this.presenceService
       .getOnlineUsers()
       .subscribe((onlineUsers) => {
+        const userId = this.data.uid || this.data.localID;
         this.data.status =
-          this.data.uid === this.auth.currentUser?.uid
+          userId === this.auth.currentUser?.uid
             ? 'active'
-            : onlineUsers.includes(this.data.uid)
+            : onlineUsers.includes(userId)
             ? 'active'
             : 'offline';
+        this.data.online = this.data.status === 'active';
       });
   }
 
@@ -95,8 +93,9 @@ export class ProfileOverviewComponent implements OnInit, OnDestroy {
     this.dialogRef.close();
     this.dialog.closeAll();
 
-    if (this.data.uid) {
-      this.chatService.selectDirectMessage(this.data.uid);
+    const userId = this.data.uid || this.data.localID;
+    if (userId) {
+      this.chatService.selectDirectMessage(userId);
     }
   }
 }

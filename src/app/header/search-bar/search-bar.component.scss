@@ -256,7 +256,7 @@ section {
     flex-wrap: wrap; // Erlaubt Umbruch
     height: 100%;
     padding: 5px 10px;
-  
+
     // Die ersten beiden Divs nehmen jeweils 50% der Breite ein
     > img {
       flex: 0 0 40px;
@@ -266,7 +266,7 @@ section {
     > div:nth-child(2) {
       flex: 0 0 50%;
     }
-  
+
     // Das letzte Div nimmt 100% der Breite ein und rutscht dadurch in die nächste Zeile
     > div:last-child {
       flex: 0 0 calc(100% - 55px);
@@ -307,7 +307,7 @@ section {
     >span {
       width: 50%;
     }
-    
+
     >p {
       display: none;
     }

@@ -101,9 +101,9 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
   checkScreenSize(): void {
     this.isMobile = window.innerWidth <= 1024;
   }
+
   /**
    * Sets up online status and tracks online users
-   * @returns {void}
    */
   ngOnInit(): void {
     this.presenceService.setOnlineStatus();
@@ -116,7 +116,6 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
 
   /**
    * Cleans up presence subscription on component destruction
-   * @returns {void}
    */
   ngOnDestroy(): void {
     if (this.presenceSubscription) {
@@ -162,7 +161,6 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
 
   /**
    * Sets up search term subscription
-   * @returns {void}
    */
   private setupSearchSubscription(): void {
     this.searchTerm.subscribe(async (term) => {
@@ -242,7 +240,6 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
         channelName: data.name || '',
         channelDescription: data.description || '',
         channelMembers: data.members || {},
-        // Erforderliche Felder mit Standardwerten
         authorId: '',
         authorPhoto: null,
         comments: [],
@@ -288,7 +285,6 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
         email: data.email || '',
         photoURL: data.photoURL || '',
         localID: doc.id,
-        // Erforderliche Felder mit Standardwerten
         authorId: doc.id,
         authorPhoto: data.photoURL || null,
         channelDescription: '',
@@ -311,7 +307,6 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
   /**
    * Handles search input event
    * @param {Event} event - Input event
-   * @returns {void}
    */
   onSearchInput(event: Event): void {
     if (this.selectedResult) {
@@ -329,7 +324,6 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
   /**
    * Selects a search result
    * @param {SearchResult} result - Selected search result
-   * @returns {void}
    */
   selectSearchResult(result: SearchResult): void {
     this.selectedResult = result;
@@ -339,7 +333,6 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
 
   /**
    * Removes the selected search result
-   * @returns {void}
    */
   removeSelectedResult(): void {
     this.selectedResult = null;
@@ -351,7 +344,6 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
 
   /**
    * Resets search input and results
-   * @returns {void}
    */
   private resetSearch(): void {
     this.searchInput = '';
@@ -363,7 +355,6 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
   /**
    * Opens channel info dialog
    * @param {Channel} channel - Channel to show info for
-   * @returns {void}
    */
   openChannelInfoDialog(channel: Channel): void {
     const dialogRef = this.dialog.open(ChannelInfoDialogComponent, {
@@ -407,7 +398,6 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
 
   /**
    * Opens member dialog
-   * @returns {void}
    */
   openMemberDialog(): void {
     const btnRect = this.memberListBtn.nativeElement.getBoundingClientRect();
@@ -433,6 +423,8 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
 
   /**
    * Creates dialog configuration
+   * @param {DOMRect} btnRect - Button rectangle
+   * @returns {MatDialogRef<AddPeopleComponent>} Dialog reference
    */
   private getAddPeopleDialogConfig(
     btnRect: DOMRect
@@ -456,6 +448,7 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
 
   /**
    * Handles dialog close event
+   * @param {MatDialogRef<AddPeopleComponent>} dialogRef - Dialog reference
    */
   private handleAddPeopleDialogClose(
     dialogRef: MatDialogRef<AddPeopleComponent>
@@ -481,7 +474,6 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
   /**
    * Opens profile dialog for a user
    * @param {DirectUser} user - User to show profile for
-   * @returns {void}
    */
   openProfileDialog(user: DirectUser): void {
     const isOwnProfile = user.uid === this.auth.currentUser?.uid;
@@ -524,27 +516,28 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Hilfsmethode: Gibt den Namen eines Suchergebnisses zurück
-   * @param {SearchResult} result - Suchergebnis
-   * @returns {string} Name des Suchergebnisses
+   * Gets the name of a search result
+   * @param {SearchResult | null} result - Search result
+   * @returns {string} Result name
    */
-  getResultName(result: SearchResult): string {
+  getResultName(result: SearchResult | null): string {
+    if (!result) return '';
     return result.type === 'channel' ? result.channelName : result.username;
   }
 
   /**
-   * Hilfsmethode: Gibt die Beschreibung eines Kanal-Suchergebnisses zurück
-   * @param {SearchResult} result - Suchergebnis
-   * @returns {string} Beschreibung des Kanals
+   * Gets the description of a channel search result
+   * @param {SearchResult} result - Search result
+   * @returns {string} Channel description
    */
   getResultDescription(result: SearchResult): string {
     return result.type === 'channel' ? result.channelDescription || '' : '';
   }
 
   /**
-   * Hilfsmethode: Prüft, ob ein Benutzer-Suchergebnis online ist
-   * @param {SearchResult} result - Suchergebnis
-   * @returns {boolean} Online-Status des Benutzers
+   * Checks if a user search result is online
+   * @param {SearchResult} result - Search result
+   * @returns {boolean} User online status
    */
   isResultUserOnline(result: SearchResult): boolean {
     return result.type === 'user' && this.onlineUsers.includes(result.localID);

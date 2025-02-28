@@ -48,3 +48,54 @@ export interface renderMessageInterface {
   /** Minute component of the message time */
   minutes: number;
 }
+
+/**
+ * Represents thread information for a message
+ */
+export interface ThreadInfo {
+  /** Number of replies in the thread */
+  replyCount: number;
+  /** Timestamp of the last reply */
+  lastReplyTime?: {
+    hours: number;
+    minutes: number;
+  };
+}
+
+/**
+ * Interface for a user mention within a text message
+ * Tracks both user data and position in the text
+ */
+export interface MentionedUser {
+  /** User ID of mentioned user */
+  uid: string;
+  /** Username of mentioned user */
+  username: string;
+  /** Display name of mentioned user, if available */
+  displayName: string | null | undefined;
+  /** Profile photo URL of mentioned user */
+  photoURL: string | null | undefined;
+  /** Starting position of mention in text */
+  start: number;
+  /** Ending position of mention in text */
+  end: number;
+}
+
+/**
+ * Interface for a mention tag used in text input/editing
+ * Similar to MentionedUser but with 'id' instead of 'uid'
+ */
+export interface MentionTag {
+  /** User ID of mentioned user */
+  id: string;
+  /** Username of mentioned user */
+  username: string;
+  /** Display name of mentioned user, if available */
+  displayName: string | null | undefined;
+  /** Profile photo URL of mentioned user */
+  photoURL: string | null | undefined;
+  /** Starting position of mention in text */
+  start: number;
+  /** Ending position of mention in text */
+  end: number;
+}
