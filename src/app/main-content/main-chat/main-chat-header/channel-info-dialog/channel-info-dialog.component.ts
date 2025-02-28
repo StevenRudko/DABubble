@@ -34,28 +34,8 @@ import {
 import { firstValueFrom, Subscription } from 'rxjs';
 import { ProfileOverviewComponent } from '../../../../shared/profile-overview/profile-overview.component';
 import { AddPeopleComponent } from '../add-people/add-people.component';
-
-/**
- * Interface for the data required by the channel dialog
- */
-interface ChannelDialogData {
-  channelId: string;
-  name: string;
-  description: string;
-  userId: string;
-  createdBy?: string;
-}
-
-/**
- * Interface for member data structure
- */
-interface MemberData {
-  uid: string;
-  email: string;
-  username: string;
-  photoURL: string;
-  online?: boolean;
-}
+import { ChannelInterface } from '../../../../models/channel-interface';
+import { UserInterface } from '../../../../models/user-interface';
 
 @Component({
   selector: 'app-channel-info-dialog',
@@ -83,15 +63,15 @@ export class ChannelInfoDialogComponent
   createdBy: string = 'Wird geladen...';
   nameExists = false;
 
-  members: MemberData[] = [];
+  members: UserInterface[] = [];
   isLoadingMembers = true;
-  memberCache = new Map<string, MemberData>();
+  memberCache = new Map<string, UserInterface>();
   private presenceSubscription: Subscription | null = null;
   private onlineUsers: Set<string> = new Set();
 
   constructor(
     public dialogRef: MatDialogRef<ChannelInfoDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ChannelDialogData,
+    @Inject(MAT_DIALOG_DATA) public data: ChannelInterface & { userId: string },
     private chatService: ChatService,
     private firestore: Firestore,
     private presenceService: PresenceService,
@@ -148,8 +128,15 @@ export class ChannelInfoDialogComponent
   private updateMembersOnlineStatus(): void {
     this.members = this.members.map((member) => ({
       ...member,
-      online: this.isUserOnline(member.uid),
+      online: this.isUserOnline(this.getUserId(member)),
     }));
+  }
+
+  /**
+   * Gets the ID of a user, handling both uid and localID
+   */
+  private getUserId(user: UserInterface): string {
+    return user.uid || user.localID;
   }
 
   /**
@@ -174,7 +161,7 @@ export class ChannelInfoDialogComponent
       const memberPromises = memberIds.map((id) => this.loadMemberData(id));
 
       const members = (await Promise.all(memberPromises)).filter(
-        (member): member is MemberData => member !== null
+        (member): member is UserInterface => member !== null
       );
 
       this.members = members;
@@ -195,7 +182,7 @@ export class ChannelInfoDialogComponent
     const channelDoc = await getDoc(doc(this.firestore, 'channels', channelId));
     if (!channelDoc.exists()) return [];
 
-    const channelData = channelDoc.data() as any;
+    const channelData = channelDoc.data() as ChannelInterface;
     return Object.entries(channelData.members || {})
       .filter(([_, value]) => value === true)
       .map(([key]) => key);
@@ -206,7 +193,9 @@ export class ChannelInfoDialogComponent
    * @param memberId - The ID of the member
    * @returns Member data or null if not found
    */
-  private async loadMemberData(memberId: string): Promise<MemberData | null> {
+  private async loadMemberData(
+    memberId: string
+  ): Promise<UserInterface | null> {
     const cachedMember = this.memberCache.get(memberId);
     if (cachedMember) return cachedMember;
 
@@ -214,7 +203,8 @@ export class ChannelInfoDialogComponent
     if (!userDoc.exists()) return null;
 
     const userData = userDoc.data();
-    const memberData: MemberData = {
+    const memberData: UserInterface = {
+      localID: memberId,
       uid: memberId,
       email: userData['email'] || '',
       username: userData['username'] || '',
@@ -230,13 +220,14 @@ export class ChannelInfoDialogComponent
    * Opens the profile dialog for a member
    * @param member - The member whose profile to show
    */
-  openProfileDialog(member: MemberData): void {
+  openProfileDialog(member: UserInterface): void {
+    const userId = this.getUserId(member);
     const userData = {
       username: member.username,
       email: member.email,
       photoURL: member.photoURL,
-      status: this.isUserOnline(member.uid) ? 'active' : 'offline',
-      uid: member.uid,
+      status: this.isUserOnline(userId) ? 'active' : 'offline',
+      uid: userId,
     };
 
     this.dialog.open(ProfileOverviewComponent, {
@@ -300,11 +291,11 @@ export class ChannelInfoDialogComponent
    * @param channelData - The channel data containing creator info
    * @returns The creator's user document
    */
-  private async getCreatorUser(channelData: any) {
-    if (!channelData || !channelData['createdBy']) {
+  private async getCreatorUser(channelData: ChannelInterface) {
+    if (!channelData || !channelData.createdBy) {
       return null;
     }
-    return await getDoc(doc(this.firestore, 'users', channelData['createdBy']));
+    return await getDoc(doc(this.firestore, 'users', channelData.createdBy));
   }
 
   /**
@@ -330,7 +321,9 @@ export class ChannelInfoDialogComponent
       const channelDoc = await this.getChannelDoc();
       if (!channelDoc.exists()) return;
 
-      const userDoc = await this.getCreatorUser(channelDoc.data());
+      const userDoc = await this.getCreatorUser(
+        channelDoc.data() as ChannelInterface
+      );
       if (!userDoc?.exists()) return;
 
       this.createdBy = this.getUserDisplayName(userDoc.data());
@@ -422,8 +415,10 @@ export class ChannelInfoDialogComponent
    * Gets the updates object for channel changes
    * @returns The updates object
    */
-  private getUpdates(): Partial<ChannelDialogData> {
-    const updates: Partial<ChannelDialogData> = {};
+  private getUpdates(): Partial<
+    Pick<ChannelInterface, 'name' | 'description'>
+  > {
+    const updates: Partial<Pick<ChannelInterface, 'name' | 'description'>> = {};
     if (this.isEditingName) updates.name = this.channelName.trim();
     if (this.isEditingDescription) {
       updates.description = this.channelDescription.trim();

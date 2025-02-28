@@ -27,6 +27,7 @@ import { UserData } from '../../service/user-data.service';
 import { MentionHighlightPipe } from '../pipes/mentionHighlight.pipe';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { EmojiPickerService } from '../../service/emoji-picker.service';
+import { SearchResult } from '../../models/search-result';
 
 interface User {
   uid: string;
@@ -34,16 +35,6 @@ interface User {
   displayName: string | null;
   email: string | null;
   photoURL?: string | null;
-}
-
-interface SearchResult {
-  id: string;
-  type: 'channel' | 'user';
-  name: string;
-  email?: string;
-  photoURL?: string;
-  description?: string;
-  online?: boolean;
 }
 
 interface MentionedUser {
@@ -495,9 +486,19 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
    * Updates placeholder text for selected recipient
    */
   private updatePlaceholderForRecipient(recipient: SearchResult): void {
+    const name = this.getRecipientName(recipient);
     this.placeholder = `Nachricht an ${
       recipient.type === 'channel' ? '#' : ''
-    }${recipient.name}`;
+    }${name}`;
+  }
+
+  /**
+   * Hilfsmethode: Extrahiert den Anzeigenamen aus einem SearchResult
+   */
+  private getRecipientName(recipient: SearchResult): string {
+    return recipient.type === 'channel'
+      ? recipient.channelName
+      : recipient.username;
   }
 
   /**
@@ -541,11 +542,11 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
       ...baseMessage,
       channelId:
         this.newMessageRecipient?.type === 'channel'
-          ? this.newMessageRecipient.id
+          ? this.newMessageRecipient.channelId
           : null,
       directUserId:
         this.newMessageRecipient?.type === 'user'
-          ? this.newMessageRecipient.id
+          ? this.newMessageRecipient.localID
           : null,
     };
   }
@@ -630,10 +631,10 @@ export class MessageInputBoxComponent implements OnInit, OnDestroy {
    */
   private async handleNewMessageSent(): Promise<void> {
     if (this.newMessageRecipient?.type === 'channel') {
-      await this.chatService.selectChannel(this.newMessageRecipient.id);
+      await this.chatService.selectChannel(this.newMessageRecipient.channelId);
     } else {
       await this.chatService.selectDirectMessage(
-        this.newMessageRecipient?.id || ''
+        this.newMessageRecipient?.localID || ''
       );
     }
     this.chatService.messageWasSent();

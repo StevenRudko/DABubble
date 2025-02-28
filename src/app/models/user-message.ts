@@ -48,13 +48,3 @@ export interface renderMessageInterface {
   /** Minute component of the message time */
   minutes: number;
 }
-
-/**
- * Type guard to check if emoji array is of type EmojiReaction[]
- */
-export function isEmojiReactionArray(emojis: any[]): emojis is EmojiReaction[] {
-  return (
-    emojis.length === 0 ||
-    (emojis[0] && 'name' in emojis[0] && 'user' in emojis[0])
-  );
-}

@@ -11,11 +11,7 @@ import { AuthService } from '../service/auth.service';
 import { PresenceService } from '../service/presence.service';
 import { BehaviorSubject } from 'rxjs';
 import { ThreadService } from '../service/open-thread.service';
-
-export interface NavigationState {
-  showChat: boolean;
-  showThread: boolean;
-}
+import { NavigationState } from '../models/navigation.interface';
 
 @Component({
   selector: 'app-main-content',
