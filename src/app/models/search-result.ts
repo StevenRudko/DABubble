@@ -1,5 +1,4 @@
 export interface SearchResult {
-  authorPhoto: any;
   type: string;
   /** ID of the message author */
   authorId: string;
@@ -8,10 +7,6 @@ export interface SearchResult {
   /** ID of the channel where the message was sent */
   channelId: string;
   directUserId: string;
-  /** Array of comment IDs associated with this message */
-  comments: string[];
-  /** Array of emoji reactions to this message */
-  emojis: string[];
   /** Content of the message */
   message: string;
   /** Timestamp of when the message was sent */

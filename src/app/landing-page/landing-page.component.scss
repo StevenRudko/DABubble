@@ -97,6 +97,10 @@
   .d-none-desktop {
     display: none !important;
   }
+
+  .create-container {
+    z-index: 100;
+  }
 }
 
 @media (max-width: 1024px) {

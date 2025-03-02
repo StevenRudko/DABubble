@@ -1,5 +1,9 @@
 @use './../../../styles.scss' as styles;
 
+h1 {
+     padding: 0 40px;
+}
+
 .privacy-policy-container {
     @include styles.dFlex($d: flex, $fd: none, $jc: none, $ai: center, $g: 8px);
     margin-bottom: 80px;

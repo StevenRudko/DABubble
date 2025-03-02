@@ -2,7 +2,8 @@
     <h1>Wähle deinen Avatar</h1>
     <div class="avatar-picker-container">
         <div class="person-circle">
-            <img [class.avatar-img]="selectedUserAvatar !== 'img/person.png'" [class.person-circle-img]="selectedUserAvatar == 'img/person.png'" src="{{selectedUserAvatar}}">
+            <img [class.avatar-img]="selectedUserAvatar !== 'img/person.png'"
+                [class.person-circle-img]="selectedUserAvatar == 'img/person.png'" src="{{selectedUserAvatar}}">
         </div>
         <div class="user-information">
             <h2>{{this.formData.username}}</h2>
@@ -11,7 +12,7 @@
         <div class="login-form">
             <div class="avatar-img-container">
                 @for(avatar of avatarPath; track avatar) {
-                <img (click)="selectedAvatar(avatar)" src="{{avatar}}">
+                <img src="{{avatar}}" (click)="selectedAvatar(avatar)">
                 }
             </div>
             <button (click)="createAccount()" class="btn-full button-base position-bottom-right"

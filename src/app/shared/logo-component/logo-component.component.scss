@@ -1,30 +1,63 @@
 @use "./../../../styles.scss" as styles;
-@use "./../../../assets/styles/fonts.scss" as fonts;
 
 .logo-div {
   cursor: default;
-  @include styles.dFlex(
-    $d: flex,
+  @include styles.dFlex($d: flex,
     $fd: row,
     $jc: flex-start,
     $ai: center,
-    $g: 0px
-  );
+    $g: 0px);
 
-  .ainimation-container {
-    @include styles.dFlex(
-      $d: flex,
+  .content-container {
+    @include styles.dFlex($d: flex,
       $fd: row,
       $jc: flex-start,
       $ai: center,
-      $g: 24px
-    );
+      $g: 24px);
   }
 
   img {
     height: 70px;
     width: 70px;
   }
+}
+
+.logo-div-responsive {
+  cursor: default;
+  @include styles.dFlex($d: flex,
+    $fd: row,
+    $jc: center,
+    $ai: center,
+    $g: 0px);
+  width: calc(100vw - 100px);
+
+  .content-container {
+    @include styles.dFlex($d: flex,
+      $fd: row,
+      $jc: flex-start,
+      $ai: center,
+      $g: 24px);
+  }
+
+  img {
+    height: 70px;
+    width: 70px;
+  }
+}
+
+.content-responsive {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 0px;
+  top: 3vh;
+  left: 50%;
+  transform: translate(-50%, 50%);
 }
 
 .animation-container {
@@ -46,19 +79,17 @@
     animation: removeBackground 0.75s ease-in-out 2.5s forwards;
   }
 
-  .ainimation-container {
+  .content-container {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center);
+    @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 24px);
     animation: moveToHead 0.75s ease-in-out 2.5s forwards;
 
     .animation-logo-container {
       width: 180px;
       height: 180px;
-      padding-right: 24px;
-      @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center);
       animation: changeSize 0.75s ease-in-out 2.5s forwards;
 
       img {
@@ -181,16 +212,132 @@
   }
 }
 
+
 @media (max-width: 1024px) {
-  .logo-div img {
-    height: 60px;
-    width: 60px;
+  $left: 50%;
+  $fontSize: 10vw;
+  $logoSize: 20vw;
+  $logoMove: 28vw;
+
+  .logo-div {
+    img {
+      height: 50px;
+      width: 50px;
+    }
+
+    p {
+      font-size: 2rem;
+    }
+  }
+
+  .animation-container {
+    animation: removeAnimationConatinerRe 0.75s ease-in-out 3.5s forwards;
+
+    .content-container {
+      animation: moveToHeadRe 0.75s ease-in-out 2.5s forwards;
+
+      .animation-logo-container {
+        width: $logoSize;
+        height: $logoSize;
+        animation: changeSizeRe 0.75s ease-in-out 2.5s forwards;
+
+        img {
+          width: $logoSize;
+          height: $logoSize;
+          transform: translateX($logoMove);
+          animation: logoMoveRe 0.5s ease-in-out 0.5s forwards,
+            changeSizeRe 0.75s ease-in-out 2.5s forwards;
+        }
+      }
+
+      .animation-text-container {
+        p {
+          font-size: $fontSize;
+          color: white;
+          transform: translateX(-100%);
+          animation: textMove 0.5s ease-in-out 1.05s forwards,
+            textStyleRe 0.75s ease-in-out 2.5s forwards;
+        }
+      }
+    }
+
+    @keyframes removeAnimationConatinerRe {
+      0% {
+        z-index: 99999;
+        width: 100%;
+        height: 100%;
+      }
+
+      100% {
+        z-index: 0;
+        height: 0px;
+      }
+    }
+
+    @keyframes logoMoveRe {
+      from {
+        transform: translateX($logoMove);
+      }
+
+      to {
+        transform: translateX(0px);
+      }
+    }
+
+    @keyframes textStyleRe {
+      from {
+        color: white;
+        font-size: $fontSize;
+      }
+
+      to {
+        color: black;
+        font-size: 2rem;
+      }
+    }
+
+    @keyframes moveToHeadRe {
+      from {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      to {
+        top: 3vh;
+        left: $left;
+        transform: translate(-50%, 50%);
+      }
+    }
+
+    @keyframes changeSizeRe {
+      from {
+        width: $logoSize;
+        height: $logoSize;
+      }
+
+      to {
+        height: 50px;
+        width: 50px;
+      }
+    }
   }
 }
 
+
 @media (max-width: 375px) {
-  .logo-div img {
-    height: 50px;
-    width: 50px;
+  .logo-div {
+    .content-container {
+      gap: 12px;
+
+      img {
+        height: 40px;
+        width: 40px;
+      }
+
+      p {
+        font-size: 1.75rem;
+      }
+    }
   }
 }

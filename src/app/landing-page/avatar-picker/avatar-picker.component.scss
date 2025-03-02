@@ -1,5 +1,9 @@
 @use './../../../styles.scss' as styles;
 
+h1 {
+    padding: 0 40px;
+}
+
 .avatar-picker-container {
     @include styles.dFlex($d: flex, $fd: column, $jc: center, $ai: center);
     width: calc(100% - 34px);
@@ -42,9 +46,9 @@ p {
 }
 
 .avatar-img-container {
-    @include styles.dFlex($d: flex, $fd: unset, $jc: space-between, $ai: center, $g: 8px);
+    @include styles.dFlex($d: flex, $fd: unset, $jc: space-evenly, $ai: center, $g: 0px);
+    flex-wrap: wrap;
     width: 100%;
-    padding-top: 8px;
     margin-bottom: 90px;
 
     img {
