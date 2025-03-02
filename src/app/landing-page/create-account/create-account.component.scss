@@ -1,11 +1,14 @@
-@use './../../../styles.scss' as styles;
+@use './../../../styles.scss';
+@use "./../../../assets/styles/fonts.scss" as f;
+@use "./../../../assets/styles/colors.scss" as c;
 
 h1 {
      padding: 0 40px;
 }
 
 .privacy-policy-container {
-    @include styles.dFlex($d: flex, $fd: none, $jc: none, $ai: center, $g: 8px);
+    @extend .f_r_c_c;
+    gap:8px;
     margin-bottom: 80px;
 }
 
@@ -22,7 +25,7 @@ h1 {
     width: 24px;
 
     &:hover {
-        background-color: #ECEEFE;
+        background-color: transparent;
     }
 }
 
@@ -41,17 +44,17 @@ h1 {
     left: 3px;
     height: 14px;
     width: 14px;
-    border: 2px solid #797EF3;
+    border: 2px solid c.$bg-checkbox-form-border;
     border-radius: 4px;
 }
 
 /* On mouse-over, add a grey background color */
 .container:hover input~.checkmark {
-    background-color: #ECEEFE;
-    border: 2px solid #444DF2;
+    background-color: c.$bg-checkbox-form-bg-hover;
+    border: 2px solid c.$bg-checkbox-form-border-hover;
 
     &:after {
-        border: solid #444DF2;
+        border: solid c.$bg-checkbox-form-contain-hover;
         border-width: 0 2px 2px 0;
     }
 }
@@ -74,7 +77,7 @@ h1 {
     top: 0px;
     width: 4px;
     height: 8px;
-    border: solid #797EF3;
+    border: solid c.$bg-checkbox-form-contain;
     border-width: 0 2px 2px 0;
     -webkit-transform: rotate(45deg);
     -ms-transform: rotate(45deg);
@@ -88,14 +91,14 @@ h1 {
     span {
         font-family: Figtree;
         font-size: 1rem;
-        color: #797EF3;
+        color: c.$conditions-text;
         border-radius: 20px;
         padding: 0 5px;
         cursor: pointer;
 
         &:hover {
-            background-color: #ECEEFE;
-            color: #444DF2;
+            background-color: c.$conditions-text-bg-hover; 
+            color:c.$conditions-text-hover;
             font-weight: 500;
             padding: 0 4.3px;
         }
@@ -103,9 +106,9 @@ h1 {
 }
 
 .hovered {
-    background-color: #ECEEFE;
+    background-color: c.$bg-checkbox-form-bg-outside-hover;
 
     span {
-        border: 2px solid #444DF2;
+        border: 2px solid c.$bg-checkbox-form-bg-outline-hover;
     }
 }
