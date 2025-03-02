@@ -5,6 +5,7 @@ $seconday-color: #535af1;
 $contrast-color: #444DF2;
 $online: #22c55e;
 $offline: #9ca3af;
+$inactive-dark: #686868;
 
 /////////// landing page  /////////// 
 $bg-avatar-selection-preview: $primary-color;
@@ -21,6 +22,7 @@ $bg-checkbox-form-contain-hover: $contrast-color;
 $conditions-text: $primary-color;
 $conditions-text-bg-hover: $general-bg-color;
 $conditions-text-hover: $contrast-color;
+
 
 /////////// header  /////////// 
 $header-text-hover: $primary-color;
@@ -70,7 +72,7 @@ $edit-msg-save-btn-bg: $primary-color;
 $edit-msg-save-btn-text: white;
 
 /////////// preview text /////////// 
-$preview-text: #686868;
+$preview-text: $inactive-dark;
 $preview-user-link: $seconday-color;
 $preview-channel-name: #1a1a1a;
 
