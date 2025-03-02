@@ -10,29 +10,8 @@ import { AddPeopleComponent } from '../add-people/add-people.component';
 import { PresenceService } from '../../../../service/presence.service';
 import { Auth } from '@angular/fire/auth';
 import { Subscription } from 'rxjs';
-
-interface MemberData {
-  uid: string;
-  email: string;
-  username: string;
-  photoURL: string;
-  online?: boolean;
-}
-
-interface ChannelData {
-  username: string;
-  type: string;
-  createdAt: string;
-  updatedAt: string;
-  members: { [key: string]: boolean };
-}
-
-interface UserDocData {
-  [key: string]: any;
-  email?: string;
-  username?: string;
-  photoURL?: string;
-}
+import { UserInterface } from '../../../../models/user-interface';
+import { ChannelInterface } from '../../../../models/channel-interface';
 
 @Component({
   selector: 'app-member-overview',
@@ -42,10 +21,10 @@ interface UserDocData {
   styleUrl: './member-overview.component.scss',
 })
 export class MemberOverviewComponent implements OnInit, OnDestroy {
-  members: MemberData[] = [];
+  members: UserInterface[] = [];
   currentChannelId: string = '';
   isLoading: boolean = true;
-  memberCache = new Map<string, MemberData>();
+  memberCache = new Map<string, UserInterface>();
   private presenceSubscription: Subscription | null = null;
   private onlineUsers: Set<string> = new Set();
 
@@ -109,8 +88,15 @@ export class MemberOverviewComponent implements OnInit, OnDestroy {
   private updateMembersOnlineStatus(): void {
     this.members = this.members.map((member) => ({
       ...member,
-      online: this.isUserOnline(member.uid),
+      online: this.isUserOnline(this.getUserId(member)),
     }));
+  }
+
+  /**
+   * Gets the ID of a user, handling both uid and localID
+   */
+  private getUserId(user: UserInterface): string {
+    return user.uid || user.localID;
   }
 
   /**
@@ -137,7 +123,7 @@ export class MemberOverviewComponent implements OnInit, OnDestroy {
     const channelDoc = await getDoc(doc(this.firestore, 'channels', channelId));
     if (!channelDoc.exists()) return [];
 
-    const channelData = channelDoc.data() as ChannelData;
+    const channelData = channelDoc.data() as ChannelInterface;
     return Object.entries(channelData.members || {})
       .filter(([_, value]) => value === true)
       .map(([key]) => key);
@@ -146,29 +132,29 @@ export class MemberOverviewComponent implements OnInit, OnDestroy {
   /**
    * Loads data for a specific member
    * @param {string} memberId - The ID of the member
-   * @returns {Promise<MemberData | null>} Member data or null
+   * @returns {Promise<UserInterface | null>} Member data or null
    */
-  private async loadMemberData(memberId: string): Promise<MemberData | null> {
+  private async loadMemberData(
+    memberId: string
+  ): Promise<UserInterface | null> {
     const cachedMember = this.memberCache.get(memberId);
     if (cachedMember) return cachedMember;
 
     const userDoc = await getDoc(doc(this.firestore, 'users', memberId));
     if (!userDoc.exists()) return null;
 
-    return this.createMemberData(memberId, userDoc.data() as UserDocData);
+    return this.createMemberData(memberId, userDoc.data());
   }
 
   /**
    * Creates member data object
    * @param {string} memberId - The ID of the member
-   * @param {UserDocData} userData - User data from Firestore
-   * @returns {MemberData} Processed member data
+   * @param {any} userData - User data from Firestore
+   * @returns {UserInterface} Processed member data
    */
-  private createMemberData(
-    memberId: string,
-    userData: UserDocData
-  ): MemberData {
-    const memberData = {
+  private createMemberData(memberId: string, userData: any): UserInterface {
+    const memberData: UserInterface = {
+      localID: memberId,
       uid: memberId,
       email: userData['email'] || '',
       username: userData['username'] || '',
@@ -191,7 +177,7 @@ export class MemberOverviewComponent implements OnInit, OnDestroy {
       const memberPromises = memberIds.map((id) => this.loadMemberData(id));
 
       const members = (await Promise.all(memberPromises)).filter(
-        (member): member is MemberData => member !== null
+        (member): member is UserInterface => member !== null
       );
 
       this.members = members;
@@ -211,16 +197,17 @@ export class MemberOverviewComponent implements OnInit, OnDestroy {
 
   /**
    * Opens profile dialog for a specific member
-   * @param {MemberData} member - The member whose profile to open
+   * @param {UserInterface} member - The member whose profile to open
    * @returns {void}
    */
-  openProfileDialog(member: MemberData): void {
+  openProfileDialog(member: UserInterface): void {
+    const userId = this.getUserId(member);
     const userData = {
       username: member.username,
       email: member.email,
       photoURL: member.photoURL,
-      status: this.isUserOnline(member.uid) ? 'active' : 'offline',
-      uid: member.uid,
+      status: this.isUserOnline(userId) ? 'active' : 'offline',
+      uid: userId,
     };
 
     this.dialog.open(ProfileOverviewComponent, {

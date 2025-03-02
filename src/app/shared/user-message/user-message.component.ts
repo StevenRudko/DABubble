@@ -15,7 +15,11 @@ import { UserMsgOptionsComponent } from '../user-msg-options/user-msg-options.co
 import { UserData } from '../../service/user-data.service';
 import { AuthService } from '../../service/auth.service';
 import { firstValueFrom } from 'rxjs';
-import { EmojiReaction } from '../../models/user-message';
+import {
+  EmojiReaction,
+  renderMessageInterface,
+  ThreadInfo,
+} from '../../models/user-message';
 import { UniquePipe } from '../pipes/unique.pipe';
 import { EmojiService } from '../../service/emoji.service';
 import { RecentEmojisService } from '../../service/recent-emojis.service';
@@ -26,32 +30,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { EmojiOverviewComponent } from '../emoji-overview/emoji-overview.component';
 import { ThreadService } from '../../service/open-thread.service';
 import { EmojiPickerService } from '../../service/emoji-picker.service';
-interface DisplayMessageInterface {
-  timestamp: number;
-  userMessageId: string;
-  author: string;
-  isOwnMessage: boolean;
-  message: string;
-  emojis: EmojiReaction[] | string[];
-  hours: number;
-  minutes: number;
-}
-
-interface UserProfileData {
-  username: string;
-  email: string;
-  photoURL: string;
-  status: 'active' | 'offline';
-  uid: string;
-}
-
-interface ThreadInfo {
-  replyCount: number;
-  lastReplyTime?: {
-    hours: number;
-    minutes: number;
-  };
-}
+import { UserInterface } from '../../models/user-interface';
 
 @Component({
   selector: 'app-user-message',
@@ -77,10 +56,11 @@ export class UserMessageComponent {
   @Input() showReactionEmojis: boolean = false;
   @Input() showAnswerDetails: boolean = true;
   @Input() showReactionIcons: boolean = true;
-  @Input() allMessages: DisplayMessageInterface[] = [];
+  @Input() allMessages: renderMessageInterface[] = [];
   @Input() CurrentUserURL: any;
-  @Input() user: any[] = [];
+  @Input() user: UserInterface[] = [];
   @Input() parentMessageId: string | null = null;
+  @Input() isInThreadView: boolean = false;
   @Input() activeEmojiPicker: string | null = null;
   @Output() setActiveEmojiPicker = new EventEmitter<string | null>();
 
@@ -183,7 +163,7 @@ export class UserMessageComponent {
   /**
    * Creates dialog configuration
    */
-  private createDialogConfig(msg: DisplayMessageInterface): any {
+  private createDialogConfig(msg: renderMessageInterface): any {
     return {
       width: '400px',
       hasBackdrop: true,
@@ -198,7 +178,7 @@ export class UserMessageComponent {
   /**
    * Opens appropriate profile dialog
    */
-  private openProfileDialog(msg: DisplayMessageInterface, config: any): void {
+  private openProfileDialog(msg: renderMessageInterface, config: any): void {
     if (msg.isOwnMessage) {
       this.dialog.open(UserOverviewComponent, config);
     } else {
@@ -212,14 +192,15 @@ export class UserMessageComponent {
   /**
    * Creates profile data object
    */
-  private createProfileData(msg: DisplayMessageInterface): UserProfileData {
+  private createProfileData(msg: renderMessageInterface): UserInterface {
     const userData = this.user.find((u) => u.username === msg.author);
     return {
       username: userData?.username || '',
       email: userData?.email || '',
       photoURL: userData?.photoURL || 'img-placeholder/default-avatar.svg',
-      status: 'offline',
-      uid: userData?.localID || '',
+      localID: userData?.localID || '',
+      uid: userData?.uid || '',
+      online: false,
     };
   }
 
@@ -502,7 +483,7 @@ export class UserMessageComponent {
   /**
    * Gets emoji count for message
    */
-  getEmojiCount(message: DisplayMessageInterface, emojiName: string): number {
+  getEmojiCount(message: renderMessageInterface, emojiName: string): number {
     return (message.emojis || []).filter((reaction) => {
       if (this.isEmojiReaction(reaction)) {
         return reaction.name === emojiName;
@@ -514,7 +495,7 @@ export class UserMessageComponent {
   /**
    * Checks if user has reacted with emoji
    */
-  hasUserReacted(message: DisplayMessageInterface, emojiName: string): boolean {
+  hasUserReacted(message: renderMessageInterface, emojiName: string): boolean {
     if (!this.currentUser) return false;
 
     return (message.emojis || []).some((reaction) => {
@@ -688,12 +669,13 @@ export class UserMessageComponent {
     if (userData.localID === this.currentUser?.uid) {
       this.dialog.open(UserOverviewComponent, config);
     } else {
-      const profileData: UserProfileData = {
+      const profileData: UserInterface = {
         username: userData.username,
         email: userData.email,
         photoURL: userData.photoURL || 'img-placeholder/default-avatar.svg',
-        status: 'offline',
-        uid: userData.localID,
+        localID: userData.localID,
+        uid: userData.uid,
+        online: false,
       };
 
       this.dialog.open(ProfileOverviewComponent, {

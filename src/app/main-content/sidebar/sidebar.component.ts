@@ -14,28 +14,8 @@ import { PresenceService } from '../../service/presence.service';
 import { ShowHiddeResultsService } from '../../service/show-hidde-results.service';
 import { SearchBarComponent } from '../../header/search-bar/search-bar.component';
 import { MainContentComponent } from '../main-content.component';
-
-/**
- * Interface for channel data structure
- */
-interface Channel {
-  id: string;
-  name: string;
-  description: string;
-  members?: { [key: string]: boolean };
-}
-
-/**
- * Interface for user profile data structure
- */
-interface UserProfile {
-  uid: string;
-  email: string;
-  displayName: string | null;
-  photoURL: string | null;
-  online?: boolean;
-  username?: string;
-}
+import { Channel, DirectUser } from '../../models/chat.interfaces';
+import { UserInterface } from '../../models/user-interface';
 
 /**
  * Component managing sidebar navigation and user/channel selection
@@ -51,12 +31,16 @@ interface UserProfile {
     SearchBarComponent,
   ],
   templateUrl: './sidebar.component.html',
-  styleUrls: ['./sidebar.component.scss', './../../header/header.component.scss', './../../header/search-bar/search-bar.component.scss'],
+  styleUrls: [
+    './sidebar.component.scss',
+    './../../header/header.component.scss',
+    './../../header/search-bar/search-bar.component.scss',
+  ],
 })
 export class SidebarComponent implements OnInit {
   channels$!: Observable<Channel[]>;
   currentUser$!: Observable<User | null>;
-  allUsers$!: Observable<UserProfile[]>;
+  allUsers$!: Observable<DirectUser[]>;
   isChannelSectionExpanded = true;
   isDirectMessageSectionExpanded = true;
   showNewMessage = false;
@@ -108,14 +92,14 @@ export class SidebarComponent implements OnInit {
     const usersCollection = collection(this.firestore, 'users');
     this.allUsers$ = combineLatest([
       collectionData(usersCollection, { idField: 'uid' }) as Observable<
-        UserProfile[]
+        DirectUser[]
       >,
       this.presenceService.getOnlineUsers(),
     ]).pipe(
       map(([users, onlineUserIds]) => {
         return users.map((user) => ({
           ...user,
-          online: onlineUserIds.includes(user.uid),
+          online: onlineUserIds.includes(user['uid']),
         }));
       })
     );
@@ -189,15 +173,18 @@ export class SidebarComponent implements OnInit {
   /**
    * Gets user's photo URL or default avatar
    */
-  getPhotoURL(user: UserProfile | User): string {
+  getPhotoURL(user: DirectUser | User): string {
     return user.photoURL || 'img-placeholder/default-avatar.svg';
   }
 
   /**
    * Gets user's display name or default text
    */
-  getDisplayName(user: UserProfile | User): string {
-    if ('username' in user && user.username) return user.username;
+  getDisplayName(user: DirectUser | User): string {
+    if ('username' in user && typeof user['username'] === 'string') {
+      return user['username'];
+    }
+
     return user.displayName || 'Unnamed User';
   }
 

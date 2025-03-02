@@ -463,6 +463,11 @@
     }
   }
 
+  .user-list::-webkit-scrollbar-thumb,
+  .collapsible-content.channel-list::-webkit-scrollbar-thumb {
+    display: block;
+  }
+
   .user-list .user-item.active {
     background-color: transparent;
 

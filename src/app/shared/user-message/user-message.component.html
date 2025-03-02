@@ -36,7 +36,7 @@
               class="emoji-picker-overlay">
             </app-emoji-picker>
           </div>
-          <div class="edit-msg-save-btns">
+          <div class="edit-msg-save-btns" [ngClass]="{'thread-view-buttons': isInThreadView}">
             <button mat-button (click)="onCancel()">Abbrechen</button>
             <button mat-button (click)="onSave()">Speichern</button>
           </div>

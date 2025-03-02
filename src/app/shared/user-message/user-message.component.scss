@@ -385,17 +385,24 @@ textarea {
 
 .edit-msg-save-btns {
   @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 28px);
-
   button {
     border: 1px solid main-colors.$edit-msg-cancel-btn-border;
     background-color: main-colors.$edit-msg-cancel-btn-bg;
     color: main-colors.$edit-msg-cancel-btn-text;
+    border-radius: 50px;
   }
 
   button:last-child {
     border: 1px solid main-colors.$edit-msg-save-btn-border;
     background-color: main-colors.$edit-msg-save-btn-border;
     color: main-colors.$edit-msg-save-btn-text;
+  }
+  &.thread-view-buttons {
+    button {
+      font-size: 12px;
+      padding: 4px 8px;
+      min-width: 60px;
+    }
   }
 }
 

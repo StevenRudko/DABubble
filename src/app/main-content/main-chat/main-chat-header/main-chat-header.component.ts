@@ -30,35 +30,12 @@ import {
   query,
   where,
   getDocs,
-  DocumentData,
 } from '@angular/fire/firestore';
 import { UserOverviewComponent } from '../../../shared/user-overview/user-overview.component';
 import { MainContentComponent } from '../../main-content.component';
-
-interface ChannelDocument extends DocumentData {
-  name: string;
-  description?: string;
-  type: string;
-  members?: Record<string, boolean>;
-}
-
-interface UserDocument extends DocumentData {
-  username?: string;
-  displayName?: string;
-  email?: string;
-  photoURL?: string;
-  online?: boolean;
-}
-
-interface SearchResult {
-  id: string;
-  type: 'channel' | 'user';
-  name: string;
-  email?: string;
-  photoURL?: string;
-  description?: string;
-  online?: boolean;
-}
+import { ChannelInterface } from '../../../models/channel-interface';
+import { UserInterface } from '../../../models/user-interface';
+import { SearchResult } from '../../../models/search-result';
 
 @Component({
   selector: 'app-main-chat-header',
@@ -124,9 +101,9 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
   checkScreenSize(): void {
     this.isMobile = window.innerWidth <= 1024;
   }
+
   /**
    * Sets up online status and tracks online users
-   * @returns {void}
    */
   ngOnInit(): void {
     this.presenceService.setOnlineStatus();
@@ -139,7 +116,6 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
 
   /**
    * Cleans up presence subscription on component destruction
-   * @returns {void}
    */
   ngOnDestroy(): void {
     if (this.presenceSubscription) {
@@ -185,7 +161,6 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
 
   /**
    * Sets up search term subscription
-   * @returns {void}
    */
   private setupSearchSubscription(): void {
     this.searchTerm.subscribe(async (term) => {
@@ -230,7 +205,16 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
   private deduplicateResults(results: SearchResult[]): SearchResult[] {
     return results.filter(
       (result, index, self) =>
-        index === self.findIndex((r) => r.id === result.id)
+        index ===
+        self.findIndex(
+          (r) =>
+            (r.type === 'channel' &&
+              result.type === 'channel' &&
+              r.channelId === result.channelId) ||
+            (r.type === 'user' &&
+              result.type === 'user' &&
+              r.localID === result.localID)
+        )
     );
   }
 
@@ -249,12 +233,28 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
     const snapshot = await getDocs(q);
 
     return snapshot.docs.map((doc) => {
-      const data = doc.data() as ChannelDocument;
+      const data = doc.data() as ChannelInterface;
       return {
-        id: doc.id,
-        type: 'channel' as const,
-        name: data.name || '',
-        description: data.description,
+        type: 'channel',
+        channelId: doc.id,
+        channelName: data.name || '',
+        channelDescription: data.description || '',
+        channelMembers: data.members || {},
+        authorId: '',
+        authorPhoto: null,
+        comments: [],
+        directUserId: '',
+        directUserName: '',
+        email: '',
+        emojis: [],
+        idOfTheRespondentMessage: '',
+        localID: doc.id,
+        message: '',
+        nameOfTheRespondent: '',
+        photoURL: '',
+        time: Date.now(),
+        userMessageId: doc.id,
+        username: data.name || '',
       };
     });
   }
@@ -278,14 +278,28 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
     const snapshot = await getDocs(q);
 
     return snapshot.docs.map((doc) => {
-      const data = doc.data() as UserDocument;
+      const data = doc.data() as UserInterface;
       return {
-        id: doc.id,
-        type: 'user' as const,
-        name: data.username || data.displayName || data.email || '',
-        email: data.email,
-        photoURL: data.photoURL,
-        online: this.onlineUsers.includes(doc.id),
+        type: 'user',
+        username: data.username || '',
+        email: data.email || '',
+        photoURL: data.photoURL || '',
+        localID: doc.id,
+        authorId: doc.id,
+        authorPhoto: data.photoURL || null,
+        channelDescription: '',
+        channelId: '',
+        channelMembers: {},
+        channelName: '',
+        comments: [],
+        directUserId: doc.id,
+        directUserName: data.username || '',
+        emojis: [],
+        idOfTheRespondentMessage: '',
+        message: '',
+        nameOfTheRespondent: '',
+        time: Date.now(),
+        userMessageId: doc.id,
       };
     });
   }
@@ -293,7 +307,6 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
   /**
    * Handles search input event
    * @param {Event} event - Input event
-   * @returns {void}
    */
   onSearchInput(event: Event): void {
     if (this.selectedResult) {
@@ -311,7 +324,6 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
   /**
    * Selects a search result
    * @param {SearchResult} result - Selected search result
-   * @returns {void}
    */
   selectSearchResult(result: SearchResult): void {
     this.selectedResult = result;
@@ -321,7 +333,6 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
 
   /**
    * Removes the selected search result
-   * @returns {void}
    */
   removeSelectedResult(): void {
     this.selectedResult = null;
@@ -333,7 +344,6 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
 
   /**
    * Resets search input and results
-   * @returns {void}
    */
   private resetSearch(): void {
     this.searchInput = '';
@@ -345,7 +355,6 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
   /**
    * Opens channel info dialog
    * @param {Channel} channel - Channel to show info for
-   * @returns {void}
    */
   openChannelInfoDialog(channel: Channel): void {
     const dialogRef = this.dialog.open(ChannelInfoDialogComponent, {
@@ -389,7 +398,6 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
 
   /**
    * Opens member dialog
-   * @returns {void}
    */
   openMemberDialog(): void {
     const btnRect = this.memberListBtn.nativeElement.getBoundingClientRect();
@@ -415,6 +423,8 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
 
   /**
    * Creates dialog configuration
+   * @param {DOMRect} btnRect - Button rectangle
+   * @returns {MatDialogRef<AddPeopleComponent>} Dialog reference
    */
   private getAddPeopleDialogConfig(
     btnRect: DOMRect
@@ -438,6 +448,7 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
 
   /**
    * Handles dialog close event
+   * @param {MatDialogRef<AddPeopleComponent>} dialogRef - Dialog reference
    */
   private handleAddPeopleDialogClose(
     dialogRef: MatDialogRef<AddPeopleComponent>
@@ -463,7 +474,6 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
   /**
    * Opens profile dialog for a user
    * @param {DirectUser} user - User to show profile for
-   * @returns {void}
    */
   openProfileDialog(user: DirectUser): void {
     const isOwnProfile = user.uid === this.auth.currentUser?.uid;
@@ -503,5 +513,33 @@ export class MainChatHeaderComponent implements OnInit, OnDestroy {
       return true;
     }
     return this.onlineUsers.includes(userId);
+  }
+
+  /**
+   * Gets the name of a search result
+   * @param {SearchResult | null} result - Search result
+   * @returns {string} Result name
+   */
+  getResultName(result: SearchResult | null): string {
+    if (!result) return '';
+    return result.type === 'channel' ? result.channelName : result.username;
+  }
+
+  /**
+   * Gets the description of a channel search result
+   * @param {SearchResult} result - Search result
+   * @returns {string} Channel description
+   */
+  getResultDescription(result: SearchResult): string {
+    return result.type === 'channel' ? result.channelDescription || '' : '';
+  }
+
+  /**
+   * Checks if a user search result is online
+   * @param {SearchResult} result - Search result
+   * @returns {boolean} User online status
+   */
+  isResultUserOnline(result: SearchResult): boolean {
+    return result.type === 'user' && this.onlineUsers.includes(result.localID);
   }
 }

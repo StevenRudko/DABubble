@@ -16,33 +16,12 @@ import {
   updateDoc,
   doc,
   getDoc,
-  DocumentData,
 } from '@angular/fire/firestore';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { ChatService } from '../../../../service/chat.service';
-
-/**
- * Interface for user profile data
- */
-interface UserProfile {
-  uid: string;
-  email: string;
-  photoURL: string | null;
-  username: string;
-  online?: boolean;
-}
-
-/**
- * Interface for channel data structure
- */
-interface ChannelData extends DocumentData {
-  name: string;
-  type: string;
-  createdAt: string;
-  updatedAt: string;
-  members: { [key: string]: boolean };
-}
+import { UserInterface } from '../../../../models/user-interface';
+import { ChannelInterface } from '../../../../models/channel-interface';
 
 /**
  * Component for adding users to a channel
@@ -61,11 +40,11 @@ export class AddPeopleComponent implements OnInit {
   currentChannelId = '';
   searchInput = '';
   searchTerm = new BehaviorSubject<string>('');
-  users$!: Observable<UserProfile[]>;
-  filteredUsers$!: Observable<UserProfile[]>;
-  selectedUsers: UserProfile[] = [];
+  users$!: Observable<UserInterface[]>;
+  filteredUsers$!: Observable<UserInterface[]>;
+  selectedUsers: UserInterface[] = [];
   showDropdown = false;
-  allUsers: UserProfile[] = [];
+  allUsers: UserInterface[] = [];
   currentMembers: Set<string> = new Set();
 
   /**
@@ -86,7 +65,7 @@ export class AddPeopleComponent implements OnInit {
     const usersCollection = collection(this.firestore, 'users');
     this.users$ = collectionData(usersCollection, {
       idField: 'uid',
-    }) as Observable<UserProfile[]>;
+    }) as Observable<UserInterface[]>;
     this.setupUserSubscriptions();
   }
 
@@ -116,14 +95,14 @@ export class AddPeopleComponent implements OnInit {
   /**
    * Filters users based on search term and current selection
    */
-  private filterUsers(term: string): UserProfile[] {
+  private filterUsers(term: string): UserInterface[] {
     if (!term.trim()) return [];
     const searchTerm = term.toLowerCase();
     return this.allUsers.filter(
       (user) =>
         user.username?.toLowerCase().includes(searchTerm) &&
         !this.selectedUsers.some((selected) => selected.uid === user.uid) &&
-        !this.currentMembers.has(user.uid)
+        !this.currentMembers.has(user.uid as string)
     );
   }
 
@@ -153,7 +132,7 @@ export class AddPeopleComponent implements OnInit {
   private async loadChannelMembers(channelId: string): Promise<void> {
     const channelDoc = await getDoc(doc(this.firestore, 'channels', channelId));
     if (channelDoc.exists()) {
-      const data = channelDoc.data() as ChannelData;
+      const data = channelDoc.data() as ChannelInterface;
       this.setCurrentMembers(data);
     }
   }
@@ -161,7 +140,7 @@ export class AddPeopleComponent implements OnInit {
   /**
    * Sets current members from channel data
    */
-  private setCurrentMembers(data: ChannelData): void {
+  private setCurrentMembers(data: ChannelInterface): void {
     this.currentMembers = new Set(
       Object.entries(data['members'] || {})
         .filter(([_, value]) => value === true)
@@ -201,7 +180,7 @@ export class AddPeopleComponent implements OnInit {
   /**
    * Selects a user from the dropdown
    */
-  selectUser(user: UserProfile): void {
+  selectUser(user: UserInterface): void {
     if (this.selectedUsers.some((selected) => selected.uid === user.uid))
       return;
     this.addUserToSelection(user);
@@ -210,7 +189,7 @@ export class AddPeopleComponent implements OnInit {
   /**
    * Adds a user to the selection
    */
-  private addUserToSelection(user: UserProfile): void {
+  private addUserToSelection(user: UserInterface): void {
     this.selectedUsers.push(user);
     this.resetSearch();
     this.focusSearchInput();
@@ -237,7 +216,7 @@ export class AddPeopleComponent implements OnInit {
   /**
    * Removes a user from selection
    */
-  removeUser(user: UserProfile, event: Event): void {
+  removeUser(user: UserInterface, event: Event): void {
     event.stopPropagation();
     this.selectedUsers = this.selectedUsers.filter(
       (selected) => selected.uid !== user.uid
@@ -277,7 +256,7 @@ export class AddPeopleComponent implements OnInit {
     channelRef: any,
     channelDoc: any
   ): Promise<void> {
-    const currentData = channelDoc.data() as ChannelData;
+    const currentData = channelDoc.data() as ChannelInterface;
     const updatedMembers = this.getUpdatedMembers(currentData);
 
     await updateDoc(channelRef, {
@@ -291,7 +270,7 @@ export class AddPeopleComponent implements OnInit {
   /**
    * Gets updated members object
    */
-  private getUpdatedMembers(currentData: ChannelData): {
+  private getUpdatedMembers(currentData: ChannelInterface): {
     [key: string]: boolean;
   } {
     const currentMembers = currentData['members'] || {};
@@ -311,7 +290,7 @@ export class AddPeopleComponent implements OnInit {
   /**
    * Gets user's photo URL or default avatar
    */
-  getPhotoURL(user: UserProfile): string {
+  getPhotoURL(user: UserInterface): string {
     return user.photoURL || 'img-placeholder/default-avatar.svg';
   }
 }

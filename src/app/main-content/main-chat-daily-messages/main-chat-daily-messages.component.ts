@@ -23,6 +23,7 @@ import { AuthService } from '../../service/auth.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ProfileOverviewComponent } from '../../shared/profile-overview/profile-overview.component';
 import { UserOverviewComponent } from '../../shared/user-overview/user-overview.component';
+import { ScrollService } from '../../service/scroll.service';
 
 @Component({
   selector: 'app-main-chat-daily-messages',
@@ -85,13 +86,15 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   currentChannel$!: Observable<any>;
   currentDirectUser$!: Observable<any>;
   isNewMessage$!: Observable<boolean>;
+  private totalMessageCount = 0;
 
   constructor(
     private userData: UserData,
     private cdr: ChangeDetectorRef,
     public chatService: ChatService,
     private authService: AuthService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private scrollService: ScrollService
   ) {
     this.currentChannel$ = this.chatService.currentChannel$;
     this.currentDirectUser$ = this.chatService.currentDirectUser$;
@@ -227,6 +230,12 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     this.processMessages();
     this.sortMessagesByTime();
     this.groupMessagesByDate();
+    this.calculateTotalMessageCount();
+
+    // Scroll nach dem Laden der Nachrichten
+    setTimeout(() => {
+      this.scrollService.scrollToBottom(this.chatContainer, true);
+    }, 0);
   }
 
   /**
@@ -345,6 +354,16 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Calculate total message count from all groups
+   */
+  private calculateTotalMessageCount(): void {
+    this.totalMessageCount = Object.values(this.groupedMessages).reduce(
+      (total, messages) => total + messages.length,
+      0
+    );
+  }
+
+  /**
    * Moves today's messages to end
    */
   private moveToDateToEnd(): void {
@@ -355,25 +374,19 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Handles scroll events
-   */
+  // onScroll-Methode ändern
   onScroll(): void {
-    const container = this.chatContainer.nativeElement;
-    this.isUserScrolled =
-      container.scrollTop + container.clientHeight <
-      container.scrollHeight - 10;
+    if (this.chatContainer) {
+      this.scrollService.onScroll(this.chatContainer.nativeElement);
+    }
   }
 
-  /**
-   * Scrolls to bottom if needed
-   */
-  private scrollToBottom(): void {
-    const container = this.chatContainer?.nativeElement;
-    
-    if (container && !this.isUserScrolled && this.chatService.autoScroll) {
-      container.scrollTop = container.scrollHeight;
-    }
+  // ngAfterViewChecked-Methode anpassen
+  ngAfterViewChecked(): void {
+    this.scrollService.handleNewMessages(
+      this.chatContainer,
+      this.totalMessageCount
+    );
   }
 
   /**
@@ -381,14 +394,10 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
    */
   ngAfterViewInit(): void {
     this.cdr.detectChanges();
-    this.scrollToBottom();
-  }
-
-  /**
-   * Handles view updates
-   */
-  ngAfterViewChecked(): void {
-    this.scrollToBottom();
+    // Verzögerter Scroll für bessere Chancen
+    setTimeout(() => {
+      this.scrollService.scrollToBottom(this.chatContainer, true);
+    }, 100);
   }
 
   /**

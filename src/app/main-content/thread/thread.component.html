@@ -8,9 +8,9 @@
   </header>
 
   <div class="chat">
-    <div #messagesContainer id="messagesContainer" class="messages-container">
-      <app-user-message *ngIf="parentMessage" [threadMessage]="true" [showAnswerDetails]="false"
-        [showReactionIcons]="true" [allMessages]="parentMessage" [CurrentUserURL]="parentMessage[0]?.authorPhoto"
+    <div #messagesContainer id="messagesContainer" class="messages-container" (scroll)="onScroll()">
+      <app-user-message *ngIf="parentMessage" [isInThreadView]="true" [threadMessage]="true" [showAnswerDetails]="false"
+        [showReactionIcons]="true" [allMessages]="parentMessage" [CurrentUserURL]="parentMessage[0].authorPhoto"
         [user]="allUsers" [activeEmojiPicker]="activeEmojiPicker" (setActiveEmojiPicker)="handleEmojiPicker($event)">
       </app-user-message>
 
@@ -22,10 +22,10 @@
       </div>
 
       <ng-container *ngFor="let message of threadMessages">
-        <app-user-message [threadMessage]="true" [showAnswerDetails]="false" [showReactionIcons]="true"
-          [allMessages]="[message]" [CurrentUserURL]="message.authorPhoto" [parentMessageId]="messageId"
-          [user]="allUsers" [activeEmojiPicker]="activeEmojiPicker" (setActiveEmojiPicker)="handleEmojiPicker($event)"
-          class="width-100">
+        <app-user-message [isInThreadView]="true" [threadMessage]="true" [showAnswerDetails]="false"
+          [showReactionIcons]="true" [allMessages]="[message]" [CurrentUserURL]="message.authorPhoto"
+          [parentMessageId]="messageId" [user]="allUsers" [activeEmojiPicker]="activeEmojiPicker"
+          (setActiveEmojiPicker)="handleEmojiPicker($event)" class="width-100">
         </app-user-message>
       </ng-container>
     </div>

@@ -19,16 +19,7 @@ import {
 } from '../models/chat.interfaces';
 import { distinctUntilChanged } from 'rxjs/operators';
 import { AuthService } from './auth.service';
-
-export interface SearchResult {
-  id: string;
-  type: 'channel' | 'user';
-  name: string;
-  email?: string;
-  photoURL?: string;
-  description?: string;
-  online?: boolean;
-}
+import { SearchResult } from '../models/search-result';
 
 @Injectable({
   providedIn: 'root',

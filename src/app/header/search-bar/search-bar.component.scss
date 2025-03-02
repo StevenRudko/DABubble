@@ -267,7 +267,7 @@ section {
     > div:nth-child(2) {
       flex: 0 0 50%;
     }
-  
+
     // Das letzte Div nimmt 100% der Breite ein und rutscht dadurch in die nächste Zeile
     > div:last-child {
       flex: 0 0 calc(100% - 55px);
@@ -309,7 +309,7 @@ section {
     >span {
       width: 50%;
     }
-    
+
     >p {
       display: none;
     }

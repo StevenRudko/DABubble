@@ -21,7 +21,6 @@
   background-color: #eceefe;
   @include styles.dFlex($d: flex, $fd: column, $jc: space-between, $ai: center);
 }
-
 .header {
   padding: 50px 50px 20px 50px;
   @include styles.dFlex($d: flex, $jc: space-between, $ai: center);
