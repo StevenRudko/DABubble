@@ -1,21 +1,23 @@
-@use './../../../styles.scss' as styles;
+@use './../../../styles.scss';
+@use "./../../../assets/styles/fonts.scss" as f;
+@use "./../../../assets/styles/colors.scss" as c;
 
 h1 {
     padding: 0 40px;
 }
 
 .avatar-picker-container {
-    @include styles.dFlex($d: flex, $fd: column, $jc: center, $ai: center);
+    @extend .f_c_c_c;
     width: calc(100% - 34px);
     padding: 17px 17px 0 17px;
 }
 
 .person-circle {
+    @extend .f_c_c_c;
     height: 140px;
     width: 140px;
-    background-color: #797EF3;
+    background-color: c.$bg-avatar-selection-preview;
     border-radius: 100%;
-    @include styles.dFlex($d: flex, $fd: unset, $jc: center, $ai: center);
     margin-bottom: 32px;
 }
 
@@ -46,7 +48,7 @@ p {
 }
 
 .avatar-img-container {
-    @include styles.dFlex($d: flex, $fd: unset, $jc: space-evenly, $ai: center, $g: 0px);
+    @extend .f_r_se_c;
     flex-wrap: wrap;
     width: 100%;
     margin-bottom: 90px;
@@ -56,14 +58,14 @@ p {
         height: 50px;
         cursor: pointer;
         border-radius: 100%;
-        border: 4px solid #e6e6e600;
+        border: 4px solid c.$bg-avatar-picker;
 
         &:hover {
-            border: 4px solid #E6E6E6;
+            border: 4px solid c.$bg-avatar-picker-hover;
         }
 
         &:active {
-            border: 4px solid #ECEEFE;
+            border: 4px solid c.$bg-avatar-picker-active;
         }
     }
 }
