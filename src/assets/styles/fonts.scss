@@ -16,7 +16,12 @@
 .logo-text {
   font-family: Nunito;
   font-weight: 700;
-  font-size: 38px;
+  font-size: clamp(0.5rem, 2vw, 4rem);
+}
+
+.profile-name {
+  font-size: clamp(0.5rem, 4vw, 1.5rem);
+  font-weight: 700;
 }
 
 @media (max-width: 425px) {

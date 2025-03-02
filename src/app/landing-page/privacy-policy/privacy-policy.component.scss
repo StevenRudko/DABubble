@@ -1,5 +1,10 @@
+@use "./../../../styles.scss";
+@use "./../../../assets/styles/fonts.scss" as f;
+@use "./../../../assets/styles/colors.scss" as c;
+
 .login-cointainer {
   max-width: 900px;
+  box-sizing: border-box;
   margin: 0 auto;
   padding: 30px 20px 60px 20px;
   position: relative;
@@ -16,7 +21,6 @@ body {
 h1 {
   text-align: center;
   margin-bottom: 30px;
-  color: #444df2;
   position: relative;
 }
 
@@ -27,24 +31,24 @@ h1 {
   cursor: pointer;
 
   &:hover {
-    color: #535af1;
+    color: c.$arrow-back-hover;
     transform: scale(1.1);
     transition: all 0.2s ease;
   }
 }
 
 .privacy-content {
-  background-color: white;
   border-radius: 12px;
   padding: 32px;
   margin-bottom: 40px;
   width: 100%;
+  box-sizing: border-box;
   transition: all 0.3s ease;
 }
 
 section {
   margin-bottom: 36px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid c.$divider-line;
   padding-bottom: 24px;
 
   &:last-child {
@@ -55,7 +59,7 @@ section {
 }
 
 h3 {
-  color: #444df2;
+  color: c.$contrast-color;
   margin-bottom: 20px;
   font-size: 20px;
   font-weight: 700;
@@ -69,7 +73,7 @@ h3 {
     top: 0;
     height: 100%;
     width: 4px;
-    background-color: #444df2;
+    background-color: c.$contrast-color;
     border-radius: 4px;
   }
 }
@@ -97,8 +101,7 @@ strong {
 }
 
 a {
-  color: #535af1;
-  text-decoration: none;
+  @extend .a-link;
   transition: all 0.2s ease;
   position: relative;
 
@@ -109,14 +112,14 @@ a {
     height: 1px;
     bottom: -2px;
     left: 0;
-    background-color: #535af1;
+    background-color: c.$seconday-color;
     transform: scaleX(0);
     transition: transform 0.3s ease;
     transform-origin: bottom right;
   }
 
   &:hover {
-    color: #7078f3;
+    color: lighten(c.$seconday-color, 10%);
 
     &::after {
       transform: scaleX(1);

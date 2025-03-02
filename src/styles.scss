@@ -1,6 +1,6 @@
 @use "@angular/material";
 @use "./assets/styles/fonts.scss";
-@use "./assets/styles/colors.scss";
+@use "./assets/styles/colors.scss" as c;
 
 * {
   margin: 0;
@@ -67,11 +67,16 @@ section,
 }
 
 h1 {
-  color: #444df2;
+  color: c.$contrast-color;
   margin-bottom: 24px;
   font-size: 2.125rem;
   white-space: nowrap;
   text-align: center
+}
+
+.a-link {
+  color: c.$seconday-color;
+  text-decoration: none;
 }
 
 .user-auth-section {
@@ -161,6 +166,13 @@ h1 {
   to {
     opacity: 1;
   }
+}
+
+.member-img {
+  height: clamp(1.5rem, 4vw, 2rem);
+  border: 2px solid c.$img-bg;
+  border-radius: 100%;
+  margin-right: -10px;
 }
 
 .login-form {
@@ -302,4 +314,65 @@ h1 {
       font-size: 0.875rem;
     }
   }
+}
+
+.btn-style {
+  background-color: c.$btn-bg;
+  cursor: pointer;
+  border-radius: 30px;
+
+  &:hover {
+    background-color: c.$btn-bg-hover;
+    color: c.$btn-text-hover;
+    font-weight: 700;
+  }
+}
+
+.f_r_fs_c {
+  display:flex;
+  flex-direction:row;
+  justify-content:flex-start;
+  align-items: center;
+}
+
+.f_r_c_c {
+  display:flex;
+  flex-direction:row;
+  justify-content:center;
+  align-items: center;
+}
+
+.f_r_sb_c {
+  display:flex;
+  flex-direction:row;
+  justify-content:space-between;
+  align-items: center;
+}
+
+.f_r_se_c {
+  display:flex;
+  flex-direction:row;
+  justify-content:space-evenly;
+  align-items: center;
+}
+
+.f_c_fs_c {
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+  align-items: center;
+}
+
+.f_c_c_c {
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items: center;
+}
+
+.f_c_se_c {
+  display:flex;
+  flex-direction:column;
+  justify-content:space-evenly;
+  align-items: center;
 }
