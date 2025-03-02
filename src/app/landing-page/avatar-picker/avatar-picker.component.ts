@@ -16,29 +16,9 @@ import { UserAccountInfoService } from '../../service/user-account-info.service'
   styleUrl: './avatar-picker.component.scss',
 })
 export class AvatarPickerComponent {
-  /**
-   * AuthService for registering new users
-   * @type {AuthService}
-   */
   authService: AuthService = inject(AuthService);
-
-  /**
-   * Router for navigating between pages
-   * @type {Router}
-   */
   router: Router = inject(Router);
-
-  /**
-   * UserAccountInfoService for displaying status messages
-   * @type {UserAccountInfoService}
-   */
   userAccInfo: UserAccountInfoService = inject(UserAccountInfoService);
-
-  /**
-   * A list of available avatar image paths.
-   * Each avatar is represented by its image file path.
-   * @type {string[]}
-   */
   avatarPath: string[] = [
     'img-placeholder/elias.svg',
     'img-placeholder/elise.svg',
@@ -47,12 +27,6 @@ export class AvatarPickerComponent {
     'img-placeholder/sofia.svg',
     'img-placeholder/steffen.svg',
   ];
-
-  /**
-   * The path of the currently selected user avatar.
-   * Defaults to a placeholder image.
-   * @type {string}
-   */
   selectedUserAvatar: string = 'img/person.png';
 
   /**
@@ -61,17 +35,7 @@ export class AvatarPickerComponent {
    * @type {any}
    */
   formData: any;
-
-  /**
-   * Indicates whether the "Create Account" button is disabled.
-   * @type {boolean}
-   */
   disabled: boolean = true;
-
-  /**
-   * Status flag to indicate whether avatars can be selected.
-   * @type {boolean}
-   */
   status: boolean = true;
 
   /**

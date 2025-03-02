@@ -21,29 +21,9 @@ import { Router, RouterLink } from '@angular/router';
   styleUrl: './user-login.component.scss',
 })
 export class UserLoginComponent {
-  /**
-   * Indicates if there was an error during login.
-   * Used to display error messages in the UI.
-   * @type {boolean}
-   */
   error: boolean = false;
-
-  /**
-   * FormBuilder instance for managing the reactive form.
-   * @type {FormBuilder}
-   */
   fb: FormBuilder = inject(FormBuilder);
-
-  /**
-   * AuthService instance for handling authentication actions.
-   * @type {AuthService}
-   */
   authService: AuthService = inject(AuthService);
-
-  /**
-   * Router instance for navigating between routes after successful login.
-   * @type {Router}
-   */
   router: Router = inject(Router);
 
   /**

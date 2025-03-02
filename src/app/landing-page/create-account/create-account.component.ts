@@ -28,35 +28,10 @@ import { ValidatorService } from '../../service/validator.service';
   styleUrl: './create-account.component.scss',
 })
 export class CreateAccountComponent {
-  /**
-   * Indicates whether the user is hovering over form elements.
-   * @type {boolean}
-   */
   isHovered: boolean = false;
-
-  /**
-   * Tracks whether the user has agreed to the privacy policy.
-   * This value is bound to a checkbox in the form.
-   * @type {boolean}
-   */
   privatPolicy: boolean = false;
-
-  /**
-   * A FormBuilder instance for constructing the reactive form.
-   * @type {FormBuilder}
-   */
   fb: FormBuilder = inject(FormBuilder);
-
-  /**
-   * Router instance used for navigating between pages.
-   * @type {Router}
-   */
   router: Router = inject(Router);
-
-  /**
-   * ValidatorService instance for applying custom form validation rules.
-   * @type {ValidatorService}
-   */
   validatorService: ValidatorService = inject(ValidatorService);
 
   /**

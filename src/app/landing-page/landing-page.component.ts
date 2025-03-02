@@ -30,17 +30,6 @@ import { UserAccountInfoService } from '../service/user-account-info.service';
   styleUrl: './landing-page.component.scss'
 })
 export class LandingPageComponent {
-  /**
-   * Router instance for navigation.
-   * Used to programmatically navigate between routes and determine the current URL.
-   * @type {Router}
-   */
   router: Router = inject(Router);
-
-  /**
-   * UserAccountInfoService instance for managing user-related notifications
-   * and messages displayed dynamically on the landing page.
-   * @type {UserAccountInfoService}
-   */
   userAccInfo: UserAccountInfoService = inject(UserAccountInfoService);
 }

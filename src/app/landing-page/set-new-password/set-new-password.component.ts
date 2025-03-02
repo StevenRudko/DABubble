@@ -19,48 +19,12 @@ import { UserAccountInfoService } from '../../service/user-account-info.service'
   styleUrl: './set-new-password.component.scss'
 })
 export class SetNewPasswordComponent {
-  /**
-   * FormBuilder instance for managing the reactive form.
-   * @type {FormBuilder}
-   */
   fb: FormBuilder = inject(FormBuilder);
-
-  /**
-   * ValidatorService instance for custom form validations, such as password strength
-   * and matching passwords.
-   * @type {ValidatorService}
-   */
   validatorService: ValidatorService = inject(ValidatorService);
-
-  /**
-   * Firebase Auth instance for handling password reset verification.
-   * @type {Auth}
-   */
   auth: Auth = inject(Auth);
-
-  /**
-   * Router instance for navigating between routes.
-   * @type {Router}
-   */
   router: Router = inject(Router);
-
-  /**
-   * ActivatedRoute instance to access query parameters from the URL, such as the
-   * `oobCode` used for password reset verification.
-   * @type {ActivatedRoute}
-   */
   route: ActivatedRoute = inject(ActivatedRoute);
-
-  /**
-   * UserAccountInfoService instance for displaying user messages and feedback.
-   * @type {UserAccountInfoService}
-   */
   userAccInfo: UserAccountInfoService = inject(UserAccountInfoService);
-
-  /**
-   * Stores the email address associated with the password reset link.
-   * @type {string | null}
-   */
   email: string | null = null;
 
   /**
@@ -99,7 +63,6 @@ export class SetNewPasswordComponent {
         console.log('Der Link ist ungültig oder abgelaufen.', error);
       });
   }
-
 
   /**
    * Handles the form submission to set a new password.

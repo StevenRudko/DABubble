@@ -22,36 +22,10 @@ import { Firestore, collection, getDocs } from '@angular/fire/firestore';
   styleUrls: ['./reset-password.component.scss'],
 })
 export class ResetPasswordComponent {
-  /**
-   * FormBuilder instance for creating the reactive form.
-   * @type {FormBuilder}
-   */
   fb: FormBuilder = inject(FormBuilder);
-
-  /**
-   * Router instance for navigating between pages.
-   * @type {Router}
-   */
   router: Router = inject(Router);
-
-  /**
-   * UserAccountInfoService instance for displaying status messages to the user.
-   * @type {UserAccountInfoService}
-   */
   userAccInfo: UserAccountInfoService = inject(UserAccountInfoService);
-
-  /**
-   * Error flag for the email field.
-   * - Set to `false` when the email field gains focus.
-   * @type {boolean}
-   */
   emailError: boolean = false;
-
-  /**
-   * Stores a list of email addresses retrieved from the Firestore database.
-   * - Populated during the `ngOnInit` lifecycle hook.
-   * @type {string[]}
-   */
   emails: string[] = [];
 
   /**
