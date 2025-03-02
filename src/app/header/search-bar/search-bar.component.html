@@ -130,7 +130,7 @@
                         <div class="memberImgList">
                             @for (channelMember of result.channelMembers.slice(0, 3); track $index) {
                                 <div>
-                                    <img src="{{channelMember.photoURL}}" alt="avatar" onerror="this.onerror=null; this.src='img/person.png';">
+                                    <img class="member-img" src="{{channelMember.photoURL}}" alt="avatar" onerror="this.onerror=null; this.src='img/person.png';">
                                 </div>
                             }
                             @if (result.channelMembers?.length > 3) {

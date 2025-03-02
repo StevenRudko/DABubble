@@ -28,7 +28,6 @@ $edit-msg-save-btn-border: #797ef3;
 $edit-msg-save-btn-bg: #797ef3;
 $edit-msg-save-btn-text: white;
 
-
 /////////// preview text /////////// 
 $preview-text:#686868;
 $preview-user-link:#535af1;
@@ -45,11 +44,21 @@ $overlay-selected-user-name: #374151;
 $overlay-selected-user-close-icon: #666;
 $overlay-selected-user-close-icon-hover: #535af1;
 
-/////////// other elements  /////////// 
-$toggle-sidebar-shadow: rgba(89, 89, 89, 0.3); // toggle btn sidebar 
-$toggle-sidebar-text:#797ef3;;
+/////////// member image circles  /////////// 
+$img-bg: white;
+
 
 /////////// searchbar  /////////// 
 $searchbar-bg: white;
 $searchbar-text: rgba(104, 104, 104);
+$searchbar-bg-scrollbar: #f1f1f191;
+$searchbar-bg-scrollbar-thumb: #cccccc;
+$searchbar-bg-scrollbar-thumb-hover: #b3b3b3;
+$searchbar-result-bg: #eceefe;
+$searchbar-result-user: rgba(104, 104, 104);
+$searchbar-result-status-on: #22c55e;
+$searchbar-result-status-off: #9ca3af;
 
+/////////// other elements  /////////// 
+$toggle-sidebar-shadow: rgba(89, 89, 89, 0.3); // toggle btn sidebar 
+$toggle-sidebar-text:#797ef3;;

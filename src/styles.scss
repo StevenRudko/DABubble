@@ -1,6 +1,6 @@
 @use "@angular/material";
 @use "./assets/styles/fonts.scss";
-@use "./assets/styles/colors.scss";
+@use "./assets/styles/colors.scss" as c;
 
 * {
   margin: 0;
@@ -161,6 +161,13 @@ h1 {
   to {
     opacity: 1;
   }
+}
+
+.member-img {
+  height: clamp(1.5rem, 4vw, 2rem);
+  border: 2px solid c.$img-bg;
+  border-radius: 100%;
+  margin-right: -10px;
 }
 
 .login-form {
