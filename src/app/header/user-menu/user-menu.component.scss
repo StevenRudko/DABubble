@@ -1,16 +1,11 @@
-@use "./../../../styles.scss" as styles;
-@use "./../../../assets/styles/fonts.scss" as fonts;
+@use "./../../../styles.scss";
+@use "./../../../assets/styles/fonts.scss" as f;
+@use "./../../../assets/styles/colors.scss" as c;
 
 .profile-overview-div {
-  @include styles.dFlex(
-    $d: flex,
-    $fd: column,
-    $jc: flex-start,
-    $ai: center,
-    $g: 0
-  );
-  background: white;
-  padding: 28px 48px;
+  display: flex;
+  background: c.$bg-overlay;
+  padding: 28px 28px;
   position: fixed;
   z-index: 10000;
   transform-origin: top right;
@@ -19,28 +14,23 @@
   right: 22px;
   border-radius: 30px;
   border-top-right-radius: 0;
-  width: auto;
+  width: 15%;
+  max-width: 250px;
   box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .profile-overivew-content {
-  @include styles.dFlex(
-    $d: flex,
-    $fd: column,
-    $jc: flex-start,
-    $ai: center,
-    $g: 12px
-  );
+  @extend .f_c_fs_c;
   width: 100%;
   box-sizing: border-box;
 }
 
 .profile-overview-btn {
-  @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
-  padding: 8px 12px;
-  width: 150px;
-  cursor: pointer;
-  border-radius: 30px;
+  @extend .f_r_c_c;
+  @extend .btn-style;
+  padding: 8px 0;
+  width: 100%;
+  box-sizing: border-box;
 
   mat-icon {
     display: none;
@@ -53,26 +43,26 @@
     font-size: 22px;
     margin: 0;
   }
-
-  &:hover {
-    background-color: #eceefe;
-    color: #797ef3;
-    font-weight: 700;
-  }
 }
 
 @media (max-width: 1024px) {
   .profile-overview-div {
+    min-width: 100%;
+    box-sizing: border-box;
     min-height: auto;
     max-height: 200px;
     left: 0;
-    right: 0;
+    right:0;
     bottom: 0;
     top: auto;
     border-radius: 30px 30px 0 0;
-    padding: 24px 16px;
+    padding: 24px 0;
     transform-origin: bottom;
     animation: slideUp 0.3s ease-in-out forwards;
+  }
+
+  .profile-overview-btn {
+    width:60%;
   }
 
   .profile-overivew-content {
@@ -80,7 +70,6 @@
   }
 
   .profile-overview-btn {
-    width: 100%;
     justify-content: center;
     padding: 12px 16px;
     gap: 12px;
@@ -100,6 +89,7 @@
     opacity: 0;
     transform: scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -110,6 +100,7 @@
   from {
     transform: translateY(100%);
   }
+
   to {
     transform: translateY(0);
   }

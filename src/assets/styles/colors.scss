@@ -1,6 +1,21 @@
 /////////// default settings /////////// 
 $general-bg-color:#ECEEFE;
 
+/////////// searchbar  /////////// 
+$searchbar-bg: white;
+$searchbar-text: rgba(104, 104, 104);
+$searchbar-bg-scrollbar: #f1f1f191;
+$searchbar-bg-scrollbar-thumb: #cccccc;
+$searchbar-bg-scrollbar-thumb-hover: #b3b3b3;
+$searchbar-result-bg: #eceefe;
+$searchbar-result-user: rgba(104, 104, 104);
+$searchbar-result-status-on: #22c55e;
+$searchbar-result-status-off: #9ca3af;
+
+/////////// profile settings overlay /////////// 
+$bg-overlay: white;
+$overlay-bg-btn-hover: #eceefe;
+
 /////////// chat windows /////////// 
 $divider-line:#adb0d9;
 $hover-user-name:#535af1;
@@ -47,18 +62,13 @@ $overlay-selected-user-close-icon-hover: #535af1;
 /////////// member image circles  /////////// 
 $img-bg: white;
 
-
-/////////// searchbar  /////////// 
-$searchbar-bg: white;
-$searchbar-text: rgba(104, 104, 104);
-$searchbar-bg-scrollbar: #f1f1f191;
-$searchbar-bg-scrollbar-thumb: #cccccc;
-$searchbar-bg-scrollbar-thumb-hover: #b3b3b3;
-$searchbar-result-bg: #eceefe;
-$searchbar-result-user: rgba(104, 104, 104);
-$searchbar-result-status-on: #22c55e;
-$searchbar-result-status-off: #9ca3af;
-
 /////////// other elements  /////////// 
 $toggle-sidebar-shadow: rgba(89, 89, 89, 0.3); // toggle btn sidebar 
 $toggle-sidebar-text:#797ef3;;
+
+
+/////////// buttons  /////////// 
+$btn-bg: white;
+$btn-bg-hover: #eceefe;
+$btn-text-hover: #797ef3;
+
