@@ -116,10 +116,18 @@ export class UserOverviewComponent {
     this.dialogRef.close();
   }
 
-  openEdit() {
+  /**
+   * Enables edit mode for the user input field.
+   * - Sets the `edit` flag to `true`, allowing the user to modify their name.
+   * - Calls `patchNameInInput()` to populate the input field with the current username.
+   * 
+   * @returns {void}
+   */
+  openEdit(): void {
     this.edit = true;
     this.patchNameInInput();
   }
+
 
   /**
    * Retrieves and sets the current user's profile information.
@@ -137,10 +145,18 @@ export class UserOverviewComponent {
     });
   }
 
+  /**
+   * Opens a dialog for the avatar picker overlay.
+   * - Uses Angular Material's `MatDialog` to open the `AvatarPickerOverlayComponent`.
+   * - Subscribes to `afterClosed()` to execute logic after the dialog is closed.
+   * - Logs a message to the console when the dialog is closed.
+   * 
+   * @returns {void}
+   */
   openDialog(): void {
-      const dialogRef = this.dialog.open(AvatarPickerOverlayComponent, {});
-      dialogRef.afterClosed().subscribe(() => {
-        console.log('The dialog was closed');
-      });
-    }
+    const dialogRef = this.dialog.open(AvatarPickerOverlayComponent, {});
+    dialogRef.afterClosed().subscribe(() => {
+      console.log('The dialog was closed');
+    });
+  }
 }

@@ -534,10 +534,8 @@ export class SearchBarComponent implements OnInit {
    * @returns {Promise<void>} - Resolves when the message has been opened and scrolled to.
    */
   async openMessage(channelId: string, messageId: string): Promise<void> {
-    this.switchAutoScroll(false);
     await this.showChannel(channelId);
     this.scrollWhenAvailable(messageId, 'chatContainer');
-    this.switchAutoScroll(true);
   }
 
   /**
@@ -572,10 +570,8 @@ export class SearchBarComponent implements OnInit {
    * @returns {Promise<void>} - Resolves when the direct message is opened and scrolled to.
    */
   async openDirectMessage(result: any): Promise<void> {
-    this.switchAutoScroll(false);
     await this.showDirectMessage(result);
     this.scrollWhenAvailable(result.userMessageId, 'chatContainer');
-    this.switchAutoScroll(true);
   }
 
   /**
@@ -612,18 +608,14 @@ export class SearchBarComponent implements OnInit {
    * - Scrolls to the target message within the chat container.
    * - Re-enables auto-scrolling after navigation.
    * 
-   * @param {any} result - The search result containing details about the thread.
-   * @returns {Promise<void>} - Resolves when the thread is opened and scrolled to.
+   * @param {SearchResult} result - The search result containing details about the thread.
    */
-  async openThread(result: any): Promise<void> {
-    this.switchAutoScroll(false);
+  openThread(result: SearchResult): void {
     if (result.channelId) {
-      await this.handleChannelThread(result);
+      this.handleChannelThread(result);
     } else if (result.directUserId) {
-      await this.handleDirectMessageThread(result);
+      this.handleDirectMessageThread(result);
     }
-    this.scrollWhenAvailable(result.messageId, 'chatContainer');
-    this.switchAutoScroll(true);
   }
 
   /**
@@ -634,13 +626,13 @@ export class SearchBarComponent implements OnInit {
    * - Scrolls to the user's message within the thread.
    * 
    * @private
-   * @param {any} result - The search result containing details about the thread.
+   * @param {SearchResult} result - The search result containing details about the thread.
    * @returns {Promise<void>} - Resolves when the thread is opened and scrolled to.
    */
-  private async handleChannelThread(result: any): Promise<void> {
+  private async handleChannelThread(result: SearchResult): Promise<void> {
     await this.showChannel(result.channelId);
     this.scrollWhenAvailable(result.idOfTheRespondentMessage, 'chatContainer');
-    this.threadService.openThread(result.idOfTheRespondentMessage);
+    await this.threadService.openThread(result.idOfTheRespondentMessage);
     this.scrollWhenAvailable(result.userMessageId, 'messagesContainer');
   }
 
@@ -655,10 +647,10 @@ export class SearchBarComponent implements OnInit {
    * @param {any} result - The search result containing details about the thread.
    * @returns {Promise<void>} - Resolves when the thread is opened and scrolled to.
    */
-  private async handleDirectMessageThread(result: any) {
+  private async handleDirectMessageThread(result: any): Promise<void> {
     await this.showDirectMessage(result);
     this.scrollWhenAvailable(result.idOfTheRespondentMessage, 'chatContainer');
-    this.threadService.openThread(result.idOfTheRespondentMessage);
+    await this.threadService.openThread(result.idOfTheRespondentMessage);
     this.scrollWhenAvailable(result.userMessageId, 'messagesContainer');
   }
 
@@ -672,7 +664,7 @@ export class SearchBarComponent implements OnInit {
    * @param {string} domId - The ID of the container in which to scroll.
    * @returns {void}
    */
-  scrollWhenAvailable(messageId: string, domId: string): void {
+  async scrollWhenAvailable(messageId: string, domId: string): Promise<void> {
     const observer = this.observeDOMChanges(() => {
       this.startScrollCheck(messageId, domId);
       observer.disconnect();
@@ -698,12 +690,16 @@ export class SearchBarComponent implements OnInit {
       const element = document.getElementById(messageId) as HTMLElement | null;
       const container = document.querySelector(`#${domId}`) as HTMLElement | null;
       if (element && container) {
-        this.scrollToMessage(container, element);
-        clearInterval(interval);
+        setTimeout(() => {
+          this.scrollToMessage(container, element);
+          clearInterval(interval);
+        }, 400)
       }
       if (++checkCounter >= maxChecks) {
         console.warn(`Scroll-Element (${messageId}) oder Container (${domId}) nicht gefunden.`);
         clearInterval(interval);
+      }
+      if (++checkCounter == maxChecks) {
       }
     }, intervalTime);
   }
@@ -720,10 +716,10 @@ export class SearchBarComponent implements OnInit {
    * @returns {void}
    */
   private scrollToMessage(container: HTMLElement, element: HTMLElement): void {
-    const scrollOffset = 250; // Offset für z. B. Navbar
+    const scrollOffset = 250;
     const targetScroll = element.offsetTop - scrollOffset;
     container.scrollTo({ top: targetScroll, behavior: 'smooth' });
-    console.log('Scrolling erfolgreich mit Offset:', scrollOffset);
+    console.log('Scrolling erfolgreich mit Offset:', scrollOffset, container);
     this.highlightMessage(element);
   }
 
@@ -757,22 +753,6 @@ export class SearchBarComponent implements OnInit {
       setTimeout(() => {
         element.classList.remove('highlight');
       }, 3000);
-    }
-  }
-
-  /**
-   * Toggles the auto-scroll functionality in the chat service.
-   * - If `status` is `false`, auto-scrolling is immediately disabled.
-   * - If `status` is `true`, auto-scrolling is enabled after a delay of 3 seconds.
-   * 
-   * @param {boolean} status - Determines whether auto-scroll should be enabled or disabled.
-   * @returns {void}
-   */
-  switchAutoScroll(status: boolean): void {
-    if (!status) {
-      this.chatService.autoScroll = status;
-    } else {
-      setTimeout(() => this.chatService.autoScroll = status, 3000);
     }
   }
 

@@ -37,13 +37,21 @@ export class LogoComponentComponent {
     }
   }
 
+  /**
+   * Handles window resize events to determine whether the UI should be in responsive mode.
+   * - Uses the `@HostListener` decorator to listen for `window:resize` events.
+   * - Sets `responsive` to `true` if the window width is less than 1024px and the current route is `/`.
+   * - Otherwise, sets `responsive` to `false`.
+   * 
+   * @returns {void}
+   */
   @HostListener('window:resize', ['$event'])
   onResize() {
     if (window.innerWidth < 1024 && this.router.url === '/') {
       this.responsive = true;
     } else {
       this.responsive = false;
-    }    
+    }
   }
 
 }

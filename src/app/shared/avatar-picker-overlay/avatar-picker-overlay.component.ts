@@ -73,13 +73,23 @@ export class AvatarPickerOverlayComponent {
     }
   }
 
+  /**
+   * Updates the user's avatar and saves the changes to Firestore.
+   * - Calls `updateUserProfile()` to update the user's profile information.
+   * - Calls `saveUserInfoToFirestore()` to persist the updated profile in Firestore.
+   * - Refreshes the user information by calling `getUserInfo()`.
+   * - Closes the dialog or UI component after updating.
+   * 
+   * @async
+   * @returns {Promise<void>} - Resolves when the avatar update process is complete.
+   */
   async setNewAvatar() {
     await this.authService.updateUserProfile(
       this.userInfo.currentUser,
       this.userInfo.displayName,
       this.selectedUserAvatar
     )
-    await this.authService.saveUserInfoToFirestore( this.userInfo.currentUser);
+    await this.authService.saveUserInfoToFirestore(this.userInfo.currentUser);
     this.userInfo.getUserInfo();
     this.close();
   }

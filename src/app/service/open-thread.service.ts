@@ -24,17 +24,53 @@ export class ThreadService {
     });
   }
 
-  /**
-   * Opens thread for specified message
-   * @param messageId ID of message to open thread for
-   */
-  openThread(messageId: string): void {
+  // /**
+  //  * Opens thread for specified message
+  //  * @param messageId ID of message to open thread for
+  //  */
+  // openThread(messageId: string): void {
+  //   const isCurrentlyVisible = this.threadVisibleSubject.getValue();
+  //   const currentMessageId = this.currentThreadMessageIdSubject.getValue();
+
+  //   if (messageId === this.previousThreadMessageId && !isCurrentlyVisible) {
+  //     this.currentThreadMessageIdSubject.next(messageId);
+  //     this.threadVisibleSubject.next(true);
+  //     return;
+  //   }
+
+  //   if (isCurrentlyVisible && currentMessageId !== messageId) {
+  //     this.threadVisibleSubject.next(false);
+  //     setTimeout(() => {
+  //       this.currentThreadMessageIdSubject.next(messageId);
+  //       this.threadVisibleSubject.next(true);
+  //     }, 50);
+  //     return;
+  //   }
+
+  //   this.currentThreadMessageIdSubject.next(messageId);
+  //   this.threadVisibleSubject.next(true);
+  // }
+
+
+
+
+
+
+/**
+ * Opens a thread, ensuring smooth visibility and UI updates.
+ * 
+ * @param {string} messageId - The ID of the thread message.
+ * @returns {Promise<void>} - Resolves when the thread is fully opened.
+ */
+openThread(messageId: string): Promise<void> {
+  return new Promise((resolve) => {
     const isCurrentlyVisible = this.threadVisibleSubject.getValue();
     const currentMessageId = this.currentThreadMessageIdSubject.getValue();
 
     if (messageId === this.previousThreadMessageId && !isCurrentlyVisible) {
       this.currentThreadMessageIdSubject.next(messageId);
       this.threadVisibleSubject.next(true);
+      resolve();
       return;
     }
 
@@ -43,13 +79,25 @@ export class ThreadService {
       setTimeout(() => {
         this.currentThreadMessageIdSubject.next(messageId);
         this.threadVisibleSubject.next(true);
+        resolve();
       }, 50);
       return;
     }
 
     this.currentThreadMessageIdSubject.next(messageId);
     this.threadVisibleSubject.next(true);
-  }
+    resolve();
+  });
+}
+
+
+
+
+
+
+
+
+
 
   /**
    * Closes current thread

@@ -45,8 +45,6 @@ export class ChatService {
   private messageSentSubject = new BehaviorSubject<boolean>(false);
   messageSent$ = this.messageSentSubject.asObservable();
 
-  autoScroll: boolean = true;
-
   private channelMembersUpdatedSource = new Subject<string>();
   channelMembersUpdated$ = this.channelMembersUpdatedSource.asObservable();
   private currentUser: any = null;
