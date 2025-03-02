@@ -323,9 +323,9 @@ h1 {
   }
 }
 
-.f_c_fs_c {
+.f_r_fs_c {
   display:flex;
-  flex-direction:column;
+  flex-direction:row;
   justify-content:flex-start;
   align-items: center;
 }
@@ -337,3 +337,16 @@ h1 {
   align-items: center;
 }
 
+.f_r_sb_c {
+  display:flex;
+  flex-direction:row;
+  justify-content:space-between;
+  align-items: center;
+}
+
+.f_c_fs_c {
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+  align-items: center;
+}

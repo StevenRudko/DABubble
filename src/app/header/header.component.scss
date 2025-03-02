@@ -1,28 +1,16 @@
-@use "./../../styles.scss" as styles;
-@use "./../../assets/styles/fonts.scss" as fonts;
-@use "./../../assets/styles/colors.scss" as main-colors;
+@use "./../../styles.scss";
+@use "./../../assets/styles/fonts.scss" as f;
+@use "./../../assets/styles/colors.scss" as c;
 
 section {
-  @include styles.padding($pl: 2rem, $pr: 2rem, $pt: 0, $pb: 0);
-  @include styles.dFlex(
-    $d: flex,
-    $fd: row,
-    $jc: space-between,
-    $ai: center,
-    $g: 0
-  );
+  padding: 0 2rem;
+  @extend .f_r_sb_c;
   height: 100px;
   box-sizing: border-box;
 }
 
 .header-left {
-  @include styles.dFlex(
-    $d: flex,
-    $fd: row,
-    $jc: flex-start,
-    $ai: center,
-    $g: 12px
-  );
+  @extend .f_r_fs_c;
   flex: 0 0 auto;
 }
 
@@ -43,29 +31,22 @@ section {
   }
 
   &:hover {
-    color: #535af1;
+    color: c.$arrow-back-hover;
   }
 }
 
 .logo-container {
-  @include styles.dFlex(
-    $d: flex,
-    $fd: row,
-    $jc: flex-start,
-    $ai: center,
-    $g: 1rem
-  );
+  @extend .f_r_fs_c;
+  gap: 1rem;
   transition: all 0.3s ease-in-out;
 
   .logo {
-    width: 60px;
-    height: 60px;
+    width: clamp(30px, 2vw, 80px);
+    height: clamp(30px, 2vw, 80px);
     border-radius: 0.5rem;
   }
 
   .logo-text {
-    font-size: 1.125rem;
-    font-weight: 600;
     cursor: default;
   }
 
@@ -75,15 +56,9 @@ section {
 }
 
 .searchbar-container {
-  @include styles.padding($pl: 12px, $pr: 24px, $pt: 0, $pb: 0);
-  @include styles.dFlex(
-    $d: flex,
-    $fd: row,
-    $jc: space-between,
-    $ai: center,
-    $g: 0
-  );
-  background-color: main-colors.$searchbar-bg;
+  padding: 0 12px 0 24px;
+  @extend .f_r_sb_c;
+  background-color: c.$searchbar-bg;
   width: 50%;
   height: 55px;
   box-shadow: unset;
@@ -92,7 +67,7 @@ section {
   position: relative;
 
   input {
-    color: main-colors.$searchbar-text;
+    color: c.$searchbar-text;
     border: unset;
     outline: unset;
     width: 100%;
@@ -112,71 +87,49 @@ app-search-bar {
   top: 50px;
   left: 0px;
   width: 100%;
-  background-color: white;
+  background-color: c.$searchbar-bg-menu;
   z-index: 999999;
 }
 
 .profile-container {
-  @include styles.dFlex(
-    $d: flex,
-    $fd: row,
-    $jc: space-between,
-    $ai: center,
-    $g: 0
-  );
+  @extend .f_r_sb_c;
   cursor: pointer;
 
   &:hover {
-    color: #797ef3;
+    color: c.$header-text-hover;
   }
 }
 
 .profile-div {
-  @include styles.dFlex(
-    $d: flex,
-    $fd: row,
-    $jc: space-between,
-    $ai: center,
-    $g: 16px
-  );
+  @extend .f_r_sb_c;
+  gap:16px;
 }
 
 .img-placeholder-div {
-  @include styles.dFlex(
-    $d: flex,
-    $fd: row,
-    $jc: flex-start,
-    $ai: center,
-    $g: 0
-  );
+  @extend .f_r_fs_c;
 
   img {
-    height: 50px;
-    width: 50px;
+    width: clamp(40px, 3.5vw, 80px);
+    height: clamp(40px, 3.5vw, 80px);
     border-radius: 100%;
   }
 }
 
-.profile-name {
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-
 .status-circle-outline {
+  @extend .f_r_c_c;
   position: relative;
   top: 19px;
   right: 12px;
   height: 15px;
   width: 15px;
-  background-color: #eceefe;
+  background-color: c.$profile-status-circle-outline;
   border-radius: 100%;
-  @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
 }
 
 .status-circle-inline {
   height: 10px;
   width: 10px;
-  background-color: #92c83e;
+  background-color: c.$profile-status-circle;
   border-radius: 100%;
 }
 
@@ -199,9 +152,6 @@ app-search-bar {
 }
 
 @media (max-width: 1200px) {
-  .profile-name {
-    font-size: 1.25rem;
-  }
 
   .searchbar-container {
     width: 40%;
@@ -220,17 +170,6 @@ app-search-bar {
 
   .searchbar-container {
     display: none;
-  }
-
-  .logo-container {
-    .logo {
-      width: 50px;
-      height: 50px;
-    }
-
-    .logo-text {
-      font-size: 1rem;
-    }
   }
 }
 

@@ -1,15 +1,25 @@
 /////////// default settings /////////// 
 $general-bg-color:#ECEEFE;
+$primary-color:#797ef3;
+$seconday-color: #535af1;
+$active:#22c55e;
+
+/////////// header  /////////// 
+$arrow-back-hover:$seconday-color;
+$header-text-hover:$primary-color;
+$profile-status-circle-outline:white;
+$profile-status-circle: $active;
 
 /////////// searchbar  /////////// 
 $searchbar-bg: white;
 $searchbar-text: rgba(104, 104, 104);
+$searchbar-bg-menu:white;
 $searchbar-bg-scrollbar: #f1f1f191;
 $searchbar-bg-scrollbar-thumb: #cccccc;
 $searchbar-bg-scrollbar-thumb-hover: #b3b3b3;
 $searchbar-result-bg: #eceefe;
 $searchbar-result-user: rgba(104, 104, 104);
-$searchbar-result-status-on: #22c55e;
+$searchbar-result-status-on: $active;
 $searchbar-result-status-off: #9ca3af;
 
 /////////// profile settings overlay /////////// 
@@ -18,57 +28,57 @@ $overlay-bg-btn-hover: #eceefe;
 
 /////////// chat windows /////////// 
 $divider-line:#adb0d9;
-$hover-user-name:#535af1;
-$user-msg-comments-number:#535af1;
+$hover-user-name:$seconday-color;
+$user-msg-comments-number:$seconday-color;
 $user-msg-bg-hover:#eceefe;
 $user-msg-light-text:#393939;
 $user-own-msg-text:white;
-$user-own-msg-text-bg:#797ef3;
-$user-own-msg-text-bg-hover:#797ef3;
+$user-own-msg-text-bg:$primary-color;
+$user-own-msg-text-bg-hover:$primary-color;
 $user-others-msg-text-bg:white;
 $user-others-msg-text-bg-hover:#eceefe;
 $user-msg-used-emoji-box-bg: #eceefe;
-$user-msg-used-emoji-box-border:#797ef3;
-$user-msg-used-emoji-box-border-hover:#535af1;
-$user-msg-used-emoji-box-amount:#535af1;
+$user-msg-used-emoji-box-border:$primary-color;
+$user-msg-used-emoji-box-border-hover:$seconday-color;
+$user-msg-used-emoji-box-amount:$seconday-color;
 $emoji-overview-bg: #444DF2;
 $emoji-overview-text: white;
 
 /////////// edit msg /////////// 
-$edit-msg-cancel-btn-border:#797ef3;
+$edit-msg-cancel-btn-border:$primary-color;
 $edit-msg-cancel-btn-bg:white;
-$edit-msg-cancel-btn-text: #797ef3;
+$edit-msg-cancel-btn-text: $primary-color;
 
-$edit-msg-save-btn-border: #797ef3;
-$edit-msg-save-btn-bg: #797ef3;
+$edit-msg-save-btn-border: $primary-color;
+$edit-msg-save-btn-bg: $primary-color;
 $edit-msg-save-btn-text: white;
 
 /////////// preview text /////////// 
 $preview-text:#686868;
-$preview-user-link:#535af1;
+$preview-user-link:$seconday-color;
 $preview-channel-name:#1a1a1a;
 
 /////////// add-members overlay /////////// 
 $overlay-bg:white;
-$overlay-close-icon-hover:#535af1;
-$overlay-channel-name: #535af1;
+$overlay-close-icon-hover:$seconday-color;
+$overlay-channel-name: $seconday-color;
 $overlay-input-border: #adb0d9;
 $overlay-input-placeholder: #999;
 $overlay-selected-user-bg: #eceefe;
 $overlay-selected-user-name: #374151;
 $overlay-selected-user-close-icon: #666;
-$overlay-selected-user-close-icon-hover: #535af1;
+$overlay-selected-user-close-icon-hover: $seconday-color;
 
 /////////// member image circles  /////////// 
 $img-bg: white;
 
 /////////// other elements  /////////// 
 $toggle-sidebar-shadow: rgba(89, 89, 89, 0.3); // toggle btn sidebar 
-$toggle-sidebar-text:#797ef3;;
+$toggle-sidebar-text:$primary-color;
 
 
 /////////// buttons  /////////// 
 $btn-bg: white;
 $btn-bg-hover: #eceefe;
-$btn-text-hover: #797ef3;
+$btn-text-hover: $primary-color;
 
