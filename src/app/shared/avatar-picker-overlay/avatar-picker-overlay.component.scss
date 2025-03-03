@@ -1,7 +1,9 @@
-@use './../../../styles.scss' as styles;
+@use "./../../../styles.scss" as s;
+@use "./../../../assets/styles/fonts.scss" as f;
+@use "./../../../assets/styles/colors.scss" as c;
 
 .avatar-picker-container {
-    @include styles.dFlex($d: flex, $fd: column, $jc: center, $ai: center);
+    @include s.dFlex($d: flex, $fd: column, $jc: center, $ai: center);
     width: calc(100% - 34px);
     padding: 0px 17px;
 }
@@ -11,7 +13,7 @@
     width: 140px;
     background-color: #797EF3;
     border-radius: 100%;
-    @include styles.dFlex($d: flex, $fd: unset, $jc: center, $ai: center);
+    @include s.dFlex($d: flex, $fd: unset, $jc: center, $ai: center);
     margin-bottom: 32px;
 }
 
@@ -43,7 +45,7 @@ p {
 }
 
 .avatar-img-container {
-    @include styles.dFlex($d: flex, $fd: unset, $jc: space-evenly, $ai: center, $g: 0px);
+    @include s.dFlex($d: flex, $fd: unset, $jc: space-evenly, $ai: center, $g: 0px);
     flex-wrap: wrap;
     width: 100%;
     margin-bottom: 20px;
@@ -66,7 +68,7 @@ p {
 }
 
 .button-container {
-    @include styles.dFlex($d: flex, $fd: center, $jc: center, $ai: center, $g: 30px);
+    @include s.dFlex($d: flex, $fd: center, $jc: center, $ai: center, $g: 30px);
 }
 
 @media (max-width: 500px) {
