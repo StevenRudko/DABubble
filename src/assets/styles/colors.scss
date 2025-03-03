@@ -1,17 +1,19 @@
 /////////// default settings /////////// 
 $general-bg-color: #ECEEFE;
 $primary-color: #797ef3;
-$seconday-color: #535af1;
+$secondary-color: #535af1;
 $contrast-color: #444DF2;
 $online: #22c55e;
 $offline: #9ca3af;
 $inactive-dark: #686868;
+$border-color: #adb0d9;
+$error-msg:#dc3545;
 
 /////////// landing page  /////////// 
 $bg-avatar-selection-preview: $primary-color;
 $bg-avatar-picker: transparent;
 $bg-avatar-picker-hover: $general-bg-color;
-$bg-avatar-picker-active: $seconday-color;
+$bg-avatar-picker-active: $secondary-color;
 $bg-checkbox-form-border: $primary-color;
 $bg-checkbox-form-bg-hover: $general-bg-color;
 $bg-checkbox-form-bg-outside-hover: $general-bg-color;
@@ -22,7 +24,10 @@ $bg-checkbox-form-contain-hover: $contrast-color;
 $conditions-text: $primary-color;
 $conditions-text-bg-hover: $general-bg-color;
 $conditions-text-hover: $contrast-color;
-
+$landing-page-btn-text: $primary-color;
+$landing-page-btn-border-hover: $border-color;
+$landing-page-btn-text-hover: $contrast-color;
+$landing-page-bg: $general-bg-color;
 
 /////////// header  /////////// 
 $header-text-hover: $primary-color;
@@ -45,9 +50,20 @@ $searchbar-result-status-off: $offline;
 $bg-overlay: white;
 $overlay-bg-btn-hover: $general-bg-color;
 
+/////////// chat header /////////// 
+$add-member-bg-search-result: white;
+$add-member-bg-search-result-border: $border-color;
+$add-member-bg-search-result-user: $general-bg-color;
+$add-member-search-result-text: black;
+$add-member-search-result-status: $online;
+
+/////////// channel info overlay /////////// 
+$channel-info-bg: white;
+
+
 /////////// chat windows /////////// 
-$hover-user-name: $seconday-color;
-$user-msg-comments-number: $seconday-color;
+$hover-user-name: $secondary-color;
+$user-msg-comments-number: $secondary-color;
 $user-msg-bg-hover: $general-bg-color;
 $user-msg-light-text: #393939;
 $user-own-msg-text: white;
@@ -57,8 +73,8 @@ $user-others-msg-text-bg: white;
 $user-others-msg-text-bg-hover: $general-bg-color;
 $user-msg-used-emoji-box-bg: $general-bg-color;
 $user-msg-used-emoji-box-border: $primary-color;
-$user-msg-used-emoji-box-border-hover: $seconday-color;
-$user-msg-used-emoji-box-amount: $seconday-color;
+$user-msg-used-emoji-box-border-hover: $secondary-color;
+$user-msg-used-emoji-box-amount: $secondary-color;
 $emoji-overview-bg: $contrast-color;
 $emoji-overview-text: white;
 
@@ -73,19 +89,19 @@ $edit-msg-save-btn-text: white;
 
 /////////// preview text /////////// 
 $preview-text: $inactive-dark;
-$preview-user-link: $seconday-color;
+$preview-user-link: $secondary-color;
 $preview-channel-name: #1a1a1a;
 
 /////////// add-members overlay /////////// 
 $overlay-bg: white;
-$overlay-close-icon-hover: $seconday-color;
-$overlay-channel-name: $seconday-color;
-$overlay-input-border: #adb0d9;
+$overlay-close-icon-hover: $secondary-color;
+$overlay-channel-name: $secondary-color;
+$overlay-input-border: $border-color;
 $overlay-input-placeholder: $offline;
 $overlay-selected-user-bg: $general-bg-color;
 $overlay-selected-user-name: #374151;
 $overlay-selected-user-close-icon: #666;
-$overlay-selected-user-close-icon-hover: $seconday-color;
+$overlay-selected-user-close-icon-hover: $secondary-color;
 
 /////////// member image circles  /////////// 
 $img-bg: white;
@@ -93,9 +109,11 @@ $img-bg: white;
 /////////// other elements  /////////// 
 $toggle-sidebar-shadow: rgba(89, 89, 89, 0.3); // toggle btn sidebar 
 $toggle-sidebar-text: $primary-color;
-$arrow-back-hover: $seconday-color;
+$arrow-back-hover: $secondary-color;
 $divider-line: $offline;
-
+$close-btn-text: black;
+$close-btn-text-hover:$contrast-color;
+$close-btn-bg-hover:$general-bg-color;
 
 /////////// buttons  /////////// 
 $btn-bg: white;

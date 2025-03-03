@@ -1,4 +1,4 @@
-@use './../../../styles.scss';
+@use './../../../styles.scss' as s;
 @use "./../../../assets/styles/fonts.scss" as f;
 @use "./../../../assets/styles/colors.scss" as c;
 
@@ -7,7 +7,7 @@ h1 {
 }
 
 .privacy-policy-container {
-    @extend .f_r_c_c;
+    @include s.f_r_c_c;
     gap:8px;
     margin-bottom: 80px;
 }

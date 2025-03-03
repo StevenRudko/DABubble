@@ -1,9 +1,9 @@
-@use "./../../../../../styles.scss" as styles;
-@use "./../../../../../assets/styles/fonts.scss" as fonts;
-@use "./../../../../../assets/styles/colors.scss" as main-colors;
+@use "./../../../../../styles.scss" as s;
+@use "./../../../../../assets/styles/fonts.scss" as f;
+@use "./../../../../../assets/styles/colors.scss" as c;
 
 .overlay-content {
-  background: main-colors.$overlay-bg;
+  background: c.$overlay-bg;
   border-radius: 16px;
   width: 420px;
   padding: 16px;
@@ -15,9 +15,7 @@
 }
 
 .overlay-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  @include s.f_r_sb_c;
   margin-bottom: 16px;
 
   h2 {
@@ -29,7 +27,7 @@
   .close-icon {
     cursor: pointer;
     &:hover {
-      color: main-colors.$overlay-close-icon-hover;
+      color: c.$overlay-close-icon-hover;
     }
   }
 }
@@ -39,7 +37,7 @@
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 16px;
-  color: main-colors.$overlay-channel-name;
+  color: c.$overlay-channel-name;
   font-weight: 500;
 }
 
@@ -51,7 +49,7 @@
 
 .tag-input {
   padding: 8px 12px;
-  border: 1px solid main-colors.$overlay-input-border;
+  border: 1px solid c.$overlay-input-border;
   border-radius: 20px;
   display: flex;
   flex-wrap: wrap;
@@ -68,7 +66,7 @@
     background: transparent;
 
     &::placeholder {
-      color: main-colors.$overlay-input-placeholder;
+      color: c.$overlay-input-placeholder;
     }
   }
 }
@@ -78,7 +76,7 @@
   align-items: center;
   gap: 8px;
   padding: 4px 12px;
-  background-color: main-colors.$overlay-selected-user-bg;
+  background-color: c.$overlay-selected-user-bg;
   border-radius: 20px;
   height: 32px;
 
@@ -89,16 +87,16 @@
   }
 
   span {
-    color: main-colors.$overlay-selected-user-name;
+    color: c.$overlay-selected-user-name;
     font-size: 14px;
   }
 
   .remove-user {
     cursor: pointer;
     font-size: 18px;
-    color: main-colors.$overlay-selected-user-close-icon;
+    color: c.$overlay-selected-user-close-icon;
     &:hover {
-      color: main-colors.$overlay-selected-user-close-icon-hover;
+      color: c.$overlay-selected-user-close-icon-hover;
     }
   }
 }
@@ -107,13 +105,13 @@
   position: fixed;
   top: auto;
   width: 388px;
-  background: white;
+  background: c.$add-member-bg-search-result;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   max-height: 300px;
   overflow-y: auto;
   z-index: 1001;
-  border: 1px solid #adb0d9;
+  border: 1px solid c.$add-member-bg-search-result-border;
   margin-top: 4px;
 }
 
@@ -126,7 +124,7 @@
   position: relative;
 
   &:hover {
-    background-color: #eceefe;
+    background-color: c.$add-member-bg-search-result-user;
   }
 
   .user-avatar {
@@ -137,7 +135,7 @@
   }
 
   span {
-    color: #374151;
+    color: c.$add-member-search-result-text; 
     font-size: 14px;
   }
 
@@ -147,9 +145,9 @@
     left: 40px;
     width: 8px;
     height: 8px;
-    background-color: #22c55e;
+    background-color: c.$add-member-search-result-status;
     border-radius: 50%;
-    border: 2px solid white;
+    border: 2px solid c.$img-bg;
   }
 }
 
@@ -160,7 +158,7 @@
 }
 
 .add-btn {
-  background: #686868;
+  background: c.$inactive-dark;
   color: white;
   border: none;
   padding: 12px 24px;
@@ -171,7 +169,7 @@
   bottom: 16px;
 
   &:hover:not(:disabled) {
-    background: #535af1;
+    background: c.$secondary-color;
   }
 
   &:disabled {

@@ -1,19 +1,13 @@
-@use "./../../../../styles.scss" as styles;
-@use "./../../../../assets/styles/fonts.scss" as fonts;
-@use "./../../../../assets/styles/colors.scss" as colors;
+@use "./../../../../styles.scss" as s;
+@use "./../../../../assets/styles/fonts.scss" as f;
+@use "./../../../../assets/styles/colors.scss" as c;
 
 header {
   height: 80px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.05);
-  @include styles.padding($pl: 48px, $pr: 48px, $pt: 0, $pb: 0);
+  padding: 0 48px;
   width: 100%;
-  @include styles.dFlex(
-    $d: flex,
-    $fd: row,
-    $jc: space-between,
-    $ai: center,
-    $g: 0
-  );
+  @include s.f_r_sb_c;
   box-sizing: border-box;
   border-top-right-radius: 20px;
   border-top-left-radius: 20px;
@@ -23,19 +17,14 @@ header {
 }
 
 .selection-name {
-  @include styles.dFlex(
-    $d: flex,
-    $fd: row,
-    $jc: flex-start,
-    $ai: center,
-    $g: 8px
-  );
+  @include s.f_r_fs_c;
+  gap:8px;
   font-size: 24px;
   font-weight: 600;
   padding: 0.5rem;
   &:hover {
-    color: #535af1;
-    background-color: #eceefe;
+    color: c.$secondary-color;
+    background-color: c.$general-bg-color;
     border-radius: 2rem;
     cursor: pointer;
   }
@@ -45,7 +34,7 @@ header {
     border-radius: 2rem;
 
     &:hover {
-      background-color: #eceefe;
+      background-color: c.$general-bg-color;
       cursor: pointer;
     }
 
@@ -63,18 +52,17 @@ header {
       right: -2px;
       width: 12px;
       height: 12px;
-      background-color: #9ca3af;
+      background-color: c.$offline;
       border-radius: 50%;
       border: 2px solid white;
       transition: background-color 0.3s ease;
 
       &.online {
-        background-color: #22c55e;
+        background-color: c.$online;
       }
     }
 
     p {
-      color: #374151;
       font-size: 24px;
       white-space: nowrap;
       overflow: hidden;
@@ -91,28 +79,18 @@ mat-icon {
 }
 
 .wrapper-member {
-  @include styles.dFlex(
-    $d: flex,
-    $fd: row,
-    $jc: space-between,
-    $ai: center,
-    $g: 12px
-  );
+  @include s.f_r_sb_c;
+  gap:12px;
 }
 
 .member-list {
-  @include styles.dFlex(
-    $d: flex,
-    $fd: row,
-    $jc: space-between,
-    $ai: center,
-    $g: 22px
-  );
+  @include s.f_r_sb_c;
+  gap:22px;
   cursor: pointer;
   border-radius: 30px;
   padding: 5px 12px;
   &:hover {
-    background-color: #eceefe;
+    background-color: c.$general-bg-color;
     .member-list-number {
       transform: scale(1.1);
     }
@@ -120,17 +98,11 @@ mat-icon {
 }
 
 .member-list-profiles {
-  @include styles.dFlex(
-    $d: flex,
-    $fd: row,
-    $jc: space-between,
-    $ai: center,
-    $g: 0
-  );
+  @include s.f_r_sb_c;
 }
 
 .circle-outline {
-  @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
+  @include s.f_r_c_c;
   background-color: white;
   border-radius: 100%;
   width: 33px;
@@ -145,8 +117,8 @@ mat-icon {
 }
 
 button {
-  @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
-  background-color: #eceefe;
+  @include s.f_r_c_c;
+  background-color: c.$general-bg-color;
   border-radius: 100%;
   border: unset;
   cursor: pointer;
@@ -162,29 +134,22 @@ button {
   width: auto;
   height: auto;
   font-size: 20px;
-  color: black;
   z-index: 2;
 }
 
 .new-message-header {
   background: #fff;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid c.$general-bg-color;
 }
 
 .new-message-container {
   width: 100%;
-  @include styles.dFlex(
-    $d: flex,
-    $fd: column,
-    $jc: flex-start,
-    $ai: flex-start,
-    $g: 0.5rem
-  );
+  @include s.f_c_fs_fs;
+  gap: 0.5rem;
 
   h2 {
     font-size: 24px;
     font-weight: 700;
-    color: black;
   }
 
   .search-container {
@@ -192,34 +157,24 @@ button {
     position: relative;
 
     .tag-input {
-      @include styles.dFlex(
-        $d: flex,
-        $fd: row,
-        $jc: flex-start,
-        $ai: center,
-        $g: 8px
-      );
+      @include s.f_c_fs_c;
+      gap:8px;
       flex-wrap: wrap;
       padding: 8px;
-      border: 1px solid #adb0d9;
+      border: 1px solid c.$border-color;
       border-radius: 30px;
       background: white;
       min-height: 32px;
 
       .selected-tag {
-        @include styles.dFlex(
-          $d: flex,
-          $fd: row,
-          $jc: flex-start,
-          $ai: center,
-          $g: 8px
-        );
-        background: #eceefe;
+        @include s.f_r_fs_c;
+        gap:8px;
+        background: c.$general-bg-color;
         border-radius: 16px;
         padding: 4px 8px;
 
         &.channel .hashtag {
-          color: #535af1;
+          color: c.$secondary-color;
         }
 
         img {
@@ -234,10 +189,10 @@ button {
           width: 16px !important;
           height: 16px !important;
           cursor: pointer;
-          color: #787878;
+          color: c.$inactive-dark;
 
           &:hover {
-            color: #535af1;
+            color: c.$secondary-color;
           }
         }
       }
@@ -248,14 +203,13 @@ button {
         outline: none;
         font-size: 14px;
         min-width: 150px;
-        color: #1c1b1f;
         margin-left: 0.25rem;
         &.disabled {
           display: none;
         }
 
         &::placeholder {
-          color: #787878;
+          color: c.$inactive-dark;
         }
       }
     }
@@ -266,7 +220,7 @@ button {
       left: 0;
       right: 0;
       background: white;
-      border: 1px solid #adb0d9;
+      border: 1px solid c.$border-color;
       border-radius: 12px;
       margin-top: 4px;
       max-height: 300px;
@@ -275,22 +229,17 @@ button {
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
       .result-item {
-        @include styles.dFlex(
-          $d: flex,
-          $fd: row,
-          $jc: flex-start,
-          $ai: center,
-          $g: 12px
-        );
+        @include s.f_r_fs_c;
+        gap:12px;
         padding: 8px 16px;
         cursor: pointer;
 
         &:hover {
-          background: #eceefe;
+          background: c.$general-bg-color;
         }
 
         .hashtag {
-          color: #535af1;
+          color: c.$secondary-color;
           font-weight: 500;
         }
 
@@ -302,24 +251,18 @@ button {
         }
 
         .result-details {
-          @include styles.dFlex(
-            $d: flex,
-            $fd: column,
-            $jc: center,
-            $ai: flex-start,
-            $g: 2px
-          );
+          @include s.f_c_c_fs;
+          gap:2px;
           flex: 1;
 
           .name {
             font-weight: 500;
-            color: #1c1b1f;
           }
 
           .email,
           .description {
             font-size: 12px;
-            color: #787878;
+            color: c.$inactive-dark;
           }
         }
       }

@@ -1,16 +1,16 @@
-@use "./../../styles.scss";
+@use "./../../styles.scss" as s;
 @use "./../../assets/styles/fonts.scss" as f;
 @use "./../../assets/styles/colors.scss" as c;
 
 section {
   padding: 0 2rem;
-  @extend .f_r_sb_c;
+  @include s.f_r_sb_c;
   height: 100px;
   box-sizing: border-box;
 }
 
 .header-left {
-  @extend .f_r_fs_c;
+  @include s.f_r_fs_c;
   flex: 0 0 auto;
 }
 
@@ -36,7 +36,7 @@ section {
 }
 
 .logo-container {
-  @extend .f_r_fs_c;
+  @include s.f_r_fs_c;
   gap: 1rem;
   transition: all 0.3s ease-in-out;
 
@@ -57,7 +57,7 @@ section {
 
 .searchbar-container {
   padding: 0 12px 0 24px;
-  @extend .f_r_sb_c;
+  @include s.f_r_sb_c;
   background-color: c.$searchbar-bg;
   width: 50%;
   height: 55px;
@@ -92,7 +92,7 @@ app-search-bar {
 }
 
 .profile-container {
-  @extend .f_r_sb_c;
+  @include s.f_r_sb_c;
   cursor: pointer;
 
   &:hover {
@@ -101,12 +101,12 @@ app-search-bar {
 }
 
 .profile-div {
-  @extend .f_r_sb_c;
+  @include s.f_r_sb_c;
   gap:16px;
 }
 
 .img-placeholder-div {
-  @extend .f_r_fs_c;
+  @include s.f_r_fs_c;
 
   img {
     width: clamp(40px, 3.5vw, 80px);
@@ -116,7 +116,7 @@ app-search-bar {
 }
 
 .status-circle-outline {
-  @extend .f_r_c_c;
+  @include s.f_r_c_c;
   position: relative;
   top: 19px;
   right: 12px;

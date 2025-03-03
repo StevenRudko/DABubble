@@ -1,4 +1,4 @@
-@use "./../../../styles.scss";
+@use "./../../../styles.scss" as s;
 @use "./../../../assets/styles/fonts.scss" as f;
 @use "./../../../assets/styles/colors.scss" as c;
 
@@ -20,13 +20,13 @@
 }
 
 .profile-overivew-content {
-  @extend .f_c_fs_c;
+  @include s.f_c_fs_c;
   width: 100%;
   box-sizing: border-box;
 }
 
 .profile-overview-btn {
-  @extend .f_r_c_c;
+  @include s.f_r_c_c;
   @extend .btn-style;
   padding: 8px 0;
   width: 100%;

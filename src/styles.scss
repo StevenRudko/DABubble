@@ -75,7 +75,7 @@ h1 {
 }
 
 .a-link {
-  color: c.$seconday-color;
+  color: c.$secondary-color;
   text-decoration: none;
 }
 
@@ -237,6 +237,23 @@ h1 {
   left: 30px;
 }
 
+.close-button {
+  color: c.$close-btn-text;
+  width: 40px;
+  height: 40px;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent !important;
+  border-radius: 50%;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    color: c.$close-btn-text-hover;
+    background-color: c.$close-btn-bg-hover !important;
+  }
+}
+
 .close-back {
   cursor: pointer;
 
@@ -328,51 +345,86 @@ h1 {
   }
 }
 
-.f_r_fs_c {
-  display:flex;
-  flex-direction:row;
-  justify-content:flex-start;
+@mixin f_r_fs_c {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
   align-items: center;
 }
 
-.f_r_c_c {
+@mixin f_r_i_c {
+  display: flex;
+  flex-direction: row;
+  justify-content: initial;
+  align-items: center;
+}
+
+@mixin f_r_c_c {
   display:flex;
   flex-direction:row;
   justify-content:center;
   align-items: center;
 }
 
-.f_r_sb_c {
+@mixin f_r_sb_c {
   display:flex;
   flex-direction:row;
   justify-content:space-between;
   align-items: center;
 }
 
-.f_r_se_c {
+@mixin f_r_se_c {
   display:flex;
   flex-direction:row;
   justify-content:space-evenly;
   align-items: center;
 }
 
-.f_c_fs_c {
+@mixin f_c_fs_c {
   display:flex;
   flex-direction:column;
   justify-content:flex-start;
   align-items: center;
 }
 
-.f_c_c_c {
+@mixin f_c_fs_fs {
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+  align-items: flex-start;
+}
+
+@mixin f_c_c_c {
   display:flex;
   flex-direction:column;
   justify-content:center;
   align-items: center;
 }
 
-.f_c_se_c {
+@mixin f_c_c_fs {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+@mixin f_c_se_c {
   display:flex;
   flex-direction:column;
   justify-content:space-evenly;
   align-items: center;
+}
+
+@mixin f_c_sb_c {
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  align-items: center;
+}
+
+@mixin f_c_sb_sb {
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  align-items: space-between;
 }

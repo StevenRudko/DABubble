@@ -1,4 +1,4 @@
-@use './../../../styles.scss';
+@use './../../../styles.scss' as s;
 @use "./../../../assets/styles/fonts.scss" as f;
 @use "./../../../assets/styles/colors.scss" as c;
 
@@ -7,13 +7,13 @@ h1 {
 }
 
 .avatar-picker-container {
-    @extend .f_c_c_c;
+    @include s.f_c_c_c;
     width: calc(100% - 34px);
     padding: 17px 17px 0 17px;
 }
 
 .person-circle {
-    @extend .f_c_c_c;
+    @include s.f_c_c_c;
     height: 140px;
     width: 140px;
     background-color: c.$bg-avatar-selection-preview;
@@ -48,7 +48,7 @@ p {
 }
 
 .avatar-img-container {
-    @extend .f_r_se_c;
+    @include s.f_r_se_c;
     flex-wrap: wrap;
     width: 100%;
     margin-bottom: 90px;

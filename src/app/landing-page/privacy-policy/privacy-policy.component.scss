@@ -1,4 +1,4 @@
-@use "./../../../styles.scss";
+@use "./../../../styles.scss" as s;
 @use "./../../../assets/styles/fonts.scss" as f;
 @use "./../../../assets/styles/colors.scss" as c;
 
@@ -112,14 +112,14 @@ a {
     height: 1px;
     bottom: -2px;
     left: 0;
-    background-color: c.$seconday-color;
+    background-color: c.$secondary-color;
     transform: scaleX(0);
     transition: transform 0.3s ease;
     transform-origin: bottom right;
   }
 
   &:hover {
-    color: lighten(c.$seconday-color, 10%);
+    color: c.$secondary-color;
 
     &::after {
       transform: scaleX(1);
