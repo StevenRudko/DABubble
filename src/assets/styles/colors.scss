@@ -7,6 +7,7 @@ $online: #22c55e;
 $offline: #9ca3af;
 $inactive-dark: #686868;
 $border-color: #adb0d9;
+$error-msg:#dc3545;
 
 /////////// landing page  /////////// 
 $bg-avatar-selection-preview: $primary-color;
@@ -48,6 +49,17 @@ $searchbar-result-status-off: $offline;
 /////////// profile settings overlay /////////// 
 $bg-overlay: white;
 $overlay-bg-btn-hover: $general-bg-color;
+
+/////////// chat header /////////// 
+$add-member-bg-search-result: white;
+$add-member-bg-search-result-border: $border-color;
+$add-member-bg-search-result-user: $general-bg-color;
+$add-member-search-result-text: black;
+$add-member-search-result-status: $online;
+
+/////////// channel info overlay /////////// 
+$channel-info-bg: white;
+
 
 /////////// chat windows /////////// 
 $hover-user-name: $secondary-color;
@@ -99,7 +111,9 @@ $toggle-sidebar-shadow: rgba(89, 89, 89, 0.3); // toggle btn sidebar
 $toggle-sidebar-text: $primary-color;
 $arrow-back-hover: $secondary-color;
 $divider-line: $offline;
-
+$close-btn-text: black;
+$close-btn-text-hover:$contrast-color;
+$close-btn-bg-hover:$general-bg-color;
 
 /////////// buttons  /////////// 
 $btn-bg: white;
