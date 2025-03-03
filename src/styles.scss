@@ -380,6 +380,13 @@ h1 {
   align-items: center;
 }
 
+@mixin f_r_sb_fs {
+  display:flex;
+  flex-direction:row;
+  justify-content:space-between;
+  align-items: flex-start;
+}
+
 @mixin f_r_se_c {
   display:flex;
   flex-direction:row;
@@ -392,6 +399,13 @@ h1 {
   flex-direction:column;
   justify-content:flex-start;
   align-items: center;
+}
+
+@mixin f_c_fs_sb {
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+  align-items: space-between;
 }
 
 @mixin f_c_fs_fs {

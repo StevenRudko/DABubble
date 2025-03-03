@@ -1,9 +1,9 @@
-@use "./../../styles.scss" as styles;
-@use "./../../assets/styles/fonts.scss" as fonts;
-@use "./../../assets/styles/colors.scss" as main-colors;
+@use "./../../styles.scss" as s;
+@use "./../../assets/styles/fonts.scss" as f;
+@use "./../../assets/styles/colors.scss" as c;
 
 main {
-  background-color: main-colors.$general-bg-color;
+  background-color: c.$general-bg-color;
   height: 100%;
   width: 100%;
   box-sizing: border-box;
@@ -67,13 +67,8 @@ mat-drawer {
 }
 
 .content-wrapper {
-  @include styles.dFlex(
-    $d: flex,
-    $fd: row,
-    $jc: space-between,
-    $ai: flex-start,
-    $g: 12px
-  );
+  @include s.f_r_sb_fs;
+  gap:12px;
   height: 100%;
   box-sizing: border-box;
   width: 100%;
@@ -100,12 +95,12 @@ app-thread {
   background-color: transparent;
 
   mat-card {
-    @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0);
+    @include s.f_r_c_c;
     height: 40%;
     width: 60px;
     border-top-left-radius: 0px;
     border-bottom-left-radius: 0px;
-    box-shadow: 4px 4px 8px main-colors.$toggle-sidebar-shadow;
+    box-shadow: 4px 4px 8px c.$toggle-sidebar-shadow;
     font-size: 18px;
     font-weight: 500px;
     line-height: 24px;
@@ -114,14 +109,15 @@ app-thread {
     bottom: 25%;
 
     &:hover {
-      color: main-colors.$toggle-sidebar-text;
+      color: c.$toggle-sidebar-text;
       font-weight: 700;
     }
   }
 }
 
 .open-sidebar-content {
-  @include styles.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 12px);
+  @include s.f_r_c_c;
+  gap:12px;
   transform: rotate(270deg);
   white-space: nowrap;
 
@@ -201,7 +197,7 @@ app-thread {
     transform: translateX(100%);
     transition: transform 0.3s ease-in-out;
     z-index: 1000;
-    background-color: main-colors.$general-bg-color;
+    background-color: c.$general-bg-color;
 
     &.thread-active {
       transform: translateX(0);
@@ -251,7 +247,7 @@ app-thread {
     transform: translateX(100%);
     transition: transform 0.3s ease-in-out;
     z-index: 1000;
-    background-color: main-colors.$general-bg-color;
+    background-color: c.$general-bg-color;
 
     &.thread-active {
       transform: translateX(0);
