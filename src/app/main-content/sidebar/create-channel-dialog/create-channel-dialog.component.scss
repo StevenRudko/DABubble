@@ -1,3 +1,7 @@
+@use "./../../../../styles.scss" as s;
+@use "./../../../../assets/styles/fonts.scss" as f;
+@use "./../../../../assets/styles/colors.scss" as c;
+
 .dialog-backdrop {
   position: fixed;
   top: 0;
@@ -38,11 +42,12 @@
 
   .close {
     cursor: pointer;
+
     &:hover {
-      color: #535af1;
-      background-color: #eceefe;
+      color: c.$secondary-color;
+      background-color: c.$general-bg-color;
       border-radius: 50%;
-      box-shadow: 0 0 0 5px #eceefe;
+      box-shadow: 0 0 0 5px c.$general-bg-color;
     }
   }
 }
@@ -55,7 +60,6 @@ p {
 .input-group {
   label {
     display: block;
-    color: black;
     margin-bottom: 16px;
     font-size: 16px;
     font-weight: bold;
@@ -64,7 +68,7 @@ p {
   input {
     width: 100%;
     height: 60px;
-    border: 1px solid #adb0d9;
+    border: 1px solid c.$border-color;
     border-radius: 40px;
     font-size: 16px;
     padding-left: 2rem;
@@ -76,14 +80,15 @@ p {
 
     &:focus {
       outline: none;
-      border-color: #444df2;
+      border-color: c.$contrast-color;
     }
   }
 }
 
 .create-btn {
   float: right;
-  background: #444df2;
+  background: c.$contrast-color;
+  ;
   color: white;
   border: none;
   padding: 12px 24px;
@@ -93,21 +98,23 @@ p {
   position: absolute;
   bottom: 4rem;
   right: 2rem;
+
   &:hover {
-    background: #797ef3;
+    background: c.$primary-color;
   }
+
   &.disabled {
-    background-color: #e2e2e2;
+    background-color: c.$general-bg-color;
     cursor: not-allowed;
 
     &:hover {
-      background-color: #e2e2e2;
+      background-color: c.$general-bg-color;
     }
   }
 }
 
 .optional {
-  color: #686868;
+  color: c.$inactive-dark;
   font-size: 16px;
   font-weight: 400;
 }
@@ -117,20 +124,21 @@ p {
   margin-top: 0.9rem;
   margin-left: 1rem;
   font-weight: bold;
-  color: grey;
+  color: c.$inactive-dark;
 }
 
 .input-group {
   position: relative;
   margin-bottom: 32px;
+
   input {
     &.invalid {
-      border-color: #dc3545;
+      border-color: c.$error-msg;
     }
   }
 
   .validation-message {
-    color: #dc3545;
+    color: c.$error-msg;
     font-size: 12px;
     margin-top: 4px;
     margin-left: 24px;
@@ -139,7 +147,7 @@ p {
 }
 
 .error-message {
-  color: #f44336;
+  color: c.$error-msg;
   font-size: 12px;
   margin-top: 4px;
 }
@@ -151,6 +159,7 @@ p {
     padding-top: 64px;
     width: 100%;
   }
+
   .create-btn {
     bottom: 6rem;
   }

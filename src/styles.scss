@@ -359,6 +359,13 @@ h1 {
   align-items: center;
 }
 
+@mixin f_c_i_i {
+  display: flex;
+  flex-direction: column;
+  justify-content: initial;
+  align-items: initial;
+}
+
 @mixin f_r_c_c {
   display:flex;
   flex-direction:row;

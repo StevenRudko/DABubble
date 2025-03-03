@@ -1,15 +1,10 @@
-@use "./../../../styles.scss" as styles;
-@use "./../../../assets/styles/fonts.scss" as fonts;
-@use "./../../../assets/styles/colors.scss" as main-colors;
+@use "./../../../styles.scss" as s;
+@use "./../../../assets/styles/fonts.scss" as f;
+@use "./../../../assets/styles/colors.scss" as c;
 
 section {
-  @include styles.dFlex(
-    $d: flex,
-    $fd: column,
-    $jc: flex-start,
-    $ai: flex-start,
-    $g: 48px
-  );
+  @include s.f_c_fs_fs;
+  gap: 48px;
   width: 100%;
   height: 100%;
   overflow-y: scroll;
@@ -30,42 +25,31 @@ section {
 }
 
 .message-wrapper {
-  @include styles.dFlex(
-    $d: flex,
-    $fd: column,
-    $jc: flex-start,
-    $ai: flex-start,
-    $g: 42px
-  );
+  @include s.f_c_fs_fs;
+  gap: 42px;
   width: 100%;
   height: auto;
   box-sizing: border-box;
 }
 
 .messages-by-date-container {
-  @include styles.dFlex($d: flex, $fd: column, $jc: center, $ai: center, $g: 0);
+  @include s.f_c_c_c;
   width: 100%;
   box-sizing: border-box;
   height: auto;
 }
 
 .divider-line {
-  @include styles.dFlex(
-    $d: flex,
-    $fd: column,
-    $jc: center,
-    $ai: center,
-    $g: 0px
-  );
+  @include s.f_c_c_c;
   height: 1px;
-  background-color: main-colors.$divider-line;
+  background-color: c.$divider-line;
   width: 100%;
   box-sizing: border-box;
 }
 
 .divider-text-box {
   padding: 4px 16px;
-  border: 1px solid main-colors.$divider-line;
+  border: 1px solid c.$divider-line;
 }
 
 .divider-text {
@@ -92,7 +76,7 @@ section {
 
         &:hover {
           .user-name {
-            color: main-colors.$hover-user-name;
+            color: c.$hover-user-name;
           }
         }
 
@@ -110,7 +94,7 @@ section {
     }
 
     .preview-text {
-      color: main-colors.$preview-text;
+      color: c.$preview-text;
       line-height: 1.5;
       margin: 0;
       padding: 0 8px;
@@ -118,7 +102,7 @@ section {
   }
 
   .user-link {
-    color: main-colors.$preview-user-link;
+    color: c.$preview-user-link;
     cursor: pointer;
     text-decoration: none;
   }
@@ -134,7 +118,7 @@ section {
       .channel-name {
         font-size: 24px;
         font-weight: 600;
-        color: main-colors.$preview-channel-name;
+        color: c.$preview-channel-name;
       }
     }
 
@@ -142,10 +126,10 @@ section {
       .preview-text {
         font-size: 16px;
         line-height: 1.5;
-        color: main-colors.$preview-text;
+        color: c.$preview-text;
 
         span {
-          color: main-colors.$preview-user-link;
+          color: c.$preview-user-link;
         }
       }
     }
