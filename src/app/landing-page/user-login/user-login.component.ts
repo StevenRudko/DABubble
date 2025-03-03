@@ -5,6 +5,7 @@ import {
   Validators,
   ReactiveFormsModule,
   FormBuilder,
+  FormGroup,
 } from '@angular/forms';
 import { AuthService } from '../../service/auth.service';
 import { Router, RouterLink } from '@angular/router';
@@ -33,7 +34,7 @@ export class UserLoginComponent {
    * - `password`: The user's password (required).
    * @type {FormGroup}
    */
-  form = this.fb.nonNullable.group({
+  form: FormGroup = this.fb.nonNullable.group({
     email: [
       '',
       [

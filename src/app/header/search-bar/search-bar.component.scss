@@ -171,10 +171,6 @@ section {
     $jc: flex-start,
     $ai: center,
     $g: 4px);
-
-  div {
-    font-size: 0.875rem;
-  }
 }
 
 .channel-img-container {
@@ -241,17 +237,15 @@ section {
     padding: 5px 10px;
     max-height: fit-content;
 
-    // Die ersten beiden Divs nehmen jeweils 50% der Breite ein
     >img {
       flex: 0 0 40px;
       margin-right: 15px;
     }
 
     >div:nth-child(2) {
-      flex: 0 0 50%;
+      flex: 0 0 calc(100% - 55px);
     }
 
-    // Das letzte Div nimmt 100% der Breite ein und rutscht dadurch in die nächste Zeile
     >div:last-child {
       flex: 0 0 calc(100% - 55px);
       padding-left: 55px;

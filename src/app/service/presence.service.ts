@@ -6,7 +6,7 @@ import {
   onDisconnect,
   onValue,
 } from '@angular/fire/database';
-import { Auth } from '@angular/fire/auth';
+import { Auth, onAuthStateChanged } from '@angular/fire/auth';
 import { BehaviorSubject, map, Observable } from 'rxjs';
 
 /**
@@ -54,11 +54,12 @@ export class PresenceService {
    * @returns {void}
    */
   setOnlineStatus(): void {
-    this.auth.onAuthStateChanged((user) => {
+    onAuthStateChanged(this.auth, (user) => {
       if (user) {
         const userStatusRef = ref(this.db, `status/${user.uid}`);
         set(userStatusRef, 'online');
         onDisconnect(userStatusRef).set('offline');
+
         window.addEventListener('beforeunload', () => {
           set(userStatusRef, 'offline');
         });
@@ -72,7 +73,7 @@ export class PresenceService {
    * @returns {void}
    */
   setOfflineStatus(): void {
-    this.auth.onAuthStateChanged((user) => {
+    onAuthStateChanged(this.auth, (user) => {
       if (user) {
         const userStatusRef = ref(this.db, `status/${user.uid}`);
         set(userStatusRef, 'offline');

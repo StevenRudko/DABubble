@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { MATERIAL_MODULES } from '../../shared/material-imports';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ValidatorService } from '../../service/validator.service';
 import { RouterLink, Router, ActivatedRoute } from '@angular/router';
 import { verifyPasswordResetCode, confirmPasswordReset } from "firebase/auth";
@@ -35,7 +35,7 @@ export class SetNewPasswordComponent {
    * Includes a custom validator to ensure both passwords match.
    * @type {FormGroup}
    */
-  form = this.fb.nonNullable.group({
+  form: FormGroup = this.fb.nonNullable.group({
     password: ['', [Validators.required, this.validatorService.passwordValidator()]],
     confirmPassword: ['', [Validators.required, this.validatorService.passwordValidator()]],
   },

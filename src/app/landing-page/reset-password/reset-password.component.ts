@@ -3,6 +3,7 @@ import { MATERIAL_MODULES } from '../../shared/material-imports';
 import { Router, RouterLink } from '@angular/router';
 import {
   FormBuilder,
+  FormGroup,
   FormsModule,
   ReactiveFormsModule,
   Validators,
@@ -34,7 +35,7 @@ export class ResetPasswordComponent {
    * - `email`: The email address of the user (required, must be a valid email format).
    * @type {FormGroup}
    */
-  form = this.fb.nonNullable.group({
+  form: FormGroup = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
   });
 
