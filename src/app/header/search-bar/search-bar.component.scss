@@ -153,11 +153,8 @@ section {
 }
 
 .messageResultChannelInfo {
-  @include styles.dFlex($d: flex,
-    $fd: row,
-    $jc: flex-start,
-    $ai: center,
-    $g: 4px);
+  @include s.f_r_fs_c;
+  gap: 4px;
 }
 
 .channel-img-container {
