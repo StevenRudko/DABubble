@@ -6,6 +6,7 @@ $contrast-color: #444DF2;
 $online: #22c55e;
 $offline: #9ca3af;
 $inactive-dark: #686868;
+$border-color: #adb0d9;
 
 /////////// landing page  /////////// 
 $bg-avatar-selection-preview: $primary-color;
@@ -22,6 +23,10 @@ $bg-checkbox-form-contain-hover: $contrast-color;
 $conditions-text: $primary-color;
 $conditions-text-bg-hover: $general-bg-color;
 $conditions-text-hover: $contrast-color;
+$landing-page-btn-text: $primary-color;
+$landing-page-btn-border-hover: $border-color;
+$landing-page-btn-text-hover: $contrast-color;
+$landing-page-bg: $general-bg-color;
 
 /////////// header  /////////// 
 $header-text-hover: $primary-color;
@@ -79,7 +84,7 @@ $preview-channel-name: #1a1a1a;
 $overlay-bg: white;
 $overlay-close-icon-hover: $secondary-color;
 $overlay-channel-name: $secondary-color;
-$overlay-input-border: #adb0d9;
+$overlay-input-border: $border-color;
 $overlay-input-placeholder: $offline;
 $overlay-selected-user-bg: $general-bg-color;
 $overlay-selected-user-name: #374151;

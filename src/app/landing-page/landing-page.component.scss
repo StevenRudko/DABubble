@@ -4,13 +4,13 @@
 
 .button-link {
   padding: 6px 15px;
-  color: #797ef3;
+  color: c.$landing-page-btn-text;
   cursor: pointer;
 
   &:hover {
-    border: 1px solid #adb0d9;
+    border: 1px solid c.$landing-page-btn-border-hover;
     border-radius: 30px;
-    color: #444df2;
+    color: c.$landing-page-btn-text-hover;
     font-weight: 500;
     padding: 5px 14px;
   }
@@ -19,7 +19,7 @@
 .landing-continer {
   width: 100%;
   min-height: 100%;
-  background-color: #eceefe;
+  background-color: c.$landing-page-bg;
   @include s.f_c_sb_c;
 }
 .header {
@@ -29,7 +29,7 @@
 }
 
 .create-container {
-  @include s.dFlex($d: flex, $fd: column, $jc: space-between, $ai: center);
+  @include s.f_c_sb_c;
   font-family: Figtree;
 
   p:nth-last-child(1) {
@@ -38,7 +38,8 @@
 }
 
 .footer {
-  @include s.dFlex($d: flex, $jc: center, $ai: center, $g: 16px);
+  @include s.f_r_c_c;
+  gap:16px;
   padding: 24px 0 48px 0;
   height: 42px;
   margin-top: auto;
@@ -53,11 +54,12 @@
 }
 
 .user-info-container {
-  background-color: #444df2;
+  background-color: c.$contrast-color;
   border-radius: 30px 30px 0px 30px;
   padding: 50px;
-  color: #ffffff;
-  @include s.dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 28px);
+  color: white;
+  @include s.f_r_c_c;
+  gap:28px;
   transform: translateX(130%);
   animation: slideIn 1.5s linear forwards;
 
