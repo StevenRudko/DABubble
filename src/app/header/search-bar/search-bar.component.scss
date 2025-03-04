@@ -1,4 +1,4 @@
-@use "./../../../styles.scss" as styles;
+@use "./../../../styles.scss" as s;
 @use "./../../../assets/styles/fonts.scss" as f;
 @use "./../../../assets/styles/colors.scss" as c;
 
@@ -26,11 +26,8 @@
 }
 
 section {
-  @include styles.dFlex($d: flex,
-    $fd: column,
-    $jc: flex-start,
-    $ai: center,
-    $g: 5px);
+  @include s.f_c_fs_c;
+  gap: 5px;
   max-height: calc(55px * 5);
   overflow-x: hidden;
   overflow-y: auto;
@@ -54,11 +51,8 @@ section {
 }
 
 .result-container {
-  @include styles.dFlex($d: flex,
-    $fd: row,
-    $jc: flex-start,
-    $ai: center,
-    $g: 15px);
+  @include s.f_r_fs_c;
+  gap: 15px;
   width: 100%;
   height: 50px;
   padding: 10px;
@@ -86,11 +80,8 @@ section {
 }
 
 .thread-message-container {
-  @include styles.dFlex($d: flex,
-    $fd: row,
-    $jc: flex-start,
-    $ai: center,
-    $g: 8px);
+  @include s.f_r_fs_c;
+  gap: 8px;
   width: 63%;
 
   span {
@@ -152,13 +143,9 @@ section {
 }
 
 .memberImgList {
-  @include styles.dFlex($d: flex,
-    $fd: row,
-    $jc: flex-start,
-    $ai: center,
-    $g: 0px);
-    min-width: 110px;
-    margin-left: auto;
+  @include s.f_r_fs_c;
+  min-width: 110px;
+  margin-left: auto;
 
   p {
     padding-left: 15px;
@@ -166,15 +153,8 @@ section {
 }
 
 .messageResultChannelInfo {
-  @include styles.dFlex($d: flex,
-    $fd: row,
-    $jc: flex-start,
-    $ai: center,
-    $g: 4px);
-
-  div {
-    font-size: 0.875rem;
-  }
+  @include s.f_r_fs_c;
+  gap: 4px;
 }
 
 .channel-img-container {
@@ -231,27 +211,21 @@ section {
 
 @media (max-width: 500px) {
   .result-container {
-    @include styles.dFlex($d: flex,
-      $fd: row,
-      $jc: flex-start,
-      $ai: center,
-      $g: 0px);
+    @include s.f_r_fs_c;
     flex-wrap: wrap;
     height: 100%;
     padding: 5px 10px;
     max-height: fit-content;
 
-    // Die ersten beiden Divs nehmen jeweils 50% der Breite ein
     >img {
       flex: 0 0 40px;
       margin-right: 15px;
     }
 
     >div:nth-child(2) {
-      flex: 0 0 50%;
+      flex: 0 0 calc(100% - 55px);
     }
 
-    // Das letzte Div nimmt 100% der Breite ein und rutscht dadurch in die nächste Zeile
     >div:last-child {
       flex: 0 0 calc(100% - 55px);
       padding-left: 55px;
@@ -263,11 +237,7 @@ section {
   }
 
   .thread-message-container {
-    @include styles.dFlex($d: flex,
-      $fd: column,
-      $jc: center,
-      $ai: flex-start,
-      $g: 0px);
+    @include s.f_c_c_fs;
     padding-top: 4px;
 
     span {

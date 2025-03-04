@@ -1,30 +1,24 @@
-@use "./../../../styles.scss" as styles;
+@use "./../../../styles.scss" as s;
+@use "./../../../assets/styles/fonts.scss" as f;
+@use "./../../../assets/styles/colors.scss" as c;
+@use 'sass:color';
 
 .sidebar {
-  @include styles.margin($ml: 12px, $mr: 12px, $mt: 12px, $mb: 0);
-  @include styles.padding($pl: 4px, $pr: 4px, $pt: 6px, $pb: 0);
-  @include styles.dFlex(
-    $d: flex,
-    $fd: column,
-    $jc: flex-start,
-    $ai: flex-start,
-    $g: 0
-  );
+  margin: 12px;
+  margin-bottom:0px;
+  padding:6px 4px;
+  padding-bottom:0px;
+  @include s.f_c_fs_fs;
   height: calc(100vh - 24px);
   overflow: hidden;
 }
 
 .header {
-  @include styles.dFlex(
-    $d: flex,
-    $fd: row,
-    $jc: space-between,
-    $ai: center,
-    $g: 0
-  );
+  @include s.f_r_sb_c;
   width: 100%;
   flex-shrink: 0;
-  @include styles.padding($pl: 0.5rem, $pr: 8px, $pt: 0.5rem, $pb: 0.5rem);
+  padding: 0.5rem; 
+  padding-right:8px;
   box-sizing: border-box;
 
   .edit-square {
@@ -36,14 +30,14 @@
     border-radius: 50%;
 
     &:hover {
-      color: #535af1;
-      background-color: #eceefe;
+      color: c.$secondary-color;
+      background-color: c.$general-bg-color;
     }
   }
 
   .logo-container {
-    @include styles.dFlex($d: flex, $ai: center, $g: 1rem);
-
+    @include s.f_r_c_c;
+    gap:1rem;
     .logo {
       width: 60px;
       height: 60px;
@@ -58,19 +52,14 @@
   }
 
   .open-icon {
-    color: #6b7280;
+    color: c.$inactive-dark;
     cursor: pointer;
   }
 }
 
 .section {
-  @include styles.dFlex(
-    $d: flex,
-    $fd: column,
-    $g: 1rem,
-    $ai: initial,
-    $jc: initial
-  );
+  @include s.f_c_i_i;
+  gap:1rem;
   width: 100%;
   flex-shrink: 0;
 
@@ -83,18 +72,19 @@
   }
 
   .section-header {
-    @include styles.dFlex($d: flex, $ai: center);
+    @include s.f_r_c_c;
     margin-top: 1rem;
     font-weight: 500;
     flex-shrink: 0;
 
     .header-content {
-      @include styles.dFlex($d: flex, $jc: flex-start, $ai: center, $g: 0.5rem);
+      @include s.f_r_fs_c;
+      gap:0.5rem;
       flex: 1;
       cursor: pointer;
       padding: 0.25rem;
       &:hover {
-        color: #535af1;
+        color: c.$secondary-color;
       }
     }
 
@@ -107,8 +97,8 @@
       cursor: pointer;
       margin-right: 1rem;
       &:hover {
-        color: #535af1;
-        background-color: #eceefe;
+        color: c.$secondary-color;
+        background-color: c.$general-bg-color;
         border-radius: 50%;
       }
     }
@@ -119,21 +109,22 @@
   }
 
   .channel-item {
-    @include styles.dFlex($d: flex, $jc: flex-start, $g: 0.5rem);
+    @include s.f_r_fs_c;
+    gap:0.5rem;
     margin: 0 2rem;
     padding: 0.25rem;
     border-radius: 0.5rem;
     cursor: pointer;
     font-weight: 500;
     &:hover {
-      color: #535af1;
-      background-color: #eceefe;
+      color: c.$secondary-color;
+      background-color: c.$general-bg-color;
       border-radius: 2rem;
     }
 
     &.active {
-      color: #535af1;
-      background-color: #eceefe;
+      color: c.$secondary-color;
+      background-color: c.$general-bg-color;
       border-radius: 2rem;
       font-weight: bold;
     }
@@ -152,7 +143,7 @@
     border-radius: 0.5rem;
     cursor: pointer;
     &:hover {
-      color: #535af1;
+      color: c.$secondary-color;
     }
   }
 }
@@ -178,7 +169,7 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: #adb0d9;
+    background-color: c.$border-color;
     border-radius: 20px;
     display: none;
   }
@@ -188,7 +179,8 @@
   }
 
   .user-item {
-    @include styles.dFlex($d: flex, $jc: initial, $ai: center, $g: 1rem);
+    @include s.f_r_i_c;
+    gap:1rem;
     padding: 0.5rem;
     margin: 0 2rem;
     cursor: pointer;
@@ -196,17 +188,17 @@
     flex-shrink: 0;
 
     &.active {
-      background-color: #eceefe;
+      background-color: c.$general-bg-color;
       border-radius: 2rem;
 
       span {
-        color: #535af1;
+        color: c.$secondary-color;
         font-weight: bold;
       }
     }
 
     &:hover {
-      background-color: #eceefe;
+      background-color: c.$general-bg-color;
       border-radius: 2rem;
     }
 
@@ -218,7 +210,6 @@
     }
 
     span {
-      color: #374151;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -230,13 +221,13 @@
       left: 3rem;
       width: 0.5rem;
       height: 0.5rem;
-      background-color: #9ca3af;
+      background-color: c.$offline;
       border-radius: 50%;
       border: 2px solid #f8f9fe;
       transition: background-color 0.3s ease;
 
       &.online {
-        background-color: #22c55e;
+        background-color: c.$online;
       }
     }
   }
@@ -272,7 +263,7 @@
     }
 
     &::-webkit-scrollbar-thumb {
-      background-color: #adb0d9;
+      background-color: c.$border-color;
       border-radius: 20px;
       display: none;
     }
@@ -312,13 +303,7 @@
   margin-bottom: 16px;
 
   .searchbar-container {
-    @include styles.dFlex(
-      $d: flex,
-      $fd: row,
-      $jc: space-between,
-      $ai: center,
-      $g: 0
-    );
+    @include s.f_r_sb_c;
     width: 100%;
     height: 45px;
     box-shadow: unset;
@@ -326,10 +311,9 @@
     border-radius: 25px;
     position: relative;
     padding: 0 12px;
-    border: 1px solid #adb0d9;
+    border: 1px solid c.$border-color;
 
     input {
-      color: #374151;
       border: unset;
       outline: unset;
       width: 100%;
@@ -349,7 +333,7 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background-color: #535af1;
+  background-color: c.$secondary-color;
   border: none;
   cursor: pointer;
   z-index: 1000;
@@ -357,7 +341,7 @@
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: darken(#535af1, 5%);
+    background-color: color.adjust(c.$secondary-color, $lightness: -5%);
   }
 
   mat-icon {
@@ -458,8 +442,8 @@
     border-radius: 2rem;
 
     &:hover {
-      color: #535af1;
-      background-color: #eceefe;
+      color: c.$secondary-color;
+      background-color: c.$general-bg-color;
     }
   }
 
@@ -477,9 +461,9 @@
     }
 
     &:hover {
-      background-color: #eceefe;
+      background-color: c.$general-bg-color;
       span {
-        color: #535af1;
+        color: c.$secondary-color;
       }
     }
   }

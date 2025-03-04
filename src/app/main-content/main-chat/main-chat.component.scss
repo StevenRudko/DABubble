@@ -1,28 +1,17 @@
-@use "./../../../styles.scss" as styles;
-@use "./../../../assets/styles/fonts.scss" as fonts;
-@use "./../../../assets/styles/colors.scss" as main-colors;
+@use "./../../../styles.scss" as s;
+@use "./../../../assets/styles/fonts.scss" as f;
+@use "./../../../assets/styles/colors.scss" as c;
 
 section {
-  @include styles.dFlex(
-    $d: flex,
-    $fd: column,
-    $jc: flex-start,
-    $ai: flex-start,
-    $g: 0
-  );
+  @include s.f_c_fs_fs;
   height: 100%;
   box-sizing: border-box;
 }
 
 .main-chat-body {
-  @include styles.padding($pl: 0px, $pr: 0px, $pt: 12px, $pb: 12px);
-  @include styles.dFlex(
-    $d: flex,
-    $fd: column,
-    $jc: space-between,
-    $ai: space-between,
-    $g: 10px
-  );
+  padding: 0 12px;
+  @include s.f_c_sb_sb;
+  gap: 10px;
   width: 100%;
   height: calc(100% - 80px);
   box-sizing: border-box;

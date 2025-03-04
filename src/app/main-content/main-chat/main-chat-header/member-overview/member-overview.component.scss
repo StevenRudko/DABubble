@@ -1,4 +1,6 @@
-@use "../../../../../styles.scss" as styles;
+@use "./../../../../../styles.scss" as s;
+@use "./../../../../../assets/styles/fonts.scss" as f;
+@use "./../../../../../assets/styles/colors.scss" as c;
 
 .member-overlay {
   position: fixed;
@@ -36,17 +38,6 @@
     font-weight: 700;
     padding: 1rem;
   }
-
-  .close-icon {
-    cursor: pointer;
-    margin-right: 1rem;
-    &:hover {
-      color: #535af1;
-      background-color: #eceefe;
-      border-radius: 50%;
-      box-shadow: 0 0 0 5px #eceefe;
-    }
-  }
 }
 
 .user-list {
@@ -54,14 +45,15 @@
   flex-direction: column;
 
   .user-item {
-    @include styles.dFlex($d: flex, $jc: initial, $ai: center, $g: 1rem);
+    @include s.f_r_i_c;
+    gap: 1rem;
     padding: 0.5rem;
     margin: 0 2rem;
     cursor: pointer;
     position: relative;
 
     &:hover {
-      background-color: #eceefe;
+      background-color: c.$general-bg-color;
       border-radius: 2rem;
     }
 
@@ -81,20 +73,21 @@
       left: 3rem;
       width: 0.5rem;
       height: 0.5rem;
-      background-color: #9ca3af;
+      background-color: c.$offline;
       border-radius: 50%;
       border: 2px solid #f8f9fe;
       transition: background-color 0.3s ease;
 
       &.online {
-        background-color: #22c55e;
+        background-color: c.$online;
       }
     }
   }
 }
 
 .add-member-btn {
-  @include styles.dFlex($d: flex, $jc: initial, $ai: center, $g: 1rem);
+  @include s.f_r_i_c;
+  gap: 1rem;
   padding: 1rem 0.5rem;
   margin: 0 2rem;
   cursor: pointer;
@@ -106,14 +99,14 @@
   margin-bottom: 1rem;
 
   &:hover {
-    background-color: #eceefe;
+    background-color: c.$general-bg-color;
     border-radius: 2rem;
   }
 
   mat-icon {
     font-size: 20px;
     margin-left: 1rem;
-    background-color: #eceefe;
+    background-color: c.$general-bg-color;
     border-radius: 50%;
   }
 
@@ -122,6 +115,6 @@
     margin-left: 0.5rem;
   }
   &:hover {
-    color: #535af1;
+    color: c.$secondary-color;
   }
 }

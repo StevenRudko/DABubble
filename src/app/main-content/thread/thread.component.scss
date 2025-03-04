@@ -1,14 +1,9 @@
-@use "./../../../styles.scss" as styles;
-@use "./../../../assets/styles/colors.scss" as main-colors;
+@use "./../../../styles.scss" as s;
+@use "./../../../assets/styles/fonts.scss" as f;
+@use "./../../../assets/styles/colors.scss" as c;
 
 section {
-  @include styles.dFlex(
-    $d: flex,
-    $fd: column,
-    $jc: flex-start,
-    $ai: space-evenly,
-    $g: 0
-  );
+  @include s.f_c_fs_sb;
   flex: 1;
   height: 100%;
   box-sizing: border-box;
@@ -18,34 +13,23 @@ header {
   height: 80px;
   min-height: 80px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.05);
-  @include styles.padding($pl: 48px, $pr: 48px, $pt: 0, $pb: 0);
+  padding: 0 48px;
   width: 100%;
-  @include styles.dFlex(
-    $d: flex,
-    $fd: row,
-    $jc: space-between,
-    $ai: center,
-    $g: 0
-  );
+  @include s.f_r_sb_c;
   box-sizing: border-box;
   border-top-right-radius: 20px;
   border-top-left-radius: 20px;
 }
 
 .thread-header {
-  @include styles.dFlex(
-    $d: flex,
-    $fd: row,
-    $jc: flex-start,
-    $ai: center,
-    $g: 8px
-  );
+  @include s.f_r_fs_c;
+  gap:8px;
   font-size: 24px;
   font-weight: 600;
 }
 
 .channel-name {
-  color: #797ef3;
+  color: c.$primary-color;
   font-size: 14px;
 }
 
@@ -53,10 +37,10 @@ header {
   cursor: pointer;
 
   &:hover {
-    color: #535af1;
-    background-color: #eceefe;
+    color: c.$secondary-color;
+    background-color: c.$general-bg-color;
     border-radius: 50%;
-    box-shadow: 0 0 0 5px #eceefe;
+    box-shadow: 0 0 0 5px c.$general-bg-color;
   }
 }
 
@@ -68,13 +52,8 @@ header {
 .chat {
   height: calc(100% - 92px);
   box-sizing: border-box;
-  @include styles.dFlex(
-    $d: flex,
-    $fd: column,
-    $jc: space-between,
-    $ai: space-between,
-    $g: 10px
-  );
+  @include s.f_c_sb_sb;
+  gap:10px;
 }
 
 .thread-divider {
@@ -87,13 +66,13 @@ header {
     flex-grow: 1;
     height: 1px;
     margin-right: 32px;
-    background-color: main-colors.$divider-line;
+    background-color: c.$divider-line;
   }
 
   .divider-text {
     margin: 0 32px;
     font-size: 18px;
-    color: #adb0d9;
+    color: c.$border-color;
   }
 }
 
@@ -124,9 +103,7 @@ app-message-input-box {
 
 @media (max-width: 1024px) {
   .mobile-back-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    @include s.f_r_c_c;
     background: none;
     border: none;
     padding: 8px;
