@@ -16,6 +16,10 @@ body {
   overflow: hidden;
 }
 
+body {
+  overflow-y:auto;
+}
+
 section,
 .width-100 {
   width: 100%;
