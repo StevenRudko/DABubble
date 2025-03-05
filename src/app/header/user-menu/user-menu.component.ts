@@ -26,7 +26,6 @@ export class UserMenuComponent {
   openDialog(): void {
     const dialogRef = this.dialog.open(UserOverviewComponent, {});
     dialogRef.afterClosed().subscribe((result) => {
-      console.log('The dialog was closed');
     });
     this.dialogRef.close();
   }

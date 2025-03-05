@@ -719,7 +719,6 @@ export class SearchBarComponent implements OnInit {
     const scrollOffset = 250;
     const targetScroll = element.offsetTop - scrollOffset;
     container.scrollTo({ top: targetScroll, behavior: 'smooth' });
-    console.log('Scrolling erfolgreich mit Offset:', scrollOffset, container);
     this.highlightMessage(element);
   }
 

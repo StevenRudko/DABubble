@@ -76,7 +76,6 @@ export class MainContentComponent {
       if (isNewUser || !user) this.resetThreadState();
 
       previousUserId = user ? user.uid : null;
-      console.log(user ? 'User Data:' : 'No user logged in', user || '');
     });
   }
 

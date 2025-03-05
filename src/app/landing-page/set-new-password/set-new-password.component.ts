@@ -51,7 +51,7 @@ export class SetNewPasswordComponent {
   ngOnInit(): void {
     const actionCode = this.route.snapshot.queryParamMap.get('oobCode');
     if (!actionCode) {
-      console.log('Ungültiger Link.');
+      console.error('Ungültiger Link.');
       return;
     };
 
@@ -60,7 +60,7 @@ export class SetNewPasswordComponent {
         this.email = email;
       })
       .catch((error) => {
-        console.log('Der Link ist ungültig oder abgelaufen.', error);
+        console.error('Der Link ist ungültig oder abgelaufen.', error);
       });
   }
 
@@ -75,7 +75,7 @@ export class SetNewPasswordComponent {
   onSubmit(): void {
     const actionCode = this.route.snapshot.queryParamMap.get('oobCode');
     if (!actionCode) {
-      console.log('Ungültiger Link.');
+      console.error('Ungültiger Link.');
       return;
     }
 
@@ -88,7 +88,7 @@ export class SetNewPasswordComponent {
         }, 1500)
       })
       .catch((error) => {
-        console.log('Fehler beim Zurücksetzen des Passworts. Bitte versuchen Sie es erneut.', error);
+        console.error('Fehler beim Zurücksetzen des Passworts. Bitte versuchen Sie es erneut.', error);
       });
   }
 }

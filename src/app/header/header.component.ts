@@ -119,8 +119,6 @@ export class HeaderComponent implements OnInit {
    * Opens the user menu dialog.
    * - Uses Angular Material's `MatDialog` to open the `UserMenuComponent`.
    * - Configures the dialog with a fixed width of 300px and a custom panel class.
-   * - Subscribes to `afterClosed()` to execute logic when the dialog is closed.
-   * - Logs a message to the console when the dialog is closed.
    * 
    * @returns {void}
    */
@@ -128,10 +126,6 @@ export class HeaderComponent implements OnInit {
     const dialogRef = this.dialog.open(UserMenuComponent, {
       width: '300px',
       panelClass: 'user-menu-dialog',
-    });
-
-    dialogRef.afterClosed().subscribe(() => {
-      console.log('The dialog was closed');
     });
   }
 }

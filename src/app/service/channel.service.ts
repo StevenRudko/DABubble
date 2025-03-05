@@ -26,8 +26,7 @@ export class ChannelService {
    * @param firestore - Firestore instance for database operations
    */
   constructor(private firestore: Firestore) {
-    this.getChannels();
-    setTimeout(() => console.log(this.channelsSubject.value), 2000);
+    this.getChannels(); 
   }
 
   /**
