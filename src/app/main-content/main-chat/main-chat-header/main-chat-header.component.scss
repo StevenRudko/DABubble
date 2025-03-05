@@ -275,6 +275,12 @@ button {
   display: none;
 }
 
+@media (max-width: 1250px) {
+  button {
+    display: none;
+  }
+}
+
 @media (max-width: 1200px) {
   .selection-name.direct-message-header p {
     font-size: 20px;

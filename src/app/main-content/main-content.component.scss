@@ -68,7 +68,7 @@ mat-drawer {
 
 .content-wrapper {
   @include s.f_r_sb_fs;
-  gap:12px;
+  gap: 12px;
   height: 100%;
   box-sizing: border-box;
   width: 100%;
@@ -78,6 +78,7 @@ mat-drawer {
 app-main-chat {
   height: 100%;
   box-sizing: border-box;
+  width: 440px;
 }
 
 app-thread {
@@ -117,7 +118,7 @@ app-thread {
 
 .open-sidebar-content {
   @include s.f_r_c_c;
-  gap:12px;
+  gap: 12px;
   transform: rotate(270deg);
   white-space: nowrap;
 

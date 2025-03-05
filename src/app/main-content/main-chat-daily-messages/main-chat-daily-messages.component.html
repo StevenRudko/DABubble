@@ -8,7 +8,7 @@
         <div class="preview-header">
           <div class="clickable-area" (click)="openProfileDialog()">
             <img [src]="getCurrentUserPhotoURL()" class="user-avatar" [alt]="getCurrentUserName()">
-            <span class="user-name">{{ getCurrentUserName() }} (Du)</span>
+            <span class="user-name">{{ getCurrentUserName() }} <span *ngIf="isOwnProfile()">(Du)</span></span>
           </div>
         </div>
         <div class="preview-content">

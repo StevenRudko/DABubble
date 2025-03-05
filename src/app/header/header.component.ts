@@ -60,7 +60,7 @@ export class HeaderComponent implements OnInit {
    * - Listens for changes in `borderTrigger$` from `showHiddeService` and updates `borderTrigger`.
    * - Listens for `isChatActive$` from `mainContent` and triggers change detection.
    * - Calls `cdr.detectChanges()` to ensure the UI updates when values change.
-   * 
+   *
    * @private
    * @returns {void}
    */
@@ -81,13 +81,13 @@ export class HeaderComponent implements OnInit {
   }
 
   /**
- * Checks the screen size on window resize and updates the `isMobile` flag accordingly.
- * - Uses the `@HostListener` decorator to listen for `resize` events on the window.
- * - Determines whether the screen width is `<= 1024px` and updates `isMobile`.
- * - If the `isMobile` state has changed, triggers change detection using `cdr.detectChanges()`.
- * 
- * @returns {void}
- */
+   * Checks the screen size on window resize and updates the `isMobile` flag accordingly.
+   * - Uses the `@HostListener` decorator to listen for `resize` events on the window.
+   * - Determines whether the screen width is `<= 1024px` and updates `isMobile`.
+   * - If the `isMobile` state has changed, triggers change detection using `cdr.detectChanges()`.
+   *
+   * @returns {void}
+   */
   @HostListener('window:resize')
   checkScreenSize(): void {
     const wasMobile = this.isMobile;
@@ -103,7 +103,7 @@ export class HeaderComponent implements OnInit {
    * - Uses the `@HostListener` decorator to listen for `mousedown` events on the document.
    * - Checks if the clicked target is inside the `.searchbar-container`.
    * - If the click occurs outside, it hides the search results via `showHiddeService.setShowResult(false)`.
-   * 
+   *
    * @param {MouseEvent} event - The mouse event triggered by a user click.
    * @returns {void}
    */
@@ -119,7 +119,7 @@ export class HeaderComponent implements OnInit {
    * Opens the user menu dialog.
    * - Uses Angular Material's `MatDialog` to open the `UserMenuComponent`.
    * - Configures the dialog with a fixed width of 300px and a custom panel class.
-   * 
+   *
    * @returns {void}
    */
   openDialog(): void {
