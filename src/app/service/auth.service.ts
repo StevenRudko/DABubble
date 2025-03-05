@@ -138,10 +138,12 @@ export class AuthService {
    * @returns {Observable<void>} - An observable that completes when the logout is successful.
    */
   logout(): Observable<void> {
+    this.presenceService.setOfflineStatus();
+
     const promise = signOut(this.firebaseAuth).then(() => {
       sessionStorage.clear();
-      this.presenceService.setOfflineStatus();
     });
+
     return from(promise);
   }
 
