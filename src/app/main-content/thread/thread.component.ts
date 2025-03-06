@@ -270,6 +270,7 @@ export class ThreadComponent implements OnInit, AfterViewChecked, OnDestroy {
       emojis: messageData.emojis || [],
       hours: date.getHours(),
       minutes: date.getMinutes(),
+      authorId: messageData.authorId
     };
   }
 

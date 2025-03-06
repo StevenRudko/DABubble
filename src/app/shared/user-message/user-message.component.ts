@@ -26,12 +26,18 @@ import { RecentEmojisService } from '../../service/recent-emojis.service';
 import { FormsModule } from '@angular/forms';
 import { ProfileOverviewComponent } from '../profile-overview/profile-overview.component';
 import { UserOverviewComponent } from '../../shared/user-overview/user-overview.component';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { EmojiOverviewComponent } from '../emoji-overview/emoji-overview.component';
 import { ThreadService } from '../../service/open-thread.service';
 import { EmojiPickerService } from '../../service/emoji-picker.service';
 import { UserInterface } from '../../models/user-interface';
+import { UserInfosService } from '../../service/user-infos.service';
 
+/**
+ * Component for displaying and interacting with user messages.
+ * - Supports emoji reactions, tagging, and threaded messages.
+ * - Provides UI interactions such as editing, deleting, and replying to messages.
+ * - Manages user message options and profile dialogs.
+ */
 @Component({
   selector: 'app-user-message',
   standalone: true,
@@ -73,7 +79,7 @@ export class UserMessageComponent {
   hoverComponent: boolean = false;
   hoverComponentEmojiOverviewMap: { [key: string]: boolean } = {};
   emojiAuthors: string[] = [];
-  private boundMentionClick = this.handleMentionClick.bind(this);
+  taggedUser: string = '';
 
   /**
    * Initializes component with required services
@@ -81,13 +87,12 @@ export class UserMessageComponent {
   constructor(
     private dialog: MatDialog,
     private userData: UserData,
-    private elementRef: ElementRef,
     private authService: AuthService,
     private emojiService: EmojiService,
     private recentEmojisService: RecentEmojisService,
-    private sanitizer: DomSanitizer,
     private threadService: ThreadService,
-    private emojiPickerService: EmojiPickerService
+    private emojiPickerService: EmojiPickerService,
+    private userInfoService: UserInfosService
   ) {
     this.initializeComponent();
     this.emojiPickerService.activePickerId$.subscribe((id) => {
@@ -120,8 +125,6 @@ export class UserMessageComponent {
    * Sets up document event listeners
    */
   private setupEventListeners(): void {
-    document.addEventListener('mentionClick', this.boundMentionClick);
-    document.addEventListener('click', this.handleGlobalClick, true);
     document.addEventListener('click', (e: MouseEvent) =>
       this.handleEmojiPickerClick(e)
     );
@@ -138,59 +141,80 @@ export class UserMessageComponent {
   }
 
   /**
-   * Handles mention click events
+   * Opens a profile dialog.
+   * - If the message is from the current user, opens the `UserOverviewComponent`.
+   * - Otherwise, opens `openProfileDialog` function with the user’s data.
+   * 
+   * @param {renderMessageInterface} msg - The message whose author profile should be displayed.
    */
-  private handleMentionClick(event: Event): void {
-    if (event instanceof CustomEvent) {
-      this.openMentionedProfile(event.detail);
+  openProfile(msg: renderMessageInterface): void {
+    if (msg.isOwnMessage) {
+      this.dialog.open(UserOverviewComponent);
+    } else {
+      this.openProfileDialog(msg);
     }
   }
 
   /**
-   * Opens profile dialog
+   * Starts openMentionProfileDialog function for a tagged user.
+   * - Searches for the user in the `this.user` array by matching their username.
+   * - If the user is found, calls `openMentionProfileDialog` to display their profile.
+   * - If no matching user is found, the function exits without any action.
+   * 
+   * @param {string} name - The username of the tagged user.
+   * @returns {void}
    */
-  openProfile(event: Event): void {
-    event.preventDefault();
-    event.stopPropagation();
-
-    const msg = this.allMessages[0];
-    if (!msg || this.dialog.openDialogs.length > 0) return;
-
-    const config = this.createDialogConfig(msg);
-    this.openProfileDialog(msg, config);
+  openTaggedProfile(name: string): void {
+    const userData = this.user.find((user) => user.username == name);
+    if (userData) {
+      this.openMentionProfileDialog(userData);
+    } else {
+      return
+    }
   }
 
   /**
-   * Creates dialog configuration
+   * Opens a profile dialog for the given message author.
+   * - Calls `createProfileData(msg)` to retrieve the necessary UserInterface data.
+   * - Opens `ProfileOverviewComponent` as a dialog with the user’s profile information.
+   * 
+   * @private
+   * @param {renderMessageInterface} msg - The message containing the author's details.
+   * @returns {void}
    */
-  private createDialogConfig(msg: renderMessageInterface): any {
-    return {
-      width: '400px',
-      hasBackdrop: true,
-      panelClass: msg.isOwnMessage
-        ? ['profile-dialog', 'right-aligned']
-        : ['profile-dialog', 'center-aligned'],
-      autoFocus: false,
-      disableClose: false,
-    };
+  private openProfileDialog(msg: renderMessageInterface): void {
+    this.dialog.open(ProfileOverviewComponent, {
+      data: this.createProfileData(msg),
+    });
   }
 
   /**
-   * Opens appropriate profile dialog
+   * Opens the profile dialog for a mentioned user.
+   * - If the mentioned user is the current user (`localID === this.userInfoService.uId`),
+   *   opens the `UserOverviewComponent`.
+   * - Otherwise, opens the `ProfileOverviewComponent` with the provided user data.
+   * 
+   * @private
+   * @param {UserInterface} userData - The user data of the mentioned user.
+   * @returns {void}
    */
-  private openProfileDialog(msg: renderMessageInterface, config: any): void {
-    if (msg.isOwnMessage) {
-      this.dialog.open(UserOverviewComponent, config);
+  private openMentionProfileDialog(userData: UserInterface): void {
+    if (userData.localID === this.userInfoService.uId) {
+      this.dialog.open(UserOverviewComponent);
     } else {
       this.dialog.open(ProfileOverviewComponent, {
-        ...config,
-        data: this.createProfileData(msg),
+        data: userData,
       });
     }
   }
 
   /**
-   * Creates profile data object
+   * Creates a user profile data object based on the message author.
+   * - Returns a `UserInterface` object with fallback values if no user is found.
+   * 
+   * @private
+   * @param {renderMessageInterface} msg - The message containing the author's username.
+   * @returns {UserInterface} - A user profile object with the extracted or default data.
    */
   private createProfileData(msg: renderMessageInterface): UserInterface {
     const userData = this.user.find((u) => u.username === msg.author);
@@ -202,46 +226,6 @@ export class UserMessageComponent {
       uid: userData?.uid || '',
       online: false,
     };
-  }
-
-  /**
-   * Cleans up event listeners
-   */
-  ngOnDestroy(): void {
-    document.removeEventListener('click', this.handleGlobalClick);
-    document.removeEventListener('mentionClick', this.boundMentionClick);
-  }
-
-  /**
-   * Handles global click events
-   */
-  private handleGlobalClick = (event: Event): void => {
-    const target = event.target as HTMLElement;
-    const mentionElement = target.closest('.mention') as HTMLElement;
-
-    if (mentionElement) {
-      this.handleMentionElementClick(event, mentionElement);
-    }
-  };
-
-  /**
-   * Handles clicks on mention elements
-   */
-  private handleMentionElementClick(
-    event: Event,
-    mentionElement: HTMLElement
-  ): void {
-    const chatContainer = document.querySelector('.main-chat-body');
-    if (chatContainer instanceof HTMLElement) {
-      chatContainer.focus();
-    }
-
-    const username = mentionElement.getAttribute('data-username');
-    if (username) {
-      event.preventDefault();
-      event.stopPropagation();
-      this.openMentionedProfile(username);
-    }
   }
 
   /**
@@ -515,7 +499,7 @@ export class UserMessageComponent {
     const dialogRef = this.dialog.open(EmojiPickerComponent, {
       backdropClass: 'custom-backdrop',
     });
-    dialogRef.afterClosed().subscribe(() => {});
+    dialogRef.afterClosed().subscribe(() => { });
   }
 
   /**
@@ -579,7 +563,6 @@ export class UserMessageComponent {
     } else {
       this.addSingleEmojiAuthor(emojiData);
     }
-
     return this.emojiAuthors;
   }
 
@@ -618,70 +601,57 @@ export class UserMessageComponent {
   }
 
   /**
-   * Formats message with mention highlights
+   * Checks if a message contains a tagged user mention.
+   * - Uses a regular expression to detect mentions in the format `@Firstname Lastname`.
+   * - Supports uppercase and lowercase letters, including German umlauts (`ÄÖÜäöüß`).
+   * - Returns `true` if at least one mention is found, otherwise `false`.
+   * 
+   * @param {string} message - The message text to check for mentions.
+   * @returns {boolean} - `true` if the message contains a mention, otherwise `false`.
    */
-  formatMessageWithMentions(message: string): SafeHtml {
-    const formattedMessage = message.replace(
-      /@(\w+\s*\w*)/g,
-      (match, username) => {
-        const cleanUsername = username.trim();
-        return `<span class="mention" data-username="${cleanUsername}">@${cleanUsername}</span>`;
-      }
-    );
-    return this.sanitizer.bypassSecurityTrustHtml(formattedMessage);
-  }
-
-  /**
-   * Opens mentioned user's profile
-   */
-  private openMentionedProfile(username: string): void {
-    if (this.dialog.openDialogs.length > 0) return;
-
-    const userData = this.user.find(
-      (u) => u.username?.toLowerCase() === username.toLowerCase()
-    );
-    if (!userData) return;
-
-    const config = this.createMentionProfileConfig(userData);
-    this.openMentionProfileDialog(userData, config);
-  }
-
-  /**
-   * Creates config for mention profile dialog
-   */
-  private createMentionProfileConfig(userData: any): any {
-    return {
-      width: '400px',
-      hasBackdrop: true,
-      panelClass:
-        userData.localID === this.currentUser?.uid
-          ? ['profile-dialog', 'right-aligned']
-          : ['profile-dialog', 'center-aligned'],
-      autoFocus: false,
-      disableClose: false,
-    };
-  }
-
-  /**
-   * Opens appropriate dialog for mentioned profile
-   */
-  private openMentionProfileDialog(userData: any, config: any): void {
-    if (userData.localID === this.currentUser?.uid) {
-      this.dialog.open(UserOverviewComponent, config);
+  checkTagging(message: string): boolean {
+    const mentionRegex = /(@[A-ZÄÖÜa-zäöüß]+\s[A-ZÄÖÜa-zäöüß]+)/g;
+    if (mentionRegex.test(message)) {
+      return true
     } else {
-      const profileData: UserInterface = {
-        username: userData.username,
-        email: userData.email,
-        photoURL: userData.photoURL || 'img-placeholder/default-avatar.svg',
-        localID: userData.localID,
-        uid: userData.uid,
-        online: false,
-      };
-
-      this.dialog.open(ProfileOverviewComponent, {
-        ...config,
-        data: profileData,
-      });
+      return false
     }
+  }
+
+  /**
+   * Splits a text string around a detected mention (`@Firstname Lastname`).
+   * - Uses a regular expression to find the first user mention.
+   * - Extracts and returns either the text before the mention, the mention itself, or the text after.
+   * - Stores the mention in `this.taggedUser` without the `@` symbol.
+   * 
+   * @param {string} message - The text to analyze for a mention.
+   * @param {string} part - Specifies which part of the text to return (`"beforeText"`, `"mention"`, or `"afterText"`).
+   * @returns {string | string[] | null} - The requested text part, or `null` if no mention is found.
+   */
+  splitTextAroundRegexDeclaration(message: string, part: string): string | string[] | null {
+    const mentionRegex = /(@[A-ZÄÖÜa-zäöüß]+\s[A-ZÄÖÜa-zäöüß]+)/g;
+    const mention = message.match(mentionRegex);
+
+    if (!mention) {
+      console.log("Keine Erwähnung gefunden.");
+      return null;
+    }
+    const firstMention: string = mention[0];
+    const index = message.indexOf(firstMention);
+    
+    const beforeText: string = index > 0 ? message.substring(0, index).trim() : "";
+    const afterText: string = message.substring(index + firstMention.length).trim();
+    this.taggedUser = mention[0].replace('@', '');
+
+    if (part === 'beforeText') {
+      return beforeText;
+    } else { '' }
+    if (part === 'mention') {
+      return mention;
+    } else { '' }
+    if (part === 'afterText') {
+      return afterText;
+    } else { '' }
+    return null
   }
 }

@@ -317,6 +317,7 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
       isOwnMessage: msg.authorId === this.currentAuthUser.uid,
       hours: this.msgTimeHours,
       minutes: this.msgTimeMins,
+      authorId: msg.authorId
     });
   }
 

@@ -47,6 +47,8 @@ export interface renderMessageInterface {
   isOwnMessage: boolean;
   /** Minute component of the message time */
   minutes: number;
+
+  authorId: string;
 }
 
 /**
