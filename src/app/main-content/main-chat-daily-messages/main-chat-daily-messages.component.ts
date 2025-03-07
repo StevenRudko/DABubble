@@ -80,7 +80,6 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   currentDirectUser: any;
   authorPhotoURl: any;
   threadMessageId: string | null = null;
-  private isUserScrolled = false;
   userMessages$: Observable<any> = new Observable<any>();
   users$: Observable<any> = new Observable<any>();
   currentChannel$!: Observable<any>;
