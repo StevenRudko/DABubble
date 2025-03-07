@@ -14,4 +14,5 @@ import { MainChatDailyMessagesComponent } from '../main-chat-daily-messages/main
   templateUrl: './main-chat.component.html',
   styleUrl: './main-chat.component.scss',
 })
+
 export class MainChatComponent {}
