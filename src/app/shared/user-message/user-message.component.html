@@ -70,7 +70,7 @@
                 <p>{{ getEmojiCount(msg, emoji?.name || emoji) }}</p>
                 <app-emoji-overview *ngIf="hoverComponentEmojiOverviewMap[emoji?.name]"
                   [emojiAuthor]="getEmojiAuthorName(msg, emoji)" [usedEmoji]="getEmojiSymbol(emoji)"
-                  [currentUserName]="this.currentUser.displayName">
+                  [currentUserName]="currentUser?.displayName || ''">
                 </app-emoji-overview>
               </div>
             </div>
