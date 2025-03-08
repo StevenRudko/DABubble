@@ -80,7 +80,6 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   currentDirectUser: any;
   authorPhotoURl: any;
   threadMessageId: string | null = null;
-  private isUserScrolled = false;
   userMessages$: Observable<any> = new Observable<any>();
   users$: Observable<any> = new Observable<any>();
   currentChannel$!: Observable<any>;
@@ -221,21 +220,58 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Loads and processes messages
+   * Loads and processes messages with improved scroll handling
    */
   private loadMessages(): void {
     if (!this.userMessages || this.allMessages.length > 0) return;
 
+    const scrollPosition = this.chatContainer?.nativeElement.scrollTop || 0;
+    const isScrolledToBottom = this.isUserAtBottom();
+    const oldCount = this.totalMessageCount;
+
+    this.processAllMessages();
+
+    setTimeout(() => {
+      this.handleScrollPosition(scrollPosition, oldCount, isScrolledToBottom);
+    }, 0);
+  }
+  /**
+   * Processes all message data for display
+   */
+  private processAllMessages(): void {
     this.resetMessageArrays();
     this.processMessages();
     this.sortMessagesByTime();
     this.groupMessagesByDate();
     this.calculateTotalMessageCount();
+  }
 
-    // Scroll nach dem Laden der Nachrichten
-    setTimeout(() => {
+  /**
+   * Handles scroll position after message processing
+   */
+  private handleScrollPosition(
+    scrollPosition: number,
+    oldCount: number,
+    wasAtBottom: boolean
+  ): void {
+    if (oldCount !== this.totalMessageCount && wasAtBottom) {
       this.scrollService.scrollToBottom(this.chatContainer, true);
-    }, 0);
+    } else if (this.chatContainer) {
+      this.chatContainer.nativeElement.scrollTop = scrollPosition;
+    }
+  }
+
+  /**
+   * Checks if user is currently scrolled to bottom of chat
+   */
+  private isUserAtBottom(): boolean {
+    if (!this.chatContainer) return true;
+    const element = this.chatContainer.nativeElement;
+    const threshold = 50;
+    return (
+      element.scrollHeight - element.scrollTop - element.clientHeight <
+      threshold
+    );
   }
 
   /**
@@ -265,16 +301,24 @@ export class MainChatDailyMessagesComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Processes message timestamp
+   * Processes message timestamp and handles null values by using current time as fallback
    */
   private getMsgTime(msg: UserMessageInterface): void {
     const timestamp: any = msg.time;
-    this.msgTime = timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000;
 
+    if (!timestamp || typeof timestamp.seconds === 'undefined') {
+      const currentTime = new Date();
+      this.msgTime = currentTime.getTime();
+      this.msgTimeHours = this.formatTimeUnit(currentTime.getHours());
+      this.msgTimeMins = this.formatTimeUnit(currentTime.getMinutes());
+      this.setDateTimes(currentTime);
+      return;
+    }
+
+    this.msgTime = timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000;
     const exactTime = new Date(this.msgTime);
     this.msgTimeHours = this.formatTimeUnit(exactTime.getHours());
     this.msgTimeMins = this.formatTimeUnit(exactTime.getMinutes());
-
     this.setDateTimes(exactTime);
   }
 

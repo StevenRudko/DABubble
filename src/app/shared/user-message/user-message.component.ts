@@ -407,7 +407,9 @@ export class UserMessageComponent {
     } else {
       this.handleEmojiReaction(emoji, messageId);
     }
+    this.setActiveEmojiPicker.emit(null);
     this.activeEmojiPicker = null;
+    this.hoverComponent = false;
   }
 
   /**
@@ -448,7 +450,7 @@ export class UserMessageComponent {
           currentUser.uid
         );
         await this.recentEmojisService.updateRecentEmoji(emoji);
-        this.activeEmojiPicker = null;
+        this.emojiPickerService.setActivePickerId(null);
       }
     } catch (error) {
       console.error('Error adding emoji reaction:', error);

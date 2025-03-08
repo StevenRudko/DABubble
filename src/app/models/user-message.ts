@@ -22,7 +22,12 @@ export interface UserMessageInterface {
   comments: string[];
   emojis: EmojiReaction[] | string[];
   message: string;
-  time: number;
+  time:
+    | {
+        seconds: number;
+        nanoseconds: number;
+      }
+    | number;
   userMessageId: string;
   isOwnMessage: boolean;
 }
