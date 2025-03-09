@@ -150,6 +150,20 @@ textarea {
   }
 }
 
+.channel-dropdown {
+  .channel-hash {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #444df2;
+    font-size: 18px;
+    margin-right: 12px;
+    width: 32px;
+    height: 32px;
+  }
+}
+
 .mention-item {
   display: flex;
   align-items: center;
@@ -185,6 +199,18 @@ textarea {
 }
 
 ::ng-deep .mention {
+  color: #444df2;
+  background-color: white;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 2px;
+
+  &:hover {
+    background-color: #eceefe;
+  }
+}
+
+::ng-deep .channel-mention {
   color: #444df2;
   background-color: white;
   cursor: pointer;

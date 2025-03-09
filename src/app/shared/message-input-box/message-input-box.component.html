@@ -1,14 +1,12 @@
 <div class="message-input-container" [id]="'input-container-' + inputId">
   <label for="new-message"></label>
   <div class="textarea-wrapper">
-
-
     <textarea #messageInput [(ngModel)]="messageText" [placeholder]="placeholder" (keydown)="onKeyDown($event)"
       (input)="onInput($event)">
     </textarea>
   </div>
 
-
+  <!-- User-Mention-Dropdown -->
   <div class="mention-dropdown" *ngIf="showMentionDropdown && mentionSearchResults.length > 0"
     [class.thread-dropdown]="isThreadMessage">
     <div *ngFor="let user of mentionSearchResults" class="mention-item" (click)="selectMention(user)">
@@ -16,6 +14,18 @@
       <div class="mention-details">
         <span class="mention-name">{{ user.username }}</span>
         <span class="mention-email">{{ user.email }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Channel-Mention-Dropdown -->
+  <div class="mention-dropdown channel-dropdown" *ngIf="showChannelDropdown && channelSearchResults.length > 0"
+    [class.thread-dropdown]="isThreadMessage">
+    <div *ngFor="let channel of channelSearchResults" class="mention-item" (click)="selectChannel(channel)">
+      <span class="channel-hash">#</span>
+      <div class="mention-details">
+        <span class="mention-name">{{ channel.name }}</span>
+        <span class="mention-email">{{ channel.description }}</span>
       </div>
     </div>
   </div>
@@ -30,6 +40,9 @@
       </div>
       <div class="circle-outline" (click)="insertAtSymbol()">
         <mat-icon>alternate_email</mat-icon>
+      </div>
+      <div class="circle-outline" (click)="insertHashSymbol()">
+        <mat-icon>tag</mat-icon>
       </div>
     </div>
     <div class="send-icon-div" (click)="sendMessage()">

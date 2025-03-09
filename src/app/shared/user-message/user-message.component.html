@@ -23,7 +23,13 @@
             {{splitTextAroundRegexDeclaration(msg.message, 'mention')}}
           </span>
           {{splitTextAroundRegexDeclaration(msg.message, 'afterText')}}
-
+        </p>
+        } @else if (checkChannelTagging(msg.message)) {
+        <p>{{splitTextAroundChannelMention(msg.message, 'beforeText')}}
+          <span class="channel-mention" (click)="openTaggedChannel(this.taggedChannel)">
+            {{splitTextAroundChannelMention(msg.message, 'mention')}}
+          </span>
+          {{splitTextAroundChannelMention(msg.message, 'afterText')}}
         </p>
         } @else {
         <p>{{msg.message}}</p>

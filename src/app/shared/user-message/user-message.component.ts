@@ -31,6 +31,8 @@ import { ThreadService } from '../../service/open-thread.service';
 import { EmojiPickerService } from '../../service/emoji-picker.service';
 import { UserInterface } from '../../models/user-interface';
 import { UserInfosService } from '../../service/user-infos.service';
+import { ChatService } from '../../service/chat.service';
+import { ChannelInfoDialogComponent } from '../../main-content/main-chat/main-chat-header/channel-info-dialog/channel-info-dialog.component';
 
 /**
  * Component for displaying and interacting with user messages.
@@ -80,6 +82,7 @@ export class UserMessageComponent {
   hoverComponentEmojiOverviewMap: { [key: string]: boolean } = {};
   emojiAuthors: string[] = [];
   taggedUser: string = '';
+  taggedChannel: string = '';
 
   /**
    * Initializes component with required services
@@ -92,7 +95,8 @@ export class UserMessageComponent {
     private recentEmojisService: RecentEmojisService,
     private threadService: ThreadService,
     private emojiPickerService: EmojiPickerService,
-    private userInfoService: UserInfosService
+    private userInfoService: UserInfosService,
+    private chatService: ChatService
   ) {
     this.initializeComponent();
     this.emojiPickerService.activePickerId$.subscribe((id) => {
@@ -143,8 +147,8 @@ export class UserMessageComponent {
   /**
    * Opens a profile dialog.
    * - If the message is from the current user, opens the `UserOverviewComponent`.
-   * - Otherwise, opens `openProfileDialog` function with the user’s data.
-   * 
+   * - Otherwise, opens `openProfileDialog` function with the user's data.
+   *
    * @param {renderMessageInterface} msg - The message whose author profile should be displayed.
    */
   openProfile(msg: renderMessageInterface): void {
@@ -160,7 +164,7 @@ export class UserMessageComponent {
    * - Searches for the user in the `this.user` array by matching their username.
    * - If the user is found, calls `openMentionProfileDialog` to display their profile.
    * - If no matching user is found, the function exits without any action.
-   * 
+   *
    * @param {string} name - The username of the tagged user.
    * @returns {void}
    */
@@ -169,15 +173,43 @@ export class UserMessageComponent {
     if (userData) {
       this.openMentionProfileDialog(userData);
     } else {
-      return
+      return;
+    }
+  }
+
+  /**
+   * Opens channel info dialog for a tagged channel.
+   * - Gets channel information and opens ChannelInfoDialogComponent
+   *
+   * @param {string} name - The name of the tagged channel.
+   * @returns {void}
+   */
+  async openTaggedChannel(name: string): Promise<void> {
+    try {
+      const channel = await this.chatService.getChannelByName(name);
+      if (channel) {
+        this.dialog.open(ChannelInfoDialogComponent, {
+          data: {
+            channelId: channel.id,
+            name: channel.name,
+            description: channel.description,
+            userId: this.currentUser?.uid,
+          },
+          maxWidth: '100vw',
+          width: '800px',
+          panelClass: ['channel-dialog', 'wide-dialog'],
+        });
+      }
+    } catch (error) {
+      console.error('Error opening channel dialog:', error);
     }
   }
 
   /**
    * Opens a profile dialog for the given message author.
    * - Calls `createProfileData(msg)` to retrieve the necessary UserInterface data.
-   * - Opens `ProfileOverviewComponent` as a dialog with the user’s profile information.
-   * 
+   * - Opens `ProfileOverviewComponent` as a dialog with the user's profile information.
+   *
    * @private
    * @param {renderMessageInterface} msg - The message containing the author's details.
    * @returns {void}
@@ -193,7 +225,7 @@ export class UserMessageComponent {
    * - If the mentioned user is the current user (`localID === this.userInfoService.uId`),
    *   opens the `UserOverviewComponent`.
    * - Otherwise, opens the `ProfileOverviewComponent` with the provided user data.
-   * 
+   *
    * @private
    * @param {UserInterface} userData - The user data of the mentioned user.
    * @returns {void}
@@ -211,7 +243,7 @@ export class UserMessageComponent {
   /**
    * Creates a user profile data object based on the message author.
    * - Returns a `UserInterface` object with fallback values if no user is found.
-   * 
+   *
    * @private
    * @param {renderMessageInterface} msg - The message containing the author's username.
    * @returns {UserInterface} - A user profile object with the extracted or default data.
@@ -501,7 +533,7 @@ export class UserMessageComponent {
     const dialogRef = this.dialog.open(EmojiPickerComponent, {
       backdropClass: 'custom-backdrop',
     });
-    dialogRef.afterClosed().subscribe(() => { });
+    dialogRef.afterClosed().subscribe(() => {});
   }
 
   /**
@@ -607,17 +639,31 @@ export class UserMessageComponent {
    * - Uses a regular expression to detect mentions in the format `@Firstname Lastname`.
    * - Supports uppercase and lowercase letters, including German umlauts (`ÄÖÜäöüß`).
    * - Returns `true` if at least one mention is found, otherwise `false`.
-   * 
+   *
    * @param {string} message - The message text to check for mentions.
    * @returns {boolean} - `true` if the message contains a mention, otherwise `false`.
    */
   checkTagging(message: string): boolean {
     const mentionRegex = /(@[A-ZÄÖÜa-zäöüß]+\s[A-ZÄÖÜa-zäöüß]+)/g;
     if (mentionRegex.test(message)) {
-      return true
+      return true;
     } else {
-      return false
+      return false;
     }
+  }
+
+  /**
+   * Checks if a message contains a tagged channel mention.
+   * - Uses a regular expression to detect channel mentions in the format `#channelname`.
+   * - Supports uppercase and lowercase letters, including German umlauts.
+   * - Returns `true` if at least one channel mention is found, otherwise `false`.
+   *
+   * @param {string} message - The message text to check for channel mentions.
+   * @returns {boolean} - `true` if the message contains a channel mention, otherwise `false`.
+   */
+  checkChannelTagging(message: string): boolean {
+    const channelRegex = /(#[A-ZÄÖÜa-zäöüß0-9_-]+)/g;
+    return channelRegex.test(message);
   }
 
   /**
@@ -625,35 +671,78 @@ export class UserMessageComponent {
    * - Uses a regular expression to find the first user mention.
    * - Extracts and returns either the text before the mention, the mention itself, or the text after.
    * - Stores the mention in `this.taggedUser` without the `@` symbol.
-   * 
+   *
    * @param {string} message - The text to analyze for a mention.
    * @param {string} part - Specifies which part of the text to return (`"beforeText"`, `"mention"`, or `"afterText"`).
    * @returns {string | string[] | null} - The requested text part, or `null` if no mention is found.
    */
-  splitTextAroundRegexDeclaration(message: string, part: string): string | string[] | null {
+  splitTextAroundRegexDeclaration(
+    message: string,
+    part: string
+  ): string | string[] | null {
     const mentionRegex = /(@[A-ZÄÖÜa-zäöüß]+\s[A-ZÄÖÜa-zäöüß]+)/g;
     const mention = message.match(mentionRegex);
 
     if (!mention) {
-      console.log("Keine Erwähnung gefunden.");
       return null;
     }
     const firstMention: string = mention[0];
     const index = message.indexOf(firstMention);
-    
-    const beforeText: string = index > 0 ? message.substring(0, index).trim() : "";
-    const afterText: string = message.substring(index + firstMention.length).trim();
+
+    const beforeText: string =
+      index > 0 ? message.substring(0, index).trim() : '';
+    const afterText: string = message
+      .substring(index + firstMention.length)
+      .trim();
     this.taggedUser = mention[0].replace('@', '');
 
     if (part === 'beforeText') {
       return beforeText;
-    } else { '' }
-    if (part === 'mention') {
+    } else if (part === 'mention') {
       return mention;
-    } else { '' }
-    if (part === 'afterText') {
+    } else if (part === 'afterText') {
       return afterText;
-    } else { '' }
-    return null
+    }
+    return null;
+  }
+
+  /**
+   * Splits a text string around a detected channel mention (`#channelname`).
+   * - Uses a regular expression to find the first channel mention.
+   * - Extracts and returns either the text before the mention, the mention itself, or the text after.
+   * - Stores the channel name in `this.taggedChannel` without the `#` symbol.
+   *
+   * @param {string} message - The text to analyze for a channel mention.
+   * @param {string} part - Specifies which part of the text to return.
+   * @returns {string | string[] | null} - The requested text part, or `null` if no channel mention is found.
+   */
+  splitTextAroundChannelMention(
+    message: string,
+    part: string
+  ): string | string[] | null {
+    const channelRegex = /(#[A-ZÄÖÜa-zäöüß0-9_-]+)/g;
+    const mention = message.match(channelRegex);
+
+    if (!mention) {
+      return null;
+    }
+    const firstMention: string = mention[0];
+    const index = message.indexOf(firstMention);
+
+    const beforeText: string =
+      index > 0 ? message.substring(0, index).trim() : '';
+    const afterText: string = message
+      .substring(index + firstMention.length)
+      .trim();
+    this.taggedChannel = mention[0].replace('#', '');
+
+    if (part === 'beforeText') {
+      return beforeText;
+    } else if (part === 'mention') {
+      return mention;
+    } else if (part === 'afterText') {
+      return afterText;
+    }
+    return null;
   }
 }

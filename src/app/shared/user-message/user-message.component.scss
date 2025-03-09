@@ -617,3 +617,13 @@ app-emoji-overview {
     gap: 0;
   }
 }
+
+.channel-mention {
+  color: #444df2;
+  font-weight: 500;
+  cursor: pointer;
+  &:hover {
+    background-color: #eceefe;
+    border-radius: 4px;
+  }
+}

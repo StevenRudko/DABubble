@@ -5,6 +5,7 @@ import {
   collectionData,
   doc,
   getDoc,
+  getDocs,
   query,
   where,
   updateDoc,
@@ -504,5 +505,35 @@ export class ChatService {
   resetCurrentSelection(): void {
     this.currentChannelSubject.next(null);
     this.currentDirectUserSubject.next(null);
+  }
+
+  /**
+   * Gets a channel by its name
+   * @param name Channel name to look for
+   * @returns Promise of the Channel object or null if not found
+   */
+  async getChannelByName(name: string): Promise<Channel | null> {
+    try {
+      const channelsCollection = collection(this.firestore, 'channels');
+      const q = query(channelsCollection, where('name', '==', name));
+      const querySnapshot = await getDocs(q);
+
+      if (querySnapshot.empty) {
+        return null;
+      }
+
+      const doc = querySnapshot.docs[0];
+      return {
+        id: doc.id,
+        name: doc.data()['name'] || '',
+        description: doc.data()['description'] || '',
+        members: doc.data()['members'] || {},
+        createdAt: doc.data()['createdAt'] || '',
+        updatedAt: doc.data()['updatedAt'] || '',
+      } as Channel;
+    } catch (error) {
+      console.error('Error finding channel by name:', error);
+      return null;
+    }
   }
 }
