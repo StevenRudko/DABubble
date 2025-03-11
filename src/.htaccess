@@ -1,0 +1,33 @@
+# Aktiviere Rewrite-Engine
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Falls die Anfrage auf eine existierende Datei zeigt, bediene diese direkt
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Ansonsten leite alles zu index.html um
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# Verhindere Zugriff auf .htaccess-Datei
+<Files .htaccess>
+  order allow,deny
+  deny from all
+</Files>
+
+# Browser-Caching für statische Assets
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/jpg "access plus 1 month"
+  ExpiresByType image/jpeg "access plus 1 month"
+  ExpiresByType image/gif "access plus 1 month"
+  ExpiresByType image/png "access plus 1 month"
+  ExpiresByType image/svg+xml "access plus 1 month"
+  ExpiresByType text/css "access plus 1 week"
+  ExpiresByType application/javascript "access plus 1 week"
+  ExpiresByType application/x-javascript "access plus 1 week"
+  ExpiresDefault "access plus 2 days"
+</IfModule>
